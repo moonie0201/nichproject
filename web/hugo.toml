@@ -1,0 +1,23 @@
+baseURL = 'https://example.org/'
+languageCode = 'ko'
+title = '투자 니치 — 한국 투자 정보 블로그'
+theme = 'PaperMod'
+
+[params]
+  description = "ISA, IRP, ETF, 배당주 등 한국 투자 핵심 정보를 쉽고 정확하게 전달합니다."
+  defaultTheme = "auto"
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = false
+
+[menu]
+  [[menu.main]]
+    name = "블로그"
+    url = "/blog/"
+    weight = 1
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
