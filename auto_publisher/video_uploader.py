@@ -9,11 +9,12 @@ YouTube Data API v3 업로더 (OAuth 2.0)
 """
 
 import logging
+import os
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-SECRETS_DIR = Path("/home/mh/ocstorage/workspace/nichproject/.youtube_secrets")
+SECRETS_DIR = Path(os.getenv("YOUTUBE_SECRETS_DIR", str(Path(__file__).parent.parent / ".youtube_secrets")))
 CLIENT_SECRETS = SECRETS_DIR / "client_secrets.json"
 TOKEN_FILE = SECRETS_DIR / "token.json"
 SCOPES = [
@@ -83,14 +84,19 @@ def upload_youtube(
         },
     }
 
-    media = MediaFileUpload(str(video_path), chunksize=-1, resumable=True, mimetype="video/mp4")
+    media = MediaFileUpload(str(video_path), chunksize=5 * 1024 * 1024, resumable=True, mimetype="video/mp4")
     request = youtube.videos().insert(part="snippet,status", body=body, media_body=media)
 
     response = None
-    while response is None:
+    max_retries = 10
+    for _attempt in range(max_retries):
         status, response = request.next_chunk()
         if status:
             logger.info(f"업로드 진행: {int(status.progress() * 100)}%")
+        if response is not None:
+            break
+    else:
+        raise RuntimeError("YouTube 업로드 실패: 청크 전송 최대 재시도 초과")
 
     video_id = response.get("id")
     url = f"https://youtube.com/{'shorts/' if is_short else 'watch?v='}{video_id}"
