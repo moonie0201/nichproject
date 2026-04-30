@@ -1,0 +1,85 @@
+{
+  "id": "USmktIntraID01",
+  "name": "US Market Intraday (Bahasa Indonesia, cron: 30 23 * * *)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 23 * * *"
+            }
+          ]
+        }
+      },
+      "id": "trig-intraday-id",
+      "name": "Schedule 30 23 * * *",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish-us-market-intraday?lang=id",
+        "options": {
+          "timeout": 600000
+        },
+        "method": "GET"
+      },
+      "id": "http-intraday-id",
+      "name": "Publish intraday id",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ok = $json.success === true;\nconst skipped = $json.skipped === true;\nconst t = $json.title || 'untitled';\nconst url = $json.url || '';\nreturn [{ json: { text: ok && !skipped ? `📊 Market Intraday (id) 발행: ${t}\\nhttps://investiqs.net${url}` : (skipped ? `⏸ skipped` : `❌ failed`) } }];"
+      },
+      "id": "msg-intraday-id",
+      "name": "결과 메시지",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule 30 23 * * *": {
+      "main": [
+        [
+          {
+            "node": "Publish intraday id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish intraday id": {
+      "main": [
+        [
+          {
+            "node": "결과 메시지",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

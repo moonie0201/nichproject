@@ -1,0 +1,181 @@
+{
+  "name": "News React Shorts (30분 폴링, 뉴스 리액트 Shorts 자동 생성)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/30 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "n-trigger-30min",
+      "name": "30분 간격 폴링",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/rss/poll",
+        "options": {"timeout": 120000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "sources", "value": "hankyung,mk,yna,edaily,newspim,sedaily"},
+            {"name": "categories", "value": "stock,etf,dividend,crypto,realestate"},
+            {"name": "dedupe_window_min", "value": "180"}
+          ]
+        }
+      },
+      "id": "n-rss-poll",
+      "name": "증권 뉴스 RSS 폴링",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// RSS 결과에서 신규 뉴스만 필터링\nconst res = $input.first().json;\nconst items = (res && res.items) ? res.items : [];\nconst fresh = items.filter(x => x.is_new === true && x.score >= 7);\nconsole.log(`총 ${items.length}건 중 신규 hot news ${fresh.length}건`);\nif (fresh.length === 0) return [];\nreturn fresh.slice(0, 3).map(x => ({ json: x }));"
+      },
+      "id": "n-filter-fresh",
+      "name": "신규 핫뉴스 필터 (상위 3건)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json && $json.id ? true : false }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "n-has-news",
+      "name": "신규 뉴스 존재?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/compliance/check",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "text", "value": "={{ $json.title + ' ' + $json.summary }}"},
+            {"name": "mode", "value": "news_react"}
+          ]
+        }
+      },
+      "id": "n-compliance",
+      "name": "금칙어/컴플라이언스 검사",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1080, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.passed }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "n-compliance-ok",
+      "name": "컴플라이언스 통과?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1300, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/shorts/generate-script",
+        "options": {"timeout": 900000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "news_id", "value": "={{ $('신규 핫뉴스 필터 (상위 3건)').item.json.id }}"},
+            {"name": "template", "value": "news_react"},
+            {"name": "duration_sec", "value": "45"},
+            {"name": "hook_style", "value": "curiosity_gap"},
+            {"name": "lang", "value": "ko"}
+          ]
+        }
+      },
+      "id": "n-shorts-script",
+      "name": "Shorts 스크립트 자동 생성",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1520, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst script = item.script || '';\nconst hook = item.hook || '';\nconst cta = item.cta || '';\nconst msg = `[뉴스 리액트 Shorts 스크립트 생성]\\n훅: ${hook}\\n본문 길이: ${script.length}자\\nCTA: ${cta}`;\nconsole.log(msg);\nreturn [{ json: { success: true, script, hook, cta, news_title: item.news_title, message: msg } }];"
+      },
+      "id": "n-script-log",
+      "name": "스크립트 저장 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1740, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconsole.log(`[차단] 컴플라이언스 실패: ${item.reason || 'unknown'}`);\nreturn [{ json: { blocked: true, reason: item.reason } }];"
+      },
+      "id": "n-blocked-log",
+      "name": "컴플라이언스 차단 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1520, 320]
+    }
+  ],
+  "connections": {
+    "30분 간격 폴링": {
+      "main": [[{"node": "증권 뉴스 RSS 폴링", "type": "main", "index": 0}]]
+    },
+    "증권 뉴스 RSS 폴링": {
+      "main": [[{"node": "신규 핫뉴스 필터 (상위 3건)", "type": "main", "index": 0}]]
+    },
+    "신규 핫뉴스 필터 (상위 3건)": {
+      "main": [[{"node": "신규 뉴스 존재?", "type": "main", "index": 0}]]
+    },
+    "신규 뉴스 존재?": {
+      "main": [
+        [{"node": "금칙어/컴플라이언스 검사", "type": "main", "index": 0}],
+        []
+      ]
+    },
+    "금칙어/컴플라이언스 검사": {
+      "main": [[{"node": "컴플라이언스 통과?", "type": "main", "index": 0}]]
+    },
+    "컴플라이언스 통과?": {
+      "main": [
+        [{"node": "Shorts 스크립트 자동 생성", "type": "main", "index": 0}],
+        [{"node": "컴플라이언스 차단 로그", "type": "main", "index": 0}]
+      ]
+    },
+    "Shorts 스크립트 자동 생성": {
+      "main": [[{"node": "스크립트 저장 로그", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

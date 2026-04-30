@@ -1,0 +1,21 @@
+{{- $scratch := newScratch }}
+
+{{- if not .Date.IsZero -}}
+{{- $iso := .Date.Format "2006-01-02T15:04:05Z07:00" -}}
+{{- $fallback := .Date | time.Format (default ":date_long" site.Params.DateFormat) -}}
+{{- $scratch.Add "meta" (slice (printf "<span class='relative-time' data-published='%s' title='%s'>%s</span>" $iso $iso $fallback)) }}
+{{- end }}
+
+{{- if (.Param "ShowWordCount") -}}
+{{- $scratch.Add "meta" (slice (printf "<span>%s</span>" (i18n "words" .WordCount | default (printf "%d words" .WordCount)))) }}
+{{- end }}
+
+{{- if not (.Param "hideAuthor") -}}
+{{- with (partial "author.html" .) }}
+{{- $scratch.Add "meta" (slice (printf "<span>%s</span>" .)) }}
+{{- end }}
+{{- end }}
+
+{{- with ($scratch.Get "meta") }}
+{{- delimit . "&nbsp;·&nbsp;" | safeHTML -}}
+{{- end -}}

@@ -1,0 +1,196 @@
+{
+  "name": "Comparison Content (수요일 09:00 KST, A vs B)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 3"
+            }
+          ]
+        }
+      },
+      "id": "n-trigger-wed-0900",
+      "name": "매주 수요일 09:00 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/comparison/pick-pair",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "pool", "value": "SCHD:JEPI,JEPQ:JEPI,QQQ:VOO,VOO:SPY,SCHD:VOO,VYM:HDV,DIVO:JEPQ,TLT:TLTW,GLD:KRXGOLD,ISA:연금저축,ISA:IRP,연금저축:IRP"},
+            {"name": "rotation_key", "value": "weekly_wed"},
+            {"name": "exclude_published_days", "value": "60"}
+          ]
+        }
+      },
+      "id": "n-pick-pair",
+      "name": "비교 페어 자동 선택",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/backtest/run",
+        "options": {"timeout": 900000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "ticker_a", "value": "={{ $json.ticker_a }}"},
+            {"name": "ticker_b", "value": "={{ $json.ticker_b }}"},
+            {"name": "period_years", "value": "5"},
+            {"name": "metrics", "value": "cagr,sharpe,max_dd,dividend_yield,total_return"}
+          ]
+        }
+      },
+      "id": "n-backtest",
+      "name": "5년 백테스트 (yfinance/pykrx)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/comparison/generate",
+        "options": {"timeout": 900000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "ticker_a", "value": "={{ $('비교 페어 자동 선택').item.json.ticker_a }}"},
+            {"name": "ticker_b", "value": "={{ $('비교 페어 자동 선택').item.json.ticker_b }}"},
+            {"name": "backtest_id", "value": "={{ $json.backtest_id }}"},
+            {"name": "template", "value": "vs_longtail"},
+            {"name": "lang", "value": "ko"},
+            {"name": "include_schema", "value": "true"},
+            {"name": "include_faq", "value": "true"}
+          ]
+        }
+      },
+      "id": "n-gen-content",
+      "name": "A vs B 비교 콘텐츠 생성",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.success }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "n-check-gen",
+      "name": "생성 성공?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish-hugo",
+        "options": {"timeout": 600000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "content_id", "value": "={{ $json.content_id }}"},
+            {"name": "category", "value": "comparison"},
+            {"name": "cluster", "value": "etf-comparison"}
+          ]
+        }
+      },
+      "id": "n-publish",
+      "name": "Hugo 발행 (클러스터 등록)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/translate",
+        "options": {"timeout": 600000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "content_id", "value": "={{ $('A vs B 비교 콘텐츠 생성').item.json.content_id }}"},
+            {"name": "from", "value": "ko"},
+            {"name": "to", "value": "en"},
+            {"name": "auto_publish", "value": "true"}
+          ]
+        }
+      },
+      "id": "n-translate-en",
+      "name": "영문 번역 (Tier-1 확장)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1520, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst ctx = $('A vs B 비교 콘텐츠 생성').item.json;\nconst msg = `비교 콘텐츠 발행 완료: ${ctx.title || 'N/A'}\\n- KO: ${ctx.hugo_url || 'N/A'}\\n- EN: ${item.translated_url || 'N/A'}`;\nconsole.log(msg);\nreturn [{ json: { success: true, message: msg } }];"
+      },
+      "id": "n-success-log",
+      "name": "성공 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1740, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconsole.log(`비교 콘텐츠 생성 실패: ${item.error || 'unknown'}`);\nreturn [{ json: { success: false, message: item.error } }];"
+      },
+      "id": "n-fail-log",
+      "name": "실패 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 420]
+    }
+  ],
+  "connections": {
+    "매주 수요일 09:00 (KST)": {
+      "main": [[{"node": "비교 페어 자동 선택", "type": "main", "index": 0}]]
+    },
+    "비교 페어 자동 선택": {
+      "main": [[{"node": "5년 백테스트 (yfinance/pykrx)", "type": "main", "index": 0}]]
+    },
+    "5년 백테스트 (yfinance/pykrx)": {
+      "main": [[{"node": "A vs B 비교 콘텐츠 생성", "type": "main", "index": 0}]]
+    },
+    "A vs B 비교 콘텐츠 생성": {
+      "main": [[{"node": "생성 성공?", "type": "main", "index": 0}]]
+    },
+    "생성 성공?": {
+      "main": [
+        [{"node": "Hugo 발행 (클러스터 등록)", "type": "main", "index": 0}],
+        [{"node": "실패 로그", "type": "main", "index": 0}]
+      ]
+    },
+    "Hugo 발행 (클러스터 등록)": {
+      "main": [[{"node": "영문 번역 (Tier-1 확장)", "type": "main", "index": 0}]]
+    },
+    "영문 번역 (Tier-1 확장)": {
+      "main": [[{"node": "성공 로그", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "name": "Compliance Gate (콘텐츠 생성 webhook → 금칙어 검사 → 발행)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "compliance-gate",
+        "options": {}
+      },
+      "id": "n-webhook",
+      "name": "콘텐츠 생성 Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "compliance-gate-webhook"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/compliance/keywords",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "text", "value": "={{ $json.body.title + '\\n' + $json.body.content }}"},
+            {"name": "banned_list", "value": "추천,따라사세요,100% 수익,보장,리딩,무조건,절대,반드시 오른다,수익률 확정"},
+            {"name": "content_id", "value": "={{ $json.body.content_id }}"}
+          ]
+        }
+      },
+      "id": "n-banned",
+      "name": "금칙어 필터 (자본시장법)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/compliance/disclaimer",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "content_id", "value": "={{ $('콘텐츠 생성 Webhook').item.json.body.content_id }}"},
+            {"name": "mode", "value": "check"},
+            {"name": "required", "value": "disclaimer,sources_min_3"}
+          ]
+        }
+      },
+      "id": "n-disclaimer",
+      "name": "면책/출처 3개 이상 검증",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const banned = $('금칙어 필터 (자본시장법)').first().json;\nconst disc = $input.first().json;\nconst passed = (banned.passed === true) && (disc.passed === true);\nconst reasons = [];\nif (!banned.passed) reasons.push(`금칙어: ${(banned.hits || []).join(', ')}`);\nif (!disc.passed) reasons.push(`면책/출처: ${disc.reason}`);\nreturn [{ json: { passed, reasons, banned, disc } }];"
+      },
+      "id": "n-aggregate",
+      "name": "컴플라이언스 종합 판정",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.passed }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "n-gate",
+      "name": "게이트 통과?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish",
+        "options": {"timeout": 600000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "content_id", "value": "={{ $('콘텐츠 생성 Webhook').item.json.body.content_id }}"},
+            {"name": "gate_status", "value": "passed"}
+          ]
+        }
+      },
+      "id": "n-publish",
+      "name": "발행 실행",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('콘텐츠 생성 Webhook').first().json.body;\nconst failures = $('컴플라이언스 종합 판정').first().json.reasons || [];\nconst content = `**[컴플라이언스 차단] 발행 보류**\\n- Content ID: ${ctx.content_id}\\n- 제목: ${ctx.title}\\n- 사유: ${failures.join(' | ')}\\n- 수동 검토 필요`;\nreturn [{ json: { content, content_id: ctx.content_id, reasons: failures } }];"
+      },
+      "id": "n-fail-format",
+      "name": "차단 메시지 포매팅",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 420]
+    },
+    {
+      "parameters": {
+        "url": "={{ $vars.DISCORD_WEBHOOK_COMPLIANCE }}",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"username\": \"Compliance Gate\",\n  \"content\": {{ JSON.stringify($json.content) }}\n}"
+      },
+      "id": "n-discord-block",
+      "name": "Discord 차단 알림",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1520, 420]
+    },
+    {
+      "parameters": {
+        "jsCode": "const pub = $input.first().json;\nconst msg = `컴플라이언스 통과 → 발행 완료: ${pub.url || pub.post_url || 'N/A'}`;\nconsole.log(msg);\nreturn [{ json: { success: true, message: msg, url: pub.url } }];"
+      },
+      "id": "n-publish-log",
+      "name": "발행 완료 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1520, 200]
+    }
+  ],
+  "connections": {
+    "콘텐츠 생성 Webhook": {
+      "main": [[{"node": "금칙어 필터 (자본시장법)", "type": "main", "index": 0}]]
+    },
+    "금칙어 필터 (자본시장법)": {
+      "main": [[{"node": "면책/출처 3개 이상 검증", "type": "main", "index": 0}]]
+    },
+    "면책/출처 3개 이상 검증": {
+      "main": [[{"node": "컴플라이언스 종합 판정", "type": "main", "index": 0}]]
+    },
+    "컴플라이언스 종합 판정": {
+      "main": [[{"node": "게이트 통과?", "type": "main", "index": 0}]]
+    },
+    "게이트 통과?": {
+      "main": [
+        [{"node": "발행 실행", "type": "main", "index": 0}],
+        [{"node": "차단 메시지 포매팅", "type": "main", "index": 0}]
+      ]
+    },
+    "발행 실행": {
+      "main": [[{"node": "발행 완료 로그", "type": "main", "index": 0}]]
+    },
+    "차단 메시지 포매팅": {
+      "main": [[{"node": "Discord 차단 알림", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

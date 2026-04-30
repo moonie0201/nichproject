@@ -3,6 +3,14 @@ defaultContentLanguage = 'ko'
 defaultContentLanguageInSubdir = true
 theme = 'PaperMod'
 
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.7
+  filename = "sitemap.xml"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
 [params]
   defaultTheme = "auto"
   ShowReadingTime = true
@@ -11,6 +19,22 @@ theme = 'PaperMod'
   ShowBreadCrumbs = true
   ShowCodeCopyButtons = false
   googleAdSense = "ca-pub-3459019439429067"
+  ai_content_policy = "https://investiqs.net/ko/about/editorial-process/"
+  enableRobotsTXT = true
+  canonifyURLs = true
+  mainSections = ["blog"]
+
+  [params.assets]
+    disableHLJS = true
+
+  [params.schema]
+    publisherName = "InvestIQs"
+    publisherLogo = "/images/logo-512.png"
+    publisherType = "Organization"
+    sameAs = [
+      "https://twitter.com/investiqs",
+      "https://www.linkedin.com/company/investiqs"
+    ]
 
 [languages]
   [languages.ko]

@@ -1,0 +1,14 @@
+{{ $related := .Site.RegularPages.Related . | first 5 }}
+{{ with $related }}
+<aside class="related-posts" style="margin-top: 2em; padding: 1.5em; background: #fdfdfd; border: 1px solid #eee; border-radius: 8px;">
+  <h2 style="margin-top: 0; font-size: 1.2em;">관련 읽을거리</h2>
+  <ul style="list-style-type: none; padding-left: 0; margin-bottom: 0;">
+    {{ range . }}
+    <li style="margin-bottom: 1em; padding-bottom: 0.5em; border-bottom: 1px solid #f0f0f0;">
+      <a href="{{ .Permalink }}" style="font-weight: 600; text-decoration: none; color: #2563eb;">{{ .Title }}</a>
+      <p style="margin: 0.2em 0; font-size: 0.85em; color: #666;">{{ .Summary | truncate 100 }}</p>
+    </li>
+    {{ end }}
+  </ul>
+</aside>
+{{ end }}

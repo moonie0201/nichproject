@@ -1,0 +1,193 @@
+{
+  "name": "Cross Platform Post (블로그 발행 webhook → X + Instagram Reels)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "blog-published",
+        "options": {}
+      },
+      "id": "n-webhook",
+      "name": "Blog Published Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "blog-published-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ !!$json.body.post_url }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "n-validate",
+      "name": "페이로드 유효?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/cross-post/generate",
+        "options": {"timeout": 300000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "post_url", "value": "={{ $json.body.post_url }}"},
+            {"name": "post_id", "value": "={{ $json.body.post_id }}"},
+            {"name": "title", "value": "={{ $json.body.title }}"},
+            {"name": "summary", "value": "={{ $json.body.summary }}"},
+            {"name": "platforms", "value": "x_thread,instagram_reel"}
+          ]
+        }
+      },
+      "id": "n-gen-crosspost",
+      "name": "X 스레드 + Reels 스크립트 생성",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [640, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://api.twitter.com/2/tweets",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "twitterOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.x_thread[0] }}\"\n}"
+      },
+      "id": "n-x-post",
+      "name": "X 첫 트윗 발행",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 100]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/x/post-thread",
+        "options": {"timeout": 300000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "first_tweet_id", "value": "={{ $json.data && $json.data.id }}"},
+            {"name": "thread", "value": "={{ JSON.stringify($('X 스레드 + Reels 스크립트 생성').item.json.x_thread.slice(1)) }}"}
+          ]
+        }
+      },
+      "id": "n-x-thread",
+      "name": "X 나머지 스레드 발행",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1080, 100]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/reels/build",
+        "options": {"timeout": 900000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "script", "value": "={{ $('X 스레드 + Reels 스크립트 생성').item.json.reel_script }}"},
+            {"name": "hook", "value": "={{ $('X 스레드 + Reels 스크립트 생성').item.json.reel_hook }}"},
+            {"name": "duration_sec", "value": "30"}
+          ]
+        }
+      },
+      "id": "n-reel-build",
+      "name": "Reels 비디오 렌더링",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 320]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/instagram/upload-reel",
+        "options": {"timeout": 600000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "video_path", "value": "={{ $json.video_path }}"},
+            {"name": "caption", "value": "={{ $('X 스레드 + Reels 스크립트 생성').item.json.reel_caption }}"},
+            {"name": "hashtags", "value": "={{ $('X 스레드 + Reels 스크립트 생성').item.json.hashtags }}"}
+          ]
+        }
+      },
+      "id": "n-ig-upload",
+      "name": "Instagram Reels 업로드",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1080, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const allInputs = $input.all();\nconst x_res = allInputs[0] ? allInputs[0].json : {};\nconst ig_res = allInputs[1] ? allInputs[1].json : {};\nconst msg = `교차 발행 완료\\n- X 스레드: ${x_res.thread_url || 'posted'}\\n- IG Reels: ${ig_res.reel_url || 'posted'}`;\nconsole.log(msg);\nreturn [{ json: { success: true, message: msg, x: x_res, ig: ig_res } }];"
+      },
+      "id": "n-merge-log",
+      "name": "교차 발행 집계 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 210]
+    },
+    {
+      "parameters": {
+        "jsCode": "console.log('[webhook] 유효하지 않은 페이로드 - post_url 누락');\nreturn [{ json: { error: 'invalid payload: post_url required' } }];"
+      },
+      "id": "n-invalid",
+      "name": "페이로드 에러 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [640, 440]
+    }
+  ],
+  "connections": {
+    "Blog Published Webhook": {
+      "main": [[{"node": "페이로드 유효?", "type": "main", "index": 0}]]
+    },
+    "페이로드 유효?": {
+      "main": [
+        [{"node": "X 스레드 + Reels 스크립트 생성", "type": "main", "index": 0}],
+        [{"node": "페이로드 에러 로그", "type": "main", "index": 0}]
+      ]
+    },
+    "X 스레드 + Reels 스크립트 생성": {
+      "main": [[
+        {"node": "X 첫 트윗 발행", "type": "main", "index": 0},
+        {"node": "Reels 비디오 렌더링", "type": "main", "index": 0}
+      ]]
+    },
+    "X 첫 트윗 발행": {
+      "main": [[{"node": "X 나머지 스레드 발행", "type": "main", "index": 0}]]
+    },
+    "X 나머지 스레드 발행": {
+      "main": [[{"node": "교차 발행 집계 로그", "type": "main", "index": 0}]]
+    },
+    "Reels 비디오 렌더링": {
+      "main": [[{"node": "Instagram Reels 업로드", "type": "main", "index": 0}]]
+    },
+    "Instagram Reels 업로드": {
+      "main": [[{"node": "교차 발행 집계 로그", "type": "main", "index": 1}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

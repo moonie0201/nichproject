@@ -1,0 +1,357 @@
+{
+  "name": "Daily Blog Publisher",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      },
+      "name": "매일 6시 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 80]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 6 * * *"
+            }
+          ]
+        }
+      },
+      "name": "매일 6시30분 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 7 * * *"
+            }
+          ]
+        }
+      },
+      "name": "매일 7시 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 520]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 7 * * *"
+            }
+          ]
+        }
+      },
+      "name": "매일 7시30분 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 740]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "45 7 * * *"
+            }
+          ]
+        }
+      },
+      "name": "매일 7시45분 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 960]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "50 7 * * *"
+            }
+          ]
+        }
+      },
+      "name": "매일 7시50분 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 1180]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/make-video?lang=ko&privacy=public",
+        "options": {"timeout": 900000},
+        "method": "GET"
+      },
+      "name": "YouTube 영상 생성 (롱폼+쇼츠)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 1180]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/refresh-market-cache",
+        "options": {"timeout": 600000},
+        "method": "GET"
+      },
+      "name": "Market Cache Refresh",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 30]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/dynamic-scan",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "Dynamic Scan (VIX/모버/배당)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 130]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish-market",
+        "options": {},
+        "method": "POST"
+      },
+      "name": "시장분석 → AI 블로그 발행",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 220]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "일반 토픽 자동 발행 (KO)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 380]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish?lang=en",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "EN 블로그",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 460]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish?lang=ja",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "JA 블로그",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 540]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish?lang=vi",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "VI 블로그",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 620]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish?lang=id",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "ID 블로그",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 700]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/analyze?ticker=VOO&lang=ko",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "AI 헤지펀드 분석 포스트 (KO)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 740]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/translate?from=ko&to=en",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "EN 분석 (KO 번역)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 900]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/translate?from=ko&to=ja",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "JA 분석 (KO 번역)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 980]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/translate?from=ko&to=vi",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "VI 분석 (KO 번역)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 1060]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/translate?from=ko&to=id",
+        "options": {},
+        "method": "GET"
+      },
+      "name": "ID 분석 (KO 번역)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 1140]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.success }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "성공 여부 확인",
+      "type": "n8n-nodes-base.if",
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.success }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "분석 성공 여부 확인",
+      "type": "n8n-nodes-base.if",
+      "position": [900, 740]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconsole.log('✅ 발행 완료:', item.title);\nreturn [{ json: { message: `✅ 발행 완료: ${item.title}`, url: 'https://invest-korea.pages.dev' } }];"
+      },
+      "name": "성공 로그",
+      "type": "n8n-nodes-base.code",
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconsole.log('❌ 발행 실패:', item.error);\nreturn [{ json: { message: `❌ 발행 실패: ${item.error}` } }];"
+      },
+      "name": "실패 로그",
+      "type": "n8n-nodes-base.code",
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconsole.log('✅ 분석 완료:', item.ticker, item.signal, item.title);\nreturn [{ json: { message: `✅ [${item.ticker}] ${item.signal} — ${item.title}`, url: item.url } }];"
+      },
+      "name": "분석 성공 로그",
+      "type": "n8n-nodes-base.code",
+      "position": [1120, 660]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconsole.log('❌ 분석 실패:', item.error);\nreturn [{ json: { message: `❌ 분석 실패: ${item.error}` } }];"
+      },
+      "name": "분석 실패 로그",
+      "type": "n8n-nodes-base.code",
+      "position": [1120, 820]
+    }
+  ],
+  "connections": {
+    "매일 6시 (KST)": {
+      "main": [[
+        { "node": "Market Cache Refresh", "type": "main", "index": 0 },
+        { "node": "Dynamic Scan (VIX/모버/배당)", "type": "main", "index": 0 }
+      ]]
+    },
+    "매일 6시30분 (KST)": {
+      "main": [[
+        { "node": "시장분석 → AI 블로그 발행", "type": "main", "index": 0 },
+        { "node": "일반 토픽 자동 발행 (KO)", "type": "main", "index": 0 }
+      ]]
+    },
+    "매일 7시 (KST)": {
+      "main": [[
+        { "node": "EN 블로그", "type": "main", "index": 0 },
+        { "node": "JA 블로그", "type": "main", "index": 0 },
+        { "node": "VI 블로그", "type": "main", "index": 0 },
+        { "node": "ID 블로그", "type": "main", "index": 0 }
+      ]]
+    },
+    "매일 7시30분 (KST)": {
+      "main": [[{ "node": "AI 헤지펀드 분석 포스트 (KO)", "type": "main", "index": 0 }]]
+    },
+    "매일 7시50분 (KST)": {
+      "main": [[{ "node": "YouTube 영상 생성 (롱폼+쇼츠)", "type": "main", "index": 0 }]]
+    },
+    "매일 7시45분 (KST)": {
+      "main": [[
+        { "node": "EN 분석 (KO 번역)", "type": "main", "index": 0 },
+        { "node": "JA 분석 (KO 번역)", "type": "main", "index": 0 },
+        { "node": "VI 분석 (KO 번역)", "type": "main", "index": 0 },
+        { "node": "ID 분석 (KO 번역)", "type": "main", "index": 0 }
+      ]]
+    },
+    "시장분석 → AI 블로그 발행": {
+      "main": [[{ "node": "성공 여부 확인", "type": "main", "index": 0 }]]
+    },
+    "일반 토픽 자동 발행 (KO)": {
+      "main": [[{ "node": "성공 여부 확인", "type": "main", "index": 0 }]]
+    },
+    "AI 헤지펀드 분석 포스트 (KO)": {
+      "main": [[{ "node": "분석 성공 여부 확인", "type": "main", "index": 0 }]]
+    },
+    "성공 여부 확인": {
+      "main": [
+        [{ "node": "성공 로그", "type": "main", "index": 0 }],
+        [{ "node": "실패 로그", "type": "main", "index": 0 }]
+      ]
+    },
+    "분석 성공 여부 확인": {
+      "main": [
+        [{ "node": "분석 성공 로그", "type": "main", "index": 0 }],
+        [{ "node": "분석 실패 로그", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "Asia/Seoul"
+  }
+}

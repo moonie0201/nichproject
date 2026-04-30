@@ -1,0 +1,33 @@
+<script>
+(function () {
+  var LABELS = {
+    ko: { now: "방금 전",   min: "{n}분 전",       hour: "{n}시간 전",      day: "{n}일 전",       locale: "ko-KR" },
+    en: { now: "just now",  min: "{n} min ago",    hour: "{n}h ago",       day: "{n}d ago",       locale: "en-US" },
+    ja: { now: "たった今",  min: "{n}分前",         hour: "{n}時間前",       day: "{n}日前",        locale: "ja-JP" },
+    vi: { now: "vừa xong",  min: "{n} phút trước", hour: "{n} giờ trước",  day: "{n} ngày trước", locale: "vi-VN" },
+    id: { now: "baru saja", min: "{n} mnt lalu",   hour: "{n} jam lalu",   day: "{n} hari lalu",  locale: "id-ID" }
+  };
+
+  function formatRelativeTime(date) {
+    var lang = (document.documentElement.lang || "ko").slice(0, 2);
+    var L = LABELS[lang] || LABELS["ko"];
+    var fmt = function (tpl, n) { return tpl.replace("{n}", n); };
+    var diffSec = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (!Number.isFinite(diffSec) || diffSec < 0) diffSec = 0;
+    if (diffSec < 60) return L.now;
+    var m = Math.floor(diffSec / 60);
+    if (m < 60) return fmt(L.min, m);
+    var h = Math.floor(m / 60);
+    if (h < 24) return fmt(L.hour, h);
+    var d = Math.floor(h / 24);
+    if (d < 7) return fmt(L.day, d);
+    return date.toLocaleDateString(L.locale, { year: "numeric", month: "long", day: "numeric" });
+  }
+
+  document.querySelectorAll(".relative-time[data-published]").forEach(function (el) {
+    var published = new Date(el.getAttribute("data-published"));
+    var label = formatRelativeTime(published);
+    if (label) el.textContent = label;
+  });
+})();
+</script>

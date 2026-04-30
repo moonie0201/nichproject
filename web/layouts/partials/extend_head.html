@@ -1,0 +1,58 @@
+{{- if site.Params.googleAdSense }}
+<script async
+  data-type="application/javascript"
+  data-name="google-adsense"
+  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ site.Params.googleAdSense }}"
+  crossorigin="anonymous"></script>
+{{- end }}
+<!-- Klaro CMP (GDPR/PIPA 동의 관리) -->
+<link rel="stylesheet" href="https://cdn.kiprotect.com/klaro/latest/klaro.min.css" />
+<script defer src="https://cdn.kiprotect.com/klaro/latest/klaro.js" data-config="klaroConfig"></script>
+<script>
+var klaroConfig = {
+  version: 1,
+  elementID: 'klaro',
+  storageMethod: 'localStorage',
+  cookieName: 'klaro',
+  privacyPolicy: '/ko/privacy/',
+  default: false,
+  mustConsent: false,
+  services: [
+    {
+      name: 'google-adsense',
+      title: 'Google AdSense',
+      purposes: ['advertising'],
+      cookies: [/^__gads/i, /^__gpi/i],
+      onlyOnce: true,
+    },
+    {
+      name: 'google-analytics',
+      title: 'Google Analytics',
+      purposes: ['analytics'],
+      cookies: [/^_ga/i, /^_gid/i],
+    }
+  ],
+  translations: {
+    ko: {
+      consentModal: { title: '개인정보 및 쿠키 설정', description: '광고·분석을 위한 쿠키 사용에 동의해 주세요.' },
+      acceptAll: '모두 동의', declineAll: '모두 거부', acceptSelected: '선택 동의',
+    },
+    en: {
+      consentModal: { title: 'Privacy & Cookie Settings', description: 'Please consent to cookies for advertising and analytics.' },
+      acceptAll: 'Accept All', declineAll: 'Decline All', acceptSelected: 'Accept Selected',
+    }
+  }
+};
+</script>
+{{- partial "schema.html" . }}
+
+{{- range .AllTranslations }}
+<link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}" />
+{{- end }}
+{{- range .AllTranslations }}{{ if eq .Language.Lang "en" }}<link rel="alternate" hreflang="x-default" href="{{ .Permalink }}" />{{ end }}{{- end }}
+{{- if .Params.ai_generated }}
+<meta name="ai-generated" content="true" />
+<meta name="ai-model" content="{{ .Params.ai_models | default "Claude/Gemini" }}" />
+<meta name="human-reviewed" content="automated-only" />
+<meta name="ai-content-policy" content="{{ site.Params.ai_content_policy | default "/ko/about/editorial-process/" }}" />
+{{- end }}

@@ -1,0 +1,194 @@
+{
+  "name": "Newsletter Weekly (금요일 07:00 KST, Stibee 발송)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 7 * * 5"
+            }
+          ]
+        }
+      },
+      "id": "n-trigger-fri-0700",
+      "name": "매주 금요일 07:00 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/newsletter/curate-weekly",
+        "options": {"timeout": 600000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "period", "value": "last_7_days"},
+            {"name": "sections", "value": "market_summary,top_posts,dividend_spotlight,tax_tip,portfolio_action"},
+            {"name": "max_words", "value": "2800"}
+          ]
+        }
+      },
+      "id": "n-curate",
+      "name": "주간 콘텐츠 큐레이션",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/newsletter/build",
+        "options": {"timeout": 600000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "curation_id", "value": "={{ $json.curation_id }}"},
+            {"name": "template", "value": "investiq_weekly_v1"},
+            {"name": "subject_ab_test", "value": "true"},
+            {"name": "include_affiliate", "value": "true"},
+            {"name": "disclaimer", "value": "true"}
+          ]
+        }
+      },
+      "id": "n-build",
+      "name": "HTML 뉴스레터 빌드 (A/B 제목)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/compliance/check",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "text", "value": "={{ $json.html_body }}"},
+            {"name": "mode", "value": "newsletter"}
+          ]
+        }
+      },
+      "id": "n-compliance",
+      "name": "금칙어/면책 검증",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.passed }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "n-pass-check",
+      "name": "컴플라이언스 통과?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.stibee.com/v1/lists/{{ $vars.STIBEE_LIST_ID }}/campaigns",
+        "options": {"timeout": 600000},
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "AccessToken", "value": "={{ $vars.STIBEE_API_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"subject\": \"{{ $('HTML 뉴스레터 빌드 (A/B 제목)').item.json.subject_a }}\",\n  \"previewText\": \"{{ $('HTML 뉴스레터 빌드 (A/B 제목)').item.json.preview }}\",\n  \"content\": \"{{ $('HTML 뉴스레터 빌드 (A/B 제목)').item.json.html_body }}\",\n  \"senderName\": \"InvestIQs Weekly\",\n  \"senderEmail\": \"weekly@investiqs.com\",\n  \"sendTimeType\": \"immediately\"\n}"
+      },
+      "id": "n-stibee-send",
+      "name": "Stibee 캠페인 발송",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/newsletter/log",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "campaign_id", "value": "={{ $json.campaignId || $json.campaign_id }}"},
+            {"name": "subject", "value": "={{ $('HTML 뉴스레터 빌드 (A/B 제목)').item.json.subject_a }}"},
+            {"name": "sent_at", "value": "={{ $now.toISO() }}"},
+            {"name": "status", "value": "sent"}
+          ]
+        }
+      },
+      "id": "n-log-send",
+      "name": "발송 이력 저장",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1520, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst msg = `주간 뉴스레터 발송 완료\\n- Campaign ID: ${item.campaign_id || 'N/A'}\\n- 발송 시각: ${item.sent_at}`;\nconsole.log(msg);\nreturn [{ json: { success: true, message: msg } }];"
+      },
+      "id": "n-done",
+      "name": "완료 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1740, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconsole.log(`뉴스레터 컴플라이언스 차단: ${item.reason}`);\nreturn [{ json: { blocked: true, reason: item.reason } }];"
+      },
+      "id": "n-blocked",
+      "name": "차단 로그 (수동 검토 필요)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 420]
+    }
+  ],
+  "connections": {
+    "매주 금요일 07:00 (KST)": {
+      "main": [[{"node": "주간 콘텐츠 큐레이션", "type": "main", "index": 0}]]
+    },
+    "주간 콘텐츠 큐레이션": {
+      "main": [[{"node": "HTML 뉴스레터 빌드 (A/B 제목)", "type": "main", "index": 0}]]
+    },
+    "HTML 뉴스레터 빌드 (A/B 제목)": {
+      "main": [[{"node": "금칙어/면책 검증", "type": "main", "index": 0}]]
+    },
+    "금칙어/면책 검증": {
+      "main": [[{"node": "컴플라이언스 통과?", "type": "main", "index": 0}]]
+    },
+    "컴플라이언스 통과?": {
+      "main": [
+        [{"node": "Stibee 캠페인 발송", "type": "main", "index": 0}],
+        [{"node": "차단 로그 (수동 검토 필요)", "type": "main", "index": 0}]
+      ]
+    },
+    "Stibee 캠페인 발송": {
+      "main": [[{"node": "발송 이력 저장", "type": "main", "index": 0}]]
+    },
+    "발송 이력 저장": {
+      "main": [[{"node": "완료 로그", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

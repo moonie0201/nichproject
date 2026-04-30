@@ -1,0 +1,5 @@
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://cdn.kiprotect.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://cdn.kiprotect.com; img-src 'self' data: https:; frame-src https://googleads.g.doubleclick.net;
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin

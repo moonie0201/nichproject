@@ -1,0 +1,108 @@
+{{- /* Article / BlogPosting schema */ -}}
+{{- if and (eq .Type "blog") (not .IsHome) -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": {{ .Title | jsonify }},
+  "description": {{ .Summary | default .Description | jsonify }},
+  "image": [
+    {{- with .Params.cover.image -}}
+      {{ (printf "%s%s" $.Site.BaseURL .) | jsonify }}
+    {{- else -}}
+      {{ (printf "%simages/og-default.png" $.Site.BaseURL) | jsonify }}
+    {{- end -}}
+  ],
+  "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  "author": {
+    "@type": "Person",
+    "name": {{ .Params.author | default "InvestIQs Research" | jsonify }},
+    "url": {{ (printf "%sko/about/authors/" .Site.BaseURL) | jsonify }},
+    "jobTitle": "Investment Research Analyst"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "InvestIQs",
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ (printf "%simages/logo-512.png" .Site.BaseURL) | jsonify }}
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ .Permalink | jsonify }}
+  },
+  "inLanguage": {{ .Site.LanguageCode | jsonify }},
+  "articleSection": {{ with .Params.categories }}{{ index . 0 | jsonify }}{{ else }}"Finance"{{ end }},
+  "keywords": {{ if .Params.tags }}{{ delimit .Params.tags "," | jsonify }}{{ else }}""{{ end }}
+}
+</script>
+{{- end -}}
+
+{{- /* BreadcrumbList schema */ -}}
+{{- if .IsPage -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":{{ .Site.BaseURL | jsonify }}},
+    {{- with (index .Params.categories 0) -}}
+    {"@type":"ListItem","position":2,"name":{{ . | jsonify }},"item":{{ (printf "%s%s/categories/%s/" $.Site.BaseURL $.Site.Language.Lang (. | urlize)) | jsonify }}},
+    {{- end -}}
+    {"@type":"ListItem","position":3,"name":{{ .Title | jsonify }},"item":{{ .Permalink | jsonify }}}
+  ]
+}
+</script>
+{{- end -}}
+
+{{- /* FAQPage schema — front matter `faq` 배열이 있을 때만 */ -}}
+{{- with .Params.faq -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {{- range $i, $q := . -}}
+    {{- if $i }},{{ end -}}
+    {
+      "@type": "Question",
+      "name": {{ $q.q | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ $q.a | jsonify }}
+      }
+    }
+    {{- end -}}
+  ]
+}
+</script>
+{{- end -}}
+
+{{- /* FinancialProduct + Review schema — 분석 포스트 전용 */ -}}
+{{- if eq .Params.content_type "analysis" -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AnalysisNewsArticle",
+  "headline": {{ .Title | jsonify }},
+  "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  "author": {
+    "@type": "Organization",
+    "name": "InvestIQs Research"
+  },
+  "about": {
+    "@type": "FinancialProduct",
+    "name": {{ .Params.primary_keyword | default .Title | jsonify }}
+  },
+  "reviewRating": {
+    "@type": "Rating",
+    "ratingValue": {{ .Params.analysis_confidence | default "medium" | jsonify }},
+    "bestRating": "very_high",
+    "worstRating": "low"
+  }
+}
+</script>
+{{- end -}}

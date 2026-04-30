@@ -1,0 +1,58 @@
+{
+  "id": "ShortsAutoDaily0830",
+  "name": "Shorts Auto (매일 08:30 KST, 최신 글로 자동 영상)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "trig-shorts",
+      "name": "매일 08:30 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/shorts/auto-latest?lang=ko&privacy=public",
+        "options": {"timeout": 1200000},
+        "method": "GET"
+      },
+      "id": "http-shorts",
+      "name": "Shorts 자동 생성",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ok = $json.success === true;\nconst skipped = $json.skipped === true;\nconst slug = $json.slug || '?';\nconst section = $json.section || '?';\nconst v = $json.video_result || {};\nconst longUrl = v.long_url || v.longform_url || v.long_youtube?.url || '';\nconst shortUrl = v.short_url || v.shorts_url || v.short_youtube?.url || '';\n\nif (!ok && !skipped) {\n  const detail = $json.error || v.error || v.output || JSON.stringify($json).slice(0, 500);\n  throw new Error(`Shorts auto 실패: ${slug} [${section}] ${detail}`);\n}\n\nlet text;\nif (skipped) {\n  text = `⏸ Shorts auto skipped: ${$json.reason || 'unknown'}`;\n} else {\n  text = `🎬 Shorts auto 생성: ${slug} [${section}]\\nLongform: ${longUrl || '-'}\\nShort: ${shortUrl || '-'}`;\n}\nreturn [{ json: { text, success: ok, skipped, slug, section, longUrl, shortUrl } }];"
+      },
+      "id": "msg-shorts",
+      "name": "결과 메시지",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, 300]
+    }
+  ],
+  "connections": {
+    "매일 08:30 (KST)": {
+      "main": [[{"node": "Shorts 자동 생성", "type": "main", "index": 0}]]
+    },
+    "Shorts 자동 생성": {
+      "main": [[{"node": "결과 메시지", "type": "main", "index": 0}]]
+    }
+  },
+  "active": true,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

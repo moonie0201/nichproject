@@ -1,0 +1,169 @@
+{
+  "name": "Keyword Rank Monitor (매일 23:00 KST, GSC 순위 변동 → Discord)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 23 * * *"
+            }
+          ]
+        }
+      },
+      "id": "n-trigger-2300",
+      "name": "매일 23:00 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/gsc/fetch",
+        "options": {"timeout": 300000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "site_url", "value": "https://invest-korea.pages.dev/"},
+            {"name": "days", "value": "28"},
+            {"name": "row_limit", "value": "200"},
+            {"name": "dimensions", "value": "query,page"}
+          ]
+        }
+      },
+      "id": "n-gsc-fetch",
+      "name": "GSC API 상위 키워드 조회",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/gsc/diff",
+        "options": {"timeout": 120000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "snapshot_id", "value": "={{ $json.snapshot_id }}"},
+            {"name": "threshold_rank_delta", "value": "3"},
+            {"name": "threshold_impr_delta_pct", "value": "25"}
+          ]
+        }
+      },
+      "id": "n-diff",
+      "name": "순위 변동 Delta 계산",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.first().json;\nconst movers = (res && res.movers) ? res.movers : [];\nconst up = movers.filter(m => m.rank_delta < 0).slice(0, 10);\nconst down = movers.filter(m => m.rank_delta > 0).slice(0, 10);\nconst hasSig = (up.length + down.length) > 0;\n\nlet content = `**[GSC 순위 리포트] ${new Date().toISOString().slice(0,10)}**\\n\\n`;\nif (up.length > 0) {\n  content += `**상승 Top ${up.length}**\\n`;\n  for (const m of up) content += `- ${m.query} : ${m.prev_rank} → ${m.curr_rank} (${m.rank_delta})\\n`;\n  content += '\\n';\n}\nif (down.length > 0) {\n  content += `**하락 Top ${down.length}**\\n`;\n  for (const m of down) content += `- ${m.query} : ${m.prev_rank} → ${m.curr_rank} (+${m.rank_delta})\\n`;\n}\nif (!hasSig) content += '유의미한 변동 없음 (threshold: ±3위, ±25% impression)';\n\nreturn [{ json: { content, has_significant_change: hasSig, up_count: up.length, down_count: down.length } }];"
+      },
+      "id": "n-format",
+      "name": "Discord 메시지 포매팅",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.has_significant_change }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "n-if-significant",
+      "name": "유의 변동 존재?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $vars.DISCORD_WEBHOOK_KEYWORD }}",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"username\": \"GSC Rank Monitor\",\n  \"content\": {{ JSON.stringify($json.content) }}\n}"
+      },
+      "id": "n-discord",
+      "name": "Discord 알림 발송",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/gsc/save-snapshot",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "date", "value": "={{ $now.format('yyyy-MM-dd') }}"},
+            {"name": "up_count", "value": "={{ $('Discord 메시지 포매팅').item.json.up_count }}"},
+            {"name": "down_count", "value": "={{ $('Discord 메시지 포매팅').item.json.down_count }}"}
+          ]
+        }
+      },
+      "id": "n-save",
+      "name": "일일 스냅샷 저장",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1520, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "console.log('[GSC Rank Monitor] 유의 변동 없음 - 알림 스킵');\nreturn [{ json: { skipped: true } }];"
+      },
+      "id": "n-skip",
+      "name": "스킵 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 420]
+    }
+  ],
+  "connections": {
+    "매일 23:00 (KST)": {
+      "main": [[{"node": "GSC API 상위 키워드 조회", "type": "main", "index": 0}]]
+    },
+    "GSC API 상위 키워드 조회": {
+      "main": [[{"node": "순위 변동 Delta 계산", "type": "main", "index": 0}]]
+    },
+    "순위 변동 Delta 계산": {
+      "main": [[{"node": "Discord 메시지 포매팅", "type": "main", "index": 0}]]
+    },
+    "Discord 메시지 포매팅": {
+      "main": [[{"node": "유의 변동 존재?", "type": "main", "index": 0}]]
+    },
+    "유의 변동 존재?": {
+      "main": [
+        [{"node": "Discord 알림 발송", "type": "main", "index": 0}],
+        [{"node": "스킵 로그", "type": "main", "index": 0}]
+      ]
+    },
+    "Discord 알림 발송": {
+      "main": [[{"node": "일일 스냅샷 저장", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

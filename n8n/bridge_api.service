@@ -1,0 +1,16 @@
+[Unit]
+Description=n8n Bridge API — nichproject Python 스크립트 HTTP 브리지
+After=network.target
+
+[Service]
+Type=simple
+User=mh
+WorkingDirectory=/home/mh/ocstorage/workspace/nichproject
+ExecStart=/home/mh/ocstorage/workspace/nichproject/venv/bin/python3 n8n/bridge_api.py
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/home/mh/ocstorage/workspace/nichproject/n8n/bridge.log
+StandardError=append:/home/mh/ocstorage/workspace/nichproject/n8n/bridge.log
+
+[Install]
+WantedBy=multi-user.target

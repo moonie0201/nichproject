@@ -1,0 +1,25 @@
+.scenario-box {
+  border: 1px solid #fbbf24;
+  background: #fffbeb;
+  border-radius: 8px;
+  padding: 1em 1.25em;
+  margin: 1.5em 0;
+}
+.scenario-header {
+  font-weight: 700;
+  color: #92400e;
+  font-size: 1.05em;
+  margin-bottom: 0.6em;
+}
+.scenario-body p { margin: 0.4em 0; }
+.scenario-body table { margin-top: 0.5em; }
+.scenario-footnote {
+  font-size: 0.82em;
+  color: #78350f;
+  border-top: 1px dashed #d97706;
+  margin-top: 0.7em;
+  padding-top: 0.4em;
+  font-style: italic;
+}
+.reg-banner { /* 분석 포스트 상단 배너 (이미 존재) */ }
+.disclaimer { /* 본문 끝 면책 */ }

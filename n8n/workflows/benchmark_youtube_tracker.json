@@ -1,0 +1,132 @@
+{
+  "name": "Benchmark YouTube Tracker (일요일 21:00 KST)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 21 * * 0"
+            }
+          ]
+        }
+      },
+      "id": "n-trigger-sun-2100",
+      "name": "매주 일요일 21:00 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 5대 벤치마크 채널 (슈카월드, 삼프로TV, 김작가TV, 월급쟁이부자들, 부읽남)\nconst channels = [\n  { name: '슈카월드', id: 'UCsJ6RuBiTVWRX156FVbeaGg' },\n  { name: '삼프로TV', id: 'UChlv4GSd7OQl3js-jkLOnFA' },\n  { name: '김작가TV', id: 'UCoIZ4FbJF1sJEwyeVW5SVHA' },\n  { name: '월급쟁이부자들TV', id: 'UC4RmSlNQtUjPWBSgOXrMrMA' },\n  { name: '부읽남TV', id: 'UCbYQOFbu4eVP6OBOyjtYQnQ' }\n];\nreturn channels.map(c => ({ json: c }));"
+      },
+      "id": "n-channel-list",
+      "name": "5대 벤치마크 채널 목록",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={{ $json.id }}&maxResults=10&order=date&publishedAfter={{ new Date(Date.now() - 7*24*60*60*1000).toISOString() }}&type=video&key={{ $vars.YOUTUBE_API_KEY }}",
+        "options": {"timeout": 60000},
+        "method": "GET"
+      },
+      "id": "n-yt-search",
+      "name": "YouTube Data API 조회 (주간)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// YouTube API 응답 파싱 → videoId, title, publishedAt 추출\nconst items = [];\nfor (const input of $input.all()) {\n  const res = input.json;\n  const videos = (res && res.items) ? res.items : [];\n  for (const v of videos) {\n    items.push({\n      json: {\n        channel_id: v.snippet && v.snippet.channelId,\n        channel_title: v.snippet && v.snippet.channelTitle,\n        video_id: v.id && v.id.videoId,\n        title: v.snippet && v.snippet.title,\n        description: v.snippet && v.snippet.description,\n        published_at: v.snippet && v.snippet.publishedAt,\n        thumbnail: v.snippet && v.snippet.thumbnails && v.snippet.thumbnails.high && v.snippet.thumbnails.high.url\n      }\n    });\n  }\n}\nconsole.log(`주간 신규 영상 ${items.length}건 수집`);\nreturn items;"
+      },
+      "id": "n-parse-videos",
+      "name": "영상 메타데이터 파싱",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/benchmark/save",
+        "options": {"timeout": 120000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "channel_id", "value": "={{ $json.channel_id }}"},
+            {"name": "channel_title", "value": "={{ $json.channel_title }}"},
+            {"name": "video_id", "value": "={{ $json.video_id }}"},
+            {"name": "title", "value": "={{ $json.title }}"},
+            {"name": "published_at", "value": "={{ $json.published_at }}"},
+            {"name": "week_of", "value": "={{ $now.format('yyyy-MM-dd') }}"}
+          ]
+        }
+      },
+      "id": "n-save-benchmark",
+      "name": "벤치마크 DB 저장",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/benchmark/weekly-report",
+        "options": {"timeout": 300000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "week_of", "value": "={{ $now.format('yyyy-MM-dd') }}"},
+            {"name": "format", "value": "markdown"},
+            {"name": "output_path", "value": "record/benchmark_weekly_{{ $now.format('yyyyMMdd') }}.md"}
+          ]
+        }
+      },
+      "id": "n-weekly-report",
+      "name": "주간 벤치마크 리포트 생성",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst msg = `벤치마크 주간 리포트 완료\\n- 수집 영상: ${item.video_count || 'N/A'}건\\n- 리포트: ${item.output_path || 'N/A'}\\n- Top 트렌드: ${(item.top_trends || []).slice(0,3).join(', ')}`;\nconsole.log(msg);\nreturn [{ json: { success: true, message: msg } }];"
+      },
+      "id": "n-summary",
+      "name": "요약 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1520, 300]
+    }
+  ],
+  "connections": {
+    "매주 일요일 21:00 (KST)": {
+      "main": [[{"node": "5대 벤치마크 채널 목록", "type": "main", "index": 0}]]
+    },
+    "5대 벤치마크 채널 목록": {
+      "main": [[{"node": "YouTube Data API 조회 (주간)", "type": "main", "index": 0}]]
+    },
+    "YouTube Data API 조회 (주간)": {
+      "main": [[{"node": "영상 메타데이터 파싱", "type": "main", "index": 0}]]
+    },
+    "영상 메타데이터 파싱": {
+      "main": [[{"node": "벤치마크 DB 저장", "type": "main", "index": 0}]]
+    },
+    "벤치마크 DB 저장": {
+      "main": [[{"node": "주간 벤치마크 리포트 생성", "type": "main", "index": 0}]]
+    },
+    "주간 벤치마크 리포트 생성": {
+      "main": [[{"node": "요약 로그", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

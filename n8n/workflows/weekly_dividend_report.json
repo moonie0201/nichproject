@@ -1,0 +1,160 @@
+{
+  "name": "Weekly Dividend Report (월요일 08:00 KST)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "n-trigger-mon-0800",
+      "name": "매주 월요일 08:00 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/refresh-market-cache",
+        "options": {"timeout": 600000},
+        "method": "GET"
+      },
+      "id": "n-refresh-cache",
+      "name": "시장 캐시 갱신",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/dividend-report",
+        "options": {"timeout": 900000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "tickers", "value": "SCHD,JEPI,JEPQ,O,QYLD,DIVO,SPYD,HDV,VYM,TLTW"},
+            {"name": "period", "value": "weekly"},
+            {"name": "lang", "value": "ko"},
+            {"name": "include_chart", "value": "true"}
+          ]
+        }
+      },
+      "id": "n-generate-report",
+      "name": "월배당 ETF 주간 리포트 생성",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.success }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "n-check-success",
+      "name": "리포트 생성 성공?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish-hugo",
+        "options": {"timeout": 600000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "content_id", "value": "={{ $json.content_id }}"},
+            {"name": "category", "value": "dividend"},
+            {"name": "pillar", "value": "monthly-dividend-etf"}
+          ]
+        }
+      },
+      "id": "n-publish-hugo",
+      "name": "Hugo 블로그 발행",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1080, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish-tistory",
+        "options": {"timeout": 600000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "content_id", "value": "={{ $json.content_id }}"},
+            {"name": "category", "value": "dividend"},
+            {"name": "visibility", "value": "public"}
+          ]
+        }
+      },
+      "id": "n-publish-tistory",
+      "name": "Tistory 교차 발행",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst msg = `주간 배당 리포트 발행 완료\\n- Hugo: ${item.hugo_url || 'N/A'}\\n- Tistory: ${item.tistory_url || 'N/A'}\\n- 대상 ETF: SCHD, JEPI, JEPQ 외 7종`;\nconsole.log(msg);\nreturn [{ json: { success: true, message: msg, hugo_url: item.hugo_url, tistory_url: item.tistory_url } }];"
+      },
+      "id": "n-success-log",
+      "name": "성공 로그 집계",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1520, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst err = item.error || 'unknown';\nconst msg = `주간 배당 리포트 실패: ${err}`;\nconsole.log(msg);\nreturn [{ json: { success: false, message: msg } }];"
+      },
+      "id": "n-failure-log",
+      "name": "실패 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1080, 420]
+    }
+  ],
+  "connections": {
+    "매주 월요일 08:00 (KST)": {
+      "main": [[{"node": "시장 캐시 갱신", "type": "main", "index": 0}]]
+    },
+    "시장 캐시 갱신": {
+      "main": [[{"node": "월배당 ETF 주간 리포트 생성", "type": "main", "index": 0}]]
+    },
+    "월배당 ETF 주간 리포트 생성": {
+      "main": [[{"node": "리포트 생성 성공?", "type": "main", "index": 0}]]
+    },
+    "리포트 생성 성공?": {
+      "main": [
+        [{"node": "Hugo 블로그 발행", "type": "main", "index": 0}],
+        [{"node": "실패 로그", "type": "main", "index": 0}]
+      ]
+    },
+    "Hugo 블로그 발행": {
+      "main": [[{"node": "Tistory 교차 발행", "type": "main", "index": 0}]]
+    },
+    "Tistory 교차 발행": {
+      "main": [[{"node": "성공 로그 집계", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

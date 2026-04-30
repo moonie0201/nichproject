@@ -1,0 +1,85 @@
+{
+  "id": "USmktWeeklEN01",
+  "name": "US Market Weekly (English, cron: 30 9 * * 6)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 9 * * 6"
+            }
+          ]
+        }
+      },
+      "id": "trig-weekly-en",
+      "name": "Schedule 30 9 * * 6",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish-us-market-weekly?lang=en",
+        "options": {
+          "timeout": 600000
+        },
+        "method": "GET"
+      },
+      "id": "http-weekly-en",
+      "name": "Publish weekly en",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ok = $json.success === true;\nconst skipped = $json.skipped === true;\nconst t = $json.title || 'untitled';\nconst url = $json.url || '';\nreturn [{ json: { text: ok && !skipped ? `📊 Market Weekly (en) 발행: ${t}\\nhttps://investiqs.net${url}` : (skipped ? `⏸ skipped` : `❌ failed`) } }];"
+      },
+      "id": "msg-weekly-en",
+      "name": "결과 메시지",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule 30 9 * * 6": {
+      "main": [
+        [
+          {
+            "node": "Publish weekly en",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish weekly en": {
+      "main": [
+        [
+          {
+            "node": "결과 메시지",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

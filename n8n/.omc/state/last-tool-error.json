@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__claude-in-chrome__computer",
+  "tool_input_preview": "{\"tabId\":923581697,\"action\":\"screenshot\"}",
+  "error": "Tab 923581697 no longer exists. Call tabs_context_mcp to get current tabs.",
+  "timestamp": "2026-04-21T15:00:58.703Z",
+  "retry_count": 1
+}

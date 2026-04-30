@@ -1,0 +1,31 @@
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=Asia/Seoul
+      - TZ=Asia/Seoul
+      # n8n 데이터 암호화 키 (변경 금지)
+      - N8N_ENCRYPTION_KEY=nichproject-n8n-key-2026
+      # 로컬 전용 — 로그인 없이 바로 사용
+      - N8N_AUTH_ACTIVE=false
+      - N8N_BASIC_AUTH_ACTIVE=false
+      - N8N_SKIP_WEBHOOK_DEREGISTRATION_SHUTDOWN=true
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # 로컬 Python 스크립트 접근 (읽기 전용)
+      - /home/mh/ocstorage/workspace:/workspace:ro
+      # 빌드 결과물 쓰기 (Hugo 콘텐츠)
+      - /home/mh/ocstorage/workspace/nichproject/web:/nichproject/web
+      - /home/mh/ocstorage/workspace/nichproject/.env:/nichproject/.env:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  n8n_data:

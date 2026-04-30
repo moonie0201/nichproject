@@ -1,0 +1,85 @@
+{
+  "id": "USmktIntraVI01",
+  "name": "US Market Intraday (Tiếng Việt, cron: 15 23 * * *)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "15 23 * * *"
+            }
+          ]
+        }
+      },
+      "id": "trig-intraday-vi",
+      "name": "Schedule 15 23 * * *",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish-us-market-intraday?lang=vi",
+        "options": {
+          "timeout": 600000
+        },
+        "method": "GET"
+      },
+      "id": "http-intraday-vi",
+      "name": "Publish intraday vi",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ok = $json.success === true;\nconst skipped = $json.skipped === true;\nconst t = $json.title || 'untitled';\nconst url = $json.url || '';\nreturn [{ json: { text: ok && !skipped ? `📊 Market Intraday (vi) 발행: ${t}\\nhttps://investiqs.net${url}` : (skipped ? `⏸ skipped` : `❌ failed`) } }];"
+      },
+      "id": "msg-intraday-vi",
+      "name": "결과 메시지",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule 15 23 * * *": {
+      "main": [
+        [
+          {
+            "node": "Publish intraday vi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish intraday vi": {
+      "main": [
+        [
+          {
+            "node": "결과 메시지",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,221 @@
+{
+  "name": "Comment Auto Reply (YouTube 댓글 webhook → 필터 → GPT 답변)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "youtube-comment",
+        "options": {}
+      },
+      "id": "n-webhook",
+      "name": "YouTube Comment Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "youtube-comment-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || {};\nconst requiredKeys = ['comment_id', 'video_id', 'author', 'text'];\nconst missing = requiredKeys.filter(k => !body[k]);\nif (missing.length > 0) {\n  return [{ json: { valid: false, missing, reason: `missing: ${missing.join(',')}` } }];\n}\nreturn [{ json: Object.assign({ valid: true }, body) }];"
+      },
+      "id": "n-validate",
+      "name": "Webhook 페이로드 검증",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.valid }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "n-if-valid",
+      "name": "페이로드 유효?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/comments/filter",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "text", "value": "={{ $json.text }}"},
+            {"name": "author", "value": "={{ $json.author }}"},
+            {"name": "filters", "value": "banned_words,spam_ads,external_links,리딩_invite,phone_number,crypto_scam"}
+          ]
+        }
+      },
+      "id": "n-filter",
+      "name": "금칙어/광고/스팸 필터",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.passed }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "n-if-clean",
+      "name": "필터 통과?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1080, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/comments/classify-intent",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "text", "value": "={{ $('Webhook 페이로드 검증').item.json.text }}"},
+            {"name": "categories", "value": "question,feedback,thanks,criticism,offtopic"}
+          ]
+        }
+      },
+      "id": "n-intent",
+      "name": "댓글 의도 분류",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 100]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/comments/gpt-reply",
+        "options": {"timeout": 120000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "comment_id", "value": "={{ $('Webhook 페이로드 검증').item.json.comment_id }}"},
+            {"name": "video_id", "value": "={{ $('Webhook 페이로드 검증').item.json.video_id }}"},
+            {"name": "text", "value": "={{ $('Webhook 페이로드 검증').item.json.text }}"},
+            {"name": "intent", "value": "={{ $json.intent }}"},
+            {"name": "tone", "value": "friendly_expert"},
+            {"name": "max_chars", "value": "280"},
+            {"name": "include_disclaimer", "value": "true"}
+          ]
+        }
+      },
+      "id": "n-gpt-reply",
+      "name": "GPT 답변 생성",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1520, 100]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/youtube/post-comment-reply",
+        "options": {"timeout": 120000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "parent_id", "value": "={{ $('Webhook 페이로드 검증').item.json.comment_id }}"},
+            {"name": "reply_text", "value": "={{ $json.reply }}"}
+          ]
+        }
+      },
+      "id": "n-post-reply",
+      "name": "YouTube 댓글 답글 게시",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1740, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "const r = $input.first().json;\nconsole.log(`자동 답글 게시: ${r.reply_id || 'posted'}`);\nreturn [{ json: { success: true, reply_id: r.reply_id } }];"
+      },
+      "id": "n-done",
+      "name": "완료 로그",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1960, 100]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/youtube/moderate-comment",
+        "options": {"timeout": 60000},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "comment_id", "value": "={{ $('Webhook 페이로드 검증').item.json.comment_id }}"},
+            {"name": "action", "value": "heldForReview"},
+            {"name": "reason", "value": "={{ $json.reason }}"}
+          ]
+        }
+      },
+      "id": "n-moderate",
+      "name": "스팸 → 보류 처리",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json;\nconsole.log('[invalid webhook]', JSON.stringify(body));\nreturn [{ json: { error: 'invalid payload', detail: body } }];"
+      },
+      "id": "n-invalid",
+      "name": "유효하지 않은 페이로드",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [860, 440]
+    }
+  ],
+  "connections": {
+    "YouTube Comment Webhook": {
+      "main": [[{"node": "Webhook 페이로드 검증", "type": "main", "index": 0}]]
+    },
+    "Webhook 페이로드 검증": {
+      "main": [[{"node": "페이로드 유효?", "type": "main", "index": 0}]]
+    },
+    "페이로드 유효?": {
+      "main": [
+        [{"node": "금칙어/광고/스팸 필터", "type": "main", "index": 0}],
+        [{"node": "유효하지 않은 페이로드", "type": "main", "index": 0}]
+      ]
+    },
+    "금칙어/광고/스팸 필터": {
+      "main": [[{"node": "필터 통과?", "type": "main", "index": 0}]]
+    },
+    "필터 통과?": {
+      "main": [
+        [{"node": "댓글 의도 분류", "type": "main", "index": 0}],
+        [{"node": "스팸 → 보류 처리", "type": "main", "index": 0}]
+      ]
+    },
+    "댓글 의도 분류": {
+      "main": [[{"node": "GPT 답변 생성", "type": "main", "index": 0}]]
+    },
+    "GPT 답변 생성": {
+      "main": [[{"node": "YouTube 댓글 답글 게시", "type": "main", "index": 0}]]
+    },
+    "YouTube 댓글 답글 게시": {
+      "main": [[{"node": "완료 로그", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

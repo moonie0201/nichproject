@@ -1,0 +1,85 @@
+{
+  "id": "USmktWrapEN01",
+  "name": "US Market Wrap (English, cron: 30 7 * * *)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 7 * * *"
+            }
+          ]
+        }
+      },
+      "id": "trig-wrap-en",
+      "name": "Schedule 30 7 * * *",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/publish-us-market-wrap?lang=en",
+        "options": {
+          "timeout": 600000
+        },
+        "method": "GET"
+      },
+      "id": "http-wrap-en",
+      "name": "Publish wrap en",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ok = $json.success === true;\nconst skipped = $json.skipped === true;\nconst t = $json.title || 'untitled';\nconst url = $json.url || '';\nreturn [{ json: { text: ok && !skipped ? `📊 Market Wrap (en) 발행: ${t}\\nhttps://investiqs.net${url}` : (skipped ? `⏸ skipped` : `❌ failed`) } }];"
+      },
+      "id": "msg-wrap-en",
+      "name": "결과 메시지",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule 30 7 * * *": {
+      "main": [
+        [
+          {
+            "node": "Publish wrap en",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish wrap en": {
+      "main": [
+        [
+          {
+            "node": "결과 메시지",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}
