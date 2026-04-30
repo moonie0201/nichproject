@@ -1,23 +1,218 @@
-baseURL = 'https://example.org/'
-languageCode = 'ko'
-title = '투자 니치 — 한국 투자 정보 블로그'
+baseURL = 'https://investiqs.net/'
+defaultContentLanguage = 'ko'
+defaultContentLanguageInSubdir = true
 theme = 'PaperMod'
 
 [params]
-  description = "ISA, IRP, ETF, 배당주 등 한국 투자 핵심 정보를 쉽고 정확하게 전달합니다."
   defaultTheme = "auto"
   ShowReadingTime = true
   ShowShareButtons = false
   ShowPostNavLinks = true
   ShowBreadCrumbs = true
   ShowCodeCopyButtons = false
+  googleAdSense = "ca-pub-3459019439429067"
 
-[menu]
-  [[menu.main]]
-    name = "블로그"
-    url = "/blog/"
+[languages]
+  [languages.ko]
+    languageCode = 'ko'
+    languageName = '한국어'
+    title = 'InvestIQs — 투자 정보 블로그'
+    contentDir = 'content/ko'
     weight = 1
+    [languages.ko.params]
+      description = "ETF, 배당주, 절세 전략 — 데이터 기반 투자 정보를 전달합니다."
+    [[languages.ko.menu.main]]
+      name = "투자공부"
+      identifier = "ko-study"
+      url = "/ko/study/"
+      weight = 1
+    [[languages.ko.menu.main]]
+      name = "일일시황"
+      identifier = "ko-daily"
+      url = "/ko/daily/"
+      weight = 2
+    [[languages.ko.menu.main]]
+      name = "주간시황"
+      identifier = "ko-weekly"
+      url = "/ko/weekly/"
+      weight = 3
+    [[languages.ko.menu.footer]]
+      name = "개인정보처리방침"
+      identifier = "ko-privacy"
+      url = "/ko/privacy/"
+      weight = 1
+    [[languages.ko.menu.footer]]
+      name = "문의하기"
+      identifier = "ko-contact"
+      url = "/ko/contact/"
+      weight = 2
+
+  [languages.en]
+    languageCode = 'en'
+    languageName = 'English'
+    title = 'InvestIQs — Investment Blog'
+    contentDir = 'content/en'
+    weight = 2
+    [languages.en.params]
+      description = "ETF, dividend investing, tax strategies — practical guides for smart investors."
+    [[languages.en.menu.main]]
+      name = "Study"
+      identifier = "en-study"
+      url = "/en/study/"
+      weight = 1
+    [[languages.en.menu.main]]
+      name = "Daily Market"
+      identifier = "en-daily"
+      url = "/en/daily/"
+      weight = 2
+    [[languages.en.menu.main]]
+      name = "Weekly Market"
+      identifier = "en-weekly"
+      url = "/en/weekly/"
+      weight = 3
+    [[languages.en.menu.footer]]
+      name = "Privacy Policy"
+      identifier = "en-privacy"
+      url = "/en/privacy/"
+      weight = 1
+    [[languages.en.menu.footer]]
+      name = "Contact"
+      identifier = "en-contact"
+      url = "/en/contact/"
+      weight = 2
+
+  [languages.ja]
+    languageCode = 'ja'
+    languageName = '日本語'
+    title = 'InvestIQs — 投資ブログ'
+    contentDir = 'content/ja'
+    weight = 3
+    [languages.ja.params]
+      description = "NISA、iDeCo、ETF、配当株など日本の投資情報をわかりやすく解説します。"
+    [[languages.ja.menu.main]]
+      name = "投資の学び"
+      identifier = "ja-study"
+      url = "/ja/study/"
+      weight = 1
+    [[languages.ja.menu.main]]
+      name = "デイリー市況"
+      identifier = "ja-daily"
+      url = "/ja/daily/"
+      weight = 2
+    [[languages.ja.menu.main]]
+      name = "ウィークリー市況"
+      identifier = "ja-weekly"
+      url = "/ja/weekly/"
+      weight = 3
+    [[languages.ja.menu.footer]]
+      name = "プライバシーポリシー"
+      identifier = "ja-privacy"
+      url = "/ja/privacy/"
+      weight = 1
+    [[languages.ja.menu.footer]]
+      name = "お問い合わせ"
+      identifier = "ja-contact"
+      url = "/ja/contact/"
+      weight = 2
+
+  [languages.vi]
+    languageCode = 'vi'
+    languageName = 'Tiếng Việt'
+    title = 'InvestIQs — Blog Đầu Tư'
+    contentDir = 'content/vi'
+    weight = 4
+    [languages.vi.params]
+      description = "Hướng dẫn đầu tư ETF, cổ phiếu, bất động sản dành cho nhà đầu tư Việt Nam."
+    [[languages.vi.menu.main]]
+      name = "Học đầu tư"
+      identifier = "vi-study"
+      url = "/vi/study/"
+      weight = 1
+    [[languages.vi.menu.main]]
+      name = "Thị trường hằng ngày"
+      identifier = "vi-daily"
+      url = "/vi/daily/"
+      weight = 2
+    [[languages.vi.menu.main]]
+      name = "Thị trường hằng tuần"
+      identifier = "vi-weekly"
+      url = "/vi/weekly/"
+      weight = 3
+    [[languages.vi.menu.footer]]
+      name = "Chính sách Bảo mật"
+      identifier = "vi-privacy"
+      url = "/vi/privacy/"
+      weight = 1
+    [[languages.vi.menu.footer]]
+      name = "Liên hệ"
+      identifier = "vi-contact"
+      url = "/vi/contact/"
+      weight = 2
+
+  [languages.id]
+    languageCode = 'id'
+    languageName = 'Bahasa Indonesia'
+    title = 'InvestIQs — Blog Investasi'
+    contentDir = 'content/id'
+    weight = 5
+    [languages.id.params]
+      description = "Panduan investasi reksa dana, saham, ETF untuk investor Indonesia."
+    [[languages.id.menu.main]]
+      name = "Belajar Investasi"
+      identifier = "id-study"
+      url = "/id/study/"
+      weight = 1
+    [[languages.id.menu.main]]
+      name = "Pasar Harian"
+      identifier = "id-daily"
+      url = "/id/daily/"
+      weight = 2
+    [[languages.id.menu.main]]
+      name = "Pasar Mingguan"
+      identifier = "id-weekly"
+      url = "/id/weekly/"
+      weight = 3
+    [[languages.id.menu.footer]]
+      name = "Kebijakan Privasi"
+      identifier = "id-privacy"
+      url = "/id/privacy/"
+      weight = 1
+    [[languages.id.menu.footer]]
+      name = "Kontak"
+      identifier = "id-contact"
+      url = "/id/contact/"
+      weight = 2
+
+[related]
+  threshold = 60
+  includeNewer = true
+  toLower = false
+  [[related.indices]]
+    name = "keywords"
+    weight = 100
+  [[related.indices]]
+    name = "tags"
+    weight = 50
+  [[related.indices]]
+    name = "date"
+    weight = 10
 
 [taxonomies]
   category = "categories"
   tag = "tags"
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[services]
+  [services.googleAnalytics]
+    ID = "G-0PNL94C6J7"
+
+[params.giscus]
+  repo = "moonie0201/nichproject"
+  repoId = "R_kgDOSGcgEg"
+  category = "Announcements"
+  categoryId = "DIC_kwDOSGcgEs4C7zyO"
+  mapping = "pathname"
+  theme = "preferred_color_scheme"
+  lang = "ko"
