@@ -15,6 +15,44 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+_DESIGN_TOKENS: dict = {}
+
+
+def _load_design_tokens() -> dict:
+    global _DESIGN_TOKENS
+    if _DESIGN_TOKENS:
+        return _DESIGN_TOKENS
+    design_path = Path(__file__).parent.parent / "DESIGN.md"
+    if not design_path.exists():
+        return {}
+    import re as _re
+    text = design_path.read_text(encoding="utf-8")
+    m = _re.match(r"^---\n(.*?)\n---", text, _re.DOTALL)
+    if not m:
+        return {}
+    try:
+        import yaml as _yaml
+        _DESIGN_TOKENS = _yaml.safe_load(m.group(1)) or {}
+    except Exception:
+        pass
+    return _DESIGN_TOKENS
+
+
+def _c(token: str, fallback: str) -> str:
+    """Color token → ffmpeg 0xRRGGBB (drawbox/drawtext)"""
+    tokens = _load_design_tokens()
+    val = tokens.get("colors", {}).get(token, fallback)
+    return "0x" + val.lstrip("#")
+
+
+def _cbg(token: str, fallback: str) -> str:
+    """Color token → #RRGGBB (ffmpeg color=c= background)"""
+    tokens = _load_design_tokens()
+    val = tokens.get("colors", {}).get(token, fallback)
+    if not val.startswith("#"):
+        val = "#" + val.lstrip("0x")
+    return val
+
 WEB_STATIC = Path(os.getenv("WEB_STATIC_DIR", str(Path(__file__).parent.parent / "web" / "static")))
 _FONT_FILE = None
 
@@ -91,81 +129,81 @@ def _make_text_card_clip(
     if card_type in {"thesis", "thesis_board"}:
         filter_expr = (
             f"{base},"
-            f"drawbox=x=64:y=64:w={width-128}:h={height-128}:color=0x020617@0.72:t=fill,"
-            f"drawbox=x=64:y=64:w={width-128}:h=8:color=0x38BDF8:t=fill,"
-            f"drawtext=text='INVESTIQS RESEARCH'{font_arg}:fontsize=28:fontcolor=0x38BDF8:x=96:y=104,"
+            f"drawbox=x=64:y=64:w={width-128}:h={height-128}:color={_c('bg-panel', '#020617')}@0.72:t=fill,"
+            f"drawbox=x=64:y=64:w={width-128}:h=8:color={_c('primary', '#38BDF8')}:t=fill,"
+            f"drawtext=text='INVESTIQS RESEARCH'{font_arg}:fontsize=28:fontcolor={_c('primary', '#38BDF8')}:x=96:y=104,"
             f"drawtext=text='{headline}'{font_arg}:fontsize=56:fontcolor=white:x=96:y=(h*0.25):line_spacing=14,"
-            f"drawtext=text='{subhead}'{font_arg}:fontsize=30:fontcolor=0xCBD5E1:x=96:y=(h*0.56):line_spacing=10,"
-            f"drawtext=text='{accent}'{font_arg}:fontsize=34:fontcolor=0xFACC15:x=96:y=(h*0.82)"
+            f"drawtext=text='{subhead}'{font_arg}:fontsize=30:fontcolor={_c('text-sub', '#CBD5E1')}:x=96:y=(h*0.56):line_spacing=10,"
+            f"drawtext=text='{accent}'{font_arg}:fontsize=34:fontcolor={_c('accent', '#FACC15')}:x=96:y=(h*0.82)"
         )
     elif card_type == "market_dashboard":
         filter_expr = (
             f"{base},"
-            f"drawbox=x=72:y=78:w={width-144}:h={height-156}:color=0x020617@0.64:t=fill,"
+            f"drawbox=x=72:y=78:w={width-144}:h={height-156}:color={_c('bg-panel', '#020617')}@0.64:t=fill,"
             f"drawbox=x=112:y=138:w={(width-264)//2}:h=180:color=0x0F766E@0.35:t=fill,"
             f"drawbox=x={width//2+20}:y=138:w={(width-264)//2}:h=180:color=0x1D4ED8@0.35:t=fill,"
-            f"drawbox=x=112:y=370:w={width-224}:h=4:color=0x38BDF8:t=fill,"
-            f"drawbox=x=112:y=520:w={width-224}:h=4:color=0xFACC15:t=fill,"
-            f"drawbox=x=112:y=670:w={width-224}:h=4:color=0x22C55E:t=fill,"
-            f"drawtext=text='MARKET DASHBOARD'{font_arg}:fontsize=30:fontcolor=0x38BDF8:x=112:y=104,"
-            f"drawtext=text='{accent}'{font_arg}:fontsize=54:fontcolor=0xFACC15:x=132:y=190,"
+            f"drawbox=x=112:y=370:w={width-224}:h=4:color={_c('primary', '#38BDF8')}:t=fill,"
+            f"drawbox=x=112:y=520:w={width-224}:h=4:color={_c('accent', '#FACC15')}:t=fill,"
+            f"drawbox=x=112:y=670:w={width-224}:h=4:color={_c('success', '#22C55E')}:t=fill,"
+            f"drawtext=text='MARKET DASHBOARD'{font_arg}:fontsize=30:fontcolor={_c('primary', '#38BDF8')}:x=112:y=104,"
+            f"drawtext=text='{accent}'{font_arg}:fontsize=54:fontcolor={_c('accent', '#FACC15')}:x=132:y=190,"
             f"drawtext=text='{headline}'{font_arg}:fontsize=46:fontcolor=white:x=112:y=410:line_spacing=14,"
-            f"drawtext=text='{subhead}'{font_arg}:fontsize=28:fontcolor=0xCBD5E1:x=112:y=710:line_spacing=10"
+            f"drawtext=text='{subhead}'{font_arg}:fontsize=28:fontcolor={_c('text-sub', '#CBD5E1')}:x=112:y=710:line_spacing=10"
         )
     elif card_type == "timeline":
         filter_expr = (
             f"{base},"
-            f"drawbox=x=92:y=120:w=6:h={height-240}:color=0x38BDF8:t=fill,"
-            f"drawbox=x=78:y=180:w=34:h=34:color=0xFACC15:t=fill,"
-            f"drawbox=x=78:y=420:w=34:h=34:color=0x38BDF8:t=fill,"
-            f"drawbox=x=78:y=660:w=34:h=34:color=0x22C55E:t=fill,"
-            f"drawtext=text='RESEARCH TIMELINE'{font_arg}:fontsize=30:fontcolor=0x38BDF8:x=132:y=122,"
+            f"drawbox=x=92:y=120:w=6:h={height-240}:color={_c('primary', '#38BDF8')}:t=fill,"
+            f"drawbox=x=78:y=180:w=34:h=34:color={_c('accent', '#FACC15')}:t=fill,"
+            f"drawbox=x=78:y=420:w=34:h=34:color={_c('primary', '#38BDF8')}:t=fill,"
+            f"drawbox=x=78:y=660:w=34:h=34:color={_c('success', '#22C55E')}:t=fill,"
+            f"drawtext=text='RESEARCH TIMELINE'{font_arg}:fontsize=30:fontcolor={_c('primary', '#38BDF8')}:x=132:y=122,"
             f"drawtext=text='{headline}'{font_arg}:fontsize=52:fontcolor=white:x=132:y=220:line_spacing=14,"
-            f"drawtext=text='{subhead}'{font_arg}:fontsize=30:fontcolor=0xCBD5E1:x=132:y=540:line_spacing=10,"
-            f"drawtext=text='{accent}'{font_arg}:fontsize=32:fontcolor=0xFACC15:x=132:y=(h*0.82)"
+            f"drawtext=text='{subhead}'{font_arg}:fontsize=30:fontcolor={_c('text-sub', '#CBD5E1')}:x=132:y=540:line_spacing=10,"
+            f"drawtext=text='{accent}'{font_arg}:fontsize=32:fontcolor={_c('accent', '#FACC15')}:x=132:y=(h*0.82)"
         )
     elif card_type == "number":
         filter_expr = (
             f"{base},"
             f"drawbox=x=80:y=90:w={width-160}:h={height-180}:color=0xFFFFFF@0.05:t=fill,"
-            f"drawtext=text='{accent}'{font_arg}:fontsize=72:fontcolor=0xFFD54F:x=(w-text_w)/2:y=(h*0.20),"
+            f"drawtext=text='{accent}'{font_arg}:fontsize=72:fontcolor={_c('warning', '#FFD54F')}:x=(w-text_w)/2:y=(h*0.20),"
             f"drawtext=text='{headline}'{font_arg}:fontsize=46:fontcolor=white:x=90:y=(h*0.44):line_spacing=14,"
-            f"drawtext=text='{subhead}'{font_arg}:fontsize=28:fontcolor=0xD7E3F4:x=90:y=(h*0.68):line_spacing=10"
+            f"drawtext=text='{subhead}'{font_arg}:fontsize=28:fontcolor={_c('text-muted', '#D7E3F4')}:x=90:y=(h*0.68):line_spacing=10"
         )
     elif card_type in {"risk", "risk_matrix"}:
         filter_expr = (
             f"{base},"
-            f"drawbox=x=72:y=72:w={width-144}:h={height-144}:color=0x7f1d1d@0.25:t=fill,"
-            f"drawbox=x=72:y=72:w=18:h={height-144}:color=0xFFD54F:t=fill,"
-            f"drawtext=text='{accent}'{font_arg}:fontsize=34:fontcolor=0xFFD54F:x=108:y=110,"
+            f"drawbox=x=72:y=72:w={width-144}:h={height-144}:color={_c('bg-risk', '#7f1d1d')}@0.25:t=fill,"
+            f"drawbox=x=72:y=72:w=18:h={height-144}:color={_c('warning', '#FFD54F')}:t=fill,"
+            f"drawtext=text='{accent}'{font_arg}:fontsize=34:fontcolor={_c('warning', '#FFD54F')}:x=108:y=110,"
             f"drawtext=text='{headline}'{font_arg}:fontsize=52:fontcolor=white:x=108:y=(h*0.28):line_spacing=14,"
-            f"drawtext=text='{subhead}'{font_arg}:fontsize=30:fontcolor=0xFDE68A:x=108:y=(h*0.58):line_spacing=10"
+            f"drawtext=text='{subhead}'{font_arg}:fontsize=30:fontcolor={_c('text-risk', '#FDE68A')}:x=108:y=(h*0.58):line_spacing=10"
         )
     elif card_type == "cta":
         filter_expr = (
             f"{base},"
             f"drawbox=x=90:y=(h*0.22):w={width-180}:h={height*0.46}:color=0xFFFFFF@0.05:t=fill,"
             f"drawtext=text='{headline}'{font_arg}:fontsize=56:fontcolor=white:x=(w-text_w)/2:y=(h*0.28):line_spacing=12,"
-            f"drawtext=text='{subhead}'{font_arg}:fontsize=28:fontcolor=0xD7E3F4:x=(w-text_w)/2:y=(h*0.50):line_spacing=10,"
-            f"drawtext=text='{accent}'{font_arg}:fontsize=32:fontcolor=0xFFD54F:x=(w-text_w)/2:y=(h*0.72)"
+            f"drawtext=text='{subhead}'{font_arg}:fontsize=28:fontcolor={_c('text-muted', '#D7E3F4')}:x=(w-text_w)/2:y=(h*0.50):line_spacing=10,"
+            f"drawtext=text='{accent}'{font_arg}:fontsize=32:fontcolor={_c('warning', '#FFD54F')}:x=(w-text_w)/2:y=(h*0.72)"
         )
     elif card_type == "comparison":
         filter_expr = (
             f"{base},"
             f"drawbox=x=72:y=80:w={width-144}:h=160:color=0xFFFFFF@0.05:t=fill,"
             f"drawbox=x=72:y=300:w={width-144}:h={height-420}:color=0x0b1220@0.45:t=fill,"
-            f"drawtext=text='{accent}'{font_arg}:fontsize=40:fontcolor=0xFFD54F:x=100:y=128,"
+            f"drawtext=text='{accent}'{font_arg}:fontsize=40:fontcolor={_c('warning', '#FFD54F')}:x=100:y=128,"
             f"drawtext=text='{headline}'{font_arg}:fontsize=48:fontcolor=white:x=100:y=340:line_spacing=14,"
-            f"drawtext=text='{subhead}'{font_arg}:fontsize=28:fontcolor=0xD7E3F4:x=100:y=620:line_spacing=10"
+            f"drawtext=text='{subhead}'{font_arg}:fontsize=28:fontcolor={_c('text-muted', '#D7E3F4')}:x=100:y=620:line_spacing=10"
         )
     else:
         filter_expr = (
             f"{base},"
             f"drawbox=x=72:y=72:w={width-144}:h={height-144}:color=white@0.06:t=fill,"
-            f"drawtext=text='{accent}'{font_arg}:fontsize=28:fontcolor=0xFFD54F:x=72:y=72,"
+            f"drawtext=text='{accent}'{font_arg}:fontsize=28:fontcolor={_c('warning', '#FFD54F')}:x=72:y=72,"
             f"drawtext=text='{headline}'{font_arg}:fontsize=54:fontcolor=white:"
             f"x=72:y=(h*0.24):line_spacing=14,"
-            f"drawtext=text='{subhead}'{font_arg}:fontsize=30:fontcolor=0xD7E3F4:"
+            f"drawtext=text='{subhead}'{font_arg}:fontsize=30:fontcolor={_c('text-muted', '#D7E3F4')}:"
             f"x=72:y=(h*0.62):line_spacing=10"
         )
     args = [
@@ -368,7 +406,7 @@ def compose_video(
             logger.warning("유효한 차트 없음 — fallback 카드 비주얼로 합성")
             cards = _build_fallback_cards(fallback_visual_plan, visual_beats, source_data_points)
             per_card_sec = max(audio_duration_sec / max(len(cards), 1), 3.5)
-            fallback_color = "#1e293b" if is_shorts else "#0f172a"
+            fallback_color = _cbg("bg-shorts", "#1e293b") if is_shorts else _cbg("bg", "#0f172a")
             for i, card in enumerate(cards):
                 clip_out = work_dir / f"fallback_{i:02d}.mp4"
                 if not _make_text_card_clip(card, per_card_sec, clip_out, img_w, img_h, color=fallback_color):
