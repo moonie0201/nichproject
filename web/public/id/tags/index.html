@@ -85,7 +85,7 @@ var klaroConfig = {
   storageMethod: 'localStorage',
   cookieName: 'klaro',
   privacyPolicy: '/ko/privacy/',
-  default: false,
+  default: true,
   mustConsent: false,
   services: [
     {
@@ -94,12 +94,16 @@ var klaroConfig = {
       purposes: ['advertising'],
       cookies: [/^__gads/i, /^__gpi/i],
       onlyOnce: true,
+      default: true,
+      optOut: true,
     },
     {
       name: 'google-analytics',
       title: 'Google Analytics',
       purposes: ['analytics'],
       cookies: [/^_ga/i, /^_gid/i],
+      default: true,
+      optOut: true,
     }
   ],
   translations: {
@@ -232,7 +236,7 @@ var klaroConfig = {
         <a href="https://investiqs.net/id/tags/biaya-manajemen/">Biaya Manajemen <sup><strong><sup>1</sup></strong></sup> </a>
     </li>
     <li>
-        <a href="https://investiqs.net/id/tags/dia/">DIA <sup><strong><sup>8</sup></strong></sup> </a>
+        <a href="https://investiqs.net/id/tags/dia/">DIA <sup><strong><sup>9</sup></strong></sup> </a>
     </li>
     <li>
         <a href="https://investiqs.net/id/tags/dividen/">Dividen <sup><strong><sup>1</sup></strong></sup> </a>
@@ -271,7 +275,7 @@ var klaroConfig = {
         <a href="https://investiqs.net/id/tags/investor-ritel/">Investor Ritel <sup><strong><sup>1</sup></strong></sup> </a>
     </li>
     <li>
-        <a href="https://investiqs.net/id/tags/iwm/">IWM <sup><strong><sup>8</sup></strong></sup> </a>
+        <a href="https://investiqs.net/id/tags/iwm/">IWM <sup><strong><sup>9</sup></strong></sup> </a>
     </li>
     <li>
         <a href="https://investiqs.net/id/tags/nasdaq-100/">Nasdaq-100 <sup><strong><sup>2</sup></strong></sup> </a>
@@ -286,7 +290,7 @@ var klaroConfig = {
         <a href="https://investiqs.net/id/tags/qld/">QLD <sup><strong><sup>2</sup></strong></sup> </a>
     </li>
     <li>
-        <a href="https://investiqs.net/id/tags/qqq/">QQQ <sup><strong><sup>10</sup></strong></sup> </a>
+        <a href="https://investiqs.net/id/tags/qqq/">QQQ <sup><strong><sup>11</sup></strong></sup> </a>
     </li>
     <li>
         <a href="https://investiqs.net/id/tags/rekening-pensiun/">Rekening Pensiun <sup><strong><sup>1</sup></strong></sup> </a>
@@ -301,10 +305,10 @@ var klaroConfig = {
         <a href="https://investiqs.net/id/tags/return-bersih/">Return Bersih <sup><strong><sup>1</sup></strong></sup> </a>
     </li>
     <li>
-        <a href="https://investiqs.net/id/tags/sp-500/">S&amp;P 500 <sup><strong><sup>8</sup></strong></sup> </a>
+        <a href="https://investiqs.net/id/tags/sp-500/">S&amp;P 500 <sup><strong><sup>9</sup></strong></sup> </a>
     </li>
     <li>
-        <a href="https://investiqs.net/id/tags/saham-as/">Saham AS <sup><strong><sup>8</sup></strong></sup> </a>
+        <a href="https://investiqs.net/id/tags/saham-as/">Saham AS <sup><strong><sup>9</sup></strong></sup> </a>
     </li>
     <li>
         <a href="https://investiqs.net/id/tags/saham-dividen/">Saham Dividen <sup><strong><sup>1</sup></strong></sup> </a>
@@ -313,7 +317,7 @@ var klaroConfig = {
         <a href="https://investiqs.net/id/tags/spt-tahunan/">SPT Tahunan <sup><strong><sup>1</sup></strong></sup> </a>
     </li>
     <li>
-        <a href="https://investiqs.net/id/tags/spy/">SPY <sup><strong><sup>8</sup></strong></sup> </a>
+        <a href="https://investiqs.net/id/tags/spy/">SPY <sup><strong><sup>9</sup></strong></sup> </a>
     </li>
     <li>
         <a href="https://investiqs.net/id/tags/total-return/">Total Return <sup><strong><sup>1</sup></strong></sup> </a>
@@ -322,7 +326,7 @@ var klaroConfig = {
         <a href="https://investiqs.net/id/tags/tqqq/">TQQQ <sup><strong><sup>2</sup></strong></sup> </a>
     </li>
     <li>
-        <a href="https://investiqs.net/id/tags/vix/">VIX <sup><strong><sup>8</sup></strong></sup> </a>
+        <a href="https://investiqs.net/id/tags/vix/">VIX <sup><strong><sup>9</sup></strong></sup> </a>
     </li>
     <li>
         <a href="https://investiqs.net/id/tags/volatilitas/">Volatilitas <sup><strong><sup>2</sup></strong></sup> </a>

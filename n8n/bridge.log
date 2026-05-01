@@ -11753,3 +11753,5 @@ Traceback (most recent call last):
     self._sock.sendall(b)
 BrokenPipeError: [Errno 32] Broken pipe
 ----------------------------------------
+$SPY: possibly delisted; no price data found  (period=1d)
+$QQQ: possibly delisted; no price data found  (period=1d)

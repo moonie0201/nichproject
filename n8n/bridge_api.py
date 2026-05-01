@@ -55,7 +55,7 @@ def run_auto_publish(lang: str = "ko") -> dict:
         cwd=NICHPROJECT,
         capture_output=True,
         text=True,
-        timeout=300,
+        timeout=int(os.getenv("RUN_PUBLISH_TIMEOUT_SEC", "600")),
     )
     lines = result.stdout.strip().split("\n")
     title = next((l.replace("  제목: ", "") for l in lines if "제목:" in l), "")
@@ -574,7 +574,7 @@ def run_translate(source_lang: str = "ko", target_lang: str = "en") -> dict:
         cwd=NICHPROJECT,
         capture_output=True,
         text=True,
-        timeout=300,
+        timeout=int(os.getenv("TRANSLATE_TIMEOUT_SEC", "600")),
     )
     return {
         "success": result.returncode == 0,
@@ -622,7 +622,7 @@ def run_make_video(slug: str = "", lang: str = "ko",
         cwd=NICHPROJECT,
         capture_output=True,
         text=True,
-        timeout=int(os.getenv("MAKE_VIDEO_TIMEOUT_SEC", "1500")),
+        timeout=int(os.getenv("MAKE_VIDEO_TIMEOUT_SEC", "1800")),
     )
     return {
         "success": result.returncode == 0,

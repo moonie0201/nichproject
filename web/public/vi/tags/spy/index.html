@@ -85,7 +85,7 @@ var klaroConfig = {
   storageMethod: 'localStorage',
   cookieName: 'klaro',
   privacyPolicy: '/ko/privacy/',
-  default: false,
+  default: true,
   mustConsent: false,
   services: [
     {
@@ -94,12 +94,16 @@ var klaroConfig = {
       purposes: ['advertising'],
       cookies: [/^__gads/i, /^__gpi/i],
       onlyOnce: true,
+      default: true,
+      optOut: true,
     },
     {
       name: 'google-analytics',
       title: 'Google Analytics',
       purposes: ['analytics'],
       cookies: [/^_ga/i, /^_gid/i],
+      default: true,
+      optOut: true,
     }
   ],
   translations: {
@@ -216,6 +220,19 @@ var klaroConfig = {
     SPY
   </h1>
 </header>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">01/05/2026 Thị trường Mỹ trong phiên: 30 phút đầu S&amp;P 500 &#43;0.44%, Nasdaq &#43;0.92%
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>⚠️ Báo cáo thị trường hằng ngày — chỉ mang tính thông tin
+Bài viết tổng hợp dữ liệu công khai từ yfinance. Đây không phải khuyến nghị mua/bán cổ phiếu cụ thể, cũng không phải tư vấn đầu tư. Mọi quyết định và rủi ro đầu tư thuộc về bạn. Tóm tắt: S&amp;P 500 &#43;0.44%, Nasdaq &#43;0.92%, VIX 16.58. Gap: gap_flat. Leaders: XLK, XLY, XLU / Laggards: XLE, XLI, XLC....</p>
+  </div>
+  <footer class="entry-footer"><span class='relative-time' data-published='2026-05-01T23:15:05+09:00' title='2026-05-01T23:15:05+09:00'>1 tháng 5, 2026</span>&nbsp;·&nbsp;<span>InvestIQs Editorial</span></footer>
+  <a class="entry-link" aria-label="post link to 01/05/2026 Thị trường Mỹ trong phiên: 30 phút đầu S&amp;P 500 &#43;0.44%, Nasdaq &#43;0.92%" href="https://investiqs.net/vi/daily/intraday-01-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-44-nasdaq-0-92/"></a>
+</article>
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">

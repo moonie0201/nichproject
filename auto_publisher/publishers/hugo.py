@@ -481,6 +481,9 @@ class HugoPublisher:
     relative: false
 """
 
+        from datetime import datetime, timezone
+        _fetched_at = datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
+
         frontmatter = f"""---
 title: "{title}"
 date: {today}
@@ -493,6 +496,13 @@ primary_keyword: "{primary_keyword}"
 schema: "{schema_type}"
 toc: true
 comments: true
+ai_generated: true
+ai_models: ["claude-sonnet-4.6", "google/gemini-2.0-flash-exp:free"]
+data_fetched_at: "{_fetched_at}"
+data_source: "yfinance"
+analysis_confidence: "medium"
+verifiedBy: "rule_based + architect_review"
+reviewedBy: "편집자 미검토 — AI 자동 발행"
 {cover_block}tags:
 {tags_yaml}
 categories:

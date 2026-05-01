@@ -80,7 +80,7 @@ var klaroConfig = {
   storageMethod: 'localStorage',
   cookieName: 'klaro',
   privacyPolicy: '/ko/privacy/',
-  default: false,
+  default: true,
   mustConsent: false,
   services: [
     {
@@ -89,12 +89,16 @@ var klaroConfig = {
       purposes: ['advertising'],
       cookies: [/^__gads/i, /^__gpi/i],
       onlyOnce: true,
+      default: true,
+      optOut: true,
     },
     {
       name: 'google-analytics',
       title: 'Google Analytics',
       purposes: ['analytics'],
       cookies: [/^_ga/i, /^_gid/i],
+      default: true,
+      optOut: true,
     }
   ],
   translations: {
@@ -339,6 +343,12 @@ var klaroConfig = {
   <ul style="list-style-type: none; padding-left: 0; margin-bottom: 0;">
     
     <li style="margin-bottom: 1em; padding-bottom: 0.5em; border-bottom: 1px solid #f0f0f0;">
+      <a href="https://investiqs.net/vi/daily/intraday-01-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-44-nasdaq-0-92/" style="font-weight: 600; text-decoration: none; color: #2563eb;">01/05/2026 Thị trường Mỹ trong phiên: 30 phút đầu S&amp;P 500 &#43;0.44%, Nasdaq &#43;0.92%</a>
+      <p style="margin: 0.2em 0; font-size: 0.85em; color: #666;">⚠️ Báo cáo thị trường hằng ngày — chỉ mang tính thông tin
+Bài viết tổng hợp dữ liệu công khai từ …</p>
+    </li>
+    
+    <li style="margin-bottom: 1em; padding-bottom: 0.5em; border-bottom: 1px solid #f0f0f0;">
       <a href="https://investiqs.net/vi/daily/01-05-2026-ng-c-a-th-tr-ng-m-s-p-500-718-66-0-99-nasdaq-0-93/" style="font-weight: 600; text-decoration: none; color: #2563eb;">01/05/2026 Đóng cửa thị trường Mỹ: S&amp;P 500 $718.66 &#43;0.99%, Nasdaq &#43;0.93%</a>
       <p style="margin: 0.2em 0; font-size: 0.85em; color: #666;">⚠️ Báo cáo thị trường hằng ngày — chỉ mang tính thông tin
 Bài viết tổng hợp dữ liệu công khai từ …</p>
@@ -358,12 +368,6 @@ Bài viết tổng hợp dữ liệu công khai từ …</p>
     
     <li style="margin-bottom: 1em; padding-bottom: 0.5em; border-bottom: 1px solid #f0f0f0;">
       <a href="https://investiqs.net/vi/daily/29-04-2026-ng-c-a-th-tr-ng-m-s-p-500-711-69-0-49-nasdaq-1-01/" style="font-weight: 600; text-decoration: none; color: #2563eb;">29/04/2026 Đóng cửa thị trường Mỹ: S&amp;P 500 $711.69 -0.49%, Nasdaq -1.01%</a>
-      <p style="margin: 0.2em 0; font-size: 0.85em; color: #666;">⚠️ Báo cáo thị trường hằng ngày — chỉ mang tính thông tin
-Bài viết tổng hợp dữ liệu công khai từ …</p>
-    </li>
-    
-    <li style="margin-bottom: 1em; padding-bottom: 0.5em; border-bottom: 1px solid #f0f0f0;">
-      <a href="https://investiqs.net/vi/daily/intraday-28-04-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-02-nasdaq-0-17/" style="font-weight: 600; text-decoration: none; color: #2563eb;">28/04/2026 Thị trường Mỹ trong phiên: 30 phút đầu S&amp;P 500 -0.02%, Nasdaq &#43;0.17%</a>
       <p style="margin: 0.2em 0; font-size: 0.85em; color: #666;">⚠️ Báo cáo thị trường hằng ngày — chỉ mang tính thông tin
 Bài viết tổng hợp dữ liệu công khai từ …</p>
     </li>

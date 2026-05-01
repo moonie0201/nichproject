@@ -15,7 +15,7 @@ var klaroConfig = {
   storageMethod: 'localStorage',
   cookieName: 'klaro',
   privacyPolicy: '/ko/privacy/',
-  default: false,
+  default: true,
   mustConsent: false,
   services: [
     {
@@ -24,12 +24,16 @@ var klaroConfig = {
       purposes: ['advertising'],
       cookies: [/^__gads/i, /^__gpi/i],
       onlyOnce: true,
+      default: true,
+      optOut: true,
     },
     {
       name: 'google-analytics',
       title: 'Google Analytics',
       purposes: ['analytics'],
       cookies: [/^_ga/i, /^_gid/i],
+      default: true,
+      optOut: true,
     }
   ],
   translations: {
