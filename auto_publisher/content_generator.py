@@ -618,8 +618,9 @@ def _build_verification_snippet(ticker: str, lang: str = "ko") -> str:
 
 CODEX_MODEL = os.getenv("CODEX_MODEL", "gpt-5.4-mini")
 GEMINI_CLI_MODEL = os.getenv("GEMINI_CLI_MODEL", "gemini-2.5-pro")
+CLAUDE_CLI_MODEL = os.getenv("CLAUDE_CLI_MODEL", "claude-sonnet-4-6")
 LLM_PRIMARY_BACKEND = os.getenv("LLM_PRIMARY_BACKEND", "gemini").strip().lower()
-LLM_BACKENDS = ("gemini", "ollama", "codex")
+LLM_BACKENDS = ("gemini", "claude", "ollama", "codex")
 
 
 def _call_codex(prompt: str, max_retries: int = 3) -> str:
@@ -650,6 +651,33 @@ def _call_codex(prompt: str, max_retries: int = 3) -> str:
                 time.sleep(wait)
             else:
                 raise RuntimeError(f"codex exec {max_retries}회 실패: {e}")
+
+
+def _call_claude_cli(prompt: str, max_retries: int = 2) -> str:
+    """claude CLI 호출 (gemini 실패 시 폴백, sonnet 기본)"""
+    for attempt in range(max_retries):
+        try:
+            result = subprocess.run(
+                ["claude", "-p", prompt, "--model", CLAUDE_CLI_MODEL],
+                capture_output=True,
+                text=True,
+                timeout=300,
+            )
+            if result.returncode != 0:
+                raise RuntimeError(f"claude 오류: {result.stderr[:300]}")
+            return result.stdout
+        except subprocess.TimeoutExpired:
+            logger.warning(f"claude 타임아웃 (시도 {attempt + 1}/{max_retries})")
+            if attempt < max_retries - 1:
+                time.sleep(4)
+            else:
+                raise RuntimeError("claude CLI 타임아웃")
+        except Exception as e:
+            logger.warning(f"claude 호출 실패 (시도 {attempt + 1}/{max_retries}): {e}")
+            if attempt < max_retries - 1:
+                time.sleep(4)
+            else:
+                raise RuntimeError(f"claude CLI {max_retries}회 실패: {e}")
 
 
 def _call_gemini_cli(prompt: str, max_retries: int = 2) -> str:
@@ -738,6 +766,9 @@ def _call_llm(prompt: str, max_retries: int = 3, think: bool = False) -> str:
             if backend == "gemini":
                 logger.info("LLM backend: gemini model=%s", GEMINI_CLI_MODEL)
                 return _call_gemini_cli(prompt)
+            if backend == "claude":
+                logger.info("LLM backend: claude model=%s", CLAUDE_CLI_MODEL)
+                return _call_claude_cli(prompt)
             if backend == "ollama":
                 logger.info("LLM backend: ollama model=%s think=%s", OLLAMA_MODEL, think)
                 return _call_ollama(prompt, think=think)
@@ -757,6 +788,8 @@ def _backend_model_name(backend: str) -> str:
         return GEMINI_CLI_MODEL
     if backend == "ollama":
         return OLLAMA_MODEL
+    if backend == "claude":
+        return CLAUDE_CLI_MODEL
     if backend == "codex":
         return CODEX_MODEL
     return "-"
