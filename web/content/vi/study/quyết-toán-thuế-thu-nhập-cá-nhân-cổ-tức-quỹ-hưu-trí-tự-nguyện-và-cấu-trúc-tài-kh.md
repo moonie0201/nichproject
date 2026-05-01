@@ -4,6 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "Bài nghiên cứu về quyết toán thuế thu nhập cá nhân ở Việt Nam, thuế cổ tức 5%, quỹ hưu trí tự nguyện và cách giảm ma sát hồ sơ năm 2026."
 keywords: "quyet toan thue thu nhap ca nhan co tuc, thoi han quyet toan thue thu nhap ca nhan nam 2026, thue co tuc 5 phan tram tai viet nam, quy huu tri tu nguyen giam tru thue, cach quan ly co tuc trong tai khoan chung khoan thuong, so sanh SPY va SCHD ve phi quan ly"
 primary_keyword: "quyet toan thue thu nhap ca nhan co tuc"

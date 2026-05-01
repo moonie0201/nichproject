@@ -4,6 +4,7 @@ date: 2026-04-24
 lastmod: 2026-04-24
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "Nghiên cứu TQQQ 5 năm so với QLD và QQQ: drawdown 81.65%, biến động 61.28%, và lý do 3x không luôn hiệu quả hơn 2x trong một chu kỳ biến động."
 keywords: "TQQQ 5 năm drawdown, TQQQ so với QLD và QQQ, drawdown 81.65% của TQQQ, biến động 61.28% của TQQQ, ETF đòn bẩy 3x và 2x, DCA với TQQQ bằng VND, phân tích ETF Nasdaq-100 đòn bẩy"
 primary_keyword: "TQQQ 5 năm drawdown"

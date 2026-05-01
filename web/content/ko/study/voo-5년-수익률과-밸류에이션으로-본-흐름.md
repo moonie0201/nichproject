@@ -3,9 +3,18 @@ title: "VOO 5년 수익률과 밸류에이션으로 본 흐름"
 date: 2026-04-22
 lastmod: 2026-04-22
 draft: false
-reviewed: true
-description: "VOO 혼조 흐름: 현재가 $651.54, 1년 +36.3%, 3년 +79.0%, 5년 +85.0%, P/E 28.1로 본 데이터 분석."
-keywords: "VOO, VOO 현재가 651.54 분석, VOO 1년 36.3% 3년 79.0% 5년 85.0%, VOO 배당수익률 1.09% 의미, VOO P/E 28.1 해석, VOO AI 에이전트 데이터 분석"
+reviewed: false
+reviewedBy: "편집자 미검토 — AI 자동 발행"
+analysis_confidence: "medium"
+description: "VOO 혼조 흐름 데이터 분석: 현재가 $651.54, 1년 +36.3%, 3년 +79.0%, 5년 +85.0%, P/E 28.1 기준으로 밸류에이션과 추세를 수치로 검토."
+keywords:
+  - "VOO"
+  - "VOO 현재가 분석"
+  - "VOO 1년 수익률"
+  - "VOO 배당수익률 1.09%"
+  - "VOO P/E 28.1 해석"
+  - "VOO AI 에이전트 데이터 분석"
+  - "S&P500 ETF 밸류에이션"
 primary_keyword: "VOO"
 schema: "Article"
 toc: true

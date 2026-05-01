@@ -4,6 +4,7 @@ date: 2026-04-24
 lastmod: 2026-04-24
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "TQQQの5年累計リターン、最大ドローダウン81.65%、ボラティリティ61.28%をQLD・QQQと比較し、3倍が2倍に劣る局面を日本向けに検証するリサーチノート。"
 keywords: "TQQQ 5年 ドローダウン, TQQQ 5年 ドローダウン, TQQQ QLD QQQ 比較, TQQQ 年率ボラティリティ, TQQQ 分配金利回り, レバレッジETF 長期投資, 新NISA 米国ETF"
 primary_keyword: "TQQQ 5年 ドローダウン"

@@ -4,6 +4,7 @@ date: 2026-04-24
 lastmod: 2026-04-24
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "A data-driven look at TQQQ’s five-year drawdown, volatility, and path dependence versus QLD and QQQ, showing why 3x trailed 2x in this window."
 keywords: "TQQQ five-year drawdown, TQQQ vs QLD five-year returns, TQQQ drawdown versus QQQ, leveraged ETF volatility drag, Nasdaq-100 leveraged ETF comparison, TQQQ path dependency analysis"
 primary_keyword: "TQQQ five-year drawdown"

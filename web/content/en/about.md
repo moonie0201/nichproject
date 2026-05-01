@@ -3,6 +3,9 @@ title: "About — InvestIQs Research"
 url: "/en/about/"
 draft: false
 reviewed: true
+analysis_confidence: "medium"
+description: "About InvestIQs Research — a data-driven platform covering US and global ETFs, dividend assets, and long-term allocation with AI-assisted analysis."
+keywords: "InvestIQs Research, data-driven ETF analysis, dividend investing research, AI-assisted investment analysis, long-term asset allocation"
 ShowToc: false
 ---
 

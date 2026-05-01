@@ -4,6 +4,7 @@ date: 2026-04-25
 lastmod: 2026-04-25
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "A research note comparing TQQQ, QLD, and QQQ on five-year returns, drawdown, volatility, dividend yield, and path dependence to test whether 3x leverage really outpaces 2x."
 keywords: "TQQQ drawdown analysis, TQQQ vs QLD five-year total return, TQQQ maximum drawdown 81.65%, QQQ vs TQQQ volatility comparison, leveraged Nasdaq-100 ETF path dependence, TQQQ dividend yield and total return, three times leverage vs two times leverage ETF"
 primary_keyword: "TQQQ drawdown analysis"

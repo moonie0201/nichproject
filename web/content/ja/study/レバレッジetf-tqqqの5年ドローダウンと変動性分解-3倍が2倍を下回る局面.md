@@ -4,6 +4,7 @@ date: 2026-04-25
 lastmod: 2026-04-25
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "TQQQの5年総収益率、最大ドローダウン、月次ボラティリティをQLDとQQQと比較し、3倍レバレッジが2倍に劣後する局面を日本向けに整理したリサーチノート。"
 keywords: "TQQQ, TQQQ 5年ドローダウン, TQQQ QLD 比較, TQQQ ボラティリティ, レバレッジETF 長期保有"
 primary_keyword: "TQQQ"

@@ -1,8 +1,18 @@
 ---
 title: "편집 프로세스 및 AI 사용 정책"
-description: "InvestIQs의 콘텐츠 생성, AI 사용 범위, 검증 절차, 정정 정책을 투명하게 공개합니다."
+description: "InvestIQs의 콘텐츠 생성, AI 사용 범위, 2단계 자동 검증 절차, 이해충돌 고지 및 정정 정책을 투명하게 공개합니다."
 date: 2026-04-30
 draft: false
+keywords:
+  - "AI 콘텐츠 정책"
+  - "편집 프로세스"
+  - "할루시네이션 탐지"
+  - "투자 정보 검증"
+  - "이해충돌 고지"
+  - "정정 정책"
+reviewed: false
+reviewedBy: "편집자 미검토 — AI 자동 발행"
+analysis_confidence: "medium"
 ---
 
 ## AI 생성 범위

@@ -3,9 +3,17 @@ title: "S&P500 ETF 비교 리포트: VOO vs TIGER 미국S&P500 운용보수·추
 date: 2026-04-23
 lastmod: 2026-04-23
 draft: false
-reviewed: true
-description: "VOO와 TIGER 미국S&P500의 운용보수 0.03%p 차이, 1년·3년·5년 수익률, 추적오차 해석을 수치로 비교."
-keywords: "VOO, VOO vs TIGER 미국S&P500 운용보수 비교, TIGER 미국S&P500 추적오차 해석, S&P500 ETF 배당수익률 비교"
+reviewed: false
+reviewedBy: "편집자 미검토 — AI 자동 발행"
+analysis_confidence: "medium"
+description: "VOO와 TIGER 미국S&P500의 운용보수 0.03%p 차이, 1년·3년·5년 수익률, 추적오차 해석을 수치로 비교한 ETF 데이터 분석 리포트."
+keywords:
+  - "VOO"
+  - "TIGER 미국S&P500"
+  - "VOO vs TIGER 미국S&P500 운용보수 비교"
+  - "TIGER 미국S&P500 추적오차"
+  - "S&P500 ETF 배당수익률 비교"
+  - "국내상장 ETF 비교"
 primary_keyword: "VOO"
 schema: "HowTo"
 toc: true

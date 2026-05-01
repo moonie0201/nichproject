@@ -4,6 +4,7 @@ date: 2026-04-24
 lastmod: 2026-04-24
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "eMAXIS Slim 全世界株式とeMAXIS Slim S&P500を20年視点で比較。地域分散、費用、リターン、円換算の差を検証。"
 keywords: "eMAXIS Slim 全世界株式, eMAXIS Slim 全世界株式 vs eMAXIS Slim S&P500, 全世界 vs 米国, 20年バックテスト, 地域分散の実証データ"
 primary_keyword: "eMAXIS Slim 全世界株式"

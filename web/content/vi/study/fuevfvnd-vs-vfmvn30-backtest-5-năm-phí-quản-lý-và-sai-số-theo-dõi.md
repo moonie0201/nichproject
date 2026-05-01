@@ -4,6 +4,7 @@ date: 2026-04-24
 lastmod: 2026-04-24
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "FUEVFVND vs VFMVN30 backtest 5 năm: so sánh phí quản lý, CAGR, cấu trúc danh mục và sai số theo dõi bằng dữ liệu công khai."
 keywords: "FUEVFVND, FUEVFVND vs VFMVN30 backtest 5 năm, sai số theo dõi FUEVFVND VFMVN30, phí quản lý ETF Việt Nam"
 primary_keyword: "FUEVFVND"

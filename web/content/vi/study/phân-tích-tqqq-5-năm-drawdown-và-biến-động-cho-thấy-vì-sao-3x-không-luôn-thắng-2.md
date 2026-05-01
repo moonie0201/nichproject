@@ -4,6 +4,7 @@ date: 2026-04-25
 lastmod: 2026-04-25
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "Phân tích TQQQ 5 năm với drawdown 81,65%, biến động 61,28% và so sánh QLD, QQQ dành cho nhà đầu tư cá nhân Việt Nam."
 keywords: "TQQQ 5 năm drawdown, TQQQ so với QLD, TQQQ so với QQQ, ETF đòn bẩy 3x, drawdown 81,65%, biến động tháng 61,28%"
 primary_keyword: "TQQQ 5 năm drawdown"

@@ -4,6 +4,7 @@ date: 2026-04-25
 lastmod: 2026-04-25
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "ETF IDX30 vs reksa dana saham: biaya, return bersih 7 tahun, dan selisih fee yang sering diremehkan investor ritel Indonesia."
 keywords: "ETF IDX30, biaya ETF IDX30, return bersih reksa dana saham, komparasi ETF IDX30 vs reksa dana saham, expense ratio IDX30 ETF, fee trading ETF Indonesia"
 primary_keyword: "ETF IDX30"

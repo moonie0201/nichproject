@@ -4,6 +4,7 @@ date: 2026-04-25
 lastmod: 2026-04-25
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "FUEVFVND vs FUESSV50 qua dữ liệu 10 năm, so sánh tổng lợi nhuận, biến động, phí và một peer ETF VN30."
 keywords: "FUEVFVND, FUEVFVND vs FUESSV50 tổng lợi nhuận, FUEVFVND phân tích biến động 10 năm, FUESSV50 so với E1VFVN30 phí và lợi nhuận, ETF VNDiamond và VNX50 cho nhà đầu tư Việt Nam"
 primary_keyword: "FUEVFVND"

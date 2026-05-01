@@ -3,6 +3,9 @@ title: "Tentang — InvestIQs Research"
 url: "/id/about/"
 draft: false
 reviewed: true
+analysis_confidence: "medium"
+description: "Tentang InvestIQs Research — platform riset berbasis data yang mencakup ETF AS, ETF Indonesia, aset dividen, dan alokasi aset jangka panjang."
+keywords: "InvestIQs Research, analisis ETF berbasis data, riset investasi dividen, analisis investasi berbantuan AI, alokasi aset jangka panjang"
 ShowToc: false
 ---
 

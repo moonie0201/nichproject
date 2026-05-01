@@ -1,9 +1,19 @@
 ---
 title: "AI 분석 예측 트랙레코드"
-description: "InvestIQs AI가 발행한 분석 신호의 60일 후 실제 성과를 공개합니다."
+description: "InvestIQs AI가 발행한 강세·약세·관망 분석 신호의 60일 후 실제 성과를 방향 정확도와 Wilson 신뢰구간으로 공개합니다."
 date: 2026-04-30
 ai_generated: false
 draft: false
+keywords:
+  - "AI 예측 트랙레코드"
+  - "분석 신호 검증"
+  - "방향 정확도"
+  - "투자 신호 성과"
+  - "Wilson 신뢰구간"
+  - "ETF 신호 추적"
+reviewed: false
+reviewedBy: "편집자 미검토 — AI 자동 발행"
+analysis_confidence: "medium"
 ---
 
 <div id="tracker-summary" style="background:#f0f4ff;border-radius:8px;padding:1.2em 1.5em;margin-bottom:1.5em;">

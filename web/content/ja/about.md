@@ -3,6 +3,9 @@ title: "About — InvestIQs Research"
 url: "/ja/about/"
 draft: false
 reviewed: true
+analysis_confidence: "medium"
+description: "InvestIQs Researchについて — 米国・日本ETF、配当資産、長期資産配分をカバーするデータ駆動型リサーチプラットフォームです。"
+keywords: "InvestIQs Research, データ駆動型ETF分析, 配当投資リサーチ, AI支援投資分析, 長期資産配分"
 ShowToc: false
 ---
 

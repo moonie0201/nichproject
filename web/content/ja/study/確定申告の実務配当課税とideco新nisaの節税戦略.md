@@ -4,6 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "日本の確定申告、配当課税、iDeCo、新NISAの使い分けを、口座設計とETF比較の観点から整理した実務ガイド。"
 keywords: "確定申告 配当所得 iDeCo 新NISA, 米国ETFの配当を確定申告でどう扱うか, iDeCoの所得控除と限度額, 新NISAと課税口座の使い分け, 配当控除と申告分離課税の違い, 確定申告の期限と加算税"
 primary_keyword: "確定申告 配当所得 iDeCo 新NISA"

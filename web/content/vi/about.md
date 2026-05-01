@@ -3,6 +3,9 @@ title: "Giới thiệu — InvestIQs Research"
 url: "/vi/about/"
 draft: false
 reviewed: true
+analysis_confidence: "medium"
+description: "Giới thiệu InvestIQs Research — nền tảng nghiên cứu dựa trên dữ liệu về ETF Mỹ, ETF Việt Nam, tài sản cổ tức và phân bổ tài sản dài hạn."
+keywords: "InvestIQs Research, phân tích ETF dựa trên dữ liệu, nghiên cứu đầu tư cổ tức, phân tích đầu tư AI, phân bổ tài sản dài hạn"
 ShowToc: false
 ---
 

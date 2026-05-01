@@ -4,6 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "Ulasan berbasis data tentang batas waktu SPT Tahunan Indonesia, perlakuan pajak dividen, perbandingan VOO dan SCHD, serta peran rekening pensiun."
 keywords: "SPT Tahunan dividen, batas waktu SPT Tahunan orang pribadi 2026, pajak dividen investor Indonesia, VOO vs SCHD biaya dan return, dividen domestik dikecualikan dari objek PPh, strategi pajak investor ritel Indonesia"
 primary_keyword: "SPT Tahunan dividen"

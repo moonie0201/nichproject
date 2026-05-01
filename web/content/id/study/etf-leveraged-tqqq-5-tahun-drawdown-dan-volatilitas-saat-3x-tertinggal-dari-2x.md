@@ -4,6 +4,7 @@ date: 2026-04-25
 lastmod: 2026-04-25
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "Catatan riset TQQQ membandingkan total return 5 tahun, drawdown, volatilitas, dan posisi relatif terhadap QLD serta QQQ untuk investor ritel Indonesia."
 keywords: "TQQQ drawdown 5 tahun, TQQQ vs QLD vs QQQ, analisis total return TQQQ 5 tahun, drawdown dan volatilitas TQQQ, ETF leveraged Nasdaq-100 untuk investor Indonesia, risiko path dependency ETF leverage"
 primary_keyword: "TQQQ drawdown 5 tahun"

@@ -4,6 +4,7 @@ date: 2026-04-24
 lastmod: 2026-04-24
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "Catatan riset TQQQ vs QLD vs QQQ: drawdown 5 tahun, volatilitas, biaya, dan mengapa ETF 3x bisa kalah efisien dari 2x pada rezim pasar tertentu."
 keywords: "TQQQ, drawdown 5 tahun TQQQ, perbandingan TQQQ vs QLD vs QQQ, volatilitas ETF leverage Nasdaq-100, CAGR TQQQ 2021 2026, ETF leverage untuk investor Indonesia, analisis risiko ETF 3x"
 primary_keyword: "TQQQ"

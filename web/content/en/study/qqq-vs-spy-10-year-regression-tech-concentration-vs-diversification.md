@@ -4,6 +4,7 @@ date: 2026-04-24
 lastmod: 2026-04-24
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "QQQ vs SPY regression analysis on tech concentration, returns, and yield using exact yfinance data for US investors."
 keywords: "QQQ, QQQ vs SPY 10 year comparison, QQQ tech concentration vs SPY diversification, QQQ dividend yield vs SPY dividend yield, QQQ SPY regression analysis"
 primary_keyword: "QQQ"

@@ -4,8 +4,9 @@ date: 2026-04-25
 lastmod: 2026-04-25
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "Expense ratio compounding model: 0.03% vs 0.5% over 30 years, with live ETF data, peer comparisons, and fee-drag scenarios."
-keywords: "expense ratio, ETF expense ratio compounding model, 0.03% vs 0.5% fee drag, 30-year ETF simulation"
+keywords: "expense ratio, ETF expense ratio compounding model, 0.03% vs 0.5% fee drag, 30-year ETF simulation, low-cost ETF long-term impact"
 primary_keyword: "expense ratio"
 schema: "HowTo"
 toc: true

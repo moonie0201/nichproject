@@ -4,6 +4,7 @@ date: 2026-04-24
 lastmod: 2026-04-24
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "ETF IDX30 vs ETF LQ45: backtest 7 tahun, total return, volatilitas, biaya, dan risiko untuk investor ritel Indonesia."
 keywords: "ETF IDX30, ETF IDX30 vs ETF LQ45, backtest 7 tahun ETF Indonesia, total return dan volatilitas ETF, Premier ETF IDX30 vs Premier ETF LQ-45"
 primary_keyword: "ETF IDX30"

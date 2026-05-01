@@ -4,6 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "English-localized research note on Korean comprehensive income tax filing, the KRW 20 million dividend and interest threshold, IRP and ISA tax credits, penalties, and high-dividend separate taxation."
 keywords: "Korean income tax filing guide, KRW 20 million dividend and interest threshold, IRP tax credit limit and deduction math, ISA rollover to retirement account, taxable brokerage account versus retirement account, VOO SCHD DGRO dividend comparison, comprehensive income tax penalties in Korea, high-dividend separate taxation regime, year-end settlement correction window"
 primary_keyword: "Korean income tax filing guide"

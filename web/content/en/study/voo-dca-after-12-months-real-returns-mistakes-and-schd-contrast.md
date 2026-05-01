@@ -4,8 +4,9 @@ date: 2026-04-22
 lastmod: 2026-04-22
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "VOO DCA after 12 months: real returns, SCHD comparison, and monthly ETF investing mistakes for U.S. investors."
-keywords: "VOO DCA, monthly ETF investing with VOO, S&P500 DCA real returns, VOO vs SCHD dividend comparison"
+keywords: "VOO DCA, monthly ETF investing with VOO, S&P500 DCA real returns, VOO vs SCHD dividend comparison, dollar cost averaging ETF strategy"
 primary_keyword: "VOO DCA"
 schema: "HowTo"
 toc: true

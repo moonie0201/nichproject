@@ -4,6 +4,7 @@ date: 2026-04-22
 lastmod: 2026-04-22
 draft: false
 reviewed: true
+analysis_confidence: "medium"
 description: "NISA積立実績として、eMAXIS Slim 全世界株式を月20万円で1年積んだ場合のリターン、費用、ACWI比較を数字で整理。"
 keywords: "NISA積立実績, eMAXIS Slim 全世界株式, つみたてNISA1年, 月20万円投資, ACWI比較, オルカン リターン"
 primary_keyword: "NISA積立実績"

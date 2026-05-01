@@ -2,7 +2,18 @@
 title: "About — InvestIQs Research"
 url: "/ko/about/"
 draft: false
-reviewed: true
+description: "InvestIQs Research는 미국·한국 ETF, 배당 자산, 장기 자산배분을 공개 데이터와 AI 분석으로 다루는 데이터 기반 리서치 플랫폼입니다."
+keywords:
+  - "InvestIQs"
+  - "ETF 리서치"
+  - "데이터 기반 투자"
+  - "미국 ETF 분석"
+  - "배당 자산"
+  - "장기 자산배분"
+  - "AI 투자 분석"
+reviewed: false
+reviewedBy: "편집자 미검토 — AI 자동 발행"
+analysis_confidence: "medium"
 ShowToc: false
 ---
 

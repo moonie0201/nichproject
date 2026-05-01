@@ -3,7 +3,10 @@ title: "Privacy Policy"
 date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
+reviewed: false
+analysis_confidence: "medium"
 description: "Privacy Policy for InvestIQs. Information about cookies, Google AdSense, and analytics usage."
+keywords: "InvestIQs privacy policy, cookies policy, Google AdSense data, analytics usage, personal data protection"
 layout: "single"
 ---
 

@@ -3,9 +3,18 @@ title: "VOO 5년 수익률과 낙폭으로 본 가격 패턴"
 date: 2026-04-25
 lastmod: 2026-04-25
 draft: false
-reviewed: true
-description: "VOO 혼조 흐름 분석: 현재가 $656.42, 1년 수익률 32.2%, P/E 28.3가 보여주는 가격 패턴"
-keywords: "VOO, VOO 1년 수익률 32.2% 분석, VOO P/E 28.3 해석, VOO 배당수익률 1.09% 의미, VOO 5년 수익률 86.0% 패턴, VOO와 IVV 비교"
+reviewed: false
+reviewedBy: "편집자 미검토 — AI 자동 발행"
+analysis_confidence: "medium"
+description: "VOO 혼조 흐름 데이터 분석: 현재가 $656.42, 1년 수익률 32.2%, P/E 28.3 기준으로 가격 패턴과 최대낙폭을 수치로 정리한 리서치 노트."
+keywords:
+  - "VOO"
+  - "VOO 1년 수익률 32.2%"
+  - "VOO P/E 28.3"
+  - "VOO 배당수익률 1.09%"
+  - "VOO 5년 수익률 86.0%"
+  - "VOO IVV 비교"
+  - "S&P500 ETF 낙폭 분석"
 primary_keyword: "VOO"
 schema: "Article"
 toc: true
