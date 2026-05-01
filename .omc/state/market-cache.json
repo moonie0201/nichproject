@@ -1,0 +1,360 @@
+{
+  "VOO": {
+    "_fetched_at": "2026-05-01T06:00:02.640327",
+    "data": {
+      "current_price": 660.58,
+      "1y_return_pct": 31.1,
+      "3y_return_pct": 85.2,
+      "5y_return_pct": 84.8,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 1.08,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 28.5,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=9%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "SPY": {
+    "_fetched_at": "2026-05-01T06:00:04.909852",
+    "data": {
+      "current_price": 718.66,
+      "1y_return_pct": 31.1,
+      "3y_return_pct": 84.7,
+      "5y_return_pct": 84.3,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 1.03,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 28.5,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=10%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "VTI": {
+    "_fetched_at": "2026-05-01T06:00:07.113562",
+    "data": {
+      "current_price": 354.18,
+      "1y_return_pct": 31.4,
+      "3y_return_pct": 83.7,
+      "5y_return_pct": 74.3,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 1.06,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 27.7,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=9%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "VT": {
+    "_fetched_at": "2026-05-01T06:00:09.017398",
+    "data": {
+      "current_price": 151.2,
+      "1y_return_pct": 32.1,
+      "3y_return_pct": 75.9,
+      "5y_return_pct": 64.0,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 1.66,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 23.2,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=9%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "QQQ": {
+    "_fetched_at": "2026-05-01T06:00:11.255894",
+    "data": {
+      "current_price": 667.74,
+      "1y_return_pct": 41.1,
+      "3y_return_pct": 117.9,
+      "5y_return_pct": 101.4,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 0.42,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 35.3,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "computed_only(info_diff=99%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "QQQM": {
+    "_fetched_at": "2026-05-01T06:00:13.311581",
+    "data": {
+      "current_price": 274.9,
+      "1y_return_pct": 41.1,
+      "3y_return_pct": 118.4,
+      "5y_return_pct": 102.1,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 0.46,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 35.3,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "computed_only(info_diff=99%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "SCHD": {
+    "_fetched_at": "2026-05-01T06:00:15.179669",
+    "data": {
+      "current_price": 32.07,
+      "1y_return_pct": 29.0,
+      "3y_return_pct": 51.3,
+      "5y_return_pct": 53.6,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 3.29,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 19.2,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=4%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "JEPI": {
+    "_fetched_at": "2026-05-01T06:00:16.955011",
+    "data": {
+      "current_price": 57.59,
+      "1y_return_pct": 12.7,
+      "3y_return_pct": 34.5,
+      "5y_return_pct": 49.9,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 8.29,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 27.1,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=1%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "JEPQ": {
+    "_fetched_at": "2026-05-01T06:00:19.034363",
+    "data": {
+      "current_price": 59.27,
+      "1y_return_pct": 29.0,
+      "3y_return_pct": 82.5,
+      "5y_return_pct": null,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 10.43,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 32.4,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=6%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "QYLD": {
+    "_fetched_at": "2026-05-01T06:00:20.866538",
+    "data": {
+      "current_price": 17.98,
+      "1y_return_pct": 24.4,
+      "3y_return_pct": 52.3,
+      "5y_return_pct": 46.7,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 11.48,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 32.0,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=4%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "VYM": {
+    "_fetched_at": "2026-05-01T06:00:22.752605",
+    "data": {
+      "current_price": 157.19,
+      "1y_return_pct": 29.6,
+      "3y_return_pct": 63.6,
+      "5y_return_pct": 76.8,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 2.23,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": 21.9,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=6%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "BND": {
+    "_fetched_at": "2026-05-01T06:00:25.082878",
+    "data": {
+      "current_price": 73.5,
+      "1y_return_pct": 4.0,
+      "3y_return_pct": 10.8,
+      "5y_return_pct": 0.7,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 3.91,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": null,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=1%)"
+      }
+    }
+  },
+  "TLT": {
+    "_fetched_at": "2026-05-01T06:00:27.119989",
+    "data": {
+      "current_price": 85.62,
+      "1y_return_pct": 0.0,
+      "3y_return_pct": -8.6,
+      "5y_return_pct": -27.9,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 4.49,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": null,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=2%)"
+      }
+    }
+  },
+  "GLD": {
+    "_fetched_at": "2026-05-01T06:00:28.949253",
+    "data": {
+      "current_price": 423.66,
+      "1y_return_pct": 39.5,
+      "3y_return_pct": 129.3,
+      "5y_return_pct": 153.9,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 0.0,
+      "expense_ratio_pct": null,
+      "market_cap": null,
+      "pe_ratio": null,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "info_only"
+      }
+    }
+  },
+  "O": {
+    "_fetched_at": "2026-05-01T06:00:31.258778",
+    "data": {
+      "current_price": 64.24,
+      "1y_return_pct": 17.3,
+      "3y_return_pct": 23.8,
+      "5y_return_pct": 23.3,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 5.04,
+      "expense_ratio_pct": null,
+      "market_cap": 59900624896,
+      "pe_ratio": 54.9,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "verified(diff=1%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "AAPL": {
+    "_fetched_at": "2026-05-01T06:00:33.404773",
+    "data": {
+      "current_price": 271.35,
+      "1y_return_pct": 28.3,
+      "3y_return_pct": 68.1,
+      "5y_return_pct": 106.8,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 0.38,
+      "expense_ratio_pct": null,
+      "market_cap": 3983727394816,
+      "pe_ratio": 34.4,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "computed_only(info_diff=99%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "MSFT": {
+    "_fetched_at": "2026-05-01T06:00:35.425995",
+    "data": {
+      "current_price": 407.78,
+      "1y_return_pct": 4.0,
+      "3y_return_pct": 41.3,
+      "5y_return_pct": 62.5,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 0.85,
+      "expense_ratio_pct": null,
+      "market_cap": 3030774972416,
+      "pe_ratio": 25.6,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "computed_only(info_diff=99%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "NVDA": {
+    "_fetched_at": "2026-05-01T06:00:37.421160",
+    "data": {
+      "current_price": 199.57,
+      "1y_return_pct": 83.3,
+      "3y_return_pct": 641.0,
+      "5y_return_pct": 1192.6,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 0.02,
+      "expense_ratio_pct": null,
+      "market_cap": 4850548998144,
+      "pe_ratio": 40.7,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "computed_only(info_diff=99%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  },
+  "GOOGL": {
+    "_fetched_at": "2026-05-01T06:00:39.318997",
+    "data": {
+      "current_price": 384.8,
+      "1y_return_pct": 143.2,
+      "3y_return_pct": 274.1,
+      "5y_return_pct": 235.9,
+      "10y_return_pct": null,
+      "dividend_yield_pct": 0.22,
+      "expense_ratio_pct": null,
+      "market_cap": 4655096004608,
+      "pe_ratio": 29.3,
+      "_sources": {
+        "current_price": "yfinance.history",
+        "dividend_yield_pct": "computed_only(info_diff=99%)",
+        "pe_ratio": "yfinance.info"
+      }
+    }
+  }
+}

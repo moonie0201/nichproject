@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>P/E on InvestIQs — 투자 정보 블로그</title>
+    <link>https://investiqs.net/ko/tags/p/e/</link>
+    <description>Recent content in P/E on InvestIQs — 투자 정보 블로그</description>
+    <generator>Hugo</generator>
+    <language>ko</language>
+    <lastBuildDate>Thu, 23 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://investiqs.net/ko/tags/p/e/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VOO 5년 수익률과 밸류에이션 데이터 분석</title>
+      <link>https://investiqs.net/ko/study/voo-5%EB%85%84-%EC%88%98%EC%9D%B5%EB%A5%A0%EA%B3%BC-%EB%B0%B8%EB%A5%98%EC%97%90%EC%9D%B4%EC%85%98-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B6%84%EC%84%9D/</link>
+      <pubDate>Thu, 23 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/ko/study/voo-5%EB%85%84-%EC%88%98%EC%9D%B5%EB%A5%A0%EA%B3%BC-%EB%B0%B8%EB%A5%98%EC%97%90%EC%9D%B4%EC%85%98-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B6%84%EC%84%9D/</guid>
+      <description>VOO 혼조 흐름 데이터 분석: 현재가 $653.14, 1년 &#43;34.3%, RSI 90.63과 P/E 28.2가 공존하는 구간의 기술적·밸류에이션 패턴 정리.</description>
+    </item>
+    <item>
+      <title>VOO 5년 수익률과 밸류에이션으로 본 흐름</title>
+      <link>https://investiqs.net/ko/study/voo-5%EB%85%84-%EC%88%98%EC%9D%B5%EB%A5%A0%EA%B3%BC-%EB%B0%B8%EB%A5%98%EC%97%90%EC%9D%B4%EC%85%98%EC%9C%BC%EB%A1%9C-%EB%B3%B8-%ED%9D%90%EB%A6%84/</link>
+      <pubDate>Wed, 22 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/ko/study/voo-5%EB%85%84-%EC%88%98%EC%9D%B5%EB%A5%A0%EA%B3%BC-%EB%B0%B8%EB%A5%98%EC%97%90%EC%9D%B4%EC%85%98%EC%9C%BC%EB%A1%9C-%EB%B3%B8-%ED%9D%90%EB%A6%84/</guid>
+      <description>VOO 혼조 흐름 데이터 분석: 현재가 $651.54, 1년 &#43;36.3%, 3년 &#43;79.0%, 5년 &#43;85.0%, P/E 28.1 기준으로 밸류에이션과 추세를 수치로 검토.</description>
+    </item>
+  </channel>
+</rss>

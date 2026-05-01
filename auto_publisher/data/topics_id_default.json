@@ -1,0 +1,29 @@
+[
+  {"id": "id-etf-01", "topic": "Apa Itu ETF? Panduan Lengkap Investasi ETF untuk Pemula", "keywords": ["ETF", "reksa dana ETF", "investasi ETF", "indeks saham"], "category": "ETF"},
+  {"id": "id-etf-02", "topic": "ETF IDX30 vs ETF LQ45: Mana yang Lebih Menguntungkan?", "keywords": ["ETF IDX30", "ETF LQ45", "saham Indonesia", "reksa dana indeks"], "category": "ETF"},
+  {"id": "id-etf-03", "topic": "Cara Beli ETF S&P500 dari Indonesia: Investasi ke Amerika Mudah", "keywords": ["ETF S&P500", "investasi Amerika", "saham AS", "ETF internasional"], "category": "ETF"},
+  {"id": "id-etf-04", "topic": "Biaya ETF yang Tersembunyi: Expense Ratio Bisa Kuras Keuntungan 20 Tahun", "keywords": ["biaya ETF", "expense ratio", "reksa dana murah", "biaya investasi"], "category": "ETF"},
+  {"id": "id-etf-05", "topic": "ETF Dividen Tinggi: Cara Dapat Passive Income 5-8% Per Tahun", "keywords": ["ETF dividen", "passive income", "dividen tinggi", "investasi dividen"], "category": "ETF"},
+  {"id": "id-etf-06", "topic": "Investasi Rutin (DCA) dengan ETF: Simulasi 10 Tahun Hasilnya Mengejutkan", "keywords": ["DCA", "investasi rutin", "dollar cost averaging", "akumulasi jangka panjang"], "category": "ETF"},
+  {"id": "id-etf-07", "topic": "Reksa Dana vs ETF: Mana yang Lebih Baik untuk Investor Pemula?", "keywords": ["reksa dana vs ETF", "perbandingan investasi", "biaya reksa dana", "pilihan investasi"], "category": "ETF"},
+
+  {"id": "id-div-01", "topic": "Saham Dividen Terbaik BEI 2025: 10 Saham Bayar Dividen Rutin", "keywords": ["saham dividen", "dividen BEI", "saham blue chip", "yield dividen"], "category": "Dividen"},
+  {"id": "id-div-02", "topic": "Hidup dari Dividen: Perlu Berapa Modal untuk Dapat 10 Juta/Bulan?", "keywords": ["hidup dari dividen", "passive income dividen", "kebebasan finansial", "penghasilan pasif"], "category": "Dividen"},
+  {"id": "id-div-03", "topic": "Reinvestasi Dividen: Bunga Berbunga yang Bikin Kaya Tanpa Kerja Keras", "keywords": ["reinvestasi dividen", "bunga berbunga", "compounding", "investasi jangka panjang"], "category": "Dividen"},
+  {"id": "id-div-04", "topic": "DIRE (Dana Investasi Real Estat): Jadi 'Juragan Properti' Modal 10 Ribu", "keywords": ["DIRE", "REITs Indonesia", "investasi properti", "dana investasi"], "category": "Dividen"},
+  {"id": "id-div-05", "topic": "Dividend Trap: Kenapa Yield Tinggi Belum Tentu Bagus?", "keywords": ["dividend trap", "yield dividen tinggi", "analisis dividen", "risiko investasi"], "category": "Dividen"},
+
+  {"id": "id-tax-01", "topic": "Pajak Saham 2025: Berapa Persen dan Cara Hitungnya yang Benar", "keywords": ["pajak saham", "PPh dividen", "pajak investasi", "pajak capital gain"], "category": "Pajak"},
+  {"id": "id-tax-02", "topic": "Cara Legal Hemat Pajak Penghasilan untuk Investor Indonesia", "keywords": ["hemat pajak", "tax planning", "PPh 21", "pengurangan pajak"], "category": "Pajak"},
+  {"id": "id-tax-03", "topic": "BPJS Ketenagakerjaan JHT dan JP: Strategi Optimalkan untuk Pensiun", "keywords": ["BPJS Ketenagakerjaan", "JHT", "JP", "dana pensiun"], "category": "Pajak"},
+
+  {"id": "id-re-01", "topic": "Investasi Properti 2025: Apartemen, Ruko, atau Tanah yang Paling Cuan?", "keywords": ["investasi properti", "beli apartemen", "investasi tanah", "properti Indonesia"], "category": "Properti"},
+  {"id": "id-re-02", "topic": "KPR vs Beli Cash: Mana yang Lebih Menguntungkan Secara Matematis?", "keywords": ["KPR", "kredit pemilikan rumah", "beli rumah", "simulasi KPR"], "category": "Properti"},
+  {"id": "id-re-03", "topic": "Yield Sewa Properti: Cara Hitung Keuntungan Nyata dari Investasi Kos-kosan", "keywords": ["yield sewa", "bisnis kos", "properti sewa", "ROI properti"], "category": "Properti"},
+
+  {"id": "id-basic-01", "topic": "Gaji 5 Juta Bisa Investasi? Roadmap Finansial 5 Tahun yang Realistis", "keywords": ["investasi gaji kecil", "menabung investasi", "perencanaan keuangan", "kebebasan finansial"], "category": "Dasar"},
+  {"id": "id-basic-02", "topic": "Dana Darurat: Berapa Bulan Pengeluaran yang Harus Disiapkan?", "keywords": ["dana darurat", "emergency fund", "tabungan darurat", "keuangan pribadi"], "category": "Dasar"},
+  {"id": "id-basic-03", "topic": "Inflasi Indonesia 3-4% per Tahun: Kenapa Uang di Bawah Kasur Itu Rugi?", "keywords": ["inflasi Indonesia", "nilai uang", "lindung nilai inflasi", "investasi vs tabungan"], "category": "Dasar"},
+  {"id": "id-basic-04", "topic": "10 Kesalahan Investasi Paling Umum Investor Pemula Indonesia", "keywords": ["kesalahan investasi", "investasi pemula", "hindari rugi", "tips investasi"], "category": "Dasar"},
+  {"id": "id-basic-05", "topic": "Alokasi Aset Usia 20-an, 30-an, 40-an: Formula Sederhana yang Terbukti", "keywords": ["alokasi aset", "portofolio investasi", "diversifikasi", "investasi sesuai usia"], "category": "Dasar"}
+]

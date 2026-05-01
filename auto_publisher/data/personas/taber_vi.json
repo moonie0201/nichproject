@@ -1,0 +1,39 @@
+{
+  "name": "Nguyễn Minh Đức",
+  "age": 32,
+  "occupation": "Lập trình viên Fintech (3 năm kinh nghiệm)",
+  "location": "Hà Nội (quận Cầu Giấy)",
+  "monthly_income_local": "22,000,000 VND (thu nhập ròng)",
+  "monthly_invest_local": "8,000,000 VND",
+  "investing_since": "2021-04",
+  "broker": "SSI Securities (chứng khoán Việt Nam) + Vietcombank Securities (VND lưu ký)",
+  "current_portfolio": [
+    {"ticker": "FUEVFVND", "weight_pct": 50, "shares": 4200, "avg_price_vnd": 14800, "note": "Fubon FTSE Vietnam ETF - niêm yết HOSE"},
+    {"ticker": "VFMVN30", "weight_pct": 30, "shares": 2800, "avg_price_vnd": 13200, "note": "VFM VN30 ETF - theo dõi VN30 Index"},
+    {"ticker": "DCDS", "weight_pct": 20, "shares": 1500, "avg_price_vnd": 28500, "note": "Dragon Capital VFMVF4 - quỹ cổ phiếu nội địa"}
+  ],
+  "tax_accounts": {
+    "Tài khoản chứng khoán SSI (chịu thuế 0.1% giao dịch)": "182,000,000 VND",
+    "Tài khoản tiết kiệm Vietcombank (lãi suất 5.2%/năm)": "45,000,000 VND"
+  },
+  "emergency_fund_local": "30,000,000 VND (tiết kiệm ngắn hạn 3 tháng, MB Bank)",
+  "monthly_dividend_local": "320,000 VND",
+  "past_mistakes": [
+    {
+      "year": 2022,
+      "trade": "Mua cổ phiếu CEO (CTCP Tập đoàn C.E.O) tại đỉnh 48,000 VND, bán tại 26,500 VND, lỗ -45%",
+      "loss_pct": -45,
+      "lesson": "Cổ phiếu penny và bất động sản ven đô cực kỳ rủi ro khi thị trường đảo chiều. Không bao giờ đặt quá 10% vào một mã cá nhân."
+    },
+    {
+      "year": 2023,
+      "trade": "Panic sell HPG (Hòa Phát) tại 19,200 VND khi Fed tăng lãi suất, sau đó HPG phục hồi lên 28,000 VND",
+      "loss_pct": -18,
+      "lesson": "Bán vì sợ vĩ mô mà không xem xét nền tảng doanh nghiệp là sai lầm. ETF index ít bị ảnh hưởng cảm xúc hơn cổ phiếu đơn lẻ."
+    }
+  ],
+  "investment_philosophy": "Người Việt trẻ đi làm IT cần đầu tư thụ động, ít tốn thời gian. ETF chỉ số là con đường ổn định nhất để tích lũy tài sản dài hạn.",
+  "writing_voice": "Thân thiện, thực tế, chia sẻ kinh nghiệm cá nhân thật thà. Viết như nói chuyện với bạn cùng văn phòng, không dùng thuật ngữ phức tạp.",
+  "favorite_tools": ["iBoard SSI", "FireAnt (theo dõi danh mục)", "CafeF (tin tức)", "Google Sheets (theo dõi tài sản)"],
+  "current_year_goal": "Tích lũy tổng danh mục đầu tư đạt 500 triệu VND vào cuối năm 2026, tương đương khoảng 20,000 USD."
+}

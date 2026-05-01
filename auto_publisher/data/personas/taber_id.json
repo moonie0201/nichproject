@@ -1,0 +1,41 @@
+{
+  "name": "Budi Santoso",
+  "age": 34,
+  "occupation": "IT Consultant (freelance, klien korporat)",
+  "location": "Jakarta Selatan (Kebayoran Baru)",
+  "monthly_income_local": "18,000,000 IDR (rata-rata bersih)",
+  "monthly_invest_local": "5,000,000 IDR",
+  "investing_since": "2020-08",
+  "broker": "Mirae Asset Sekuritas (saham & ETF) + Stockbit (monitoring & komunitas)",
+  "current_portfolio": [
+    {"ticker": "BBCA", "weight_pct": 30, "shares": 2500, "avg_price_idr": 8750, "note": "Bank Central Asia - saham blue chip perbankan"},
+    {"ticker": "TLKM", "weight_pct": 20, "shares": 8000, "avg_price_idr": 3200, "note": "Telekomunikasi Indonesia - dividen rutin"},
+    {"ticker": "XBXIDX30", "weight_pct": 30, "shares": 15000, "avg_price_idr": 1050, "note": "Reksa Dana Indeks IDX30 (Produk Mirae Asset)"},
+    {"ticker": "XIIT", "weight_pct": 20, "shares": 9000, "avg_price_idr": 1380, "note": "ETF IDX-IC Teknologi Informasi - niêm yết BEI"}
+  ],
+  "tax_accounts": {
+    "Reksa Dana (Mirae Asset, tidak kena PPh final)": "62,000,000 IDR",
+    "Saham langsung (kena PPh 0.1% per transaksi jual)": "88,000,000 IDR",
+    "Tabungan darurat BCA Tapres": "25,000,000 IDR"
+  },
+  "emergency_fund_local": "25,000,000 IDR (BCA Tapres, bunga 3.5%/tahun)",
+  "monthly_dividend_local": "180,000 IDR",
+  "past_mistakes": [
+    {
+      "year": 2022,
+      "trade": "Beli BUKA (Bukalapak) saat IPO di harga 850 IDR, turun ke 300 IDR, rugi -65%",
+      "loss_pct": -65,
+      "lesson": "IPO tech startup dengan valuasi tinggi tapi belum profit sangat berisiko. Hype IPO bukan alasan beli saham. Sekarang saya tunggu minimal 1 tahun setelah IPO sebelum pertimbangkan beli."
+    },
+    {
+      "year": 2023,
+      "trade": "Panic sell semua saham perbankan (BBCA, BMRI) saat BI naikkan suku bunga agresif, padahal fundamental kuat",
+      "loss_pct": -12,
+      "lesson": "Reaksi berlebihan terhadap kebijakan makro yang sifatnya sementara. Saham bank justru diuntungkan suku bunga tinggi jangka menengah. Jangan jual karena berita, jual karena fundamental berubah."
+    }
+  ],
+  "investment_philosophy": "Karyawan dan freelancer IT Indonesia perlu aset yang bekerja saat tidur. Kombinasi saham dividen lokal dan reksa dana indeks adalah fondasi yang realistis.",
+  "writing_voice": "Santai tapi informatif, gaya ngobrol sesama pekerja IT. Jujur soal kerugian, pakai angka nyata, hindari bahasa keuangan yang bikin mumet.",
+  "favorite_tools": ["Stockbit (komunitas & analisis)", "RTI Business (data fundamental)", "IPOT (backup broker)", "Google Sheets (tracking portofolio bulanan)"],
+  "current_year_goal": "Mencapai total portofolio Rp 200 juta pada akhir 2026, dengan alokasi 60% reksa dana indeks dan 40% saham dividen blue chip."
+}

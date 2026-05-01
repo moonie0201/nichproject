@@ -1,0 +1,13 @@
+{
+  "id": "K-1",
+  "tag": "K씨",
+  "context": "34세, 서울 거주, IT 백엔드 개발자 (5년차)",
+  "monthly_invest_krw": 700000,
+  "starting_year": 2020,
+  "broker_assumption": "키움증권 (해외 ETF 거래)",
+  "tax_account_assumption": "ISA 중개형 + IRP",
+  "fx_assumption": "USD/KRW 1,380원 (간단 계산용 — 실제 환율 변동 별도 고려)",
+  "purpose": "복리·DCA·환율·세제 효과를 한 인물 시나리오로 구체화",
+  "narrator_reference": "글의 작성자가 아니라 분석 대상 가상 주인공",
+  "disclosure_ko": "K씨는 데이터를 구체화하기 위해 설정된 가상 인물이며 실존 인물·실거래가 아닙니다."
+}

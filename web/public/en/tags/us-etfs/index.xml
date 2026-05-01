@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>US ETFs on InvestIQs — Investment Blog</title>
+    <link>https://investiqs.net/en/tags/us-etfs/</link>
+    <description>Recent content in US ETFs on InvestIQs — Investment Blog</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 28 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://investiqs.net/en/tags/us-etfs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Korean Income Tax Filing Guide: The Dividend Threshold and IRP/ISA Tax Strategy</title>
+      <link>https://investiqs.net/en/study/korean-income-tax-filing-guide-the-dividend-threshold-and-irpisa-tax-strategy/</link>
+      <pubDate>Tue, 28 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/en/study/korean-income-tax-filing-guide-the-dividend-threshold-and-irpisa-tax-strategy/</guid>
+      <description>English-localized research note on Korean comprehensive income tax filing, the KRW 20 million dividend and interest threshold, IRP and ISA tax credits, penalties, and high-dividend separate taxation.</description>
+    </item>
+    <item>
+      <title>QQQ vs SPY 10-Year Regression: Tech Concentration vs Diversification</title>
+      <link>https://investiqs.net/en/study/qqq-vs-spy-10-year-regression-tech-concentration-vs-diversification/</link>
+      <pubDate>Fri, 24 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/en/study/qqq-vs-spy-10-year-regression-tech-concentration-vs-diversification/</guid>
+      <description>QQQ vs SPY regression analysis on tech concentration, returns, and yield using exact yfinance data for US investors.</description>
+    </item>
+  </channel>
+</rss>

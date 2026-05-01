@@ -1,0 +1,13 @@
+{
+  "type": "POV",
+  "description": "특정 상황에 처한 사람의 입장에서 공감을 유도하는 템플릿",
+  "structure": [
+    { "time": "0-5s", "visual": "POV 상황 자막 (예: 1억 모은 20대의 생각)", "audio": "상황 제시" },
+    { "time": "5-20s", "visual": "해당 상황의 행동이나 고민 장면", "audio": "속마음 내레이션" },
+    { "time": "20-40s", "visual": "주제와 관련된 핵심 정보 제공", "audio": "핵심 인사이트" },
+    { "time": "40-50s", "visual": "정리 및 제언", "audio": "공감 및 행동 유도" }
+  ],
+  "bgm_recommendation": "차분하거나 공감되는 템포의 BGM",
+  "hashtags": ["#POV", "#재테크", "#투자일기", "#돈모으기", "#공감"],
+  "thumbnail_text": "OO 입장에서 본 OOO"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "NewsReact",
+  "description": "최근 뉴스에 대한 반응",
+  "structure": {
+    "hook": "최근 뉴스 헤드라인 언급",
+    "content": "이 뉴스가 투자자에게 주는 의미",
+    "cta": "오늘 뉴스에 대한 의견 공유"
+  }
+}

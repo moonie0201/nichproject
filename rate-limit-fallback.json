@@ -1,0 +1,27 @@
+{
+  "fallbackModels": [
+    {
+      "providerID": "openrouter",
+      "modelID": "meta-llama/llama-3.3-70b-instruct:free"
+    },
+    {
+      "providerID": "openrouter",
+      "modelID": "openai/gpt-oss-120b:free"
+    },
+    {
+      "providerID": "google",
+      "modelID": "gemini-2.5-flash"
+    },
+    {
+      "providerID": "ollama",
+      "modelID": "qwen3-coder:30b-a3b-q4_K_M"
+    },
+    {
+      "providerID": "ollama",
+      "modelID": "devstral-small-2:24b"
+    }
+  ],
+  "cooldownMs": 60000,
+  "maxRetries": 5,
+  "enabled": true
+}

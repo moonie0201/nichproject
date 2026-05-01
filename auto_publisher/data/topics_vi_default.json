@@ -1,0 +1,29 @@
+[
+  {"id": "vi-etf-01", "topic": "ETF là gì? Hướng dẫn đầu tư ETF cho người mới bắt đầu", "keywords": ["ETF", "quỹ chỉ số", "đầu tư ETF", "chứng chỉ quỹ"], "category": "ETF"},
+  {"id": "vi-etf-02", "topic": "Quỹ ETF nội địa vs ETF nước ngoài: Nên chọn cái nào?", "keywords": ["ETF VN30", "ETF nước ngoài", "so sánh ETF", "đầu tư chứng khoán"], "category": "ETF"},
+  {"id": "vi-etf-03", "topic": "Đầu tư S&P500 từ Việt Nam: Cách mua ETF Mỹ dễ nhất 2025", "keywords": ["S&P500", "đầu tư Mỹ", "ETF quốc tế", "chứng khoán Mỹ"], "category": "ETF"},
+  {"id": "vi-etf-04", "topic": "Phí quản lý ETF ảnh hưởng thế nào đến lợi nhuận sau 20 năm?", "keywords": ["phí ETF", "expense ratio", "chi phí đầu tư", "ETF dài hạn"], "category": "ETF"},
+  {"id": "vi-etf-05", "topic": "ETF cổ tức cao: Thu nhập thụ động từ 5-8% mỗi năm", "keywords": ["ETF cổ tức", "thu nhập thụ động", "cổ tức cao", "đầu tư thu nhập"], "category": "ETF"},
+  {"id": "vi-etf-06", "topic": "VN30 ETF: Có nên đầu tư vào rổ 30 cổ phiếu lớn nhất Việt Nam?", "keywords": ["VN30 ETF", "FUEVN30", "E1VFVN30", "chứng khoán Việt Nam"], "category": "ETF"},
+  {"id": "vi-etf-07", "topic": "Đầu tư định kỳ (DCA) với ETF: 10 năm tích lũy ra sao?", "keywords": ["DCA", "đầu tư định kỳ", "tích lũy dài hạn", "ETF strategy"], "category": "ETF"},
+
+  {"id": "vi-div-01", "topic": "Cổ phiếu cổ tức cao: 10 mã chứng khoán trả cổ tức tốt nhất sàn HoSE", "keywords": ["cổ tức cao", "cổ phiếu cổ tức", "HoSE", "đầu tư cổ tức"], "category": "Cổ tức"},
+  {"id": "vi-div-02", "topic": "Sống bằng cổ tức: Cần bao nhiêu tiền để có 20 triệu/tháng?", "keywords": ["sống bằng cổ tức", "thu nhập thụ động", "tự do tài chính", "cổ tức hàng tháng"], "category": "Cổ tức"},
+  {"id": "vi-div-03", "topic": "Tái đầu tư cổ tức: Lãi kép giúp tài sản tăng gấp đôi trong bao lâu?", "keywords": ["tái đầu tư cổ tức", "lãi kép", "DRIP", "đầu tư dài hạn"], "category": "Cổ tức"},
+  {"id": "vi-div-04", "topic": "Quỹ REIT tại Việt Nam: Đầu tư bất động sản với 1 triệu đồng", "keywords": ["REIT", "quỹ bất động sản", "đầu tư BĐS", "thu nhập cho thuê"], "category": "Cổ tức"},
+  {"id": "vi-div-05", "topic": "Cổ tức tiền mặt vs cổ tức cổ phiếu: Nhà đầu tư nên chọn gì?", "keywords": ["cổ tức tiền mặt", "cổ tức cổ phiếu", "so sánh cổ tức", "chiến lược đầu tư"], "category": "Cổ tức"},
+
+  {"id": "vi-tax-01", "topic": "Thuế đầu tư chứng khoán 2025: Bao nhiêu % và cách tính đúng nhất", "keywords": ["thuế chứng khoán", "thuế TNCN", "thuế cổ tức", "thuế bán cổ phiếu"], "category": "Tiết kiệm thuế"},
+  {"id": "vi-tax-02", "topic": "Cách giảm thuế thu nhập cá nhân hợp pháp cho nhà đầu tư Việt Nam", "keywords": ["giảm thuế", "tiết kiệm thuế", "quyết toán thuế", "miễn giảm thuế"], "category": "Tiết kiệm thuế"},
+  {"id": "vi-tax-03", "topic": "Tài khoản chứng khoán: Mở ở đâu để tiết kiệm phí nhất 2025?", "keywords": ["tài khoản chứng khoán", "phí giao dịch", "chọn công ty chứng khoán", "VPS SSI VNDS"], "category": "Tiết kiệm thuế"},
+
+  {"id": "vi-re-01", "topic": "Đầu tư bất động sản 2025: Chung cư, đất nền hay shophouse nên chọn gì?", "keywords": ["bất động sản 2025", "đầu tư chung cư", "đất nền", "shophouse"], "category": "Bất động sản"},
+  {"id": "vi-re-02", "topic": "Dòng tiền từ cho thuê nhà: Tính toán lợi suất thực tế như thế nào?", "keywords": ["cho thuê nhà", "lợi suất BĐS", "dòng tiền cho thuê", "tỷ suất lợi nhuận"], "category": "Bất động sản"},
+  {"id": "vi-re-03", "topic": "Mua nhà lần đầu: Vay bao nhiêu là an toàn? Tính toán chi tiết", "keywords": ["vay mua nhà", "lãi suất ngân hàng", "vay thế chấp", "tài chính nhà ở"], "category": "Bất động sản"},
+
+  {"id": "vi-basic-01", "topic": "Lương 15 triệu/tháng đầu tư được bao nhiêu? Lộ trình 5 năm thực tế", "keywords": ["đầu tư với lương thấp", "tiết kiệm đầu tư", "kế hoạch tài chính", "tự do tài chính"], "category": "Cơ bản"},
+  {"id": "vi-basic-02", "topic": "Quỹ khẩn cấp: Tiết kiệm bao nhiêu tháng lương và gửi ở đâu?", "keywords": ["quỹ khẩn cấp", "tiết kiệm khẩn cấp", "tiết kiệm trực tuyến", "tài chính cá nhân"], "category": "Cơ bản"},
+  {"id": "vi-basic-03", "topic": "Lạm phát 3-4%/năm ăn mòn tiền tiết kiệm thế nào? Cách bảo vệ tài sản", "keywords": ["lạm phát", "bảo vệ tài sản", "đầu tư chống lạm phát", "giá trị tiền tệ"], "category": "Cơ bản"},
+  {"id": "vi-basic-04", "topic": "10 sai lầm đầu tư phổ biến của người Việt và cách tránh", "keywords": ["sai lầm đầu tư", "nhà đầu tư mới", "tránh rủi ro", "kinh nghiệm đầu tư"], "category": "Cơ bản"},
+  {"id": "vi-basic-05", "topic": "Phân bổ tài sản 50-30-20: Công thức đơn giản cho người mới", "keywords": ["phân bổ tài sản", "quy tắc 50-30-20", "quản lý tài chính", "danh mục đầu tư"], "category": "Cơ bản"}
+]

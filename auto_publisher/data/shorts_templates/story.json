@@ -1,0 +1,9 @@
+{
+  "name": "Story",
+  "description": "서사적인 Journey",
+  "structure": {
+    "hook": "과거/현재의 문제 제시",
+    "content": "변화 과정과 교훈",
+    "cta": "이런 경험이 있다면 구독"
+  }
+}

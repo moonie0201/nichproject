@@ -1,0 +1,14 @@
+{
+  "type": "Reveal",
+  "description": "새로운 투자 개념이나 상품을 직관적으로 소개하는 템플릿",
+  "structure": [
+    { "time": "0-3s", "visual": "후킹 자막 + 긴장감 조성 영상", "audio": "질문형 내레이션" },
+    { "time": "3-10s", "visual": "문제 상황 제시/기존 방식의 단점", "audio": "상황 설명 및 공감 유도" },
+    { "time": "10-30s", "visual": "핵심 개념 소개 (애니메이션/인포그래픽)", "audio": "개념 요약 및 장점 3가지" },
+    { "time": "30-40s", "visual": "데이터 비교/수익률 그래프", "audio": "비교 근거 제시" },
+    { "time": "40-45s", "visual": "풀스크린 CTA", "audio": "행동 유도" }
+  ],
+  "bgm_recommendation": "Lo-fi hip hop, 경쾌한 템포",
+  "hashtags": ["#투자공부", "#주식기초", "#재테크", "#ETF", "#돈공부"],
+  "thumbnail_text": "[개념] OO 모르면 손해 / 30초만에 이해하기"
+}

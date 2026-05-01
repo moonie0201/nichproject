@@ -1,0 +1,9 @@
+{
+  "name": "POV",
+  "description": "관점 및 코멘터리",
+  "structure": {
+    "hook": "강력한 주장으로 시작",
+    "content": "주장에 대한 근거와 데이터",
+    "cta": "다른 의견이라면 댓글로"
+  }
+}

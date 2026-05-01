@@ -1,0 +1,13 @@
+{
+  "id": "T-1",
+  "tag": "田中さん",
+  "context": "33歳、ITエンジニア、東京都世田谷区",
+  "monthly_invest_jpy": 200000,
+  "starting_year": 2020,
+  "broker_assumption": "SBI証券 (米国ETF + 投信)",
+  "tax_account_assumption": "新NISA (成長投資枠) + iDeCo",
+  "fx_assumption": "USD/JPY 152円前後 (簡易計算用 — 実際の為替変動は別途考慮)",
+  "purpose": "複利・積立・新NISA税制効果を一人物シナリオで具体化",
+  "narrator_reference": "田中さんは記事の執筆者ではなく分析対象の仮想主人公",
+  "disclosure_ja": "田中さんはデータを具体化するための仮想人物であり、実在の人物・実際の取引ではありません。"
+}

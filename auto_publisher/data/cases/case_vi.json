@@ -1,0 +1,13 @@
+{
+  "id": "D-1",
+  "tag": "Anh Đức",
+  "context": "32 tuổi, lập trình viên fintech, Hà Nội",
+  "monthly_invest_vnd": 8000000,
+  "starting_year": 2020,
+  "broker_assumption": "SSI Securities + VPS",
+  "tax_account_assumption": "Tài khoản chứng khoán cá nhân (cổ tức/lãi vốn theo quy định)",
+  "fx_assumption": "USD/VND 24,500 (chỉ để minh hoạ — biến động tỷ giá xét riêng)",
+  "purpose": "Cụ thể hoá hiệu ứng lãi kép, DCA, thuế cho ETF/cổ tức Việt Nam",
+  "narrator_reference": "Anh Đức là chủ thể phân tích giả định, không phải tác giả bài viết",
+  "disclosure_vi": "Anh Đức là nhân vật giả định nhằm cụ thể hoá dữ liệu; không phải người thật và không phải giao dịch thật."
+}

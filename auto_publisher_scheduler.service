@@ -1,0 +1,16 @@
+[Unit]
+Description=Auto Publisher Scheduler — 한국 투자 블로그 자동 발행
+After=network.target
+
+[Service]
+Type=simple
+User=mh
+WorkingDirectory=/home/mh/ocstorage/workspace/nichproject
+ExecStart=/home/mh/ocstorage/workspace/nichproject/venv/bin/python3 -m auto_publisher.main schedule
+Restart=on-failure
+RestartSec=60
+StandardOutput=append:/home/mh/ocstorage/workspace/nichproject/auto_publisher/scheduler.log
+StandardError=append:/home/mh/ocstorage/workspace/nichproject/auto_publisher/scheduler.err.log
+
+[Install]
+WantedBy=multi-user.target

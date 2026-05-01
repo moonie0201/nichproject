@@ -1,0 +1,9 @@
+[
+  {
+    "topic_id": "blog-etf-04",
+    "attempts": 1,
+    "first_failed_at": "2026-04-24T06:30:20.463479",
+    "last_failed_at": "2026-04-24T06:30:20.463486",
+    "last_reason": "codex exec 3회 실패: codex 오류: 2026-04-23T21:30:16.783756Z ERROR codex_login::auth::manager: Failed to refresh token: 401 Unauthorized: {\n  \"error\": {\n    \"message\": \"Your refresh token has already been "
+  }
+]

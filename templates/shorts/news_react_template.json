@@ -1,0 +1,13 @@
+{
+  "type": "NewsReact",
+  "description": "최신 뉴스나 경제 이슈에 대해 빠르게 반응하고 의견을 제시하는 템플릿",
+  "structure": [
+    { "time": "0-5s", "visual": "뉴스 헤드라인 캡처 + 리액션(표정)", "audio": "긴급성 강조" },
+    { "time": "5-20s", "visual": "주요 뉴스 내용 요약 (그래픽)", "audio": "뉴스 내용 설명" },
+    { "time": "20-40s", "visual": "투자자 입장 해석 및 리액션", "audio": "의견 및 분석" },
+    { "time": "40-50s", "visual": "결론 및 행동 제언 + CTA", "audio": "최종 정리" }
+  ],
+  "bgm_recommendation": "빠르고 긴박한 뉴스 리포트 스타일",
+  "hashtags": ["#경제뉴스", "#투자이슈", "#재테크", "#속보", "#시장분석"],
+  "thumbnail_text": "OO뉴스 OOO 충격 / 분석"
+}

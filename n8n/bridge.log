@@ -11576,3 +11576,180 @@ Traceback (most recent call last):
     self._sock.sendall(b)
 BrokenPipeError: [Errno 32] Broken pipe
 ----------------------------------------
+$SPY: possibly delisted; no price data found  (period=1d)
+$QQQ: possibly delisted; no price data found  (period=1d)
+$^VIX: possibly delisted; no price data found  (period=1d)
+----------------------------------------
+Exception occurred during processing of request from ('172.19.0.2', 50942)
+Traceback (most recent call last):
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 830, in do_GET
+    return True  # 토큰 미설정 시 내부망 신뢰
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 50, in run_auto_publish
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/home/mh/ocstorage/workspace/nichproject/venv/bin/python3', '-m', 'auto_publisher.main', 'run', '--lang', 'ko']' timed out after 300 seconds
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/usr/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/usr/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/usr/lib/python3.12/socketserver.py", line 761, in __init__
+    self.handle()
+  File "/usr/lib/python3.12/http/server.py", line 436, in handle
+    self.handle_one_request()
+  File "/usr/lib/python3.12/http/server.py", line 424, in handle_one_request
+    method()
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 833, in do_GET
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 997, in _respond
+    dry_run=bool(body.get("dry_run", False)),
+    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socketserver.py", line 840, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('172.19.0.2', 56676)
+Traceback (most recent call last):
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 830, in do_GET
+    return True  # 토큰 미설정 시 내부망 신뢰
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 50, in run_auto_publish
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/home/mh/ocstorage/workspace/nichproject/venv/bin/python3', '-m', 'auto_publisher.main', 'run', '--lang', 'en']' timed out after 300 seconds
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/usr/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/usr/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/usr/lib/python3.12/socketserver.py", line 761, in __init__
+    self.handle()
+  File "/usr/lib/python3.12/http/server.py", line 436, in handle
+    self.handle_one_request()
+  File "/usr/lib/python3.12/http/server.py", line 424, in handle_one_request
+    method()
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 833, in do_GET
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 997, in _respond
+    dry_run=bool(body.get("dry_run", False)),
+    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socketserver.py", line 840, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('172.19.0.2', 50584)
+Traceback (most recent call last):
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 848, in do_GET
+    self._respond(200, {"status": "ok"})
+                       ^^^^^^^^^^^^^^^^^^
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 569, in run_translate
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/home/mh/ocstorage/workspace/nichproject/venv/bin/python3', '-m', 'auto_publisher.main', 'translate', '--from', 'ko', '--to', 'en']' timed out after 300 seconds
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/usr/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/usr/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/usr/lib/python3.12/socketserver.py", line 761, in __init__
+    self.handle()
+  File "/usr/lib/python3.12/http/server.py", line 436, in handle
+    self.handle_one_request()
+  File "/usr/lib/python3.12/http/server.py", line 424, in handle_one_request
+    method()
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 850, in do_GET
+    if path == "/publish":
+            ^^^^^^^^^^^^^^^
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 997, in _respond
+    dry_run=bool(body.get("dry_run", False)),
+    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socketserver.py", line 840, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('172.19.0.2', 44070)
+Traceback (most recent call last):
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 893, in do_GET
+    except Exception as e:
+                           
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 604, in run_make_video
+    _VIDEO_JOBS[job_id].update({"status": "failed", "error": str(e), "finished_at": time.time()})
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/home/mh/ocstorage/workspace/nichproject/venv/bin/python3', '-m', 'auto_publisher.main', 'make-video', '--slug', '2026nyeon-5wol-1il-migug-jeungsi-magam-s-p500-718-66-0-99-naseudag-0-93', '--lang', 'ko', '--privacy', 'public']' timed out after 900 seconds
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/usr/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/usr/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/usr/lib/python3.12/socketserver.py", line 761, in __init__
+    self.handle()
+  File "/usr/lib/python3.12/http/server.py", line 436, in handle
+    self.handle_one_request()
+  File "/usr/lib/python3.12/http/server.py", line 424, in handle_one_request
+    method()
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 895, in do_GET
+    return
+        ^^^
+  File "/home/mh/ocstorage/workspace/nichproject/n8n/bridge_api.py", line 997, in _respond
+    dry_run=bool(body.get("dry_run", False)),
+    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socketserver.py", line 840, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------

@@ -1,0 +1,15 @@
+{
+  "type": "List",
+  "description": "TOP 3, 방법 5가지 등 정보를 순차적으로 나열하는 템플릿",
+  "structure": [
+    { "time": "0-5s", "visual": "주제 및 카운트다운 타이틀", "audio": "주제 및 흥미 유발" },
+    { "time": "5-15s", "visual": "첫 번째 아이템 소개 및 짧은 설명", "audio": "핵심 포인트 설명" },
+    { "time": "15-25s", "visual": "두 번째 아이템 소개 및 짧은 설명", "audio": "핵심 포인트 설명" },
+    { "time": "25-35s", "visual": "세 번째 아이템 소개 및 짧은 설명", "audio": "핵심 포인트 설명" },
+    { "time": "35-45s", "visual": "요약 자막", "audio": "최종 정리" },
+    { "time": "45-50s", "visual": "팔로우/댓글 CTA", "audio": "행동 유도" }
+  ],
+  "bgm_recommendation": "Upbeat, 긴박한 빌드업 비트",
+  "hashtags": ["#꿀팁", "#투자정보", "#재테크", "#TOP3", "#주식"],
+  "thumbnail_text": "OO TOP 3 / 지금 바로 확인"
+}

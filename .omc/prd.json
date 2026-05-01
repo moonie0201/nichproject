@@ -1,0 +1,16 @@
+{
+  "project": "investiqs.net 콘텐츠 품질 10/10",
+  "stories": [
+    {"id": "Q-001", "title": "① data_fetched_at 타임스탬프", "passes": true, "acceptanceCriteria": ["build_eeat_frontmatter()가 data_fetched_at, data_source 파라미터를 받아 frontmatter에 포함", "_inject_disclaimer()가 data_fetched_at 있을 때 '15분' 또는 '지연' 포함한 텍스트 반환", "test_quality_gates.py의 data_fetched_at 관련 테스트 3개 통과"]},
+    {"id": "Q-002", "title": "② AI 생성 콘텐츠 레이블 (EU AI Act)", "passes": true, "acceptanceCriteria": ["build_eeat_frontmatter() 결과에 ai_generated: true, ai_models 필드 포함", "_inject_disclaimer('ko')에 AI·Claude 또는 자동 포함", "_inject_disclaimer('en')에 AI·automated 또는 generated 포함", "테스트 3개 통과"]},
+    {"id": "Q-003", "title": "③ 이해충돌 고지 (FTC)", "passes": true, "acceptanceCriteria": ["_inject_disclaimer('ko')에 '광고' 또는 'AdSense'와 '협찬' 또는 '보상' 포함", "_inject_disclaimer('en')에 advertising/adsense와 compensation/sponsored 포함", "테스트 2개 통과"]},
+    {"id": "Q-004", "title": "④ 불확실성 등급 (Morningstar 모델)", "passes": true, "acceptanceCriteria": ["build_eeat_frontmatter()가 analysis_confidence, confidence_note 파라미터 수용", "기본값 'medium', 허용값 외 ValueError 발생", "frontmatter 출력에 두 필드 포함", "테스트 3개 통과"]},
+    {"id": "Q-005", "title": "⑤ 시나리오 박스 대칭 강제", "passes": true, "acceptanceCriteria": ["verify_rule_based()가 scenario-box 있고 하락/손실 키워드 없으면 issues에 'scenario_missing_downside' 추가 ok=False", "하락 키워드 있으면 scenario_missing_downside 없음", "테스트 2개 통과"]},
+    {"id": "Q-006", "title": "⑥ 결론부 방향성 언어 소프트콜", "passes": true, "acceptanceCriteria": ["verify_rule_based() 반환값에 'warnings' 키 존재", "소프트콜 패턴 감지 + 개인상황 문구 없으면 warnings에 'soft_directional' 포함 (ok=True 유지)", "개인상황 문구 있으면 soft_directional 경고 없음", "테스트 2개 통과"]},
+    {"id": "Q-007", "title": "⑦ 분석 신뢰도 뱃지", "passes": true, "acceptanceCriteria": ["_format_signal_with_badge() 함수 content_generator.py에 존재", "confidence < 0.60이면 반환값에 ⚠️ 또는 '낮은 신뢰도' 포함", "confidence >= 0.60이면 ⚠️ 없음", "테스트 2개 통과"]},
+    {"id": "Q-008", "title": "⑨ 재현 가능 코드 스니펫", "passes": true, "acceptanceCriteria": ["_build_verification_snippet(ticker='VOO', lang='ko')가 yfinance·VOO·```python 포함 반환", "_build_verification_snippet(ticker='005930.KS', lang='ko')가 빈 문자열 반환", "테스트 2개 통과"]},
+    {"id": "Q-009", "title": "⑪ EU AI Act 메타 태그 (Hugo partial)", "passes": true, "acceptanceCriteria": ["web/layouts/partials/extend_head.html에 name='ai-generated' 메타태그 존재", "name='ai-model' 메타태그 존재", "테스트 1개 통과"]},
+    {"id": "Q-010", "title": "⑫ PredictionTracker 신규 모듈", "passes": true, "acceptanceCriteria": ["auto_publisher/prediction_tracker.py에 PredictionTracker 클래스 존재", "record(), pending_verification(), run_verification(), accuracy_summary() 메서드 구현", "return_pct 계산: (653.14-600)/600 ≈ 8.86% (rel=0.01)", "테스트 3개 통과"]},
+    {"id": "Q-011", "title": "⑬ 3단 표기 (AI생성+자동검증+감수)", "passes": true, "acceptanceCriteria": ["build_eeat_frontmatter() 결과에 ai_generated, verifiedBy, reviewedBy 모두 존재", "reviewed_by=None이면 '편집자 미검토' 또는 'unreviewed' 포함", "테스트 2개 통과"]}
+  ]
+}

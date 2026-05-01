@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>인덱스펀드 on InvestIQs — 투자 정보 블로그</title>
+    <link>https://investiqs.net/ko/tags/%EC%9D%B8%EB%8D%B1%EC%8A%A4%ED%8E%80%EB%93%9C/</link>
+    <description>Recent content in 인덱스펀드 on InvestIQs — 투자 정보 블로그</description>
+    <generator>Hugo</generator>
+    <language>ko</language>
+    <lastBuildDate>Sat, 25 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://investiqs.net/ko/tags/%EC%9D%B8%EB%8D%B1%EC%8A%A4%ED%8E%80%EB%93%9C/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VOO 5년 수익률과 낙폭으로 본 가격 패턴</title>
+      <link>https://investiqs.net/ko/study/voo-5%EB%85%84-%EC%88%98%EC%9D%B5%EB%A5%A0%EA%B3%BC-%EB%82%99%ED%8F%AD%EC%9C%BC%EB%A1%9C-%EB%B3%B8-%EA%B0%80%EA%B2%A9-%ED%8C%A8%ED%84%B4/</link>
+      <pubDate>Sat, 25 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/ko/study/voo-5%EB%85%84-%EC%88%98%EC%9D%B5%EB%A5%A0%EA%B3%BC-%EB%82%99%ED%8F%AD%EC%9C%BC%EB%A1%9C-%EB%B3%B8-%EA%B0%80%EA%B2%A9-%ED%8C%A8%ED%84%B4/</guid>
+      <description>VOO 혼조 흐름 데이터 분석: 현재가 $656.42, 1년 수익률 32.2%, P/E 28.3 기준으로 가격 패턴과 최대낙폭을 수치로 정리한 리서치 노트.</description>
+    </item>
+    <item>
+      <title>VOO 5년 수익률과 밸류에이션으로 본 흐름</title>
+      <link>https://investiqs.net/ko/study/voo-5%EB%85%84-%EC%88%98%EC%9D%B5%EB%A5%A0%EA%B3%BC-%EB%B0%B8%EB%A5%98%EC%97%90%EC%9D%B4%EC%85%98%EC%9C%BC%EB%A1%9C-%EB%B3%B8-%ED%9D%90%EB%A6%84/</link>
+      <pubDate>Wed, 22 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/ko/study/voo-5%EB%85%84-%EC%88%98%EC%9D%B5%EB%A5%A0%EA%B3%BC-%EB%B0%B8%EB%A5%98%EC%97%90%EC%9D%B4%EC%85%98%EC%9C%BC%EB%A1%9C-%EB%B3%B8-%ED%9D%90%EB%A6%84/</guid>
+      <description>VOO 혼조 흐름 데이터 분석: 현재가 $651.54, 1년 &#43;36.3%, 3년 &#43;79.0%, 5년 &#43;85.0%, P/E 28.1 기준으로 밸류에이션과 추세를 수치로 검토.</description>
+    </item>
+  </channel>
+</rss>

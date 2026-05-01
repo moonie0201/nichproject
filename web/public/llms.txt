@@ -1,0 +1,23 @@
+# InvestIQs — 데이터 기반 투자 정보
+
+> 한국 및 글로벌 ETF, 배당주, 절세 전략, 부동산 투자에 대한 실데이터 기반 분석 콘텐츠. yfinance, pykrx 등 공개 시장 데이터로 검증 가능한 수치만 인용하며, 3인칭 리서치 노트 톤으로 작성한다.
+
+본 사이트는 자격이 인증된 투자 애널리스트 페르소나가 작성한 포스트를 다국어(한국어/영어/일본어/베트남어/인도네시아어)로 발행한다. 모든 수익률/가격 데이터는 yfinance 또는 pykrx에서 포스트 작성일 기준으로 수집된다.
+
+## 핵심 콘텐츠
+
+- [ETF 투자 가이드](https://investiqs.net/ko/categories/etf/): S&P500, 나스닥, 배당 ETF, 채권 ETF 분석
+- [배당주 전략](https://investiqs.net/ko/categories/배당주/): 고배당주, 배당성장주, REITs, 배당 재투자
+- [절세 계좌](https://investiqs.net/ko/categories/절세/): ISA, 연금저축, IRP, 연말정산, 양도소득세
+- [부동산 투자](https://investiqs.net/ko/categories/부동산/): 청약, 갭투자, 경매, 수익형 부동산
+- [재테크 기초](https://investiqs.net/ko/categories/재테크-기초/): 사회초년생 로드맵, 자산배분, 신용관리
+
+## 데이터 출처 & 방법론
+
+- [데이터 & 방법론 페이지](https://investiqs.net/ko/about/methodology/)
+- [편집 정책](https://investiqs.net/ko/about/editorial-policy/)
+- [저자 프로필](https://investiqs.net/ko/about/authors/)
+
+## 면책
+
+본 사이트는 교육/정보 목적이며 투자 자문이 아니다. 모든 투자 판단은 독자 본인의 책임이며, 과거 수익률이 미래 수익을 보장하지 않는다.

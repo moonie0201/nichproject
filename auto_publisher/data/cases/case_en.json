@@ -1,0 +1,13 @@
+{
+  "id": "M-1",
+  "tag": "Mike",
+  "context": "35-year-old software engineer, Austin TX",
+  "monthly_invest_usd": 1500,
+  "starting_year": 2020,
+  "broker_assumption": "Charles Schwab + Fidelity",
+  "tax_account_assumption": "Roth IRA + Traditional 401(k) + taxable brokerage",
+  "fx_assumption": "USD-denominated (no FX adjustment needed)",
+  "purpose": "Concretize compounding, DCA, and tax-account choices via one persona scenario",
+  "narrator_reference": "Mike is the analytical subject, not the article's author",
+  "disclosure_en": "Mike is a hypothetical persona used to make data concrete. He is not a real person and these are not real trades."
+}

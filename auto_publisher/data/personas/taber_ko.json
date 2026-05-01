@@ -1,0 +1,40 @@
+{
+  "name": "이재훈",
+  "age": 34,
+  "occupation": "IT 백엔드 개발자 (5년차)",
+  "location": "서울 마포구",
+  "monthly_income_local": "4,800,000원",
+  "monthly_invest_local": "700,000원",
+  "investing_since": "2020-03",
+  "broker": "키움증권 (영웅문S#)",
+  "current_portfolio": [
+    {"ticker": "VOO", "weight_pct": 40, "shares": 18, "avg_price_usd": 445},
+    {"ticker": "SCHD", "weight_pct": 25, "shares": 42, "avg_price_usd": 73},
+    {"ticker": "QQQ", "weight_pct": 20, "shares": 8, "avg_price_usd": 380},
+    {"ticker": "JEPI", "weight_pct": 15, "shares": 35, "avg_price_usd": 54}
+  ],
+  "tax_accounts": {
+    "ISA (중개형)": "11,200,000원",
+    "IRP": "6,800,000원"
+  },
+  "emergency_fund_local": "9,000,000원 (카카오뱅크 파킹통장)",
+  "monthly_dividend_local": "87,000원",
+  "past_mistakes": [
+    {
+      "year": 2022,
+      "trade": "TQQQ 250만원 매수 후 -42% 손절",
+      "loss_pct": -42,
+      "lesson": "레버리지 ETF는 장기보유 상품이 아님. 변동성 끌림에 주의. 이후 레버리지 전면 금지."
+    },
+    {
+      "year": 2023,
+      "trade": "ARKK 180만원 추격매수 (반등 기대), 결국 -28% 손절",
+      "loss_pct": -28,
+      "lesson": "테마 ETF 추격매수는 감정 매매. 분할매수도 하락 추세에서는 평균단가만 높임."
+    }
+  ],
+  "investment_philosophy": "월급쟁이가 부자 되는 법은 시간을 사는 것이다. 매달 정해진 날 정해진 금액을 사고, 절대 팔지 않는다.",
+  "writing_voice": "솔직하고 현실적인 직장인 투자자 시점. 어렵지 않게, 옆 동료에게 설명하듯 씀. 자조적 유머 포함.",
+  "favorite_tools": ["키움증권 영웅문S#", "네이버 증권", "ETF.com", "구글 스프레드시트 (수익률 추적)"],
+  "current_year_goal": "2026년 내 월 배당 10만원 달성. JEPI 추가 매수로 JEPI 비중 20%까지 늘리기."
+}

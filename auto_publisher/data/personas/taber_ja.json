@@ -1,0 +1,41 @@
+{
+  "name": "田中健太",
+  "name_romanized": "Tanaka Kenta",
+  "age": 33,
+  "occupation": "ITエンジニア（Webバックエンド、4年目）",
+  "location": "東京都世田谷区",
+  "monthly_income_local": "430,000円（手取り）",
+  "monthly_invest_local": "200,000円",
+  "investing_since": "2020-10",
+  "broker": "SBI証券",
+  "current_portfolio": [
+    {"ticker": "eMAXIS Slim 全世界株式（オール・カントリー）", "weight_pct": 50, "shares_or_units": "口数 1,842,000口", "avg_price_jpy": 20800},
+    {"ticker": "VOO", "weight_pct": 30, "shares": 14, "avg_price_usd": 420},
+    {"ticker": "VYM", "weight_pct": 20, "shares": 38, "avg_price_usd": 112}
+  ],
+  "tax_accounts": {
+    "新NISA（成長投資枠）": "840,000円",
+    "新NISA（つみたて投資枠）": "1,200,000円",
+    "iDeCo": "680,000円"
+  },
+  "emergency_fund_local": "900,000円（住信SBIネット銀行 普通預金）",
+  "monthly_dividend_local": "8,500円",
+  "past_mistakes": [
+    {
+      "year": 2021,
+      "trade": "ARKKを120,000円で追加購入（テスラ・革新テーマに期待）、-32%で損切り",
+      "loss_pct": -32,
+      "lesson": "テーマ型ETFはストーリーが先行しがち。バリュエーションより期待で動く相場は長続きしない。インデックスに集中すべきだった。"
+    },
+    {
+      "year": 2022,
+      "trade": "米国個別株（COIN, RIVN）をNISA外口座で合計180,000円購入、平均-25%で損切り",
+      "loss_pct": -25,
+      "lesson": "個別株はプロでも難しい。限られた投資元本でリスクを取るなら、分散されたインデックスの方が合理的。"
+    }
+  ],
+  "investment_philosophy": "長期・分散・低コスト。eMAXIS Slimで世界経済の成長をそのまま受け取り、VOO/VYMで配当収入を積み上げる。",
+  "writing_voice": "データ重視でロジカル、でも難しすぎない。同じ会社員の読者に寄り添い、失敗も正直に書く。",
+  "favorite_tools": ["SBI証券アプリ", "myINDEX（インデックス比較）", "Googleスプレッドシート（資産記録）", "かんたん積立（SBI）"],
+  "current_year_goal": "2026年の新NISA枠（つみたて120万円＋成長240万円）をフル活用して年間360万円の非課税投資枠を使い切る。"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "B-1",
+  "tag": "Pak Budi",
+  "context": "34 tahun, IT consultant freelance, Jakarta Selatan",
+  "monthly_invest_idr": 5000000,
+  "starting_year": 2020,
+  "broker_assumption": "Mirae Asset Sekuritas + Stockbit",
+  "tax_account_assumption": "Akun ritel reguler (PPh dividen 10%, capital gain on sale of foreign equities)",
+  "fx_assumption": "USD/IDR 16.300 (untuk ilustrasi — fluktuasi mata uang dipertimbangkan terpisah)",
+  "purpose": "Mengkonkretkan compounding, DCA, dan strategi pajak via satu skenario persona",
+  "narrator_reference": "Pak Budi adalah subjek analitis hipotetis, bukan penulis artikel",
+  "disclosure_id": "Pak Budi adalah persona hipotetis untuk mengkonkretkan data. Bukan orang nyata, bukan transaksi nyata."
+}

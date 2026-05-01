@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Personal Finance on InvestIQs — Investment Blog</title>
+    <link>https://investiqs.net/en/categories/personal-finance/</link>
+    <description>Recent content in Personal Finance on InvestIQs — Investment Blog</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 28 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://investiqs.net/en/categories/personal-finance/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Korean Income Tax Filing Guide: The Dividend Threshold and IRP/ISA Tax Strategy</title>
+      <link>https://investiqs.net/en/study/korean-income-tax-filing-guide-the-dividend-threshold-and-irpisa-tax-strategy/</link>
+      <pubDate>Tue, 28 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/en/study/korean-income-tax-filing-guide-the-dividend-threshold-and-irpisa-tax-strategy/</guid>
+      <description>English-localized research note on Korean comprehensive income tax filing, the KRW 20 million dividend and interest threshold, IRP and ISA tax credits, penalties, and high-dividend separate taxation.</description>
+    </item>
+    <item>
+      <title>Expense Ratio Compounding: 0.03% vs 0.5% Over 30 Years</title>
+      <link>https://investiqs.net/en/study/expense-ratio-compounding-003-vs-05-over-30-years/</link>
+      <pubDate>Sat, 25 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/en/study/expense-ratio-compounding-003-vs-05-over-30-years/</guid>
+      <description>Expense ratio compounding model: 0.03% vs 0.5% over 30 years, with live ETF data, peer comparisons, and fee-drag scenarios.</description>
+    </item>
+    <item>
+      <title>TQQQ’s 5-Year Drawdown and Volatility Breakdown: Where 3x Lagged 2x</title>
+      <link>https://investiqs.net/en/study/tqqqs-5-year-drawdown-and-volatility-breakdown-where-3x-lagged-2x/</link>
+      <pubDate>Sat, 25 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/en/study/tqqqs-5-year-drawdown-and-volatility-breakdown-where-3x-lagged-2x/</guid>
+      <description>A research note comparing TQQQ, QLD, and QQQ on five-year returns, drawdown, volatility, dividend yield, and path dependence to test whether 3x leverage really outpaces 2x.</description>
+    </item>
+    <item>
+      <title>QQQ vs SPY 10-Year Regression: Tech Concentration vs Diversification</title>
+      <link>https://investiqs.net/en/study/qqq-vs-spy-10-year-regression-tech-concentration-vs-diversification/</link>
+      <pubDate>Fri, 24 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/en/study/qqq-vs-spy-10-year-regression-tech-concentration-vs-diversification/</guid>
+      <description>QQQ vs SPY regression analysis on tech concentration, returns, and yield using exact yfinance data for US investors.</description>
+    </item>
+    <item>
+      <title>TQQQ Five-Year Drawdown and Volatility Decomposition: When 3x Trails 2x</title>
+      <link>https://investiqs.net/en/study/tqqq-five-year-drawdown-and-volatility-decomposition-when-3x-trails-2x/</link>
+      <pubDate>Fri, 24 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/en/study/tqqq-five-year-drawdown-and-volatility-decomposition-when-3x-trails-2x/</guid>
+      <description>A data-driven look at TQQQ’s five-year drawdown, volatility, and path dependence versus QLD and QQQ, showing why 3x trailed 2x in this window.</description>
+    </item>
+    <item>
+      <title>VOO DCA After 12 Months: Real Returns, Mistakes, and SCHD Contrast</title>
+      <link>https://investiqs.net/en/study/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/</link>
+      <pubDate>Wed, 22 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/en/study/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/</guid>
+      <description>VOO DCA after 12 months: real returns, SCHD comparison, and monthly ETF investing mistakes for U.S. investors.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,38 @@
+[
+  {"id": "en-etf-01", "topic": "ETF Investing for Beginners: How to Start With $100", "keywords": ["ETF investing", "index funds", "beginner investing", "S&P500"], "category": "ETF"},
+  {"id": "en-etf-02", "topic": "S&P500 vs Total Market ETF: Which Should You Choose?", "keywords": ["S&P500 ETF", "VTI", "VOO", "index fund comparison"], "category": "ETF"},
+  {"id": "en-etf-03", "topic": "Dividend ETF vs Growth ETF: Building Passive Income", "keywords": ["dividend ETF", "SCHD", "VYM", "passive income"], "category": "ETF"},
+  {"id": "en-etf-04", "topic": "Best Low-Cost ETFs of 2025: Expense Ratio Matters", "keywords": ["low cost ETF", "expense ratio", "Vanguard", "Fidelity"], "category": "ETF"},
+  {"id": "en-etf-05", "topic": "Sector ETFs: How to Bet on Tech, Healthcare, and Energy", "keywords": ["sector ETF", "tech ETF", "QQQ", "healthcare ETF"], "category": "ETF"},
+  {"id": "en-etf-06", "topic": "Bond ETFs Explained: Safe Harbor in a Volatile Market", "keywords": ["bond ETF", "BND", "AGG", "fixed income"], "category": "ETF"},
+  {"id": "en-etf-07", "topic": "International ETF Investing: Go Beyond the US Market", "keywords": ["international ETF", "VEA", "VWO", "global investing"], "category": "ETF"},
+  {"id": "en-etf-08", "topic": "Dollar-Cost Averaging with ETFs: A Decade Simulation", "keywords": ["dollar cost averaging", "DCA", "ETF strategy", "long-term investing"], "category": "ETF"},
+  {"id": "en-etf-09", "topic": "Gold ETF vs Physical Gold: What's Better for Your Portfolio?", "keywords": ["gold ETF", "GLD", "IAU", "gold investing"], "category": "ETF"},
+  {"id": "en-etf-10", "topic": "Leveraged ETFs: Why Most Investors Should Avoid Them", "keywords": ["leveraged ETF", "3x ETF", "TQQQ", "ETF risk"], "category": "ETF"},
+
+  {"id": "en-div-01", "topic": "Dividend Investing 101: How to Build a $1,000/Month Income", "keywords": ["dividend investing", "dividend income", "passive income", "dividend stocks"], "category": "Dividend"},
+  {"id": "en-div-02", "topic": "Dividend Aristocrats: 25+ Years of Consecutive Dividend Growth", "keywords": ["dividend aristocrats", "dividend growth", "JNJ", "KO"], "category": "Dividend"},
+  {"id": "en-div-03", "topic": "High Dividend Yield Stocks: Trap or Treasure?", "keywords": ["high dividend yield", "dividend trap", "yield analysis", "dividend safety"], "category": "Dividend"},
+  {"id": "en-div-04", "topic": "DRIP Investing: How Dividend Reinvestment Compounds Wealth", "keywords": ["DRIP", "dividend reinvestment", "compound interest", "wealth building"], "category": "Dividend"},
+  {"id": "en-div-05", "topic": "REITs for Passive Income: Best Real Estate Investment Trusts", "keywords": ["REITs", "real estate investing", "O", "VICI", "rental income"], "category": "Dividend"},
+  {"id": "en-div-06", "topic": "Covered Call ETFs: Monthly Income Strategy Explained", "keywords": ["covered call ETF", "JEPI", "QYLD", "options income"], "category": "Dividend"},
+  {"id": "en-div-07", "topic": "International Dividend Stocks: Boost Yield Beyond the US", "keywords": ["international dividends", "foreign stocks", "ADR", "global income"], "category": "Dividend"},
+  {"id": "en-div-08", "topic": "Building a Dividend Portfolio From Scratch: Step-by-Step", "keywords": ["dividend portfolio", "stock picking", "portfolio building", "income investing"], "category": "Dividend"},
+
+  {"id": "en-tax-01", "topic": "Roth IRA vs Traditional IRA: Which Tax Advantage Wins?", "keywords": ["Roth IRA", "Traditional IRA", "tax-advantaged investing", "retirement"], "category": "Tax"},
+  {"id": "en-tax-02", "topic": "401k Contribution Limits 2025: Maximize Your Tax Savings", "keywords": ["401k", "contribution limits", "employer match", "retirement savings"], "category": "Tax"},
+  {"id": "en-tax-03", "topic": "Tax-Loss Harvesting: How to Turn Losses Into Tax Savings", "keywords": ["tax loss harvesting", "capital gains", "tax strategy", "wash sale rule"], "category": "Tax"},
+  {"id": "en-tax-04", "topic": "HSA Investing: The Triple Tax Advantage Most People Miss", "keywords": ["HSA", "health savings account", "triple tax advantage", "medical investing"], "category": "Tax"},
+  {"id": "en-tax-05", "topic": "Capital Gains Tax Guide: Short-Term vs Long-Term Rates", "keywords": ["capital gains tax", "long-term capital gains", "tax rates", "stock taxes"], "category": "Tax"},
+  {"id": "en-tax-06", "topic": "Backdoor Roth IRA: Beat Income Limits Legally", "keywords": ["backdoor Roth IRA", "Roth conversion", "high income investing", "tax strategy"], "category": "Tax"},
+
+  {"id": "en-re-01", "topic": "House Hacking: How to Live for Free While Building Wealth", "keywords": ["house hacking", "rental income", "real estate investing", "live for free"], "category": "Real Estate"},
+  {"id": "en-re-02", "topic": "REITs vs Rental Property: Which Builds More Wealth?", "keywords": ["REITs vs rental", "real estate investing", "passive income", "property investment"], "category": "Real Estate"},
+  {"id": "en-re-03", "topic": "How to Analyze a Rental Property: Cap Rate, Cash Flow, ROI", "keywords": ["rental property analysis", "cap rate", "cash flow", "real estate ROI"], "category": "Real Estate"},
+
+  {"id": "en-basic-01", "topic": "Emergency Fund 101: How Much You Really Need (and Where to Park It)", "keywords": ["emergency fund", "HYSA", "high yield savings", "financial safety net"], "category": "Basics"},
+  {"id": "en-basic-02", "topic": "The 50/30/20 Budget Rule: Simple Framework for Financial Freedom", "keywords": ["budget rule", "50/30/20", "personal budgeting", "money management"], "category": "Basics"},
+  {"id": "en-basic-03", "topic": "Compound Interest: Why Starting at 25 Beats Starting at 35", "keywords": ["compound interest", "time in market", "early investing", "financial math"], "category": "Basics"},
+  {"id": "en-basic-04", "topic": "Index Funds vs Active Funds: Why 90% of Pros Lose to the Market", "keywords": ["index funds", "active funds", "passive investing", "fund performance"], "category": "Basics"},
+  {"id": "en-basic-05", "topic": "Asset Allocation by Age: The Simple Formula That Works", "keywords": ["asset allocation", "age-based investing", "stock bond ratio", "portfolio rebalancing"], "category": "Basics"}
+]

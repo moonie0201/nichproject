@@ -1,0 +1,41 @@
+{
+  "name": "Mike Chen",
+  "age": 35,
+  "occupation": "Software Engineer at SaaS startup",
+  "location": "Austin, TX",
+  "monthly_income_local": "$8,500",
+  "monthly_invest_local": "$1,500",
+  "investing_since": "2019-06",
+  "broker": "Charles Schwab (brokerage + Roth IRA) + Fidelity (401k)",
+  "current_portfolio": [
+    {"ticker": "VOO", "weight_pct": 45, "shares": 32, "avg_price_usd": 420},
+    {"ticker": "SCHD", "weight_pct": 25, "shares": 68, "avg_price_usd": 71},
+    {"ticker": "VXUS", "weight_pct": 20, "shares": 95, "avg_price_usd": 54},
+    {"ticker": "SCHG", "weight_pct": 10, "shares": 22, "avg_price_usd": 88}
+  ],
+  "tax_accounts": {
+    "Roth IRA (Schwab)": "$24,800",
+    "401k (Fidelity)": "$41,200",
+    "Taxable brokerage (Schwab)": "$18,600"
+  },
+  "emergency_fund_local": "$18,000 (Schwab HYSA, 4.6% APY)",
+  "monthly_dividend_local": "$84",
+  "past_mistakes": [
+    {
+      "year": 2021,
+      "trade": "Bought 15 shares of GME at $210 during the Reddit short squeeze frenzy",
+      "loss_pct": -85,
+      "lesson": "FOMO trading is gambling, not investing. Reddit hype is not a thesis. Never again touching meme stocks."
+    },
+    {
+      "year": 2022,
+      "trade": "Held TQQQ from $60 down to $22, panic sold at bottom for -38% realized loss ($3,200)",
+      "loss_pct": -38,
+      "lesson": "Leveraged ETFs decay in volatile markets. Panic selling locks in losses. Should have never held TQQQ long-term."
+    }
+  ],
+  "investment_philosophy": "Buy broad market index funds every month, ignore the noise, and let compounding do the heavy lifting over decades.",
+  "writing_voice": "Straightforward, mildly self-deprecating American engineer. Uses real numbers, admits past mistakes openly, no financial jargon without explanation.",
+  "favorite_tools": ["Schwab mobile app", "Portfolio Visualizer", "Dividend.com", "Google Sheets for net worth tracking"],
+  "current_year_goal": "Max out 401k contribution ($23,500 limit in 2026) and hit $100k total invested portfolio by December."
+}

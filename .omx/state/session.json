@@ -1,0 +1,9 @@
+{
+  "session_id": "omx-1777379181019-8x82im",
+  "started_at": "2026-04-28T12:26:26.226Z",
+  "cwd": "/home/mh/ocstorage/workspace/nichproject",
+  "pid": 1000737,
+  "platform": "linux",
+  "pid_start_ticks": 155180190,
+  "pid_cmdline": "node /home/mh/.npm-global/bin/omx --madmax --high"
+}
