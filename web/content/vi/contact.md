@@ -4,7 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 description: "Liên hệ với InvestIQs. Gửi câu hỏi về thông tin đầu tư hoặc blog qua email."
-layout: "single"
+layout: "page"
 comments: true
 ---
 

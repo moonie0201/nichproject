@@ -4,7 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 description: "InvestIQs에 문의하세요. 투자 정보, 블로그 관련 질문을 이메일로 보내주세요."
-layout: "single"
+layout: "page"
 comments: true
 ---
 

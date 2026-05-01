@@ -7,7 +7,7 @@ reviewed: false
 analysis_confidence: "medium"
 description: "Privacy Policy for InvestIQs. Information about cookies, Google AdSense, and analytics usage."
 keywords: "InvestIQs privacy policy, cookies policy, Google AdSense data, analytics usage, personal data protection"
-layout: "single"
+layout: "page"
 ---
 
 <script type="application/ld+json">

@@ -4,7 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 description: "Kebijakan Privasi InvestIQs. Informasi tentang penggunaan cookie, Google AdSense, dan analitik."
-layout: "single"
+layout: "page"
 ---
 
 <script type="application/ld+json">

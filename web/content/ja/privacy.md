@@ -4,7 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 description: "InvestIQsのプライバシーポリシーです。Cookie、Google AdSense、アナリティクスの使用についてご説明します。"
-layout: "single"
+layout: "page"
 ---
 
 <script type="application/ld+json">

@@ -4,7 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 description: "InvestIQs의 개인정보처리방침입니다. 쿠키, Google AdSense, 애널리틱스 사용에 관한 안내를 포함합니다."
-layout: "single"
+layout: "page"
 ---
 
 <script type="application/ld+json">

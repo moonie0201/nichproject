@@ -1,0 +1,22 @@
+# 환경변수 / 시크릿
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+ml_env/
+
+# OMC / Claude 내부 상태
+.omc/state/
+.omc/sessions/
+.claude/scheduled_tasks.lock
+
+# 빌드 / 로그
+*.log
+auto_publisher/*.log
+n8n/bridge.log

@@ -4,7 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 description: "Chính sách bảo mật của InvestIQs. Thông tin về cookie, Google AdSense và phân tích dữ liệu."
-layout: "single"
+layout: "page"
 ---
 
 <script type="application/ld+json">

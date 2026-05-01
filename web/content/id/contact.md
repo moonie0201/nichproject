@@ -4,7 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 description: "Hubungi InvestIQs. Kirim pertanyaan tentang informasi investasi atau blog melalui email."
-layout: "single"
+layout: "page"
 comments: true
 ---
 

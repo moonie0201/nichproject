@@ -4,7 +4,7 @@ date: 2026-04-28
 lastmod: 2026-04-28
 draft: false
 description: "Contact InvestIQs. Send us your questions about investment information or the blog."
-layout: "single"
+layout: "page"
 comments: true
 ---
 

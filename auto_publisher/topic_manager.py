@@ -495,6 +495,66 @@ class TopicManager:
         union = words_a | words_b
         return len(intersection) / len(union)
 
+    def _get_global_recent_primary_keywords(self, days: int = 30) -> list[str]:
+        """전역 published_history.json에서 최근 N일 이내 발행된 topic_id의 primary_keyword(첫 번째 키워드) 수집"""
+        global_history_file = DATA_DIR / "published_history.json"
+        try:
+            if not global_history_file.exists():
+                return []
+            with open(global_history_file, "r", encoding="utf-8") as f:
+                history = json.load(f)
+            cutoff = datetime.now().timestamp() - days * 86400
+            recent_ids: set[str] = set()
+            for h in history:
+                try:
+                    pub_ts = datetime.fromisoformat(h["published_at"]).timestamp()
+                except (KeyError, ValueError):
+                    continue
+                if pub_ts >= cutoff:
+                    recent_ids.add(h["topic_id"])
+            # Collect primary keywords (first keyword) from all language topic files
+            primary_keywords: list[str] = []
+            for lang_topics_file in DATA_DIR.glob("topics_*.json"):
+                try:
+                    with open(lang_topics_file, "r", encoding="utf-8") as f:
+                        lang_topics = json.load(f)
+                    for t in lang_topics:
+                        if t.get("id") in recent_ids:
+                            kws = t.get("keywords", [])
+                            if kws:
+                                primary_keywords.append(kws[0])
+                except Exception:
+                    continue
+            return primary_keywords
+        except Exception:
+            return []
+
+    @staticmethod
+    def _primary_keyword_similarity(candidate_kw: str, existing_kw: str) -> float:
+        """두 primary_keyword의 단어 집합 Jaccard 유사도"""
+        words_a = set(candidate_kw.lower().split())
+        words_b = set(existing_kw.lower().split())
+        if not words_a or not words_b:
+            return 0.0
+        return len(words_a & words_b) / len(words_a | words_b)
+
+    def _is_duplicate_primary_keyword(self, candidate: dict, global_primary_keywords: list[str], threshold: float = 0.8) -> str | None:
+        """
+        후보 토픽의 primary_keyword가 전역 최근 발행 항목과 중복인지 검사.
+        중복이면 매칭된 키워드 반환, 아니면 None.
+        """
+        candidate_kws = candidate.get("keywords", [])
+        if not candidate_kws:
+            return None
+        candidate_pk = candidate_kws[0]
+        for existing_pk in global_primary_keywords:
+            if candidate_pk == existing_pk:
+                return existing_pk
+            sim = self._primary_keyword_similarity(candidate_pk, existing_pk)
+            if sim >= threshold:
+                return existing_pk
+        return None
+
     def _get_recent_published_topics(self, days: int = 30) -> list[dict]:
         """최근 N일 이내 발행된 토픽 목록 반환 (키워드+제목 포함)"""
         try:
@@ -561,6 +621,7 @@ class TopicManager:
         failed = self._load_failed()
         published_ids = {h["topic_id"] for h in history}
         recent_topics = self._get_recent_published_topics(days=30)
+        global_primary_keywords = self._get_global_recent_primary_keywords(days=30)
 
         # 1) 실패 재시도 우선 (attempts < 3, 발행 안 됨)
         topics_by_id = {t["id"]: t for t in topics}
@@ -573,7 +634,11 @@ class TopicManager:
             if candidate and candidate.get("type", "blog") == topic_type:
                 matched = self._is_duplicate_topic(candidate, recent_topics)
                 if matched:
-                    logger.info(f"Skipping duplicate topic: {candidate['topic']} (similar to recent: {matched})")
+                    logger.debug(f"Skipping duplicate topic: {candidate['topic']} (similar to recent: {matched})")
+                    continue
+                global_matched = self._is_duplicate_primary_keyword(candidate, global_primary_keywords)
+                if global_matched:
+                    logger.debug(f"Skipping topic (global primary_keyword duplicate): {candidate['topic']} (matches: {global_matched})")
                     continue
                 logger.info(
                     f"실패 재시도: [{candidate['category']}] {candidate['topic']}"
@@ -589,7 +654,11 @@ class TopicManager:
                 continue
             matched = self._is_duplicate_topic(topic, recent_topics)
             if matched:
-                logger.info(f"Skipping duplicate topic: {topic['topic']} (similar to recent: {matched})")
+                logger.debug(f"Skipping duplicate topic: {topic['topic']} (similar to recent: {matched})")
+                continue
+            global_matched = self._is_duplicate_primary_keyword(topic, global_primary_keywords)
+            if global_matched:
+                logger.debug(f"Skipping topic (global primary_keyword duplicate): {topic['topic']} (matches: {global_matched})")
                 continue
             logger.info(f"다음 토픽: [{topic['category']}] {topic['topic']}")
             return topic
