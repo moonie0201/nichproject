@@ -208,8 +208,8 @@ def _make_text_card_clip(
         )
     args = [
         "-f", "lavfi", "-i", filter_expr,
-        "-c:v", "libx264",
-        "-preset", "veryfast",
+        "-c:v", os.getenv("FFMPEG_VIDEO_CODEC", "h264_nvenc"),
+        "-preset", os.getenv("FFMPEG_PRESET", "p1"),
         "-tune", "stillimage",
         "-pix_fmt", "yuv420p",
         str(out_path),
@@ -279,7 +279,9 @@ def _make_kenburns_clip(image_path: Path, duration_sec: float, out_path: Path,
         (f"scale={width*2}:{height*2}:force_original_aspect_ratio=decrease,"
          f"pad={width*2}:{height*2}:(ow-iw)/2:(oh-ih)/2:color=white,"
          f"zoompan={zoom_expr}:d={total_frames}:s={width}x{height}:fps={fps}"),
-        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-r", str(fps),
+        "-c:v", os.getenv("FFMPEG_VIDEO_CODEC", "h264_nvenc"),
+        "-preset", os.getenv("FFMPEG_PRESET", "p1"),
+        "-pix_fmt", "yuv420p", "-r", str(fps),
         str(out_path),
     ]
     return _ffmpeg_run(args, f"kenburns:{image_path.name}")
@@ -291,7 +293,9 @@ def _make_solid_clip(duration_sec: float, out_path: Path,
     args = [
         "-f", "lavfi", "-i",
         f"color=c={color}:s={width}x{height}:d={duration_sec:.2f}:r=30",
-        "-c:v", "libx264", "-pix_fmt", "yuv420p", str(out_path),
+        "-c:v", os.getenv("FFMPEG_VIDEO_CODEC", "h264_nvenc"),
+        "-preset", os.getenv("FFMPEG_PRESET", "p1"),
+        "-pix_fmt", "yuv420p", str(out_path),
     ]
     return _ffmpeg_run(args, "solid_bg")
 
@@ -301,7 +305,10 @@ def _vstack_clips(top_path: Path, bot_path: Path, out_path: Path) -> bool:
     args = [
         "-i", str(top_path), "-i", str(bot_path),
         "-filter_complex", "[0:v][1:v]vstack=inputs=2[v]",
-        "-map", "[v]", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+        "-map", "[v]",
+        "-c:v", os.getenv("FFMPEG_VIDEO_CODEC", "h264_nvenc"),
+        "-preset", os.getenv("FFMPEG_PRESET", "p1"),
+        "-pix_fmt", "yuv420p",
         str(out_path),
     ]
     return _ffmpeg_run(args, "vstack")
@@ -356,7 +363,9 @@ def _mux_audio_subtitle(video_path: Path, audio_path: Path, srt_path: Path,
         "-i", str(audio_path),
         "-filter_complex", filter_complex,
         "-map", "[vout]", "-map", "1:a",
-        "-c:v", "libx264", "-c:a", "aac",
+        "-c:v", os.getenv("FFMPEG_VIDEO_CODEC", "h264_nvenc"),
+        "-preset", os.getenv("FFMPEG_PRESET", "p1"),
+        "-c:a", "aac",
         "-b:a", "192k", "-shortest",
         str(out_path),
     ]

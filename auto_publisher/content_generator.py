@@ -709,7 +709,7 @@ def _call_gemini_cli(prompt: str, max_retries: int = 2) -> str:
 
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3.6:35b-a3b")
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-OLLAMA_TIMEOUT_SEC = int(os.getenv("OLLAMA_TIMEOUT_SEC", "1200"))
+OLLAMA_TIMEOUT_SEC = int(os.getenv("OLLAMA_TIMEOUT_SEC", "300"))
 OLLAMA_THINK_MODE = os.getenv("OLLAMA_THINK_MODE", "script").strip().lower()
 
 
