@@ -7,6 +7,7 @@ description: "S&P 500 +0.99%, Nasdaq +0.93%, VIX 16.89."
 schema: "NewsArticle"
 primary_keyword: "US Market Close"
 toc: true
+comments: true
 tags:
   - "SPY"
   - "QQQ"

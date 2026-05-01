@@ -14,6 +14,7 @@ keywords:
 schema: "NewsArticle"
 primary_keyword: "US Market Intraday"
 toc: true
+comments: true
 tags:
   - "SPY"
   - "QQQ"

@@ -10,6 +10,7 @@ keywords: "quyet toan thue thu nhap ca nhan co tuc, thoi han quyet toan thue thu
 primary_keyword: "quyet toan thue thu nhap ca nhan co tuc"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/quyết-toán-thuế-thu-nhập-cá-nhân-cổ-tức-quỹ-hưu-trí-tự-nguyện-và-cấu-trúc-tài-kh/compound-growth.png"
     alt: "Quyết toán thuế thu nhập cá nhân: cổ tức, quỹ hưu trí tự nguyện và cấu trúc tài khoản"

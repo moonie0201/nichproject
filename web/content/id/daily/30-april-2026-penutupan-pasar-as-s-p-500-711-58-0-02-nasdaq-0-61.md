@@ -8,6 +8,7 @@ keywords: "S&P 500 penutupan, Nasdaq penutupan, Dow penutupan, VIX, pasar AS pen
 schema: "NewsArticle"
 primary_keyword: "US Market Close"
 toc: true
+comments: true
 tags:
   - "SPY"
   - "QQQ"

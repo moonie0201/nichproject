@@ -10,6 +10,7 @@ keywords: "VOO DCA, monthly ETF investing with VOO, S&P500 DCA real returns, VOO
 primary_keyword: "VOO DCA"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/compound-growth.png"
     alt: "VOO DCA After 12 Months: Real Returns, Mistakes, and SCHD Contrast"

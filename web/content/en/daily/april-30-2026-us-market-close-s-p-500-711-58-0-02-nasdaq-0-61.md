@@ -8,6 +8,7 @@ keywords: "S&P 500 close, Nasdaq close, Dow close, VIX, US market close, April 3
 schema: "NewsArticle"
 primary_keyword: "US Market Close"
 toc: true
+comments: true
 tags:
   - "SPY"
   - "QQQ"

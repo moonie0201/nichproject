@@ -10,6 +10,7 @@ keywords: "QQQ, QQQ vs SPY 10 year comparison, QQQ tech concentration vs SPY div
 primary_keyword: "QQQ"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/qqq-vs-spy-10-year-regression-tech-concentration-vs-diversification/compound-growth.png"
     alt: "QQQ vs SPY 10-Year Regression: Tech Concentration vs Diversification"

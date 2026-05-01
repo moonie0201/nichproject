@@ -10,6 +10,7 @@ keywords: "TQQQ 5年 ドローダウン, TQQQ 5年 ドローダウン, TQQQ QLD 
 primary_keyword: "TQQQ 5年 ドローダウン"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/tqqqの5年ドローダウンと変動性分解-3倍が2倍に劣る局面/compound-growth.png"
     alt: "TQQQの5年ドローダウンと変動性分解: 3倍が2倍に劣る局面"

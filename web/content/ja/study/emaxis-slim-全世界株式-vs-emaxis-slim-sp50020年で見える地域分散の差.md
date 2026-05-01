@@ -10,6 +10,7 @@ keywords: "eMAXIS Slim 全世界株式, eMAXIS Slim 全世界株式 vs eMAXIS Sl
 primary_keyword: "eMAXIS Slim 全世界株式"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/emaxis-slim-全世界株式-vs-emaxis-slim-sp50020年で見える地域分散の差/compound-growth.png"
     alt: "eMAXIS Slim 全世界株式 vs eMAXIS Slim S&P500｜20年で見える地域分散の差"

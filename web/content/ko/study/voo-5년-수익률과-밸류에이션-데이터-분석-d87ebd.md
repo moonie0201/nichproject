@@ -18,6 +18,7 @@ keywords:
 primary_keyword: "VOO"
 schema: "Article"
 toc: true
+comments: true
 cover:
     image: "/images/voo-5년-수익률과-밸류에이션-데이터-분석-d87ebd/price-history.png"
     alt: "VOO 5년 수익률과 밸류에이션 데이터 분석"

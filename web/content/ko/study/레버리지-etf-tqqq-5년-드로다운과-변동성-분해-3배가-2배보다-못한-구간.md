@@ -18,6 +18,7 @@ keywords:
 primary_keyword: "레버리지 ETF"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/레버리지-etf-tqqq-5년-드로다운과-변동성-분해-3배가-2배보다-못한-구간/fee-impact.png"
     alt: "레버리지 ETF TQQQ 5년 드로다운과 변동성 분해: 3배가 2배보다 못한 구간"

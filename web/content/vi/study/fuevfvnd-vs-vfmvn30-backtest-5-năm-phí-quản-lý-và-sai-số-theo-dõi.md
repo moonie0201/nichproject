@@ -10,6 +10,7 @@ keywords: "FUEVFVND, FUEVFVND vs VFMVN30 backtest 5 năm, sai số theo dõi FUE
 primary_keyword: "FUEVFVND"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/fuevfvnd-vs-vfmvn30-backtest-5-năm-phí-quản-lý-và-sai-số-theo-dõi/compound-growth.png"
     alt: "FUEVFVND vs VFMVN30: Backtest 5 Năm, Phí Quản Lý Và Sai Số Theo Dõi"

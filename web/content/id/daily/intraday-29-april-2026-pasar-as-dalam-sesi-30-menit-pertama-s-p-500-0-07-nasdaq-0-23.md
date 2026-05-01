@@ -8,6 +8,7 @@ keywords: "S&P 500 intraday, Nasdaq intraday, VIX intraday, pembukaan pasar AS, 
 schema: "NewsArticle"
 primary_keyword: "US Market Intraday"
 toc: true
+comments: true
 tags:
   - "SPY"
   - "QQQ"

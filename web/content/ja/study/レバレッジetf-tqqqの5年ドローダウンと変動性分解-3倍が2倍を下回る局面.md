@@ -10,6 +10,7 @@ keywords: "TQQQ, TQQQ 5年ドローダウン, TQQQ QLD 比較, TQQQ ボラティ
 primary_keyword: "TQQQ"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/レバレッジetf-tqqqの5年ドローダウンと変動性分解-3倍が2倍を下回る局面/compound-growth.png"
     alt: "レバレッジETF TQQQの5年ドローダウンと変動性分解: 3倍が2倍を下回る局面"

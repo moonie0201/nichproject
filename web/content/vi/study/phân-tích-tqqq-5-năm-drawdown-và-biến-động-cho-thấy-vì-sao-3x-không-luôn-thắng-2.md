@@ -10,6 +10,7 @@ keywords: "TQQQ 5 năm drawdown, TQQQ so với QLD, TQQQ so với QQQ, ETF đòn
 primary_keyword: "TQQQ 5 năm drawdown"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/phân-tích-tqqq-5-năm-drawdown-và-biến-động-cho-thấy-vì-sao-3x-không-luôn-thắng-2/compound-growth.png"
     alt: "Phân tích TQQQ 5 năm: drawdown và biến động cho thấy vì sao 3x không luôn thắng 2x"

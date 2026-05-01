@@ -10,6 +10,7 @@ keywords: "ETF IDX30, biaya ETF IDX30, return bersih reksa dana saham, komparasi
 primary_keyword: "ETF IDX30"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/etf-idx30-vs-reksa-dana-saham-data-7-tahun-biaya-dan-return-bersih/compound-growth.png"
     alt: "ETF IDX30 vs Reksa Dana Saham: Data 7 Tahun, Biaya dan Return Bersih"

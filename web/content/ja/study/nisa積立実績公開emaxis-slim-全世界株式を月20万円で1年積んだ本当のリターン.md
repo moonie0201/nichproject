@@ -10,6 +10,7 @@ keywords: "NISA積立実績, eMAXIS Slim 全世界株式, つみたてNISA1年, 
 primary_keyword: "NISA積立実績"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/nisa積立実績公開emaxis-slim-全世界株式を月20万円で1年積んだ本当のリターン/compound-growth.png"
     alt: "NISA積立実績公開：eMAXIS Slim 全世界株式を月20万円で1年積んだ本当のリターン"

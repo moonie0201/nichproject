@@ -10,6 +10,7 @@ keywords: "TQQQ, drawdown 5 tahun TQQQ, perbandingan TQQQ vs QLD vs QQQ, volatil
 primary_keyword: "TQQQ"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/etf-leveraged-tqqq-drawdown-5-tahun-dan-pembongkaran-volatilitas-saat-3x-terting/compound-growth.png"
     alt: "ETF Leveraged TQQQ: Drawdown 5 Tahun dan Pembongkaran Volatilitas, Saat 3x Tertinggal dari 2x"

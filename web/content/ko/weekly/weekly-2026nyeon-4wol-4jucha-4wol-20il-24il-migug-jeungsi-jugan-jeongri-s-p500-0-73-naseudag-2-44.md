@@ -9,6 +9,7 @@ keywords: "미국 증시 주간, 미국증시 마감 주간, S&P500 주간, 나�
 schema: "NewsArticle"
 primary_keyword: "미국 증시 주간"
 toc: true
+comments: true
 tags:
   - "SPY"
   - "QQQ"

@@ -10,6 +10,7 @@ keywords: "SPT Tahunan dividen, batas waktu SPT Tahunan orang pribadi 2026, paja
 primary_keyword: "SPT Tahunan dividen"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/spt-tahunan-dividen-dan-rekening-pensiun-struktur-pajak-yang-lebih-penting-darip/compound-growth.png"
     alt: "SPT Tahunan, Dividen, dan Rekening Pensiun: Struktur Pajak yang Lebih Penting daripada Nama ETF"

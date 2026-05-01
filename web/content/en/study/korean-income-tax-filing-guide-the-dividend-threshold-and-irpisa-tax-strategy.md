@@ -10,6 +10,7 @@ keywords: "Korean income tax filing guide, KRW 20 million dividend and interest 
 primary_keyword: "Korean income tax filing guide"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/korean-income-tax-filing-guide-the-dividend-threshold-and-irpisa-tax-strategy/compound-growth.png"
     alt: "Korean Income Tax Filing Guide: The Dividend Threshold and IRP/ISA Tax Strategy"

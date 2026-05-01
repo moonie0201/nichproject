@@ -10,6 +10,7 @@ keywords: "expense ratio, ETF expense ratio compounding model, 0.03% vs 0.5% fee
 primary_keyword: "expense ratio"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/expense-ratio-compounding-003-vs-05-over-30-years/compound-growth.png"
     alt: "Expense Ratio Compounding: 0.03% vs 0.5% Over 30 Years"

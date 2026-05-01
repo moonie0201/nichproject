@@ -10,6 +10,7 @@ keywords: "FUEVFVND, FUEVFVND vs FUESSV50 tổng lợi nhuận, FUEVFVND phân t
 primary_keyword: "FUEVFVND"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/fuevfvnd-vs-fuessv50-dữ-liệu-10-năm-về-tổng-lợi-nhuận-và-biến-động/compound-growth.png"
     alt: "FUEVFVND vs FUESSV50: Dữ liệu 10 năm về tổng lợi nhuận và biến động"

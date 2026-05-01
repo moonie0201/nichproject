@@ -7,6 +7,7 @@ description: "30-minute snapshot — S&P 500 -0.37%, Nasdaq -0.94%, VIX 17.94, g
 schema: "NewsArticle"
 primary_keyword: "US Market Intraday"
 toc: true
+comments: true
 tags:
   - "SPY"
   - "QQQ"

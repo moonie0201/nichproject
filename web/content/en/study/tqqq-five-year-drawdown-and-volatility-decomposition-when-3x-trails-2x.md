@@ -10,6 +10,7 @@ keywords: "TQQQ five-year drawdown, TQQQ vs QLD five-year returns, TQQQ drawdown
 primary_keyword: "TQQQ five-year drawdown"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/tqqq-five-year-drawdown-and-volatility-decomposition-when-3x-trails-2x/compound-growth.png"
     alt: "TQQQ Five-Year Drawdown and Volatility Decomposition: When 3x Trails 2x"

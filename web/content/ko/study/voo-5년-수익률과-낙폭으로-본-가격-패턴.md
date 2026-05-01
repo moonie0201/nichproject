@@ -18,6 +18,7 @@ keywords:
 primary_keyword: "VOO"
 schema: "Article"
 toc: true
+comments: true
 cover:
     image: "/images/voo-5년-수익률과-낙폭으로-본-가격-패턴/price-history.png"
     alt: "VOO 5년 수익률과 낙폭으로 본 가격 패턴"

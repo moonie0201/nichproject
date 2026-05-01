@@ -17,6 +17,7 @@ keywords:
 primary_keyword: "VOO"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/sp500-etf-비교-리포트-voo-vs-tiger-미국sp500-운용보수추적오차/etf-comparison.png"
     alt: "S&P500 ETF 비교 리포트: VOO vs TIGER 미국S&P500 운용보수·추적오차"

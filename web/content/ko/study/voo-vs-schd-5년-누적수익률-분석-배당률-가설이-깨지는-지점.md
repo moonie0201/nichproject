@@ -18,6 +18,7 @@ keywords:
 primary_keyword: "VOO"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/voo-vs-schd-5년-누적수익률-분석-배당률-가설이-깨지는-지점/etf-comparison.png"
     alt: "VOO vs SCHD 5년 누적수익률 분석: 배당률 가설이 깨지는 지점"

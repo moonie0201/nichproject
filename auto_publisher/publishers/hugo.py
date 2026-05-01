@@ -492,6 +492,7 @@ keywords: "{kw_str}"
 primary_keyword: "{primary_keyword}"
 schema: "{schema_type}"
 toc: true
+comments: true
 {cover_block}tags:
 {tags_yaml}
 categories:

@@ -10,6 +10,7 @@ keywords: "ETF IDX30, ETF IDX30 vs ETF LQ45, backtest 7 tahun ETF Indonesia, tot
 primary_keyword: "ETF IDX30"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/etf-idx30-vs-etf-lq45-backtest-7-tahun-total-return-dan-volatilitas/compound-growth.png"
     alt: "ETF IDX30 vs ETF LQ45: Backtest 7 Tahun Total Return dan Volatilitas"

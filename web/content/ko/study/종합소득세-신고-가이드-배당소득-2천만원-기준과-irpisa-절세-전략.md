@@ -17,6 +17,7 @@ keywords:
 primary_keyword: "종합소득세"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/종합소득세-신고-가이드-배당소득-2천만원-기준과-irpisa-절세-전략/compound-growth.png"
     alt: "종합소득세 신고 가이드: 배당소득 2천만원 기준과 IRP·ISA 절세 전략"

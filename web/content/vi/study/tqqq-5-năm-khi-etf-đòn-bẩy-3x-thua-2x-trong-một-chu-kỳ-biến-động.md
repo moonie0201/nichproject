@@ -10,6 +10,7 @@ keywords: "TQQQ 5 năm drawdown, TQQQ so với QLD và QQQ, drawdown 81.65% củ
 primary_keyword: "TQQQ 5 năm drawdown"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/tqqq-5-năm-khi-etf-đòn-bẩy-3x-thua-2x-trong-một-chu-kỳ-biến-động/compound-growth.png"
     alt: "TQQQ 5 năm: khi ETF đòn bẩy 3x thua 2x trong một chu kỳ biến động"

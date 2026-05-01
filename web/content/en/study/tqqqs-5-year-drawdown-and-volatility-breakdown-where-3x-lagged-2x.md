@@ -10,6 +10,7 @@ keywords: "TQQQ drawdown analysis, TQQQ vs QLD five-year total return, TQQQ maxi
 primary_keyword: "TQQQ drawdown analysis"
 schema: "HowTo"
 toc: true
+comments: true
 cover:
     image: "/images/tqqqs-5-year-drawdown-and-volatility-breakdown-where-3x-lagged-2x/compound-growth.png"
     alt: "TQQQ’s 5-Year Drawdown and Volatility Breakdown: Where 3x Lagged 2x"

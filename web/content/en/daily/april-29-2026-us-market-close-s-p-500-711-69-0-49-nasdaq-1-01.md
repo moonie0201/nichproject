@@ -14,6 +14,7 @@ keywords:
 schema: "NewsArticle"
 primary_keyword: "US Market Close"
 toc: true
+comments: true
 tags:
   - "SPY"
   - "QQQ"
