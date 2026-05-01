@@ -620,7 +620,7 @@ CODEX_MODEL = os.getenv("CODEX_MODEL", "gpt-5.4-mini")
 GEMINI_CLI_MODEL = os.getenv("GEMINI_CLI_MODEL", "gemini-2.5-pro")
 CLAUDE_CLI_MODEL = os.getenv("CLAUDE_CLI_MODEL", "claude-sonnet-4-6")
 LLM_PRIMARY_BACKEND = os.getenv("LLM_PRIMARY_BACKEND", "gemini").strip().lower()
-LLM_BACKENDS = ("gemini", "claude", "ollama", "codex")
+LLM_BACKENDS = ("gemini", "claude", "codex", "ollama")
 
 
 def _call_codex(prompt: str, max_retries: int = 3) -> str:
@@ -758,7 +758,10 @@ def _prepare_ollama_prompt(prompt: str, think: bool = False) -> str:
 def _call_llm(prompt: str, max_retries: int = 3, think: bool = False) -> str:
     """환경변수 기반 LLM 백엔드 선택 + 폴백."""
     primary = LLM_PRIMARY_BACKEND if LLM_PRIMARY_BACKEND in LLM_BACKENDS else "gemini"
-    order = [primary] + [backend for backend in LLM_BACKENDS if backend != primary]
+    non_ollama = [b for b in LLM_BACKENDS if b != "ollama"]
+    if primary != "ollama":
+        non_ollama = [primary] + [b for b in non_ollama if b != primary]
+    order = non_ollama + ["ollama"]
     errors: list[str] = []
 
     for backend in order:
