@@ -188,55 +188,37 @@ def _load_tiktok_credentials() -> dict:
     return {"access_token": token["access_token"], "open_id": token.get("open_id", "")}
 
 
-def tiktok_auth_setup():
-    """TikTok OAuth 인증 흐름 — 브라우저 인증 후 token.json 저장."""
+def tiktok_auth_setup(code: str | None = None):
+    """TikTok OAuth 인증 흐름 — 권한 코드를 받아 token.json 저장.
+
+    사용법:
+      1. 인자 없이 실행 → 인증 URL 출력 → 브라우저에서 권한 부여
+      2. redirect된 URL에서 ?code=... 부분 복사
+      3. tiktok_auth_setup(code='복사한_코드') 다시 실행
+    """
     import urllib.parse
     import urllib.request
-    from http.server import BaseHTTPRequestHandler, HTTPServer
 
     client_key = os.getenv("TIKTOK_CLIENT_KEY", "")
     client_secret = os.getenv("TIKTOK_CLIENT_SECRET", "")
     if not client_key or not client_secret:
         raise RuntimeError("TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET 환경변수를 먼저 설정하세요.")
 
-    redirect_uri = "http://localhost:8080/callback"
-    auth_url = (
-        f"https://www.tiktok.com/v2/auth/authorize/"
-        f"?client_key={client_key}"
-        f"&scope=video.publish,user.info.basic"
-        f"&response_type=code"
-        f"&redirect_uri={urllib.parse.quote(redirect_uri, safe='')}"
-        f"&state=investiqs"
-    )
-    print(f"\n아래 URL을 브라우저에서 열어 TikTok 계정 인증을 완료하세요:\n\n{auth_url}\n")
+    redirect_uri = "https://investiqs.net/tiktok-callback/"
 
-    code_holder = {}
-
-    class _Handler(BaseHTTPRequestHandler):
-        def log_message(self, *args):
-            pass  # suppress access logs
-
-        def do_GET(self):
-            parsed = urllib.parse.urlparse(self.path)
-            params = urllib.parse.parse_qs(parsed.query)
-            if "code" in params:
-                code_holder["code"] = params["code"][0]
-                self.send_response(200)
-                self.end_headers()
-                self.wfile.write(b"<h2>TikTok auth complete. You can close this tab.</h2>")
-            else:
-                self.send_response(400)
-                self.end_headers()
-                self.wfile.write(b"Missing code parameter.")
-
-    server = HTTPServer(("", 8080), _Handler)
-    server.timeout = 120
-    print("localhost:8080에서 콜백 대기 중 (2분 타임아웃)...")
-    server.handle_request()
-
-    code = code_holder.get("code")
     if not code:
-        raise RuntimeError("인증 코드를 받지 못했습니다. 다시 시도하세요.")
+        auth_url = (
+            f"https://www.tiktok.com/v2/auth/authorize/"
+            f"?client_key={client_key}"
+            f"&scope=user.info.basic,video.upload,video.publish"
+            f"&response_type=code"
+            f"&redirect_uri={urllib.parse.quote(redirect_uri, safe='')}"
+            f"&state=investiqs"
+        )
+        print(f"\n1) 아래 URL을 브라우저에서 열어 권한을 부여하세요:\n\n{auth_url}\n")
+        print(f"2) 리다이렉트된 URL에서 ?code= 부분 값을 복사한 뒤,")
+        print(f"   tiktok_auth_setup(code='복사한_코드')로 다시 실행하세요.\n")
+        return None
 
     payload = json.dumps({
         "client_key": client_key,
