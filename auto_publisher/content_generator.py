@@ -1622,6 +1622,8 @@ def translate_post(source_post: dict, source_lang: str, target_lang: str) -> dic
 
 You are translating and LOCALIZING the following blog post from {source_lang} to {target_lp["output_lang"]}.
 
+CRITICAL — NO KOREAN OUTPUT: The output language is {target_lp["output_lang"]}. Do NOT include any Korean (한글) characters anywhere in the output — not in the title, body, tags, keywords, meta_description, image alt text, categories, scenario headers, scenario body text, or any HTML attribute. If you encounter Korean text in the source, translate it fully. Outputting Korean characters is a critical failure.
+
 [Critical: localization rules]
 - Replace ALL persona-specific details (name, age, broker, portfolio, currency, tax accounts) with YOUR fixed profile above
 - Convert numbers/currency to the target market's local equivalent (e.g., KRW → USD/JPY/VND/IDR)

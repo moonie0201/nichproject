@@ -398,7 +398,7 @@ class HugoPublisher:
         schema_type = schema_map.get(content_type, "Article")
 
         # 차트 생성 및 주입
-        category = categories[0] if categories else "재테크 기초"
+        category = categories[0] if categories else ("재테크 기초" if self.lang == "ko" else "ETF")
         og_image_path = ""  # OG 이미지로 사용할 첫 차트 경로
         try:
             from auto_publisher.chart_generator import (

@@ -33,7 +33,7 @@ aliases:
 
 ## Hai biểu đồ mở đầu
 
-<figure class="chart-figure"><img src="/images/tqqq-5-năm-khi-etf-đòn-bẩy-3x-thua-2x-trong-một-chu-kỳ-biến-động/compound-growth.png" alt="월 30만원 적립식 투자 20년 복리 시뮬레이션" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>월 30만원 적립식 투자 20년 복리 시뮬레이션</figcaption></figure>
+<figure class="chart-figure"><img src="/images/tqqq-5-năm-khi-etf-đòn-bẩy-3x-thua-2x-trong-một-chu-kỳ-biến-động/compound-growth.png" alt="Mô phỏng lãi kép 20 năm đầu tư hàng tháng" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>Mô phỏng lãi kép 20 năm đầu tư hàng tháng</figcaption></figure>
 
 <figure class="chart-figure"><img src="/images/레버리지-etf-tqqq-5년-드로डाउन과-변동성-분해-3배가-2배보다-못한-구간/fee-impact.png" alt="So sánh tác động của chênh lệch phí ETF lên lợi suất dài hạn" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>So sánh tác động của chênh lệch phí ETF lên lợi suất dài hạn</figcaption></figure>
 

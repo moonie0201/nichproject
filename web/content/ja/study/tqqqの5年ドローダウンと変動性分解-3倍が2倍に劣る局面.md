@@ -32,7 +32,7 @@ aliases:
 
 ## まず2枚のチャートが先に示すこと
 
-<figure class="chart-figure"><img src="/images/tqqqの5年ドローダウンと変動性分解-3倍が2倍に劣る局面/compound-growth.png" alt="월 30만원 적립식 투자 20년 복리 시뮬레이션" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>월 30만원 적립식 투자 20년 복리 시뮬레이션</figcaption></figure>
+<figure class="chart-figure"><img src="/images/tqqqの5年ドローダウンと変動性分解-3倍が2倍に劣る局面/compound-growth.png" alt="月30万円積立投資20年複利シミュレーション" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>月30万円積立投資20年複利シミュレーション</figcaption></figure>
 
 <figure class="chart-figure"><img src="/images/レバレッジ-etf-tqqq-5년-드로다운과-변동성-분해-3배가-2배보다-못한-구간/fee-impact.png" alt="ETF手数料差が長期リターンに与える影響の比較" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>ETF手数料差が長期リターンに与える影響の比較</figcaption></figure>
 

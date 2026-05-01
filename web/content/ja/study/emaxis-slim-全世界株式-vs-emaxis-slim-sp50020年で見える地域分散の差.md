@@ -35,7 +35,7 @@ aliases:
 
 ## 地域分散は効くのか、それとも米国集中の方が素直か
 
-<figure class="chart-figure"><img src="/images/emaxis-slim-全世界株式-vs-emaxis-slim-sp50020年で見える地域分散の差/compound-growth.png" alt="월 30만원 적립식 투자 20년 복리 시뮬레이션" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>월 30만원 적립식 투자 20년 복리 시뮬레이션</figcaption></figure>
+<figure class="chart-figure"><img src="/images/emaxis-slim-全世界株式-vs-emaxis-slim-sp50020年で見える地域分散の差/compound-growth.png" alt="月30万円積立投資20年複利シミュレーション" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>月30万円積立投資20年複利シミュレーション</figcaption></figure>
 
 eMAXIS Slim 全世界株式とeMAXIS Slim S&P500の比較で、まず外してはいけない点がある。オルカンは「全世界」と名が付くが、2025/01の月報では米国66.1%、日本4.7%、英国3.1%、カナダ2.7%、フランス2.4%だった。つまり、全世界株式は米国を薄めた商品であって、米国を捨てた商品ではない。市場の通説は「オルカン=分散、S&P500=集中」だが、実態は「100%米国」対「66%米国」の比較に近い。
 

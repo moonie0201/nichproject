@@ -35,7 +35,7 @@ aliases:
 
 ## Why the 20-year savings curve matters more than the share price
 
-<figure class="chart-figure"><img src="/images/qqq-vs-spy-10-year-regression-tech-concentration-vs-diversification/compound-growth.png" alt="월 30만원 적립식 투자 20년 복리 시뮬레이션" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>월 30만원 적립식 투자 20년 복리 시뮬레이션</figcaption></figure>
+<figure class="chart-figure"><img src="/images/qqq-vs-spy-10-year-regression-tech-concentration-vs-diversification/compound-growth.png" alt="Monthly investment 20-year compound growth simulation" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>Monthly investment 20-year compound growth simulation</figcaption></figure>
 
 The first mistake in comparing QQQ and SPY is to stare at the price tags. QQQ at $651.42 and SPY at $708.45 look like two expensive symbols, but share price is not the signal. The return path is. The 20-year monthly 300,000-won simulation inserted below this section makes the same point in a cleaner way: at 4%, 7%, and 10%, the ending values do not rise in a straight line. They accelerate. That is the compounding effect that turns a small annual edge into a large decade gap.
 
@@ -95,9 +95,9 @@ That diverges from the usual consensus. A broad index can be more durable, but d
 Fundamentally, the dividend yield gap tells the same story from another angle. QQQ's 0.43% yield signals that its return mix is more dependent on price appreciation than income. SPY's 1.04% yield is still not high, but it is materially higher. For a portfolio that needs cash flow or tax-managed reinvestment flexibility, SPY gives more current distribution. For a portfolio that is trying to capture secular growth, QQQ has been the stronger tape in the 2020-2026 window.
 
 <aside class="scenario-box">
-  <div class="scenario-header">💡 가상 시나리오: Mike's 2020 start with monthly ETF buys</div>
+  <div class="scenario-header">💡 Hypothetical Scenario: Mike's 2020 start with monthly ETF buys</div>
   <div class="scenario-body">
-    <p><strong>설정</strong>: 35-year-old software engineer in Austin, TX; start year 2020; Charles Schwab + Fidelity; Roth IRA + Traditional 401(k) + taxable brokerage; $1,500 per month.</p>
+    <p><strong>Setup</strong>: 35-year-old software engineer in Austin, TX; start year 2020; Charles Schwab + Fidelity; Roth IRA + Traditional 401(k) + taxable brokerage; $1,500 per month.</p>
     <p>At the current dividend yields, a steady $18,000 annual contribution would map to roughly $77.40 of annual distribution value for QQQ and $187.20 for SPY before reinvestment. That is not total-return forecasting, but it quantifies the income gap using the exact yfinance numbers.</p>
     <p>If the start year moves from 2020 to 2022, or if expense ratios, taxes, or valuation multiples change, the spread can compress fast. The same setup does not behave the same way across regimes.</p>
   </div>

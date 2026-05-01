@@ -26,7 +26,7 @@ from auto_publisher.config import (
     SUPPORTED_LANGUAGES,
     validate_config,
 )
-from auto_publisher.content_generator import generate_blog_post, translate_post
+from auto_publisher.content_generator import generate_blog_post, translate_post, CATEGORIES_BY_LANG
 from auto_publisher.publishers.hugo import HugoPublisher
 from auto_publisher.topic_manager import TopicManager
 from auto_publisher.notifier import notify_discord
@@ -623,7 +623,7 @@ def do_translate_publish(source_lang: str = "ko", target_lang: str = "en",
         content_html=translated["content_html"],
         tags=translated.get("tags", []),
         meta_description=translated.get("meta_description", ""),
-        categories=translated.get("categories", ["투자", "재테크"]),
+        categories=translated.get("categories") or CATEGORIES_BY_LANG.get(target_lang, ["Investing", "Personal Finance"]),
         primary_keyword=translated.get("primary_keyword", ""),
         keywords_long_tail=translated.get("keywords_long_tail", []),
         schema_faq=translated.get("schema_faq", []),

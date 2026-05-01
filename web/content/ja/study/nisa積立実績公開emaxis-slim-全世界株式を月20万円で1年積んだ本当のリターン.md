@@ -37,7 +37,7 @@ NISA積立実績としてこのファンドを見るなら、1年の上昇率だ
 
 ## 1年の数字は強いが、20年チャートの方が本質を映す
 
-<figure class="chart-figure"><img src="/images/nisa積立実績公開emaxis-slim-全世界株式を月20万円で1年積んだ本当のリターン/compound-growth.png" alt="월 30만원 적립식 투자 20년 복리 시뮬레이션" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>월 30만원 적립식 투자 20년 복리 시뮬레이션</figcaption></figure>
+<figure class="chart-figure"><img src="/images/nisa積立実績公開emaxis-slim-全世界株式を月20万円で1年積んだ本当のリターン/compound-growth.png" alt="月30万円積立投資20年複利シミュレーション" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>月30万円積立投資20年複利シミュレーション</figcaption></figure>
 
 下の20年シミュレーションは、月30万円を年4%・7%・10%で回したときの複利差を示している。概算では20年後の評価額は約1.10億円、約1.56億円、約2.28億円まで開く。元本は7200万円なので、差の主因は元本の多寡ではなく、年率のわずかな違いだ。1年の+49.23%は目を引くが、長期の資産形成ではこのチャートのように時間が数字を拡大する。
 

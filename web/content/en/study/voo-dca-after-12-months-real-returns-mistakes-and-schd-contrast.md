@@ -30,13 +30,13 @@ categories:
 aliases:
   - /en/blog/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/
 ---
-<div class="summary-box"><ul><li>VOO sits at $651.54 with a 1-year return of +36.3%, a 3-year cumulative return of +79.0%, a 5-year cumulative return of +85.0%, and a dividend yield of 1.09%.</li><li>SCHD sits at $31.03 with a 1-year return of +26.8%, a 3-year cumulative return of +41.5%, a 5-year cumulative return of +49.8%, and a dividend yield of 3.4%.</li><li>Across the provided windows, VOO beat SCHD by 9.5 percentage points over 1 year, 37.5 points over 3 years, and 35.2 points over 5 years on cumulative return.</li><li>The chart below tests monthly 30만원 DCA over 20 years at 4%, 7%, and 10%; the gap between those paths shows how sensitive long-horizon outcomes are to small return differences.</li><li>The biggest mistake in a first-year DCA window is treating a strong 12-month run as a permanent feature of the market instead of a regime that can change fast.</li></ul></div>
+<div class="summary-box"><ul><li>VOO sits at $651.54 with a 1-year return of +36.3%, a 3-year cumulative return of +79.0%, a 5-year cumulative return of +85.0%, and a dividend yield of 1.09%.</li><li>SCHD sits at $31.03 with a 1-year return of +26.8%, a 3-year cumulative return of +41.5%, a 5-year cumulative return of +49.8%, and a dividend yield of 3.4%.</li><li>Across the provided windows, VOO beat SCHD by 9.5 percentage points over 1 year, 37.5 points over 3 years, and 35.2 points over 5 years on cumulative return.</li><li>The chart below tests monthly KRW 300,000 DCA over 20 years at 4%, 7%, and 10%; the gap between those paths shows how sensitive long-horizon outcomes are to small return differences.</li><li>The biggest mistake in a first-year DCA window is treating a strong 12-month run as a permanent feature of the market instead of a regime that can change fast.</li></ul></div>
 
 ## What the 20-year DCA chart is really saying
 
-<figure class="chart-figure"><img src="/images/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/compound-growth.png" alt="월 30만원 적립식 투자 20년 복리 시뮬레이션" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>월 30만원 적립식 투자 20년 복리 시뮬레이션</figcaption></figure>
+<figure class="chart-figure"><img src="/images/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/compound-growth.png" alt="Monthly investment 20-year compound growth simulation" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>Monthly investment 20-year compound growth simulation</figcaption></figure>
 
-The chart beneath this section is the cleanest reminder that monthly ETF investing is about time, not drama. A monthly 30만원 plan over 20 years looks modest in year 1, then starts to separate sharply when the assumed return moves from 4% to 7%, and again from 7% to 10%. That is the core lesson. The later contributions matter less than the early contributions once compounding starts doing real work.
+The chart beneath this section is the cleanest reminder that monthly ETF investing is about time, not drama. A monthly KRW 300,000 plan over 20 years looks modest in year 1, then starts to separate sharply when the assumed return moves from 4% to 7%, and again from 7% to 10%. That is the core lesson. The later contributions matter less than the early contributions once compounding starts doing real work.
 
 For a VOO DCA setup, that matters because the first year is too short to judge the whole process. A single strong year can make the strategy look effortless. A weak year can make it look broken. Neither read is reliable on its own. The chart shows why long holding periods dominate the conversation: the difference between 4%, 7%, and 10% is not a small cosmetic change. Over 20 years, it turns into a very different terminal picture.
 
@@ -116,7 +116,7 @@ The biggest mistake is usually behavioral, not mathematical. It is treating a st
 
 ### Is one year enough to judge a DCA strategy?
 
-No. A 1-year result can show whether the market was favorable, but it cannot prove the strategy is superior in every regime. The 20-year 30만원 DCA chart is the better frame because the spread between 4%, 7%, and 10% assumptions shows how long-horizon outcomes depend on compounding, not on one calendar year.
+No. A 1-year result can show whether the market was favorable, but it cannot prove the strategy is superior in every regime. The 20-year KRW 300,000 DCA chart is the better frame because the spread between 4%, 7%, and 10% assumptions shows how long-horizon outcomes depend on compounding, not on one calendar year.
 
 The first year of VOO DCA is best read as a stress test of discipline, not a final verdict on the strategy. The numbers are strong, the comparison versus SCHD is clear, and the main risk is overlearning from a favorable market window. The sample supports broad-market compounding over the measured periods, while still leaving open the possibility that a different regime could favor a higher-yield path.
 

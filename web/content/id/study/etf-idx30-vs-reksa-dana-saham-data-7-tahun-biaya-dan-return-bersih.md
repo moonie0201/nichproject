@@ -37,7 +37,7 @@ Bagan simulasi Rp300 ribu per bulan selama 20 tahun, pada skenario 4%, 7%, dan 1
 
 ## Biaya yang kelihatan kecil, tapi mengubah hasil
 
-<figure class="chart-figure"><img src="/images/etf-idx30-vs-reksa-dana-saham-data-7-tahun-biaya-dan-return-bersih/compound-growth.png" alt="월 30만원 적립식 투자 20년 복리 시뮬레이션" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>월 30만원 적립식 투자 20년 복리 시뮬레이션</figcaption></figure>
+<figure class="chart-figure"><img src="/images/etf-idx30-vs-reksa-dana-saham-data-7-tahun-biaya-dan-return-bersih/compound-growth.png" alt="Simulasi bunga majemuk 20 tahun investasi bulanan" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>Simulasi bunga majemuk 20 tahun investasi bulanan</figcaption></figure>
 
 Data paling menarik justru bukan pada return mentah, melainkan pada struktur biaya. Batavia IDX30 ETF, atau XBID, menampilkan expense ratio 3,20% pada snapshot StockAnalysis per 6 Februari 2026, sementara factsheet BPAM menulis biaya manajemen maksimum 3,00% per tahun. Di sisi lain, Batavia Dana Saham mencantumkan biaya manajemen maksimum 3,00% per tahun, biaya pembelian maksimum 2,00%, biaya penjualan kembali maksimum 2,00%, dan biaya pengalihan maksimum 1,00% pada factsheet terbaru yang tersedia.
 
@@ -64,10 +64,10 @@ Data mendukung ETF sedikit lebih tahan dalam window 7 tahun yang tersedia, tetap
 Return bersih bukan hanya soal fee tahunan. Pada ETF, spread bid-ask, biaya broker, dan disiplin eksekusi ikut memengaruhi hasil. Pada reksa dana saham, subscription fee, redemption fee, dan kualitas manajer investasi ikut masuk. Dengan kata lain, produk yang terlihat mahal di atas kertas kadang tidak mahal di praktik, dan produk yang tampak efisien kadang menahan biaya yang tidak langsung terlihat.
 
 <aside class="scenario-box">
-  <div class="scenario-header">💡 가상 시나리오: Pak Budi의 alokasi bulanan Rp5 juta sejak 2020</div>
+  <div class="scenario-header">💡 Skenario Hipotetis: Pak Budi - alokasi bulanan Rp5 juta sejak 2020</div>
 
   <div class="scenario-body">
-    <p><strong>설정</strong>: Pak Budi, 34 tahun, IT consultant freelance di Jakarta Selatan, mulai investasi pada 2020 lewat Mirae Asset Sekuritas dan Stockbit, dengan setoran rutin Rp5.000.000 per bulan.</p>
+    <p><strong>Pengaturan</strong>: Pak Budi, 34 tahun, IT consultant freelance di Jakarta Selatan, mulai investasi pada 2020 lewat Mirae Asset Sekuritas dan Stockbit, dengan setoran rutin Rp5.000.000 per bulan.</p>
     <p>Pada snapshot 17 April 2026, Rp5.000.000 setara kira-kira 9.982 unit XBID jika dihitung dari NAV Rp500,31 per unit. Dengan fee ETF Stockbit 0,15% beli, friksi awal sekitar Rp7.500 per setoran.</p>
     <p>Di sisi reksa dana saham, NAV Batavia Dana Saham pada 17 April 2026 tercatat Rp53.872,21 per unit. Jika kanal pembelian mengenakan subscription fee 2,00%, biaya awal untuk setoran Rp5.000.000 menjadi Rp100.000. Jika kanal memberi subscription fee 0%, selisih biaya ini praktis lenyap.</p>
     <p>Jika kondisi berubah, misalnya titik masuk dimulai setelah koreksi besar atau fee distribusi dipangkas ke 0%, bacaan biaya bersihnya bisa berbeda dari snapshot ini. Disconfirming satu baris: ETF tidak selalu menang bila reksa dana saham dibeli lewat kanal tanpa load dan manajer investasinya mengalahkan indeks beberapa tahun berturut-turut.</p>

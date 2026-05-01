@@ -33,7 +33,7 @@ aliases:
 
 ## Dua grafik yang bicara lebih dulu
 
-<figure class="chart-figure"><img src="/images/etf-leveraged-tqqq-drawdown-5-tahun-dan-pembongkaran-volatilitas-saat-3x-terting/compound-growth.png" alt="월 30만원 적립식 투자 20년 복리 시뮬레이션" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>월 30만원 적립식 투자 20년 복리 시뮬레이션</figcaption></figure>
+<figure class="chart-figure"><img src="/images/etf-leveraged-tqqq-drawdown-5-tahun-dan-pembongkaran-volatilitas-saat-3x-terting/compound-growth.png" alt="Simulasi bunga majemuk 20 tahun investasi bulanan" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>Simulasi bunga majemuk 20 tahun investasi bulanan</figcaption></figure>
 
 <figure class="chart-figure"><img src="/images/레버리지-etf-tqqq-5년-드로다운과-변동성-분해-3배가-2배보다-못한-구간/fee-impact.png" alt="Perbandingan dampak biaya ETF terhadap kinerja jangka panjang" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>Perbandingan dampak biaya ETF terhadap kinerja jangka panjang</figcaption></figure>
 

@@ -35,7 +35,7 @@ aliases:
 
 ## Kenapa simulasi Rp300 ribu/bulan tetap penting
 
-<figure class="chart-figure"><img src="/images/etf-idx30-vs-etf-lq45-backtest-7-tahun-total-return-dan-volatilitas/compound-growth.png" alt="월 30만원 적립식 투자 20년 복리 시뮬레이션" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>월 30만원 적립식 투자 20년 복리 시뮬레이션</figcaption></figure>
+<figure class="chart-figure"><img src="/images/etf-idx30-vs-etf-lq45-backtest-7-tahun-total-return-dan-volatilitas/compound-growth.png" alt="Simulasi bunga majemuk 20 tahun investasi bulanan" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>Simulasi bunga majemuk 20 tahun investasi bulanan</figcaption></figure>
 
 Grafik simulasi Rp300 ribu per bulan selama 20 tahun, dengan skenario 4%, 7%, dan 10%, memberi konteks yang sering dilupakan saat orang sibuk membandingkan ETF hanya dari nama indeks. Selisih return tahunan yang terlihat kecil di satu atau dua tahun bisa membesar setelah 10-20 tahun. Pada produk berbasis indeks, biaya, distribusi dividen, dan disiplin rebalancing biasanya lebih berpengaruh daripada narasi merek indeks yang terdengar lebih meyakinkan.
 
@@ -73,10 +73,10 @@ Poin yang paling menonjol ada di 2018. R-LQ45X mencetak 30.33% pada tahun itu, s
 Data mendukung bacaan bahwa LQ45 bukan sekadar versi lebih luas yang pasti lebih encer. Berbeda dari konsensus pasar yang sering menilai IDX30 sebagai pilihan paling "elite", window 2018-2024 justru menunjukkan LQ45X menang di total return dan tetap lebih rapat dalam volatilitas.
 
 <aside class="scenario-box">
-  <div class="scenario-header">💡 가상 시나리오: Pak Budi pada strategi akumulasi ETF bulanan</div>
+  <div class="scenario-header">💡 Skenario Hipotetis: Pak Budi pada strategi akumulasi ETF bulanan</div>
 
   <div class="scenario-body">
-    <p><strong>설정</strong>: Pak Budi adalah persona hipotetis berusia 34 tahun, IT consultant freelance di Jakarta Selatan, mulai 2020, memakai Mirae Asset Sekuritas + Stockbit, dengan akun ritel reguler. Alokasi bulanan Rp5.000.000 dipakai untuk membeli ETF secara bertahap.</p>
+    <p><strong>Pengaturan</strong>: Pak Budi adalah persona hipotetis berusia 34 tahun, IT consultant freelance di Jakarta Selatan, mulai 2020, memakai Mirae Asset Sekuritas + Stockbit, dengan akun ritel reguler. Alokasi bulanan Rp5.000.000 dipakai untuk membeli ETF secara bertahap.</p>
     <p>Dengan harga snapshot pertengahan April 2026, Rp5.000.000 kira-kira setara 9.746 unit XIIT pada 513 per unit, atau sekitar 5.296 unit R-LQ45X pada 944 per unit, sebelum spread dan komisi broker. Pada akun reguler, dividen tunai juga terkena PPh 10%, sehingga total return bersih akan sedikit di bawah angka bruto.</p>
     <p>Jika start date bergeser ke Maret 2020, hasil akhir bisa berubah tajam karena dua ETF sama-sama mengalami drawdown dua digit pada fase Covid; XIIT sempat -19.87% di bulan terburuk, sementara R-LQ45X -21.01%.</p>
   </div>
