@@ -15,6 +15,7 @@ ml_env/
 .omc/state/
 .omc/sessions/
 .claude/scheduled_tasks.lock
+web/public/.omc/
 
 # 빌드 / 로그
 *.log
