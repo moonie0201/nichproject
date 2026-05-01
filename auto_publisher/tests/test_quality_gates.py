@@ -1,15 +1,17 @@
 """TDD: 투자 콘텐츠 품질 10/10 — 11개 갭 순차 검증"""
-import re
 from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
 
 from auto_publisher.content_generator import (
+    _build_verification_snippet,
+    _format_signal_with_badge,
     _inject_disclaimer,
     build_eeat_frontmatter,
 )
 from auto_publisher.content_verifier import verify_rule_based
+from auto_publisher.prediction_tracker import PredictionTracker
 
 
 # ─────────────────────────────────────────────
@@ -155,7 +157,6 @@ def test_verifier_passes_conclusion_with_personal_context():
 # ─────────────────────────────────────────────
 
 def test_low_confidence_signal_gets_badge():
-    from auto_publisher.content_generator import _format_signal_with_badge
     result = _format_signal_with_badge(
         "news_sentiment", "bullish", confidence=0.30, sample_size=5
     )
@@ -164,7 +165,6 @@ def test_low_confidence_signal_gets_badge():
 
 
 def test_high_confidence_signal_no_badge():
-    from auto_publisher.content_generator import _format_signal_with_badge
     result = _format_signal_with_badge(
         "technical", "bullish", confidence=0.85, sample_size=None
     )
@@ -176,7 +176,6 @@ def test_high_confidence_signal_no_badge():
 # ─────────────────────────────────────────────
 
 def test_verification_snippet_us_etf():
-    from auto_publisher.content_generator import _build_verification_snippet
     snippet = _build_verification_snippet(ticker="VOO", lang="ko")
     assert "yfinance" in snippet
     assert "VOO" in snippet
@@ -184,7 +183,6 @@ def test_verification_snippet_us_etf():
 
 
 def test_verification_snippet_skipped_for_korean_stock():
-    from auto_publisher.content_generator import _build_verification_snippet
     assert _build_verification_snippet(ticker="005930.KS", lang="ko") == ""
     assert _build_verification_snippet(ticker="035720.KQ", lang="ko") == ""
 
@@ -204,7 +202,6 @@ def test_hugo_head_partial_has_ai_meta_tags():
 # ─────────────────────────────────────────────
 
 def test_prediction_tracker_records_signal():
-    from auto_publisher.prediction_tracker import PredictionTracker
     tracker = PredictionTracker(db_path=":memory:")
     tracker.record(
         slug="voo-2026-04", ticker="VOO",
@@ -217,7 +214,6 @@ def test_prediction_tracker_records_signal():
 
 
 def test_prediction_tracker_verifies_after_60_days():
-    from auto_publisher.prediction_tracker import PredictionTracker
     tracker = PredictionTracker(db_path=":memory:")
     past = (date.today() - timedelta(days=61)).isoformat()
     tracker.record(
@@ -232,7 +228,6 @@ def test_prediction_tracker_verifies_after_60_days():
 
 
 def test_prediction_tracker_accuracy_summary():
-    from auto_publisher.prediction_tracker import PredictionTracker
     tracker = PredictionTracker(db_path=":memory:")
     past = (date.today() - timedelta(days=61)).isoformat()
     tracker.record(
