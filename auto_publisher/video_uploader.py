@@ -360,6 +360,111 @@ def upload_tiktok(
     raise RuntimeError(f"TikTok 업로드 타임아웃: publish_id={publish_id} (300초 초과)")
 
 
+def upload_instagram_reels(
+    public_video_url: str,
+    caption: str,
+    video_path: Path | None = None,
+    cover_url: str | None = None,
+    share_to_feed: bool = True,
+) -> dict:
+    """Instagram Reels 업로드 (Meta Graph API v21.0).
+
+    필요 환경변수:
+    - META_ACCESS_TOKEN: Page Access Token (long-lived)
+    - IG_USER_ID: Instagram Business Account ID
+
+    흐름:
+    1) POST /{ig_user_id}/media — media_type=REELS, video_url, caption
+    2) status_code 폴링 (FINISHED까지 최대 5분)
+    3) POST /{ig_user_id}/media_publish — creation_id로 발행
+    """
+    import urllib.parse
+    import urllib.request
+
+    GRAPH_BASE = "https://graph.facebook.com/v21.0"
+
+    access_token = os.getenv("META_ACCESS_TOKEN", "")
+    ig_user_id = os.getenv("IG_USER_ID", "")
+    if not access_token:
+        raise RuntimeError("META_ACCESS_TOKEN 환경변수가 설정되지 않았습니다.")
+    if not ig_user_id:
+        raise RuntimeError("IG_USER_ID 환경변수가 설정되지 않았습니다.")
+
+    caption_trimmed = caption[:2200]
+
+    # ─── 1) 미디어 컨테이너 생성 ───
+    media_params: dict = {
+        "media_type": "REELS",
+        "video_url": public_video_url,
+        "caption": caption_trimmed,
+        "share_to_feed": "true" if share_to_feed else "false",
+        "access_token": access_token,
+    }
+    if cover_url:
+        media_params["cover_url"] = cover_url
+
+    media_url = f"{GRAPH_BASE}/{ig_user_id}/media"
+    media_req = urllib.request.Request(
+        media_url,
+        data=urllib.parse.urlencode(media_params).encode(),
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        method="POST",
+    )
+    with urllib.request.urlopen(media_req, timeout=60) as resp:
+        media_data = json.loads(resp.read().decode())
+
+    creation_id = media_data.get("id")
+    if not creation_id:
+        raise RuntimeError(f"IG 미디어 컨테이너 생성 실패: {media_data}")
+    logger.info(f"Instagram 미디어 컨테이너 생성: creation_id={creation_id}")
+
+    # ─── 2) 상태 폴링 (최대 5분, 5초 간격) ───
+    status_url = f"{GRAPH_BASE}/{creation_id}?fields=status_code,status&access_token={access_token}"
+    finished = False
+    for poll_idx in range(60):
+        time.sleep(5)
+        poll_req = urllib.request.Request(status_url, method="GET")
+        with urllib.request.urlopen(poll_req, timeout=30) as poll_resp:
+            poll_data = json.loads(poll_resp.read().decode())
+
+        status_code = poll_data.get("status_code", "")
+        logger.info(f"Instagram 상태 폴링 {poll_idx + 1}/60: {status_code}")
+
+        if status_code == "FINISHED":
+            finished = True
+            break
+        elif status_code in ("ERROR", "EXPIRED"):
+            raise RuntimeError(f"IG status: {status_code} — {poll_data.get('status', '')}")
+
+    if not finished:
+        raise RuntimeError(f"IG status: 타임아웃 (300초 초과, creation_id={creation_id})")
+
+    # ─── 3) 발행 ───
+    publish_params = {
+        "creation_id": creation_id,
+        "access_token": access_token,
+    }
+    publish_url = f"{GRAPH_BASE}/{ig_user_id}/media_publish"
+    publish_req = urllib.request.Request(
+        publish_url,
+        data=urllib.parse.urlencode(publish_params).encode(),
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        method="POST",
+    )
+    with urllib.request.urlopen(publish_req, timeout=60) as pub_resp:
+        pub_data = json.loads(pub_resp.read().decode())
+
+    media_id = pub_data.get("id", "")
+    logger.info(f"Instagram Reels 발행 완료: media_id={media_id}")
+
+    return {
+        "creation_id": creation_id,
+        "media_id": media_id,
+        "url": f"https://www.instagram.com/reel/{media_id}/",
+        "status": "published",
+    }
+
+
 if __name__ == "__main__":
     import sys
     logging.basicConfig(level=logging.INFO)

@@ -414,6 +414,25 @@ def do_make_video(slug: str, lang: str = "ko",
                     logger.error(f"TikTok 쇼츠 업로드 실패: {e}")
                     results["short_tiktok_error"] = str(e)
 
+            if os.getenv("IG_REELS_ENABLED", "false").lower() == "true":
+                try:
+                    from auto_publisher.video_uploader import upload_instagram_reels
+                    ig_host = os.getenv("INSTAGRAM_VIDEO_HOST_URL", "")
+                    if not ig_host:
+                        raise RuntimeError("INSTAGRAM_VIDEO_HOST_URL 미설정")
+                    public_url = ig_host.rstrip("/") + "/" + short_mp4.name
+                    ig_caption = (short_script.get("title", "") + "\n\n" +
+                                  short_script.get("description", ""))[:2200]
+                    ig_up = upload_instagram_reels(
+                        public_video_url=public_url,
+                        caption=ig_caption,
+                    )
+                    results["short_instagram"] = ig_up
+                    logger.info(f"Instagram Reels 업로드 완료: {ig_up['url']}")
+                except Exception as e:
+                    logger.error(f"Instagram Reels 업로드 실패: {e}")
+                    results["short_instagram_error"] = str(e)
+
     # Discord 알림
     try:
         long_url_final = results.get("long_youtube", {}).get("url", "")

@@ -951,6 +951,23 @@ class BridgeHandler(BaseHTTPRequestHandler):
         if path in STUB_ROUTES:
             self._respond(200, stub_response(path))
             return
+        if path == "/instagram/auth-test":
+            try:
+                import urllib.request as _ureq
+                access_token = os.getenv("META_ACCESS_TOKEN", "")
+                if not access_token:
+                    self._respond(400, {"success": False, "error": "META_ACCESS_TOKEN 미설정"})
+                    return
+                me_url = f"https://graph.facebook.com/v21.0/me?access_token={access_token}"
+                with _ureq.urlopen(_ureq.Request(me_url, method="GET"), timeout=15) as _r:
+                    me_data = json.loads(_r.read().decode())
+                if "id" in me_data and "name" in me_data:
+                    self._respond(200, {"success": True, "id": me_data["id"], "name": me_data["name"]})
+                else:
+                    self._respond(200, {"success": False, "response": me_data})
+            except Exception as e:
+                self._respond(500, {"success": False, "error": str(e)})
+            return
         self._respond(404, {"error": "Not found", "routes": list(ROUTES.keys()) + ["/health"]})
 
     def do_POST(self):
