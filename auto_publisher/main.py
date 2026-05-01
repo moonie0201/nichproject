@@ -400,6 +400,20 @@ def do_make_video(slug: str, lang: str = "ko",
                 logger.error(f"쇼츠 업로드 실패: {e}")
                 results["short_upload_error"] = str(e)
 
+            if os.getenv("TIKTOK_ENABLED", "false").lower() == "true":
+                try:
+                    from auto_publisher.video_uploader import upload_tiktok
+                    tt_up = upload_tiktok(
+                        video_path=short_mp4,
+                        title=short_script["title"],
+                        tags=short_script.get("tags", []),
+                    )
+                    results["short_tiktok"] = tt_up
+                    logger.info(f"TikTok 쇼츠 업로드 완료: {tt_up['url']}")
+                except Exception as e:
+                    logger.error(f"TikTok 쇼츠 업로드 실패: {e}")
+                    results["short_tiktok_error"] = str(e)
+
     # Discord 알림
     try:
         long_url_final = results.get("long_youtube", {}).get("url", "")
