@@ -879,14 +879,29 @@ def health_full() -> dict:
             pass
     result["last_published"] = last_published
 
-    # n8n running
-    try:
-        n8n_out = subprocess.run(
-            ["pgrep", "n8n"], capture_output=True, text=True, timeout=5
-        )
-        result["n8n_running"] = n8n_out.returncode == 0
-    except Exception:
-        result["n8n_running"] = False
+    # n8n running (Docker 컨테이너 우선, 직접 프로세스 폴백)
+    def _check_n8n() -> bool:
+        try:
+            r = subprocess.run(
+                ["docker", "ps", "-q", "--filter", "name=n8n"],
+                capture_output=True, text=True, timeout=5,
+            )
+            if r.stdout.strip():
+                return True
+        except Exception:
+            pass
+        try:
+            r = subprocess.run(
+                ["pgrep", "-f", "n8n"],
+                capture_output=True, text=True, timeout=5,
+            )
+            if r.stdout.strip():
+                return True
+        except Exception:
+            pass
+        return False
+
+    result["n8n_running"] = _check_n8n()
 
     # tunnel active
     try:
