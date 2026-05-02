@@ -119,10 +119,8 @@ def publish_market_post() -> dict:
     recent = signals.get("recent_signals", [])
     signal_text = "\n".join(recent[-10:]) if recent else "데이터 없음"
 
-    # 2) OpenRouter로 블로그 포스트 생성
+    # 2) LLM으로 블로그 포스트 생성 (OpenRouter 1차, Gemini CLI 폴백)
     api_key = os.getenv("OPENROUTER_API_KEY", "")
-    if not api_key:
-        return {"success": False, "error": "OPENROUTER_API_KEY 없음"}
 
     from datetime import date
     today = date.today().strftime("%Y년 %m월 %d일")
@@ -159,25 +157,44 @@ def publish_market_post() -> dict:
 [출력 형식]
 {{"title": "제목", "content_html": "<h2>...</h2>...", "meta_description": "메타설명", "tags": ["데이터 분석", "시장 흐름", "암호화폐", "패턴 분석"]}}"""
 
-    def _call_gemini(prompt: str) -> dict:
-        resp = req.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-            json={"model": "google/gemini-2.0-flash-001", "messages": [{"role": "user", "content": prompt}], "temperature": 0.7, "max_tokens": 6000},
-            timeout=120,
+    def _call_market_llm(prompt: str) -> dict:
+        # 1차: OpenRouter
+        if api_key:
+            try:
+                resp = req.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                    json={"model": "google/gemini-2.0-flash-001", "messages": [{"role": "user", "content": prompt}], "temperature": 0.7, "max_tokens": 6000},
+                    timeout=120,
+                )
+                _resp_data = resp.json()
+                if "choices" not in _resp_data:
+                    _err = _resp_data.get("error", {})
+                    raise RuntimeError(f"OpenRouter error: {_err.get('message', str(_resp_data))[:200]}")
+                raw = _resp_data["choices"][0]["message"]["content"].strip()
+                if raw.startswith("```"):
+                    raw = "\n".join(l for l in raw.split("\n") if not l.strip().startswith("```"))
+                return json.loads(raw)
+            except Exception as e:
+                log.warning(f"OpenRouter failed: {e}, falling back to gemini CLI")
+
+        # 2차: Gemini CLI fallback
+        import subprocess
+        gemini_model = os.getenv("GEMINI_CLI_MODEL", "gemini-2.5-flash")
+        result = subprocess.run(
+            ["gemini", "-m", gemini_model, "-p", prompt],
+            capture_output=True, text=True, timeout=120,
         )
-        _resp_data = resp.json()
-        if "choices" not in _resp_data:
-            _err = _resp_data.get("error", {})
-            raise RuntimeError(f"OpenRouter error: {_err.get('message', str(_resp_data))[:200]}")
-        raw = _resp_data["choices"][0]["message"]["content"].strip()
+        if result.returncode != 0:
+            raise RuntimeError(f"Both OpenRouter + Gemini CLI failed: {result.stderr[:300]}")
+        raw = result.stdout.strip()
         if raw.startswith("```"):
             raw = "\n".join(l for l in raw.split("\n") if not l.strip().startswith("```"))
         return json.loads(raw)
 
     # 1차 시도
     try:
-        post = _call_gemini(_build_prompt())
+        post = _call_market_llm(_build_prompt())
     except Exception as e:
         return {"success": False, "error": f"AI 생성 실패: {e}"}
 
@@ -187,7 +204,7 @@ def publish_market_post() -> dict:
         retry_issues = vr.get("retry_prompt", "검증 실패")
         log.warning(f"publish_market_post: 1차 검증 실패 — {retry_issues}. 재시도...")
         try:
-            post = _call_gemini(_build_prompt(retry_issues=retry_issues))
+            post = _call_market_llm(_build_prompt(retry_issues=retry_issues))
             vr2 = verify_two_stage(post, source_data=None, lang="ko", min_len=2500)
             if not vr2.get("ok"):
                 log.warning(f"publish_market_post: 2차 검증도 실패 — 그대로 진행. {vr2.get('retry_prompt', '')}")
