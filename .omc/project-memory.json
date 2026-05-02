@@ -284,8 +284,8 @@
     },
     {
       "path": "n8n/bridge_api.py",
-      "accessCount": 93,
-      "lastAccessed": 1777635269138,
+      "accessCount": 99,
+      "lastAccessed": 1777716620904,
       "type": "file"
     },
     {
@@ -302,8 +302,8 @@
     },
     {
       "path": "auto_publisher/publishers/hugo.py",
-      "accessCount": 68,
-      "lastAccessed": 1777635415120,
+      "accessCount": 72,
+      "lastAccessed": 1777716951728,
       "type": "file"
     },
     {
@@ -344,8 +344,8 @@
     },
     {
       "path": ".env",
-      "accessCount": 12,
-      "lastAccessed": 1777244796583,
+      "accessCount": 14,
+      "lastAccessed": 1777716614012,
       "type": "file"
     },
     {
