@@ -342,6 +342,12 @@ def build_localized_wrap_markdown(snapshot: dict, lang: str) -> str:
             laggards=", ".join(laggards[:3]),
         ),
         "",
+        f"## {i18n['section_h2_scenario']}",
+        "",
+        f"{i18n.get('scenario_up_label', '**Upside Scenario**')}: {i18n.get('scenario_up_text', '')}",
+        "",
+        f"{i18n.get('scenario_down_label', '**Downside Scenario**')}: {i18n.get('scenario_down_text', '')}",
+        "",
         f"## {i18n['section_h2_calendar']}",
         "",
         *[f"- {item}" for item in i18n.get("wrap_calendar", [
