@@ -4,35 +4,45 @@
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/blog/etf-투자-왕초보도-쉽게-똑똑하게-시작하는-etf-투자-가이드-2024-최신.md",
     "published_at": "2026-04-19T09:48:13.735414",
-    "title": "ETF 초보자 가이드: 처음 시작하는 ETF 투자"
+    "title": "ETF 초보자 가이드: 처음 시작하는 ETF 투자",
+    "date": "2026-04-19",
+    "slug": "etf-01"
   },
   {
     "topic_id": "etf-02",
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/blog/미국-sp500-etf-vs-국내-코스피-etf-전격-비교-투자-어디에-해야-돈-벌까.md",
     "published_at": "2026-04-19T09:51:23.188752",
-    "title": "미국 S&P500 ETF vs 국내 코스피 ETF 비교 분석"
+    "title": "미국 S&P500 ETF vs 국내 코스피 ETF 비교 분석",
+    "date": "2026-04-19",
+    "slug": "etf-02"
   },
   {
     "topic_id": "etf-03",
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/blog/월배당etf로-매달-용돈-받는-법-배당투자-실전-가이드.md",
     "published_at": "2026-04-19T16:56:54.719743",
-    "title": "월배당 ETF로 매달 용돈 받는 법"
+    "title": "월배당 ETF로 매달 용돈 받는 법",
+    "date": "2026-04-19",
+    "slug": "etf-03"
   },
   {
     "topic_id": "etf-04",
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/blog/2025년-유망-섹터etf-총정리-반도체etfai-etf-어디가-먼저.md",
     "published_at": "2026-04-19T20:52:28.209056",
-    "title": "2025년 유망 섹터 ETF 총정리"
+    "title": "2025년 유망 섹터 ETF 총정리",
+    "date": "2026-04-19",
+    "slug": "etf-04"
   },
   {
     "topic_id": "etf-05",
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/blog/레버리지etf-장기투자-정말-괜찮을까-곱버스인버스까지-현실-체크.md",
     "published_at": "2026-04-19T20:54:14.385991",
-    "title": "레버리지 ETF의 진실: 장기투자해도 될까?"
+    "title": "레버리지 ETF의 진실: 장기투자해도 될까?",
+    "date": "2026-04-19",
+    "slug": "etf-05"
   },
   {
     "topic_id": "ko-prediction-tracker",
