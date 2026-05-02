@@ -802,6 +802,131 @@ def generate_monthly_dividend(symbols=None, lang: str = "ko", force_timeout: boo
     }
 
 
+_BRIDGE_START_TIME = time.time()
+
+
+def health_full() -> dict:
+    """확장 헬스체크 — 토큰, 발행 이력, 프로세스, 디스크, GPU 포함."""
+    import shutil
+
+    result: dict = {"status": "ok"}
+
+    # uptime
+    result["bridge_uptime_sec"] = int(time.time() - _BRIDGE_START_TIME)
+
+    # TikTok token
+    tiktok_path = NICHPROJECT / ".tiktok_secrets" / "token.json"
+    tiktok_info: dict = {"exists": tiktok_path.exists()}
+    if tiktok_path.exists():
+        try:
+            tok = json.loads(tiktok_path.read_text())
+            expires_at = tok.get("expires_at") or tok.get("expires_in")
+            if expires_at:
+                tiktok_info["expires_in_sec"] = int(float(expires_at) - time.time())
+        except Exception:
+            pass
+    result["tiktok_token"] = tiktok_info
+
+    # YouTube token
+    yt_path = NICHPROJECT / ".youtube_secrets" / "token.json"
+    result["youtube_token"] = {"exists": yt_path.exists()}
+
+    # last_published
+    history_path = NICHPROJECT / "auto_publisher" / "data" / "published_history.json"
+    last_published: dict = {}
+    if history_path.exists():
+        try:
+            entries = json.loads(history_path.read_text())
+            if isinstance(entries, list) and entries:
+                last = entries[-1]
+                last_published = {
+                    "timestamp": last.get("timestamp") or last.get("published_at"),
+                    "slug": last.get("slug"),
+                    "lang": last.get("lang"),
+                }
+            elif isinstance(entries, dict) and entries:
+                key = max(entries.keys())
+                last = entries[key]
+                last_published = {
+                    "timestamp": key,
+                    "slug": last.get("slug"),
+                    "lang": last.get("lang"),
+                }
+        except Exception:
+            pass
+    result["last_published"] = last_published
+
+    # n8n running
+    try:
+        n8n_out = subprocess.run(
+            ["pgrep", "n8n"], capture_output=True, text=True, timeout=5
+        )
+        result["n8n_running"] = n8n_out.returncode == 0
+    except Exception:
+        result["n8n_running"] = False
+
+    # tunnel active
+    try:
+        tunnel_out = subprocess.run(
+            ["pgrep", "-f", "cloudflared.*investiqs"],
+            capture_output=True, text=True, timeout=5,
+        )
+        result["tunnel_active"] = tunnel_out.returncode == 0
+    except Exception:
+        result["tunnel_active"] = False
+
+    # stuck processes (auto_publisher.main make-video running >= 1800s)
+    stuck = []
+    try:
+        ps_out = subprocess.run(
+            ["ps", "-eo", "pid,etimes,args", "--no-headers"],
+            capture_output=True, text=True, timeout=5,
+        )
+        for line in ps_out.stdout.splitlines():
+            parts = line.split(None, 2)
+            if len(parts) < 3:
+                continue
+            pid_str, elapsed_str, cmd = parts
+            if "auto_publisher" in cmd and "make-video" in cmd:
+                try:
+                    elapsed = int(elapsed_str)
+                    if elapsed >= 1800:
+                        stuck.append({"pid": int(pid_str), "cmd": cmd[:120], "elapsed_sec": elapsed})
+                except ValueError:
+                    pass
+    except Exception:
+        pass
+    result["stuck_processes"] = stuck
+
+    # disk usage
+    try:
+        df_out = subprocess.run(
+            ["df", "/", "--output=pcent"],
+            capture_output=True, text=True, timeout=5,
+        )
+        lines = [l.strip() for l in df_out.stdout.splitlines() if l.strip()]
+        pct_str = lines[-1].rstrip("%")
+        result["disk_usage_percent"] = float(pct_str)
+    except Exception:
+        result["disk_usage_percent"] = None
+
+    # GPU utilization
+    try:
+        gpu_out = subprocess.run(
+            ["nvidia-smi", "--query-gpu=utilization.gpu", "--format=csv,noheader,nounits"],
+            capture_output=True, text=True, timeout=10,
+        )
+        if gpu_out.returncode == 0:
+            gpu_vals = [float(v.strip()) for v in gpu_out.stdout.splitlines() if v.strip()]
+            result["gpu_utilization_percent"] = gpu_vals[0] if len(gpu_vals) == 1 else gpu_vals
+        else:
+            result["gpu_utilization_percent"] = None
+    except Exception:
+        result["gpu_utilization_percent"] = None
+
+    return result
+
+
 def deep_health() -> dict:
     """서비스별 확장 헬스체크."""
     import shutil
@@ -866,6 +991,15 @@ class BridgeHandler(BaseHTTPRequestHandler):
                 self._respond(200, deep_health())
             else:
                 self._respond(200, {"status": "ok"})
+            return
+        if path == "/health/full":
+            if not self._check_auth():
+                self._respond(401, {"error": "Unauthorized"})
+                return
+            try:
+                self._respond(200, health_full())
+            except Exception as e:
+                self._respond(500, {"status": "error", "error": str(e)})
             return
         if path == "/publish":
             try:
