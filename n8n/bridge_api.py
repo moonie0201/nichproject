@@ -962,6 +962,49 @@ def health_full() -> dict:
     except Exception:
         result["gpu_utilization_percent"] = None
 
+    # 활성 n8n 워크플로우 수
+    def _active_workflows():
+        try:
+            r = subprocess.run(
+                ["docker", "exec", "n8n-n8n-1", "sqlite3",
+                 "/home/node/.n8n/database.sqlite",
+                 "SELECT COUNT(*) FROM workflow_entity WHERE active=1"],
+                capture_output=True, text=True, timeout=5
+            )
+            return int(r.stdout.strip()) if r.returncode == 0 else None
+        except Exception:
+            return None
+
+    # 최근 24h 발행 수
+    def _recent_publish_count():
+        try:
+            from datetime import datetime, timedelta
+            hist = json.load(open(str(NICHPROJECT / "auto_publisher" / "data" / "published_history.json")))
+            since = datetime.now().timestamp() - 86400
+            recent = [e for e in hist
+                      if datetime.fromisoformat(e.get('date', e.get('timestamp', '2000-01-01')).replace('Z', '+00:00')).timestamp() > since]
+            return len(recent)
+        except Exception:
+            return None
+
+    # 마지막 영상 생성 시각
+    def _last_video():
+        try:
+            from glob import glob
+            from os.path import getmtime
+            from datetime import datetime
+            videos = glob(str(WORKSPACE / ".omc" / "video_cache" / "*" / "short.mp4"))
+            if not videos:
+                return None
+            latest = max(videos, key=getmtime)
+            return datetime.fromtimestamp(getmtime(latest)).isoformat()
+        except Exception:
+            return None
+
+    result["active_workflows"] = _active_workflows()
+    result["recent_24h_publish_count"] = _recent_publish_count()
+    result["last_video_generated"] = _last_video()
+
     return result
 
 
