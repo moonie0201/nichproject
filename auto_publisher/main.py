@@ -531,7 +531,7 @@ def cmd_analyze(args):
 
 
 def cmd_run(args):
-    """즉시 생성 + 발행"""
+    """즉시 생성 + 발행 (--with-video 시 영상까지 자동 chain)"""
     errors = validate_config()
     if errors:
         for e in errors:
@@ -540,6 +540,7 @@ def cmd_run(args):
         sys.exit(1)
 
     langs = SUPPORTED_LANGUAGES if getattr(args, "all_langs", False) else [getattr(args, "lang", "ko")]
+    with_video = getattr(args, "with_video", True)
 
     for lang in langs:
         result = do_publish(lang=lang)
@@ -551,6 +552,20 @@ def cmd_run(args):
                     print(f"  {platform}: {pr['url']}")
                 elif "error" in pr:
                     print(f"  {platform}: 실패 — {pr['error']}")
+
+            # 영상 자동 chain — hugo slug 추출하여 do_make_video 호출
+            if with_video:
+                hugo_pr = result.get("publish_results", {}).get("hugo") or {}
+                slug = hugo_pr.get("slug")
+                if slug:
+                    logger.info(f"[{lang}] --with-video chain: do_make_video(slug={slug})")
+                    try:
+                        do_make_video(slug=slug, lang=lang)
+                    except Exception as e:
+                        logger.error(f"[{lang}] make-video chain 실패 (블로그는 이미 발행됨): {e}",
+                                     exc_info=True)
+                else:
+                    logger.info(f"[{lang}] hugo slug 없음 — make-video chain 스킵")
         else:
             print(f"[{lang}] 발행할 토픽이 없습니다.")
 
@@ -716,9 +731,13 @@ def main():
     )
     subparsers = parser.add_subparsers(dest="command", help="명령어")
 
-    run_p = subparsers.add_parser("run", help="즉시 생성 + 발행")
+    run_p = subparsers.add_parser("run", help="즉시 생성 + 발행 (기본: 영상까지 chain)")
     run_p.add_argument("--lang", default="ko", choices=SUPPORTED_LANGUAGES, help="발행 언어")
     run_p.add_argument("--all-langs", action="store_true", help="전체 언어 순차 발행")
+    run_p.add_argument("--with-video", dest="with_video", action="store_true", default=True,
+                       help="블로그 발행 후 자동으로 make-video 실행 (기본 True)")
+    run_p.add_argument("--no-video", dest="with_video", action="store_false",
+                       help="영상 chain 비활성화 — 블로그만 발행")
     subparsers.add_parser("schedule", help="스케줄러 데몬 시작")
     subparsers.add_parser("generate", help="콘텐츠 생성만 (테스트)")
     subparsers.add_parser("test-login", help="Tistory 로그인 테스트")
