@@ -1,1 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>VOO DCA on InvestIQs — Investment Blog</title><link>https://investiqs.net/en/tags/voo-dca/</link><description>Recent content in VOO DCA on InvestIQs — Investment Blog</description><image><title>InvestIQs — Investment Blog</title><url>https://investiqs.net/images/og-default.png</url><link>https://investiqs.net/images/og-default.png</link></image><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 22 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://investiqs.net/en/tags/voo-dca/index.xml" rel="self" type="application/rss+xml"/><item><title>VOO DCA After 12 Months: Real Returns, Mistakes, and SCHD Contrast</title><link>https://investiqs.net/en/study/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/</link><pubDate>Wed, 22 Apr 2026 00:00:00 +0000</pubDate><guid>https://investiqs.net/en/study/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/</guid><description>VOO DCA after 12 months: real returns, SCHD comparison, and monthly ETF investing mistakes for U.S. investors.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>VOO DCA on InvestIQs — Investment Blog</title>
+    <link>https://investiqs.net/en/tags/voo-dca/</link>
+    <description>Recent content in VOO DCA on InvestIQs — Investment Blog</description>
+    <image>
+      <title>InvestIQs — Investment Blog</title>
+      <url>https://investiqs.net/images/og-default.png</url>
+      <link>https://investiqs.net/images/og-default.png</link>
+    </image>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 22 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://investiqs.net/en/tags/voo-dca/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VOO DCA After 12 Months: Real Returns, Mistakes, and SCHD Contrast</title>
+      <link>https://investiqs.net/en/study/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/</link>
+      <pubDate>Wed, 22 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/en/study/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/</guid>
+      <description>VOO DCA after 12 months: real returns, SCHD comparison, and monthly ETF investing mistakes for U.S. investors.</description>
+    </item>
+  </channel>
+</rss>

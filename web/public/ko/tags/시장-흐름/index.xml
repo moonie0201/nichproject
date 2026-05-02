@@ -1,1 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>시장 흐름 on InvestIQs — 투자 정보 블로그</title><link>https://investiqs.net/ko/tags/%EC%8B%9C%EC%9E%A5-%ED%9D%90%EB%A6%84/</link><description>Recent content in 시장 흐름 on InvestIQs — 투자 정보 블로그</description><image><title>InvestIQs — 투자 정보 블로그</title><url>https://investiqs.net/images/og-default.png</url><link>https://investiqs.net/images/og-default.png</link></image><generator>Hugo</generator><language>ko</language><lastBuildDate>Wed, 22 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://investiqs.net/ko/tags/%EC%8B%9C%EC%9E%A5-%ED%9D%90%EB%A6%84/index.xml" rel="self" type="application/rss+xml"/><item><title>2026년 4월 22일 시장 심층 분석: 변동성 속 기회 포착 전략</title><link>https://investiqs.net/ko/study/2026%EB%85%84-4%EC%9B%94-22%EC%9D%BC-%EC%8B%9C%EC%9E%A5-%EC%8B%AC%EC%B8%B5-%EB%B6%84%EC%84%9D-%EB%B3%80%EB%8F%99%EC%84%B1-%EC%86%8D-%EA%B8%B0%ED%9A%8C-%ED%8F%AC%EC%B0%A9-%EC%A0%84%EB%9E%B5/</link><pubDate>Wed, 22 Apr 2026 00:00:00 +0000</pubDate><guid>https://investiqs.net/ko/study/2026%EB%85%84-4%EC%9B%94-22%EC%9D%BC-%EC%8B%9C%EC%9E%A5-%EC%8B%AC%EC%B8%B5-%EB%B6%84%EC%84%9D-%EB%B3%80%EB%8F%99%EC%84%B1-%EC%86%8D-%EA%B8%B0%ED%9A%8C-%ED%8F%AC%EC%B0%A9-%EC%A0%84%EB%9E%B5/</guid><description>2026년 4월 22일 시장 분석: 변동성 속 섹터별 흐름, XLV vs VHT Peer ETF 비교, 기술적·펀더멘털 분석, 리스크 시나리오를 데이터 기반으로 정리.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>시장 흐름 on InvestIQs — 투자 정보 블로그</title>
+    <link>https://investiqs.net/ko/tags/%EC%8B%9C%EC%9E%A5-%ED%9D%90%EB%A6%84/</link>
+    <description>Recent content in 시장 흐름 on InvestIQs — 투자 정보 블로그</description>
+    <image>
+      <title>InvestIQs — 투자 정보 블로그</title>
+      <url>https://investiqs.net/images/og-default.png</url>
+      <link>https://investiqs.net/images/og-default.png</link>
+    </image>
+    <generator>Hugo</generator>
+    <language>ko</language>
+    <lastBuildDate>Wed, 22 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://investiqs.net/ko/tags/%EC%8B%9C%EC%9E%A5-%ED%9D%90%EB%A6%84/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2026년 4월 22일 시장 심층 분석: 변동성 속 기회 포착 전략</title>
+      <link>https://investiqs.net/ko/study/2026%EB%85%84-4%EC%9B%94-22%EC%9D%BC-%EC%8B%9C%EC%9E%A5-%EC%8B%AC%EC%B8%B5-%EB%B6%84%EC%84%9D-%EB%B3%80%EB%8F%99%EC%84%B1-%EC%86%8D-%EA%B8%B0%ED%9A%8C-%ED%8F%AC%EC%B0%A9-%EC%A0%84%EB%9E%B5/</link>
+      <pubDate>Wed, 22 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://investiqs.net/ko/study/2026%EB%85%84-4%EC%9B%94-22%EC%9D%BC-%EC%8B%9C%EC%9E%A5-%EC%8B%AC%EC%B8%B5-%EB%B6%84%EC%84%9D-%EB%B3%80%EB%8F%99%EC%84%B1-%EC%86%8D-%EA%B8%B0%ED%9A%8C-%ED%8F%AC%EC%B0%A9-%EC%A0%84%EB%9E%B5/</guid>
+      <description>2026년 4월 22일 시장 분석: 변동성 속 섹터별 흐름, XLV vs VHT Peer ETF 비교, 기술적·펀더멘털 분석, 리스크 시나리오를 데이터 기반으로 정리.</description>
+    </item>
+  </channel>
+</rss>

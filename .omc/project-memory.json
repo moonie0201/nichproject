@@ -284,8 +284,8 @@
     },
     {
       "path": "n8n/bridge_api.py",
-      "accessCount": 99,
-      "lastAccessed": 1777716620904,
+      "accessCount": 104,
+      "lastAccessed": 1777717727602,
       "type": "file"
     },
     {
@@ -373,6 +373,12 @@
       "type": "file"
     },
     {
+      "path": "n8n/docker-compose.yml",
+      "accessCount": 5,
+      "lastAccessed": 1777717730021,
+      "type": "file"
+    },
+    {
       "path": "ai_hedge_fund/src/tools/api.py",
       "accessCount": 4,
       "lastAccessed": 1776618023501,
@@ -383,12 +389,6 @@
       "accessCount": 4,
       "lastAccessed": 1776786543658,
       "type": "directory"
-    },
-    {
-      "path": "n8n/docker-compose.yml",
-      "accessCount": 4,
-      "lastAccessed": 1776871070769,
-      "type": "file"
     },
     {
       "path": "auto_publisher_scheduler.service",

@@ -52,6 +52,20 @@ async function refresh() {
     cards.push(`<div class="card"><div class="label">n8n</div><div class="value status-${d.n8n_running ? 'ok' : 'err'}">${d.n8n_running ? '✅' : '❌'}</div></div>`);
     cards.push(`<div class="card"><div class="label">Tunnel</div><div class="value status-${d.tunnel_active ? 'ok' : 'err'}">${d.tunnel_active ? '✅' : '❌'}</div></div>`);
 
+    if (d.active_workflows !== null && d.active_workflows !== undefined) {
+      cards.push(`<div class="card"><div class="label">Active Workflows</div><div class="value status-${d.active_workflows >= 27 ? 'ok' : 'warn'}">${d.active_workflows}/27</div></div>`);
+    }
+
+    if (d.recent_24h_publish_count !== null && d.recent_24h_publish_count !== undefined) {
+      cards.push(`<div class="card"><div class="label">24h 발행 수</div><div class="value">${d.recent_24h_publish_count}</div></div>`);
+    }
+
+    if (d.last_video_generated) {
+      const ts = new Date(d.last_video_generated);
+      const ago = Math.round((Date.now() - ts) / 60000);
+      cards.push(`<div class="card"><div class="label">최근 영상</div><div class="value">${ago < 60 ? ago + 'm' : Math.round(ago/60) + 'h'} ago</div></div>`);
+    }
+
     document.getElementById('grid').innerHTML = cards.join('');
   } catch (e) {
     document.getElementById('raw').textContent = 'Error: ' + e.message;
