@@ -154,6 +154,9 @@ _EN = {
         "A single session is not a trend; check sector breadth.",
         "Verify whether your held sectors are among today's leaders or laggards.",
         "Compare VIX vs your portfolio volatility tolerance.",
+        "If a Mag7 name shows RSI > 70, treat any add as short-term overbought risk.",
+        "When 10-year yield and DXY rise together, re-check your growth-stock exposure.",
+        "Wait for the next major event (CPI/FOMC/earnings) before changing position size.",
     ],
     # weekly body texts
     "weekly_intro": (
@@ -268,6 +271,9 @@ _JA = {
         "1セッションはトレンドではない。セクター全体の強弱を確認する。",
         "保有セクターが今日のリーダー・出遅れのどちらに入っているか確認する。",
         "VIXとポートフォリオのボラティリティ許容度を比較する。",
+        "Mag7 銘柄の RSI が 70 を超えた場合、追加買いは短期過熱リスクとして扱う。",
+        "10年金利と DXY が同時に上昇する局面では、グロース株の比重を再点検する。",
+        "次の主要イベント(CPI/FOMC/決算)までポジションサイズの変更を急がない。",
     ],
     # weekly body texts
     "weekly_intro": (
@@ -382,6 +388,9 @@ _VI = {
         "Một phiên không phải xu hướng; kiểm tra độ rộng toàn ngành.",
         "Xác nhận ngành bạn đang nắm thuộc nhóm dẫn đầu hay yếu nhất hôm nay.",
         "So sánh VIX với mức chịu đựng biến động của danh mục.",
+        "Nếu một cổ phiếu Mag7 có RSI > 70, hãy xem việc gia tăng vị thế là rủi ro quá mua ngắn hạn.",
+        "Khi lợi suất 10 năm và DXY cùng tăng, hãy kiểm tra lại tỷ trọng cổ phiếu tăng trưởng.",
+        "Đợi sự kiện quan trọng tiếp theo (CPI/FOMC/earnings) trước khi thay đổi quy mô vị thế.",
     ],
     # weekly body texts
     "weekly_intro": (
@@ -496,6 +505,9 @@ _ID = {
         "Satu sesi bukan tren; periksa luasnya sektor.",
         "Verifikasi apakah sektor yang dipegang termasuk pemimpin atau tertinggal hari ini.",
         "Bandingkan VIX dengan toleransi volatilitas portofolio Anda.",
+        "Jika saham Mag7 menunjukkan RSI > 70, perlakukan penambahan posisi sebagai risiko overbought jangka pendek.",
+        "Saat imbal hasil 10 tahun dan DXY naik bersamaan, periksa kembali eksposur saham pertumbuhan.",
+        "Tunggu event utama berikutnya (CPI/FOMC/earnings) sebelum mengubah ukuran posisi.",
     ],
     # weekly body texts
     "weekly_intro": (
