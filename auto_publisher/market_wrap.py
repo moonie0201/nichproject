@@ -99,6 +99,20 @@ MACRO_TICKERS = [
     ("DX-Y.NYB", "달러 인덱스 (DXY)"),
 ]
 
+# 아시아 핸드오프: 미국 마감 후 한국 독자가 만나는 다음 시장
+ASIA_TICKERS = [
+    ("^N225", "Nikkei 225 (일본)"),
+    ("^HSI", "Hang Seng (홍콩)"),
+    ("^KS11", "KOSPI Composite (한국)"),
+    ("000001.SS", "Shanghai Composite (중국)"),
+]
+
+# 디지털 자산: 위험선호 24시간 바로미터
+CRYPTO_TICKERS = [
+    ("BTC-USD", "Bitcoin"),
+    ("ETH-USD", "Ethereum"),
+]
+
 KST = timezone(timedelta(hours=9))
 
 
@@ -288,8 +302,8 @@ def fetch_us_market_snapshot() -> dict:
     # 미국장 마감 기준 = KST 전날
     us_close_date = (now_kst - timedelta(days=1)).strftime("%Y-%m-%d")
 
-    # 1단계: 가격 데이터 병렬 수집 (indices, vix, sectors, bonds, comms, mag7, macro)
-    with ThreadPoolExecutor(max_workers=10) as ex:
+    # 1단계: 가격 데이터 병렬 수집 (indices, vix, sectors, bonds, comms, mag7, macro, asia, crypto)
+    with ThreadPoolExecutor(max_workers=12) as ex:
         fut_indices = ex.submit(_fetch_extended_items, INDEX_TICKERS, False)
         fut_vix = ex.submit(_fetch_one_price, VIX_TICKER)
         fut_sectors = ex.submit(_fetch_extended_items, SECTOR_TICKERS, False)
@@ -297,6 +311,8 @@ def fetch_us_market_snapshot() -> dict:
         fut_comms = ex.submit(_fetch_extended_items, COMMODITY_TICKERS, False)
         fut_mag7 = ex.submit(_fetch_extended_items, MAG7_TICKERS, True)
         fut_macro = ex.submit(_fetch_extended_items, MACRO_TICKERS, False)
+        fut_asia = ex.submit(_fetch_extended_items, ASIA_TICKERS, False)
+        fut_crypto = ex.submit(_fetch_extended_items, CRYPTO_TICKERS, False)
         fut_movers = ex.submit(_fetch_top_movers, MOVER_TICKERS)
         # 인덱스 RSI 및 5일 트렌드용 history 도 같이
         fut_index_hist = {
@@ -333,6 +349,8 @@ def fetch_us_market_snapshot() -> dict:
         commodities = fut_comms.result()
         mag7 = fut_mag7.result()
         macro = fut_macro.result()
+        asia = fut_asia.result()
+        crypto = fut_crypto.result()
         top_movers = fut_movers.result()
 
         # RSI 및 5일 트렌드 계산
@@ -361,6 +379,8 @@ def fetch_us_market_snapshot() -> dict:
         "commodities": commodities,
         "mag7": mag7,
         "macro": macro,
+        "asia": asia,
+        "crypto": crypto,
         "index_rsi": index_rsi,
         "index_5d": index_5d,
         "top_movers": top_movers,
@@ -615,6 +635,38 @@ def _build_macro_table(snapshot: dict) -> str:
             f"<tr><td>{m['name']}</td><td>{m['ticker']}</td>"
             f"<td>{value_str}</td>"
             f"<td>{_format_pct(m['pct'])}</td></tr>"
+        )
+    rows.append("</table>")
+    return "\n".join(rows)
+
+
+def _build_asia_crypto_table(snapshot: dict) -> str:
+    """아시아 지수 + 비트코인/이더리움 — 미국 마감 후 한국 독자가 만나는 다음 시장."""
+    asia = snapshot.get("asia") or []
+    crypto = snapshot.get("crypto") or []
+    if not any(a.get("price", 0) > 0 for a in asia) and not any(c.get("price", 0) > 0 for c in crypto):
+        return ""
+    rows = ["<table><caption>아시아 지수 · 디지털 자산 — 미국 마감 → 다음 시장 핸드오프</caption>"]
+    rows.append("<tr><th>구분</th><th>자산</th><th>티커</th><th>현재값</th><th>등락률</th></tr>")
+    for a in asia:
+        if a.get("price", 0) <= 0:
+            continue
+        bg = _heatmap_bg(a["pct"])
+        fg = _heatmap_fg(a["pct"])
+        cell_style = f'style="background:{bg};color:{fg};font-weight:600;"'
+        rows.append(
+            f"<tr><td>🌏 아시아</td><td>{a['name']}</td><td>{a['ticker']}</td>"
+            f"<td>{a['price']:,.2f}</td><td {cell_style}>{_format_pct(a['pct'])}</td></tr>"
+        )
+    for c in crypto:
+        if c.get("price", 0) <= 0:
+            continue
+        bg = _heatmap_bg(c["pct"])
+        fg = _heatmap_fg(c["pct"])
+        cell_style = f'style="background:{bg};color:{fg};font-weight:600;"'
+        rows.append(
+            f"<tr><td>₿ 디지털</td><td>{c['name']}</td><td>{c['ticker']}</td>"
+            f"<td>${c['price']:,.0f}</td><td {cell_style}>{_format_pct(c['pct'])}</td></tr>"
         )
     rows.append("</table>")
     return "\n".join(rows)
@@ -978,6 +1030,17 @@ def build_markdown(snapshot: dict, lang: str = "ko") -> str:
         "## 📉 오늘의 상승/하락 주도 종목",
         "",
         movers_table if movers_table else "_(모버 데이터 없음)_",
+        "",
+        "## 🌏 아시아 핸드오프 · 디지털 자산",
+        "",
+        _build_asia_crypto_table(snapshot) or "_(아시아·디지털 자산 데이터 없음)_",
+        "",
+        (
+            "한국 독자에게 미국 마감 → 아시아 개장은 자금 흐름의 자연스러운 다음 페이지다. "
+            "특히 닛케이225·홍콩H지수가 미국 흐름을 따라가는지, 디커플링되는지 첫 시간 안에 드러난다. "
+            "비트코인·이더리움은 24시간 거래되는 위험선호 바로미터로, 미국장 마감 후의 즉각적인 위험심리 변화를 "
+            "가장 빠르게 반영한다."
+        ),
         "",
         "## 💡 오늘의 시장 내러티브",
         "",
