@@ -50,20 +50,18 @@ def acquire_bridge_lock() -> None:
 
 def run_auto_publish(lang: str = "ko") -> dict:
     """auto_publisher 실행 — 콘텐츠 생성 + Hugo 빌드 + CF 배포"""
-    result = subprocess.run(
+    stdout, stderr, returncode = _popen_stream(
         [VENV_PYTHON, "-m", "auto_publisher.main", "run", "--lang", lang],
         cwd=NICHPROJECT,
-        capture_output=True,
-        text=True,
-        timeout=int(os.getenv("RUN_PUBLISH_TIMEOUT_SEC", "600")),
+        timeout_sec=int(os.getenv("RUN_PUBLISH_TIMEOUT_SEC", "600")),
     )
-    lines = result.stdout.strip().split("\n")
+    lines = stdout.strip().split("\n")
     title = next((l.replace("  제목: ", "") for l in lines if "제목:" in l), "")
     return {
-        "success": result.returncode == 0,
+        "success": returncode == 0,
         "title": title,
-        "output": result.stdout[-1000:],
-        "error": result.stderr[-500:] if result.returncode != 0 else "",
+        "output": stdout[-1000:],
+        "error": stderr[-500:] if returncode != 0 else "",
     }
 
 
@@ -569,17 +567,15 @@ def run_analyze(ticker: str = "VOO", lang: str = "ko") -> dict:
 
 def run_translate(source_lang: str = "ko", target_lang: str = "en") -> dict:
     """번역+현지화 발행"""
-    result = subprocess.run(
+    stdout, stderr, returncode = _popen_stream(
         [VENV_PYTHON, "-m", "auto_publisher.main", "translate", "--from", source_lang, "--to", target_lang],
         cwd=NICHPROJECT,
-        capture_output=True,
-        text=True,
-        timeout=int(os.getenv("TRANSLATE_TIMEOUT_SEC", "600")),
+        timeout_sec=int(os.getenv("TRANSLATE_TIMEOUT_SEC", "600")),
     )
     return {
-        "success": result.returncode == 0,
-        "output": result.stdout[-500:],
-        "error": result.stderr[-300:] if result.returncode != 0 else "",
+        "success": returncode == 0,
+        "output": stdout[-500:],
+        "error": stderr[-300:] if returncode != 0 else "",
     }
 
 
@@ -604,6 +600,32 @@ def _run_video_job(job_id: str, slug: str, lang: str, privacy: str) -> None:
         _VIDEO_JOBS[job_id].update({"status": "failed", "error": str(e), "finished_at": time.time()})
 
 
+def _popen_stream(cmd: list, cwd, timeout_sec: int) -> tuple[str, str, int]:
+    """subprocess.Popen으로 실행하며 stdout을 sys.stdout에 실시간 스트림하고 캡처도 반환.
+
+    Returns: (stdout_captured, stderr_captured, returncode)
+    """
+    proc = subprocess.Popen(
+        cmd,
+        cwd=cwd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
+    )
+    output_lines = []
+    try:
+        for line in proc.stdout:
+            sys.stdout.write(line)
+            sys.stdout.flush()
+            output_lines.append(line)
+        proc.wait(timeout=timeout_sec)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        raise
+    return "".join(output_lines), "", proc.returncode
+
+
 def run_make_video(slug: str = "", lang: str = "ko",
                    privacy: str = "public") -> dict:
     """블로그 slug → 롱폼+쇼츠 영상 생성 + YouTube 업로드"""
@@ -616,19 +638,17 @@ def run_make_video(slug: str = "", lang: str = "ko",
             slug = latest["slug"]
     if not slug:
         return {"success": False, "error": "slug 없고 최근 포스트도 없음"}
-    result = subprocess.run(
+    stdout, stderr, returncode = _popen_stream(
         [VENV_PYTHON, "-m", "auto_publisher.main", "make-video",
          "--slug", slug, "--lang", lang, "--privacy", privacy],
         cwd=NICHPROJECT,
-        capture_output=True,
-        text=True,
-        timeout=int(os.getenv("MAKE_VIDEO_TIMEOUT_SEC", "1800")),
+        timeout_sec=int(os.getenv("MAKE_VIDEO_TIMEOUT_SEC", "1800")),
     )
     return {
-        "success": result.returncode == 0,
+        "success": returncode == 0,
         "slug": slug,
-        "output": result.stdout[-1500:],
-        "error": result.stderr[-500:] if result.returncode != 0 else "",
+        "output": stdout[-1500:],
+        "error": stderr[-500:] if returncode != 0 else "",
     }
 
 
