@@ -1,5 +1,20 @@
 # 🎯 사용자 직접 액션 가이드 (2026-05-02 최종)
 
+## 🎉 검증 완료 (2026-05-02)
+
+### 자동 발행 100% 작동 검증
+- ✅ `publish-us-market-wrap` 실제 호출 → 새 글 생성 + Cloudflare 배포 성공
+- ✅ 영상 자동 합성 → 3개 short.mp4 생성 (Gemini Flash + NVENC)
+- ✅ TikTok OAuth → token 발급 완료 (24h refresh 자동)
+- ✅ n8n 27개 워크플로우 active=1
+- ✅ Cloudflare Tunnel + systemd active+enabled
+- ✅ AdSense / Klaro v2 / GA4 / og-default 모두 정상
+- ✅ 디스크 76GB 정리 (88% → 86%)
+
+### 다음 자동 트리거 (KST)
+**07:15 — us_market_wrap (다국어)** ⭐ 다음 트리거
+**08:30 — shorts_auto** (영상 + 업로드 시도)
+
 ## ✅ 자동화 100% 완료된 것
 - 한국어 일일 발행 (06:00 KST)
 - 다국어 시장 wrap EN/JA/VI/ID (07:30~08:15)
