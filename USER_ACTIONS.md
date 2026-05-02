@@ -55,3 +55,26 @@ ls -lt /home/mh/ocstorage/workspace/nichproject/web/content/ko/daily/ | head -5
 ```bash
 tail -f /tmp/bridge.log
 ```
+
+## 🚨 추가 (TikTok 자동화 활성화)
+
+### TikTok App Audit 신청
+현재 Sandbox 모드라 비공개 계정에만 업로드 가능. 일반 자동 업로드는 **앱 심사 통과 필요**.
+
+**신청 절차:**
+1. https://developers.tiktok.com/apps/ → 앱 선택
+2. **Production** 탭 → "Submit for review" 클릭
+3. 필수 정보 작성:
+   - **데모 비디오**: 자동 업로드 흐름 시연 영상 1개 (mp4, 50MB 이내)
+     - 권장: 우리 코드가 실제로 영상 업로드하는 화면 녹화 (3분)
+   - **Usage description**: 1000자 — InvestIQs 자동화 용도 설명
+4. 심사 기간: **약 7~14일**
+
+**심사 통과 후:**
+- `Production` 모드 활성화
+- `.env`의 `TIKTOK_CLIENT_KEY/SECRET`을 production 키로 교체
+- `tiktok_auth_setup()` 1회 재실행 (production token 발급)
+
+**임시 우회 (심사 전):**
+- 본인 TikTok 계정을 **비공개**로 전환 → 업로드 작동
+- 그 후 다시 공개 전환
