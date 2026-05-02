@@ -257,6 +257,54 @@ def tiktok_auth_setup(code: str | None = None):
     print(f"TikTok 인증 성공! 토큰 저장 완료: {TIKTOK_TOKEN_FILE}")
 
 
+_TIKTOK_MIN_CHUNK = 5 * 1024 * 1024   # TikTok 규격: 최소 5MB
+_TIKTOK_DEFAULT_CHUNK = 10 * 1024 * 1024  # 일반 청크 크기 10MB
+
+
+def _calc_chunk_params(file_size: int) -> tuple[int, int]:
+    """TikTok init 규격에 맞는 (chunk_size, total_chunk_count) 계산.
+
+    규칙:
+    - 5MB 미만 파일: single chunk, chunk_size = file_size
+    - 5MB 이상 파일: chunk_size = 10MB, ceil(file_size / 10MB) chunks
+
+    invariant: chunk_size * total_chunk_count >= file_size 이고
+               chunk_size <= file_size (TikTok 거부 방지)."""
+    # chunk_size 는 절대 file_size 보다 클 수 없음 (TikTok 거부)
+    chunk_size = min(_TIKTOK_DEFAULT_CHUNK, file_size)
+    total = math.ceil(file_size / chunk_size) if chunk_size else 1
+    return chunk_size, total
+
+
+def _build_init_body(
+    video_path: Path,
+    title: str,
+    privacy: str,
+    disable_duet: bool,
+    disable_comment: bool,
+    disable_stitch: bool,
+) -> dict:
+    """TikTok init 엔드포인트에 보낼 JSON body 구조 (테스트용 분리)."""
+    file_size = Path(video_path).stat().st_size
+    chunk_size, total_chunks = _calc_chunk_params(file_size)
+    return {
+        "post_info": {
+            "title": title,
+            "privacy_level": privacy,
+            "disable_duet": disable_duet,
+            "disable_comment": disable_comment,
+            "disable_stitch": disable_stitch,
+            "video_cover_timestamp_ms": 1000,
+        },
+        "source_info": {
+            "source": "FILE_UPLOAD",
+            "video_size": file_size,
+            "chunk_size": chunk_size,
+            "total_chunk_count": total_chunks,
+        },
+    }
+
+
 def upload_tiktok(
     video_path: Path,
     title: str,
@@ -273,8 +321,6 @@ def upload_tiktok(
     """
     import urllib.request
 
-    CHUNK_SIZE = 10 * 1024 * 1024  # 10MB
-
     # privacy 기본값: 환경변수 우선, 없으면 SELF_ONLY (sandbox 안전값)
     if privacy is None:
         privacy = os.environ.get("TIKTOK_DEFAULT_PRIVACY", "SELF_ONLY")
@@ -285,7 +331,7 @@ def upload_tiktok(
 
     video_path = Path(video_path)
     file_size = video_path.stat().st_size
-    total_chunks = math.ceil(file_size / CHUNK_SIZE)
+    chunk_size, total_chunks = _calc_chunk_params(file_size)
 
     # 태그를 제목에 append (최대 5개, 전체 150자 제한)
     full_title = title
@@ -297,22 +343,15 @@ def upload_tiktok(
 
     def _do_init(privacy_level: str):
         """Init 요청 수행. (upload_url, publish_id) 반환."""
-        init_body = json.dumps({
-            "post_info": {
-                "title": full_title,
-                "privacy_level": privacy_level,
-                "disable_duet": disable_duet,
-                "disable_comment": disable_comment,
-                "disable_stitch": disable_stitch,
-                "video_cover_timestamp_ms": 1000,
-            },
-            "source_info": {
-                "source": "FILE_UPLOAD",
-                "video_size": file_size,
-                "chunk_size": CHUNK_SIZE,
-                "total_chunk_count": total_chunks,
-            },
-        }).encode()
+        body = _build_init_body(
+            video_path=video_path,
+            title=full_title,
+            privacy=privacy_level,
+            disable_duet=disable_duet,
+            disable_comment=disable_comment,
+            disable_stitch=disable_stitch,
+        )
+        init_body = json.dumps(body).encode()
         req = urllib.request.Request(
             "https://open.tiktokapis.com/v2/post/publish/video/init/",
             data=init_body,
@@ -322,8 +361,15 @@ def upload_tiktok(
             },
             method="POST",
         )
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.loads(resp.read().decode())
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode())
+        except urllib.error.HTTPError as e:
+            # 응답 본문을 캡처해 디버깅 가능하게 (이전: HTTP 400 만 보였음)
+            err_body = e.read().decode(errors="replace")
+            raise RuntimeError(
+                f"TikTok init HTTP {e.code}: {err_body}"
+            ) from e
         return data["data"]["upload_url"], data["data"]["publish_id"]
 
     # ─── 1) Init (403 unaudited 에러 시 SELF_ONLY로 자동 재시도) ───
@@ -345,8 +391,8 @@ def upload_tiktok(
     # ─── 2) Chunk upload ───
     with open(video_path, "rb") as f:
         for chunk_idx in range(total_chunks):
-            start = chunk_idx * CHUNK_SIZE
-            chunk = f.read(CHUNK_SIZE)
+            start = chunk_idx * chunk_size
+            chunk = f.read(chunk_size)
             end = start + len(chunk) - 1
             put_req = urllib.request.Request(
                 upload_url,
