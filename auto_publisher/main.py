@@ -12,8 +12,10 @@ Auto Publisher Bot — 메인 엔트리포인트
 
 import argparse
 import logging
+import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 from auto_publisher.config import (
@@ -302,73 +304,100 @@ def do_make_video(slug: str, lang: str = "ko",
             authoritative_charts.append(c)
     logger.info(f"블로그 실제 차트 {len(authoritative_charts)}개: {authoritative_charts}")
 
+    skip_long = os.getenv("SKIP_LONG_VIDEO", "false").lower() == "true"
+    _t_total = time.time()
+
     # ─── 1) 롱폼 ───
-    logger.info(f"[{slug}] 롱폼 대사 생성 시작")
-    long_script = generate_long_video_script(blog_md, lang, blog_url=blog_url, data_pack=video_data_pack)
-    long_text = script_to_plain_text(long_script)
-    if not long_text:
-        logger.error("롱폼 대사 비어있음")
-        return None
+    if skip_long:
+        logger.info(f"[{slug}] SKIP_LONG_VIDEO=true — 롱폼 스킵, 쇼츠만 생성")
+        long_script = {"title": video_data_pack.get("title", slug), "chapters": [], "tags": [], "description": ""}
+        long_url = blog_url
+    else:
+        _t0 = time.time()
+        logger.info(f"[STEP_START] generate_long_video_script slug={slug}")
+        long_script = generate_long_video_script(blog_md, lang, blog_url=blog_url, data_pack=video_data_pack)
+        logger.info(f"[STEP_END] generate_long_video_script took {time.time()-_t0:.1f}s")
+        long_text = script_to_plain_text(long_script)
+        if not long_text:
+            logger.error("롱폼 대사 비어있음")
+            return None
 
-    long_mp3 = cache_dir / "long.mp3"
-    long_srt = cache_dir / "long.srt"
-    tts_info = synthesize_tts_with_srt(long_text, lang, long_mp3, long_srt)
+        long_mp3 = cache_dir / "long.mp3"
+        long_srt = cache_dir / "long.srt"
+        _t0 = time.time()
+        logger.info(f"[STEP_START] long_tts slug={slug}")
+        tts_info = synthesize_tts_with_srt(long_text, lang, long_mp3, long_srt)
+        logger.info(f"[STEP_END] long_tts took {time.time()-_t0:.1f}s")
 
-    # 롱폼 차트: 블로그 실제 차트 우선 + LLM 지정 차트 중 유효한 것만 추가
-    llm_long_charts = [c.get("chart") for c in long_script.get("chapters", []) if c.get("chart")]
-    valid_llm_long = [c for c in llm_long_charts
-                      if _resolve_chart_path(c) and Path(_resolve_chart_path(c)).exists()]
-    long_charts = authoritative_charts + [c for c in valid_llm_long if c not in authoritative_charts]
-    if not long_charts:
-        logger.warning(f"[{slug}] 블로그에 차트 없음 — fallback 카드 비주얼로 합성")
-    long_mp4 = cache_dir / "long.mp4"
-    if not compose_video(slug=f"{slug}_long",
-                         audio_path=long_mp3, srt_path=long_srt,
-                         chart_paths=long_charts,
-                         audio_duration_sec=tts_info["duration_sec"],
-                         out_path=long_mp4, aspect="16:9",
-                         fallback_visual_plan=long_script.get("fallback_visual_plan"),
-                         visual_beats=long_script.get("visual_beats"),
-                         source_data_points=long_script.get("source_data_points")):
-        logger.error("롱폼 영상 합성 실패")
-        return None
-    vq = _validate_video_file(long_mp4, tts_info["duration_sec"], "16:9")
-    if not vq["ok"]:
-        logger.warning(f"롱폼 품질 검증 실패: {vq['issues']}")
-    results["long_mp4"] = str(long_mp4)
-    results["long_duration_sec"] = tts_info["duration_sec"]
-    results["long_video_quality"] = vq
+        # 롱폼 차트: 블로그 실제 차트 우선 + LLM 지정 차트 중 유효한 것만 추가
+        llm_long_charts = [c.get("chart") for c in long_script.get("chapters", []) if c.get("chart")]
+        valid_llm_long = [c for c in llm_long_charts
+                          if _resolve_chart_path(c) and Path(_resolve_chart_path(c)).exists()]
+        long_charts = authoritative_charts + [c for c in valid_llm_long if c not in authoritative_charts]
+        if not long_charts:
+            logger.warning(f"[{slug}] 블로그에 차트 없음 — fallback 카드 비주얼로 합성")
+        long_mp4 = cache_dir / "long.mp4"
+        _t0 = time.time()
+        logger.info(f"[STEP_START] long_video_compose slug={slug}")
+        if not compose_video(slug=f"{slug}_long",
+                             audio_path=long_mp3, srt_path=long_srt,
+                             chart_paths=long_charts,
+                             audio_duration_sec=tts_info["duration_sec"],
+                             out_path=long_mp4, aspect="16:9",
+                             fallback_visual_plan=long_script.get("fallback_visual_plan"),
+                             visual_beats=long_script.get("visual_beats"),
+                             source_data_points=long_script.get("source_data_points")):
+            logger.error("롱폼 영상 합성 실패")
+            return None
+        logger.info(f"[STEP_END] long_video_compose took {time.time()-_t0:.1f}s")
+        vq = _validate_video_file(long_mp4, tts_info["duration_sec"], "16:9")
+        if not vq["ok"]:
+            logger.warning(f"롱폼 품질 검증 실패: {vq['issues']}")
+        results["long_mp4"] = str(long_mp4)
+        results["long_duration_sec"] = tts_info["duration_sec"]
+        results["long_video_quality"] = vq
 
-    # 업로드
-    if upload:
-        try:
-            from auto_publisher.video_uploader import upload_youtube
-            up = upload_youtube(
-                video_path=long_mp4,
-                title=long_script["title"],
-                description=long_script.get("description", "") + f"\n\n원본 블로그: {blog_url}",
-                tags=long_script.get("tags", []),
-                is_short=False, privacy=privacy,
-            )
-            results["long_youtube"] = up
-        except Exception as e:
-            logger.error(f"롱폼 업로드 실패: {e}")
-            results["long_upload_error"] = str(e)
+        # 업로드
+        if upload:
+            try:
+                from auto_publisher.video_uploader import upload_youtube
+                _t0 = time.time()
+                logger.info(f"[STEP_START] long_youtube_upload slug={slug}")
+                up = upload_youtube(
+                    video_path=long_mp4,
+                    title=long_script["title"],
+                    description=long_script.get("description", "") + f"\n\n원본 블로그: {blog_url}",
+                    tags=long_script.get("tags", []),
+                    is_short=False, privacy=privacy,
+                )
+                logger.info(f"[STEP_END] long_youtube_upload took {time.time()-_t0:.1f}s")
+                results["long_youtube"] = up
+            except Exception as e:
+                logger.error(f"롱폼 업로드 실패: {e}")
+                results["long_upload_error"] = str(e)
+
+        long_url = results.get("long_youtube", {}).get("url", blog_url)
 
     # ─── 2) 쇼츠 (롱폼 압축) ───
-    long_url = results.get("long_youtube", {}).get("url", blog_url)
-    logger.info(f"[{slug}] 쇼츠 대사 생성 시작")
+    _t0 = time.time()
+    logger.info(f"[STEP_START] generate_short_video_script slug={slug}")
     short_script = generate_short_video_script(long_script, long_url, lang, data_pack=video_data_pack)
+    logger.info(f"[STEP_END] generate_short_video_script took {time.time()-_t0:.1f}s")
     short_text = script_to_plain_text(short_script)
 
     short_mp3 = cache_dir / "short.mp3"
     short_srt = cache_dir / "short.srt"
+    _t0 = time.time()
+    logger.info(f"[STEP_START] short_tts slug={slug}")
     tts_info_s = synthesize_tts_with_srt(short_text, lang, short_mp3, short_srt)
+    logger.info(f"[STEP_END] short_tts took {time.time()-_t0:.1f}s")
 
-    # 쇼츠 차트: 블로그의 실제 차트 중 대표 1~2개 (롱폼과 동일 원본 사용)
-    short_charts = authoritative_charts[:2] if authoritative_charts else long_charts[:2]
+    # 쇼츠 차트: 블로그의 실제 차트 중 대표 1~2개
+    short_charts = authoritative_charts[:2] if authoritative_charts else []
     logger.info(f"쇼츠 차트 {len(short_charts)}개: {short_charts}")
     short_mp4 = cache_dir / "short.mp4"
+    _t0 = time.time()
+    logger.info(f"[STEP_START] short_video_compose slug={slug}")
     if not compose_video(slug=f"{slug}_short",
                          audio_path=short_mp3, srt_path=short_srt,
                          chart_paths=short_charts,
@@ -379,6 +408,7 @@ def do_make_video(slug: str, lang: str = "ko",
                          source_data_points=short_script.get("source_data_points")):
         logger.error("쇼츠 영상 합성 실패")
     else:
+        logger.info(f"[STEP_END] short_video_compose took {time.time()-_t0:.1f}s")
         vq_s = _validate_video_file(short_mp4, tts_info_s["duration_sec"], "9:16")
         if not vq_s["ok"]:
             logger.warning(f"쇼츠 품질 검증 실패: {vq_s['issues']}")
@@ -388,6 +418,8 @@ def do_make_video(slug: str, lang: str = "ko",
         if upload:
             try:
                 from auto_publisher.video_uploader import upload_youtube
+                _t0 = time.time()
+                logger.info(f"[STEP_START] short_youtube_upload slug={slug}")
                 up = upload_youtube(
                     video_path=short_mp4,
                     title=short_script["title"],
@@ -395,6 +427,7 @@ def do_make_video(slug: str, lang: str = "ko",
                     tags=short_script.get("tags", []),
                     is_short=True, privacy=privacy,
                 )
+                logger.info(f"[STEP_END] short_youtube_upload took {time.time()-_t0:.1f}s")
                 results["short_youtube"] = up
             except Exception as e:
                 logger.error(f"쇼츠 업로드 실패: {e}")
@@ -403,11 +436,14 @@ def do_make_video(slug: str, lang: str = "ko",
             if os.getenv("TIKTOK_ENABLED", "false").lower() == "true":
                 try:
                     from auto_publisher.video_uploader import upload_tiktok
+                    _t0 = time.time()
+                    logger.info(f"[STEP_START] tiktok_upload slug={slug}")
                     tt_up = upload_tiktok(
                         video_path=short_mp4,
                         title=short_script["title"],
                         tags=short_script.get("tags", []),
                     )
+                    logger.info(f"[STEP_END] tiktok_upload took {time.time()-_t0:.1f}s")
                     results["short_tiktok"] = tt_up
                     logger.info(f"TikTok 쇼츠 업로드 완료: {tt_up['url']}")
                 except Exception as e:
@@ -432,6 +468,8 @@ def do_make_video(slug: str, lang: str = "ko",
                 except Exception as e:
                     logger.error(f"Instagram Reels 업로드 실패: {e}")
                     results["short_instagram_error"] = str(e)
+
+    logger.info(f"[STEP_END] do_make_video TOTAL took {time.time()-_t_total:.1f}s slug={slug}")
 
     # Discord 알림
     try:

@@ -404,7 +404,8 @@ def compose_video(
         if p and Path(p).exists():
             valid_charts.append(Path(p))
 
-    per_chart_sec = max(audio_duration_sec / max(len(valid_charts), 1), 3.0)
+    _kenburns_min = float(os.getenv("KENBURNS_PER_CHART_SEC", "2"))
+    per_chart_sec = max(audio_duration_sec / max(len(valid_charts), 1), _kenburns_min)
 
     work_dir = audio_path.parent / f"{slug}_clips"
     work_dir.mkdir(parents=True, exist_ok=True)

@@ -948,12 +948,14 @@ def generate_short_video_script(
         "source_data_points": long_script.get("source_data_points", []),
     }
 
+    _short_max_sec = int(os.getenv("SHORT_DURATION_SEC", "60"))
+
     result = _video_llm_json(_build_short_script_prompt(long_script, blog_url, lang), "short_video_script")
     result.setdefault("title", f"{data_pack.get('title', '')[:50]} #shorts")
     result.setdefault("tags", [])
     result.setdefault("chapters", [])
     result.setdefault("mid_roll_marks_sec", [])
-    result.setdefault("total_duration_sec", 60)
+    result.setdefault("total_duration_sec", _short_max_sec)
     result.setdefault("hashtags", ["#shorts"])
 
     critique = _critique_script(result, data_pack, lang, "short")
@@ -983,6 +985,11 @@ def generate_short_video_script(
     if not ok:
         for issue in issues:
             logger.warning("[short_video_script] 스크립트 검증 경고: %s", issue)
+
+    # SHORT_DURATION_SEC 환경변수 캡 적용
+    if result.get("total_duration_sec", 0) > _short_max_sec:
+        result["total_duration_sec"] = _short_max_sec
+        logger.info(f"[short_video_script] total_duration_sec 캡 적용: {_short_max_sec}s")
 
     return result
 
