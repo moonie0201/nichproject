@@ -97,7 +97,24 @@ docker exec n8n-n8n-1 sqlite3 /home/node/.n8n/database.sqlite "SELECT COUNT(*) F
 df -h / && nvidia-smi --query-gpu=utilization.gpu --format=csv
 ```
 
-### 7. n8n UI 접속
+### 7. n8n 워크플로우 활성 상태 점검
+n8n 컨테이너 재시작 시 워크플로우가 비활성화되는 경우 발견됨.
+
+**확인:**
+```bash
+docker exec n8n-n8n-1 sqlite3 /home/node/.n8n/database.sqlite "SELECT COUNT(*) FROM workflow_entity WHERE active=1"
+# 결과가 27이 아니면 즉시 활성화 필요
+```
+
+**일괄 활성화:**
+```bash
+docker exec n8n-n8n-1 sqlite3 /home/node/.n8n/database.sqlite "UPDATE workflow_entity SET active=1 WHERE active=0"
+docker restart n8n-n8n-1
+```
+
+**자동 검증**: dashboard.html의 "Active Workflows" 카드에서 27 미만 시 ⚠️ 표시.
+
+### 8. n8n UI 접속
 - http://localhost:5678
 - 발행 실패 시 Executions 메뉴에서 에러 확인
 
