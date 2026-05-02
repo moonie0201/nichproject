@@ -17,6 +17,7 @@ from auto_publisher.market_wrap import (
     SECTOR_TICKERS,
     VIX_TICKER,
     MACRO_TICKERS,
+    MAG7_TICKERS,
     GROWTH_SECTORS,
     DEFENSIVE_SECTORS,
     KST,
@@ -26,6 +27,7 @@ from auto_publisher.market_wrap import (
     _fetch_extended_items,
     _heatmap_bg,
     _heatmap_fg,
+    _compute_fear_greed,
 )
 
 logger = logging.getLogger(__name__)
@@ -99,14 +101,16 @@ def fetch_intraday_snapshot() -> dict:
             "gap": "gap_flat", "narrative_hint": "mixed",
         }
 
-    # 인덱스·VIX·섹터·매크로 병렬 수집
-    with ThreadPoolExecutor(max_workers=10) as ex:
+    # 인덱스·VIX·섹터·매크로·Mag7 병렬 수집
+    with ThreadPoolExecutor(max_workers=12) as ex:
         # 5분봉 기반 (intraday 로직): indices, vix, sectors
         idx_futures = {ticker: ex.submit(_fetch_intraday_price, ticker) for ticker, _ in INDEX_TICKERS}
         vix_future = ex.submit(_fetch_intraday_price, VIX_TICKER)
         sec_futures = {ticker: ex.submit(_fetch_intraday_price, ticker) for ticker, _ in SECTOR_TICKERS}
         # 매크로 (yields/DXY) 는 일봉 기반 → market_wrap 헬퍼 재사용
         macro_future = ex.submit(_fetch_extended_items, MACRO_TICKERS, False)
+        # Mag7 도 일봉 기반으로 (오늘 등락률 + RSI)
+        mag7_future = ex.submit(_fetch_extended_items, MAG7_TICKERS, True)
 
         indices = []
         for ticker, name in INDEX_TICKERS:
@@ -143,10 +147,22 @@ def fetch_intraday_snapshot() -> dict:
             })
 
         macro = macro_future.result()
+        mag7 = mag7_future.result()
 
     sorted_secs = sorted(sectors, key=lambda s: s["pct_from_open"], reverse=True)
     pos_sec = sum(1 for s in sectors if s["pct_from_open"] > 0)
     neg_sec = sum(1 for s in sectors if s["pct_from_open"] < 0)
+    pos_m7 = sum(1 for m in mag7 if m.get("price", 0) > 0 and m.get("pct", 0) > 0)
+    neg_m7 = sum(1 for m in mag7 if m.get("price", 0) > 0 and m.get("pct", 0) < 0)
+    m7_total = sum(1 for m in mag7 if m.get("price", 0) > 0)
+
+    # FG: 인트라데이용 — VIX + SPY 개장 이후 모멘텀 기반
+    spy_intra = next((i for i in indices if i["ticker"] == "SPY"), None)
+    fg_proxy_snapshot = {
+        "vix": {"price": vix["price"]},
+        "indices": [{"ticker": "SPY", "pct": (spy_intra or {}).get("pct_from_open", 0.0)}],
+    }
+    fear_greed = _compute_fear_greed(fg_proxy_snapshot)
 
     snapshot = {
         "date_kst": date_kst,
@@ -161,10 +177,15 @@ def fetch_intraday_snapshot() -> dict:
         "gap": None,
         "narrative_hint": None,
         "macro": macro,
+        "mag7": mag7,
+        "fear_greed": fear_greed,
         "breadth": {
             "sector_positive": pos_sec,
             "sector_negative": neg_sec,
             "sector_total": len(sectors),
+            "mag7_positive": pos_m7,
+            "mag7_negative": neg_m7,
+            "mag7_total": m7_total,
         },
     }
     snapshot["gap"] = classify_gap(snapshot)
@@ -459,6 +480,11 @@ def build_intraday_markdown(snapshot: dict, lang: str = "ko") -> str:
     macro_table = _build_intraday_macro_table(snapshot)
     breadth_box = _build_intraday_breadth(snapshot)
 
+    # Mag7 + FG 추가 (cycle 17)
+    from auto_publisher.market_wrap import _build_mag7_table, _build_fear_greed_block
+    mag7_table = _build_mag7_table(snapshot, lang="ko")
+    fg_block = _build_fear_greed_block(snapshot, lang="ko")
+
     # 매크로 데이터 기반 동적 코멘트
     macro_list = snapshot.get("macro") or []
     tnx = next((m for m in macro_list if m["ticker"] == "^TNX"), None)
@@ -478,6 +504,7 @@ def build_intraday_markdown(snapshot: dict, lang: str = "ko") -> str:
         fm,
         _DISCLAIMER_BANNER,
         "",
+        fg_block,
         breadth_box,
         summary,
         "",
@@ -513,6 +540,15 @@ def build_intraday_markdown(snapshot: dict, lang: str = "ko") -> str:
             f"**{', '.join(laggards[:3])}** 다. 장 초반 섹터 분포는 거래량이 작아 신뢰도가 낮을 수 있지만, "
             "특정 섹터가 시장 평균을 크게 벗어나면 뉴스 또는 어닝 영향이 깔려 있을 가능성이 높다. "
             "이 단계에서는 어떤 자금이 어디로 들어가고 있는지 가설만 세우고, 일중 후반부 추가 확인이 필요하다."
+        ),
+        "",
+        "## 🚀 Magnificent 7 (오늘 일봉 기준)",
+        "",
+        mag7_table,
+        "",
+        (
+            "Mag7 일봉 등락률은 미국장 마감 시점 기준 추정치다. 장 초반 Mag7 흐름이 개장 30분 지수 흐름과 같은 방향이면 "
+            "성장주 주도 시작, 반대 방향이면 자금 회전 신호로 본다. RSI 70 이상은 단기 과열로 점검이 필요하다."
         ),
         "",
         "## 💡 첫 30분 시장 인상",
