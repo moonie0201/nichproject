@@ -261,15 +261,23 @@ def upload_tiktok(
     video_path: Path,
     title: str,
     tags: list = None,
-    privacy: str = "PUBLIC_TO_EVERYONE",
+    privacy: str = None,
     disable_duet: bool = False,
     disable_comment: bool = False,
     disable_stitch: bool = False,
 ) -> dict:
-    """TikTok Content Posting API v2로 mp4 업로드. {'publish_id': ..., 'status': 'published', 'url': ...} 반환."""
+    """TikTok Content Posting API v2로 mp4 업로드. {'publish_id': ..., 'status': 'published', 'url': ...} 반환.
+
+    privacy 기본값은 환경변수 TIKTOK_DEFAULT_PRIVACY (기본 SELF_ONLY).
+    Sandbox 미심사 앱은 SELF_ONLY만 허용되므로 403 unaudited 에러 시 자동 재시도.
+    """
     import urllib.request
 
     CHUNK_SIZE = 10 * 1024 * 1024  # 10MB
+
+    # privacy 기본값: 환경변수 우선, 없으면 SELF_ONLY (sandbox 안전값)
+    if privacy is None:
+        privacy = os.environ.get("TIKTOK_DEFAULT_PRIVACY", "SELF_ONLY")
 
     creds = _load_tiktok_credentials()
     access_token = creds["access_token"]
@@ -287,39 +295,52 @@ def upload_tiktok(
     else:
         full_title = title[:150]
 
-    # ─── 1) Init ───
-    init_body = json.dumps({
-        "post_info": {
-            "title": full_title,
-            "privacy_level": privacy,
-            "disable_duet": disable_duet,
-            "disable_comment": disable_comment,
-            "disable_stitch": disable_stitch,
-            "video_cover_timestamp_ms": 1000,
-        },
-        "source_info": {
-            "source": "FILE_UPLOAD",
-            "video_size": file_size,
-            "chunk_size": CHUNK_SIZE,
-            "total_chunk_count": total_chunks,
-        },
-    }).encode()
+    def _do_init(privacy_level: str):
+        """Init 요청 수행. (upload_url, publish_id) 반환."""
+        init_body = json.dumps({
+            "post_info": {
+                "title": full_title,
+                "privacy_level": privacy_level,
+                "disable_duet": disable_duet,
+                "disable_comment": disable_comment,
+                "disable_stitch": disable_stitch,
+                "video_cover_timestamp_ms": 1000,
+            },
+            "source_info": {
+                "source": "FILE_UPLOAD",
+                "video_size": file_size,
+                "chunk_size": CHUNK_SIZE,
+                "total_chunk_count": total_chunks,
+            },
+        }).encode()
+        req = urllib.request.Request(
+            "https://open.tiktokapis.com/v2/post/publish/video/init/",
+            data=init_body,
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "Content-Type": "application/json; charset=UTF-8",
+            },
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode())
+        return data["data"]["upload_url"], data["data"]["publish_id"]
 
-    req = urllib.request.Request(
-        "https://open.tiktokapis.com/v2/post/publish/video/init/",
-        data=init_body,
-        headers={
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json; charset=UTF-8",
-        },
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        init_data = json.loads(resp.read().decode())
+    # ─── 1) Init (403 unaudited 에러 시 SELF_ONLY로 자동 재시도) ───
+    try:
+        upload_url, publish_id = _do_init(privacy)
+    except Exception as e:
+        err_str = str(e)
+        if "unaudited_client" in err_str and privacy != "SELF_ONLY":
+            logger.warning(
+                f"TikTok app unaudited — privacy={privacy} 거부됨. SELF_ONLY로 재시도."
+            )
+            privacy = "SELF_ONLY"
+            upload_url, publish_id = _do_init(privacy)
+        else:
+            raise
 
-    upload_url = init_data["data"]["upload_url"]
-    publish_id = init_data["data"]["publish_id"]
-    logger.info(f"TikTok init 완료: publish_id={publish_id}")
+    logger.info(f"TikTok init 완료: publish_id={publish_id}, privacy={privacy}")
 
     # ─── 2) Chunk upload ───
     with open(video_path, "rb") as f:
