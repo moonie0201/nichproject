@@ -20,6 +20,7 @@ _NUMBER_PATTERN = re.compile(r"(?:\$?\d[\d,]*\.?\d*%?|[0-9]+년|[0-9]+개월|[0-
 _QUALITY_TARGET_SCORE = 90
 _RULE_TARGET_SCORE = 95
 _VIDEO_THINK_MODE = os.getenv("OLLAMA_THINK_MODE", "script").strip().lower()
+_VIDEO_SCRIPT_MAX_ITER = int(os.getenv("VIDEO_SCRIPT_MAX_ITER", "1"))
 
 # --- 스크립트 캐시 설정 ---
 CACHE_DIR = Path(os.getenv("WORKSPACE", "/home/mh/ocstorage/workspace/nichproject")) / ".omc" / "script_cache"
@@ -997,7 +998,7 @@ def generate_long_video_script(
     critique = _critique_script(result, data_pack, lang, "long")
     regenerated = False
     ok, issues = True, []
-    for _ in range(3):
+    for _ in range(_VIDEO_SCRIPT_MAX_ITER):
         if critique.get("regenerate", True) or int(critique.get("score", 0) or 0) < _QUALITY_TARGET_SCORE:
             result = _rewrite_script(result, critique, data_pack, blog_url, lang, "long")
             regenerated = True
@@ -1064,7 +1065,7 @@ def generate_short_video_script(
     critique = _critique_script(result, data_pack, lang, "short")
     regenerated = False
     ok, issues = True, []
-    for _ in range(3):
+    for _ in range(_VIDEO_SCRIPT_MAX_ITER):
         if critique.get("regenerate", True) or int(critique.get("score", 0) or 0) < _QUALITY_TARGET_SCORE:
             result = _rewrite_script(result, critique, data_pack, blog_url, lang, "short")
             regenerated = True
