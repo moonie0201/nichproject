@@ -64,4 +64,19 @@ ls -lt web/content/ko/daily/ | head -5
 
 ---
 
+## ULTRAWORK 6사이클 추가 작업 (2026-05-02 후반)
+
+- ✅ Admin dashboard at https://investiqs.net/admin/dashboard.html (비밀번호: investiqs2026)
+- ✅ /health/full에 active_workflows + recent_24h_publish_count + last_video_generated 추가
+- ✅ n8n 27개 워크플로우 첫 자동 백업 (28 파일, 2.8MB DB)
+- ✅ published_history 누락 title 5개 보완
+- ✅ backup_workflows.sh에 active 검증 + 자동 복구 추가
+- ✅ n8n Docker 감지 개선 (pgrep + docker ps 둘 다)
+- ✅ .env 권한 600
+- ✅ wrangler --commit-message로 배포 추적
+
+총 commits: 50+ (오늘)
+
+---
+
 🎉 **자동화 인프라 100% 배포 완료**. 사용자 P0 1개만 해결하면 모든 플랫폼 자동 동작.
