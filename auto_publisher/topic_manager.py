@@ -397,8 +397,9 @@ DEFAULT_TOPICS = [
 class TopicManager:
     """토픽 큐 관리자 (다국어 지원)"""
 
-    def __init__(self, lang: str = "ko"):
+    def __init__(self, lang: str = "ko", auto_refill: bool = True):
         self.lang = lang
+        self.auto_refill = auto_refill
         # 언어별 토픽 파일: topics_ko.json, topics_en.json, ...
         self.topics_file = DATA_DIR / f"topics_{lang}.json"
         self.history_file = DATA_DIR / f"published_history_{lang}.json"
@@ -663,6 +664,41 @@ class TopicManager:
             logger.info(f"다음 토픽: [{topic['category']}] {topic['topic']}")
             return topic
 
+        if self.auto_refill:
+            logger.info("토픽 큐 고갈 — Gemini로 새 토픽 자동 생성 시작")
+            try:
+                new_topics_raw = self.auto_generate_topics(20)
+                existing_topics = self._load_topics()
+                existing_ids = {t["id"] for t in existing_topics}
+                for raw in new_topics_raw:
+                    topic_id = f"auto-{uuid.uuid4().hex[:8]}"
+                    existing_topics.append(
+                        {
+                            "id": topic_id,
+                            "topic": raw.get("title", ""),
+                            "keywords": [raw.get("primary_keyword", "")] + raw.get("secondary_keywords", []),
+                            "category": "자동생성",
+                            "estimated_difficulty": raw.get("estimated_difficulty", "medium"),
+                            "type": topic_type,
+                        }
+                    )
+                self._save_topics(existing_topics)
+                logger.info(f"자동 생성 토픽 {len(new_topics_raw)}개 추가 완료")
+                # 추가된 토픽에서 다시 선택
+                for topic in self._load_topics():
+                    if topic["id"] in published_ids:
+                        continue
+                    if topic.get("type", "blog") != topic_type:
+                        continue
+                    if self._is_duplicate_topic(topic, recent_topics):
+                        continue
+                    if self._is_duplicate_primary_keyword(topic, global_primary_keywords):
+                        continue
+                    logger.info(f"자동생성 토픽 선택: [{topic['category']}] {topic['topic']}")
+                    return topic
+            except Exception as e:
+                logger.error(f"자동 토픽 생성 실패: {e}")
+
         logger.warning(
             f"발행 가능한 {topic_type} 토픽이 없습니다. 새 토픽을 추가해주세요."
         )
@@ -697,6 +733,52 @@ class TopicManager:
         self._save_topics(topics)
         logger.info(f"토픽 추가: {topic_id} - {topic}")
         return topic_id
+
+    def auto_generate_topics(self, count: int = 20) -> list[dict]:
+        """토픽 큐가 고갈됐을 때 Gemini Flash로 새 토픽 자동 생성."""
+        import subprocess
+        import os
+
+        seed_keywords = [
+            "VOO", "QQQ", "SCHD", "TLT", "GLD", "TIGER", "KODEX", "SPY",
+            "삼성전자", "S&P500", "나스닥", "ETF", "배당주", "리츠", "채권"
+        ]
+
+        history = self._load_history()
+        topics = self._load_topics()
+        topics_by_id = {t["id"]: t for t in topics}
+        recent_titles = [
+            topics_by_id[h["topic_id"]]["topic"]
+            for h in history[-30:]
+            if h["topic_id"] in topics_by_id
+        ]
+
+        prompt = (
+            f"투자 블로그 한국어 글 토픽 {count}개를 JSON으로 생성하세요.\n"
+            f"다음 키워드 중 일부 활용: {', '.join(seed_keywords)}\n"
+            f"이미 발행된 토픽: {recent_titles}\n\n"
+            "각 토픽은:\n"
+            "- title (한국어, 60자 이내, 구체적 수치 포함)\n"
+            "- primary_keyword (영문 ticker 또는 한글)\n"
+            "- secondary_keywords (3-5개)\n"
+            '- estimated_difficulty ("easy" | "medium" | "hard")\n\n'
+            "출력: JSON array만"
+        )
+
+        result = subprocess.run(
+            ["gemini", "-m", os.getenv("GEMINI_CLI_MODEL", "gemini-2.5-flash"), "-p", prompt],
+            capture_output=True, text=True, timeout=90
+        )
+        if result.returncode != 0:
+            raise RuntimeError(f"gemini failed: {result.stderr}")
+
+        text = result.stdout.strip()
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        new_topics = json.loads(text.strip())
+        return new_topics
 
     def get_status(self) -> dict:
         """토픽 큐 상태 조회"""
