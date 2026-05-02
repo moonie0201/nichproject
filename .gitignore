@@ -17,6 +17,10 @@ ml_env/
 .claude/scheduled_tasks.lock
 web/public/.omc/
 
+# 빌드 산출물
+web/public/
+web/content/en/daily/
+
 # 빌드 / 로그
 *.log
 auto_publisher/*.log
