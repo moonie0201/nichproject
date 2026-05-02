@@ -65,6 +65,14 @@
 3. **TikTok App Audit** — Submit for review (7~14일)
 4. **Meta 계정 활성화** — 24h 대기
 
+## ✅ 검증 완료
+
+### 자동 발행 실제 호출 테스트
+- ✅ `publish-us-market-wrap` 실제 호출 성공 (2026-05-02 07:15 KST)
+- ✅ 다음 7시간 후 자동 실행 예정 (07:15 KST 정상 작동)
+- ✅ n8n 워크플로우 상태: 활성 ✓
+- ✅ 토픽 큐 상태: 충분 ✓
+
 ## 🎯 다음 자동 트리거 (KST)
 - 06:00 daily_publisher (한국어)
 - 07:30 us_market_wrap_en
