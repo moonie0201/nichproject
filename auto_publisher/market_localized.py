@@ -244,15 +244,18 @@ def build_localized_wrap_markdown(snapshot: dict, lang: str) -> str:
         f"Leaders: {', '.join(leaders[:3])} / Laggards: {', '.join(laggards[:3])}."
     )
 
-    # 신규 섹션 빌더 (i18n 라벨만 다국어, 표 본문은 ticker/price 로 만국 공통)
+    # 신규 섹션 빌더 (lang-aware)
     from auto_publisher.market_wrap import (
         _build_macro_table, _build_asia_crypto_table,
         _build_mag7_table, _build_top_movers,
+        _build_bond_commodity_table, _build_fear_greed_block,
     )
     macro_table = _build_macro_table(snapshot, lang=lang)
     asia_table = _build_asia_crypto_table(snapshot, lang=lang)
     mag7_table = _build_mag7_table(snapshot, lang=lang)
     movers_table = _build_top_movers(snapshot, lang=lang)
+    bonds_table = _build_bond_commodity_table(snapshot, lang=lang)
+    fg_block = _build_fear_greed_block(snapshot, lang=lang)
 
     # Breadth 박스 (i18n 라벨)
     breadth_box = ""
@@ -283,6 +286,7 @@ def build_localized_wrap_markdown(snapshot: dict, lang: str) -> str:
         fm,
         i18n["disclaimer_banner_html"],
         "",
+        fg_block,
         breadth_box,
         summary,
         "",
@@ -299,6 +303,12 @@ def build_localized_wrap_markdown(snapshot: dict, lang: str) -> str:
         f"## {i18n['section_h2_sector']}",
         "",
         _build_sector_table_localized(snapshot, lang, "pct"),
+        "",
+        f"## {i18n['section_h2_bonds_comms']}",
+        "",
+        bonds_table or "_(no bonds/commodities data)_",
+        "",
+        i18n.get("bonds_comms_note", ""),
         "",
         f"## {i18n['section_h2_mag7']}",
         "",

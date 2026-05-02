@@ -757,39 +757,84 @@ def _build_breadth_block(snapshot: dict) -> str:
     )
 
 
-def _build_fear_greed_block(snapshot: dict) -> str:
+_FG_LABELS_BY_LANG = {
+    "ko": ("시장 심리", "극단적 공포", "공포", "중립", "탐욕", "극단적 탐욕", "VIX {vix} 기준 추정치"),
+    "en": ("Market Sentiment", "Extreme Fear", "Fear", "Neutral", "Greed", "Extreme Greed", "Estimated from VIX {vix}"),
+    "ja": ("マーケットセンチメント", "極端な恐怖", "恐怖", "中立", "強欲", "極端な強欲", "VIX {vix} に基づく推定"),
+    "vi": ("Tâm lý thị trường", "Sợ hãi cực độ", "Sợ hãi", "Trung lập", "Tham lam", "Tham lam cực độ", "Ước tính từ VIX {vix}"),
+    "id": ("Sentimen Pasar", "Ketakutan Ekstrem", "Ketakutan", "Netral", "Keserakahan", "Keserakahan Ekstrem", "Estimasi dari VIX {vix}"),
+}
+
+
+def _build_fear_greed_block(snapshot: dict, lang: str = "ko") -> str:
     fg = snapshot.get("fear_greed") or {}
     score = fg.get("score", 50)
-    label = fg.get("label", "중립")
     vix_price = (snapshot.get("vix") or {}).get("price", 0.0)
     filled = round(score / 10)
     bar = "█" * filled + "░" * (10 - filled)
     emoji = "😨" if score < 26 else "😟" if score < 46 else "😐" if score < 56 else "😊" if score < 76 else "🤑"
+    title, ef, f, n, g, eg, basis_tmpl = _FG_LABELS_BY_LANG.get(lang) or _FG_LABELS_BY_LANG["en"]
+    label = (
+        ef if score < 26 else f if score < 46 else n if score < 56
+        else g if score < 76 else eg
+    )
+    basis = basis_tmpl.format(vix=f"{vix_price:.2f}")
     return (
         f'<div class="fg-gauge" style="background:#f8f9fa;border:1px solid #dee2e6;'
         f'border-radius:8px;padding:1em 1.2em;margin:0 0 1.5em 0;">'
-        f"<strong>🧭 시장 심리: {label} {emoji} ({score}/100)</strong><br>"
+        f"<strong>🧭 {title}: {label} {emoji} ({score}/100)</strong><br>"
         f"<code style=\"font-size:1.1em;letter-spacing:2px;\">{bar}</code> "
-        f"<span style=\"font-size:0.85em;color:#666;\">VIX {vix_price:.2f} 기준 추정치</span>"
+        f"<span style=\"font-size:0.85em;color:#666;\">{basis}</span>"
         f"</div>"
     )
 
 
-def _build_bond_commodity_table(snapshot: dict) -> str:
+_BONDS_COMMS_CAPTIONS = {
+    "ko": ("채권 ETF · 원자재 ETF 등락률", "구분", "자산", "티커", "종가", "등락률", "채권", "원자재"),
+    "en": ("Bond & Commodity ETF Returns", "Type", "Asset", "Ticker", "Close", "Change", "Bond", "Commodity"),
+    "ja": ("債券ETF・コモディティETF騰落率", "区分", "資産", "ティッカー", "終値", "騰落率", "債券", "コモディティ"),
+    "vi": ("Hiệu suất ETF Trái phiếu & Hàng hóa", "Loại", "Tài sản", "Mã", "Giá đóng", "Thay đổi", "Trái phiếu", "Hàng hóa"),
+    "id": ("Return ETF Obligasi & Komoditas", "Jenis", "Aset", "Ticker", "Penutupan", "Perubahan", "Obligasi", "Komoditas"),
+}
+
+_BONDS_NAMES_BY_LANG = {
+    "ko": {"TLT": "미국 장기채 (20Y+)", "IEF": "미국 중기채 (7-10Y)", "SHY": "미국 단기채 (1-3Y)",
+           "GLD": "금 ETF", "SLV": "은 ETF", "USO": "원유 ETF"},
+    "en": {"TLT": "US Long Bond (20Y+)", "IEF": "US Intermediate (7-10Y)", "SHY": "US Short Bond (1-3Y)",
+           "GLD": "Gold ETF", "SLV": "Silver ETF", "USO": "Oil ETF"},
+    "ja": {"TLT": "米国長期債 (20Y+)", "IEF": "米国中期債 (7-10Y)", "SHY": "米国短期債 (1-3Y)",
+           "GLD": "金ETF", "SLV": "銀ETF", "USO": "原油ETF"},
+    "vi": {"TLT": "TPCP Mỹ dài hạn (20Y+)", "IEF": "TPCP Mỹ trung hạn (7-10Y)", "SHY": "TPCP Mỹ ngắn hạn (1-3Y)",
+           "GLD": "ETF Vàng", "SLV": "ETF Bạc", "USO": "ETF Dầu"},
+    "id": {"TLT": "Obligasi AS Jangka Panjang (20Y+)", "IEF": "Obligasi AS Menengah (7-10Y)", "SHY": "Obligasi AS Pendek (1-3Y)",
+           "GLD": "ETF Emas", "SLV": "ETF Perak", "USO": "ETF Minyak"},
+}
+
+
+def _build_bond_commodity_table(snapshot: dict, lang: str = "ko") -> str:
     bonds = snapshot.get("bonds") or []
     comms = snapshot.get("commodities") or []
-    rows = ["<table><caption>채권 ETF · 원자재 ETF 등락률</caption>"]
-    rows.append("<tr><th>구분</th><th>자산</th><th>티커</th><th>종가</th><th>등락률</th></tr>")
+    name_map = _BONDS_NAMES_BY_LANG.get(lang) or _BONDS_NAMES_BY_LANG["en"]
+    cap, h_type, h_asset, h_tk, h_cl, h_pct, bond_lbl, comm_lbl = (
+        _BONDS_COMMS_CAPTIONS.get(lang) or _BONDS_COMMS_CAPTIONS["en"]
+    )
+    rows = [f"<table><caption>{cap}</caption>"]
+    rows.append(
+        f"<tr><th>{h_type}</th><th>{h_asset}</th><th>{h_tk}</th>"
+        f"<th>{h_cl}</th><th>{h_pct}</th></tr>"
+    )
     for item in bonds:
         if item["price"] > 0:
+            display_name = name_map.get(item["ticker"], item.get("name") or item["ticker"])
             rows.append(
-                f"<tr><td>채권</td><td>{item['name']}</td><td>{item['ticker']}</td>"
+                f"<tr><td>{bond_lbl}</td><td>{display_name}</td><td>{item['ticker']}</td>"
                 f"<td>{_format_price(item['price'])}</td><td>{_format_pct(item['pct'])}</td></tr>"
             )
     for item in comms:
         if item["price"] > 0:
+            display_name = name_map.get(item["ticker"], item.get("name") or item["ticker"])
             rows.append(
-                f"<tr><td>원자재</td><td>{item['name']}</td><td>{item['ticker']}</td>"
+                f"<tr><td>{comm_lbl}</td><td>{display_name}</td><td>{item['ticker']}</td>"
                 f"<td>{_format_price(item['price'])}</td><td>{_format_pct(item['pct'])}</td></tr>"
             )
     rows.append("</table>")
