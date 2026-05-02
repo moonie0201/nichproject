@@ -88,8 +88,26 @@ def _profile_chart_motion() -> dict:
 
 
 def _profile_short_form() -> dict:
-    """쇼츠 합성 (TTS+오버레이, ~60s) — chart_motion 과 동일한 GPU 우선."""
-    return _profile_chart_motion()
+    """쇼츠 합성 (TTS+오버레이, ~60s) — YouTube Shorts 알고리즘 권장 비트레이트.
+
+    Codex 자문: 8-12 Mbps VBR/CQ 권장 (현재 703 kbps 는 너무 낮음).
+    Audio: EBU R128 loudnorm (-16 LUFS) 정규화로 플랫폼 라우드니스 매칭."""
+    codec = _env_codec()
+    base_extra = (
+        ["-rc", "vbr", "-cq", "19", "-b:v", "8M", "-maxrate", "12M", "-bufsize", "16M"]
+        if _is_nvenc(codec) else
+        ["-crf", "19", "-maxrate", "10M", "-bufsize", "16M"]
+    )
+    return {
+        "codec": codec,
+        "preset": _env_preset(),
+        "tune": _resolve_tune(codec),
+        "pix_fmt": "yuv420p",
+        "extra": base_extra,
+        "audio_codec": "aac",
+        "audio_bitrate": "192k",
+        "audio_filter": "loudnorm=I=-16:TP=-1.5:LRA=11",
+    }
 
 
 def _profile_long_form() -> dict:

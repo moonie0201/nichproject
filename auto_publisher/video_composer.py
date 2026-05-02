@@ -355,17 +355,39 @@ def _mux_audio_subtitle(video_path: Path, audio_path: Path, srt_path: Path,
         )
 
     sub_filter = f"subtitles='{srt_escaped}':force_style='{sub_style}'"
-    filter_complex = f"{pad_filter}{video_in}{sub_filter}[vout]"
+
+    # Codex 자문: short_form 프로파일 적용 (8M 비트레이트 + loudnorm 오디오 정규화)
+    from auto_publisher.video_encoder import get_profile
+    profile = get_profile("short_form" if is_shorts else "long_form")
+
+    audio_filter = profile.get("audio_filter")
+    if audio_filter:
+        # 비디오 + 오디오 필터 chain 함께
+        filter_complex = (
+            f"{pad_filter}{video_in}{sub_filter}[vout];"
+            f"[1:a]{audio_filter}[aout]"
+        )
+        audio_map = "[aout]"
+    else:
+        filter_complex = f"{pad_filter}{video_in}{sub_filter}[vout]"
+        audio_map = "1:a"
 
     args = [
         "-i", str(video_path),
         "-i", str(audio_path),
         "-filter_complex", filter_complex,
-        "-map", "[vout]", "-map", "1:a",
-        "-c:v", os.getenv("FFMPEG_VIDEO_CODEC", "h264_nvenc"),
-        "-preset", os.getenv("FFMPEG_PRESET", "p1"),
-        "-c:a", "aac",
-        "-b:a", "192k", "-shortest",
+        "-map", "[vout]", "-map", audio_map,
+        "-c:v", profile["codec"],
+        "-preset", profile["preset"],
+    ]
+    if profile.get("tune"):
+        args += ["-tune", profile["tune"]]
+    args += ["-pix_fmt", profile["pix_fmt"]]
+    args += list(profile.get("extra", []))
+    args += [
+        "-c:a", profile.get("audio_codec", "aac"),
+        "-b:a", profile.get("audio_bitrate", "192k"),
+        "-shortest",
         str(out_path),
     ]
     return _ffmpeg_run(args, "mux")

@@ -1,6 +1,6 @@
 {
   "id": "ShortsAutoDaily0830",
-  "name": "Shorts Auto (매일 08:30 KST, 최신 글로 자동 영상)",
+  "name": "Shorts Auto (매일 08:30/12:30/18:30 KST, 일 3편 자동 영상)",
   "nodes": [
     {
       "parameters": {
@@ -8,13 +8,13 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "30 8 * * *"
+              "expression": "30 8,12,18 * * *"
             }
           ]
         }
       },
       "id": "trig-shorts",
-      "name": "매일 08:30 (KST)",
+      "name": "매일 08:30/12:30/18:30 (KST)",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1,
       "position": [240, 300]
