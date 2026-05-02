@@ -80,3 +80,17 @@
 - 08:00 us_market_wrap_vi
 - 08:15 us_market_wrap_id
 - 08:30 shorts_auto (영상 생성 + 업로드 시도)
+
+---
+
+## 🎬 세션 종료 (2026-05-02)
+
+자동화 인프라 구축 완료. 다음 cron부터 실행됩니다:
+
+- **07:15 KST** — us_market_wrap 다국어 (이미 검증 완료)
+- **08:30 KST** — shorts_auto (영상 합성 + 업로드 시도)
+
+**사용자 액션 1개만 남음:**
+- TikTok OAuth 재인증 (USER_ACTIONS.md P0 #0 참조, 3분)
+
+수고하셨습니다 🚀
