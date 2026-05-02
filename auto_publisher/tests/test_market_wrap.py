@@ -115,11 +115,26 @@ def test_holiday_detection_normal_day_false():
 
 # ── 3. Markdown 조립 ──────────────────────────────────────────
 
-def test_build_markdown_contains_5_h2_sections(fake_snapshot):
+def test_build_markdown_contains_required_h2_sections(fake_snapshot):
+    """필수 섹션이 모두 H2 로 등장한다 (지수, 섹터, 채권·원자재, Mag7, 모버, 내러티브, 매크로, 시나리오, 내일 포인트, Action)."""
     from auto_publisher.market_wrap import build_markdown
     md = build_markdown(fake_snapshot)
+    required = [
+        "지수 한눈에 보기",
+        "섹터별 강약",
+        "채권·원자재",
+        "Magnificent 7",
+        "상승/하락 주도 종목",
+        "시장 내러티브",
+        "핵심 매크로",
+        "시나리오 박스",
+        "내일 주목할 포인트",
+        "Action Point",
+    ]
+    for label in required:
+        assert label in md, f"필수 섹션 누락: {label}"
     h2_count = len(re.findall(r"^## ", md, re.MULTILINE))
-    assert h2_count == 5, f"H2 개수 5 기대, 실제 {h2_count}\nMD preview:\n{md[:500]}"
+    assert h2_count >= len(required), f"H2 개수 {len(required)} 이상 기대, 실제 {h2_count}"
 
 
 def test_build_markdown_contains_index_table(fake_snapshot):

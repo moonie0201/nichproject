@@ -3,10 +3,10 @@
 데이터 스펙과 템플릿은 /home/mh/.claude/plans/peaceful-jumping-charm.md 참조.
 
 핵심 함수:
-- fetch_us_market_snapshot(): SPY/QQQ/DIA/IWM + 11개 섹터 ETF + VIX 수집
+- fetch_us_market_snapshot(): 4대 지수·VIX·11섹터·채권3·원자재3·Mag7·매크로4(10Y/30Y/5Y/DXY)·대형주 30개 모버 병렬 수집
 - is_us_market_holiday(snapshot): 휴장일 감지
 - classify_narrative(snapshot): growth_led / defensive_led / risk_off / mixed
-- build_markdown(snapshot): Hugo front matter + 5개 H2 + 표 2개
+- build_markdown(snapshot): Hugo front matter + 10개 H2 (지수/매크로/섹터/채권원자재/Mag7/모버/내러티브/시나리오/내일포인트/Action) + 히트맵
 """
 
 from __future__ import annotations
@@ -74,6 +74,29 @@ MOVER_TICKERS = [
     "BA", "CAT", "HON", "LMT", "GE",
     "PG", "KO", "PEP", "WMT", "COST",
     "DIS", "NFLX", "CRM", "ADBE", "INTC",
+]
+
+MOVER_NAMES = {
+    "JPM": "JPMorgan", "BAC": "Bank of America", "GS": "Goldman Sachs",
+    "MS": "Morgan Stanley", "WFC": "Wells Fargo",
+    "JNJ": "Johnson & Johnson", "UNH": "UnitedHealth", "PFE": "Pfizer",
+    "MRK": "Merck", "ABBV": "AbbVie",
+    "XOM": "ExxonMobil", "CVX": "Chevron", "COP": "ConocoPhillips",
+    "SLB": "Schlumberger", "EOG": "EOG Resources",
+    "BA": "Boeing", "CAT": "Caterpillar", "HON": "Honeywell",
+    "LMT": "Lockheed Martin", "GE": "GE Aerospace",
+    "PG": "Procter & Gamble", "KO": "Coca-Cola", "PEP": "PepsiCo",
+    "WMT": "Walmart", "COST": "Costco",
+    "DIS": "Disney", "NFLX": "Netflix", "CRM": "Salesforce",
+    "ADBE": "Adobe", "INTC": "Intel",
+}
+
+# 핵심 매크로: 10년물·30년물 미국채 수익률, 달러 인덱스
+MACRO_TICKERS = [
+    ("^TNX", "미국 10년물 수익률"),
+    ("^TYX", "미국 30년물 수익률"),
+    ("^FVX", "미국 5년물 수익률"),
+    ("DX-Y.NYB", "달러 인덱스 (DXY)"),
 ]
 
 KST = timezone(timedelta(hours=9))
@@ -222,8 +245,8 @@ def _compute_fear_greed(snapshot: dict) -> dict:
 
 
 def _fetch_top_movers(ticker_list: list[str]) -> dict:
-    """대형주 리스트에서 당일 Top 3 상승/하락 수집."""
-    pairs = [(t, t) for t in ticker_list]
+    """대형주 리스트에서 당일 Top 3 상승/하락 수집 (회사명 포함)."""
+    pairs = [(t, MOVER_NAMES.get(t, t)) for t in ticker_list]
     items = _fetch_extended_items(pairs, with_rsi=False)
     items = [i for i in items if i["price"] > 0]
     sorted_items = sorted(items, key=lambda x: x["pct"], reverse=True)
@@ -233,37 +256,92 @@ def _fetch_top_movers(ticker_list: list[str]) -> dict:
     }
 
 
+def _compute_breadth(snapshot: dict) -> dict:
+    """섹터·Mag7 어드밴스/디클라인 폭(breadth) 집계."""
+    sectors = snapshot.get("sectors") or []
+    pos_sec = sum(1 for s in sectors if s.get("pct", 0) > 0)
+    neg_sec = sum(1 for s in sectors if s.get("pct", 0) < 0)
+    mag7 = snapshot.get("mag7") or []
+    pos_m7 = sum(1 for m in mag7 if m.get("price", 0) > 0 and m.get("pct", 0) > 0)
+    neg_m7 = sum(1 for m in mag7 if m.get("price", 0) > 0 and m.get("pct", 0) < 0)
+    return {
+        "sector_positive": pos_sec,
+        "sector_negative": neg_sec,
+        "sector_total": len(sectors),
+        "mag7_positive": pos_m7,
+        "mag7_negative": neg_m7,
+        "mag7_total": sum(1 for m in mag7 if m.get("price", 0) > 0),
+    }
+
+
+def _compute_5d_change(closes: list[float]) -> float | None:
+    """최근 5거래일 수익률(%) — 종가 기준."""
+    if len(closes) < 6 or closes[-6] == 0:
+        return None
+    return round((closes[-1] / closes[-6] - 1.0) * 100.0, 2)
+
+
 def fetch_us_market_snapshot() -> dict:
-    """SPY/QQQ/DIA/IWM + VIX + 11개 섹터 ETF 스냅샷 수집."""
+    """SPY/QQQ/DIA/IWM + VIX + 섹터 + 매크로(yields/DXY) + Mag7 + 모버 병렬 수집."""
     now_kst = datetime.now(tz=KST)
     date_kst = now_kst.strftime("%Y-%m-%d")
     # 미국장 마감 기준 = KST 전날
     us_close_date = (now_kst - timedelta(days=1)).strftime("%Y-%m-%d")
 
-    indices = []
-    for ticker, name in INDEX_TICKERS:
-        p = _fetch_one_price(ticker)
-        indices.append({
-            "ticker": ticker,
-            "name": name,
-            "price": p["price"],
-            "pct": p["pct"],
-            "vol": p["vol"],
-            "prev_close_ts": p["prev_close_ts"],
-        })
+    # 1단계: 가격 데이터 병렬 수집 (indices, vix, sectors, bonds, comms, mag7, macro)
+    with ThreadPoolExecutor(max_workers=10) as ex:
+        fut_indices = ex.submit(_fetch_extended_items, INDEX_TICKERS, False)
+        fut_vix = ex.submit(_fetch_one_price, VIX_TICKER)
+        fut_sectors = ex.submit(_fetch_extended_items, SECTOR_TICKERS, False)
+        fut_bonds = ex.submit(_fetch_extended_items, BOND_TICKERS, False)
+        fut_comms = ex.submit(_fetch_extended_items, COMMODITY_TICKERS, False)
+        fut_mag7 = ex.submit(_fetch_extended_items, MAG7_TICKERS, True)
+        fut_macro = ex.submit(_fetch_extended_items, MACRO_TICKERS, False)
+        fut_movers = ex.submit(_fetch_top_movers, MOVER_TICKERS)
+        # 인덱스 RSI 및 5일 트렌드용 history 도 같이
+        fut_index_hist = {
+            ticker: ex.submit(_fetch_history, ticker, "1mo")
+            for ticker, _ in INDEX_TICKERS
+        }
 
-    vix_raw = _fetch_one_price(VIX_TICKER)
-    vix = {"price": vix_raw["price"], "pct": vix_raw["pct"]}
+        # vol·prev_close_ts 가 필요한 indices 는 보강 fetch (cache 가 부족할 때)
+        indices_raw = fut_indices.result()
+        # _fetch_extended_items 는 vol/prev_close_ts 를 내려주지 않으므로 보강
+        indices_full = []
+        for ticker, name in INDEX_TICKERS:
+            base = next((i for i in indices_raw if i.get("ticker") == ticker), None) or {}
+            extra = _fetch_one_price(ticker)
+            indices_full.append({
+                "ticker": ticker,
+                "name": name,
+                "price": base.get("price") or extra.get("price", 0.0),
+                "pct": base.get("pct") if base.get("pct") is not None else extra.get("pct", 0.0),
+                "vol": extra.get("vol", 0),
+                "prev_close_ts": extra.get("prev_close_ts", ""),
+            })
 
-    sectors = []
-    for ticker, name in SECTOR_TICKERS:
-        p = _fetch_one_price(ticker)
-        sectors.append({
-            "ticker": ticker,
-            "name": name,
-            "pct": p["pct"],
-            "price": p["price"],
-        })
+        vix_raw = fut_vix.result()
+        vix = {"price": vix_raw["price"], "pct": vix_raw["pct"]}
+
+        sectors_raw = fut_sectors.result()
+        sectors = [
+            {"ticker": s["ticker"], "name": s["name"], "pct": s["pct"], "price": s["price"]}
+            for s in sectors_raw
+        ]
+
+        bonds = fut_bonds.result()
+        commodities = fut_comms.result()
+        mag7 = fut_mag7.result()
+        macro = fut_macro.result()
+        top_movers = fut_movers.result()
+
+        # RSI 및 5일 트렌드 계산
+        index_rsi: dict[str, float | None] = {}
+        index_5d: dict[str, float | None] = {}
+        for ticker, fut in fut_index_hist.items():
+            closes = fut.result()
+            index_rsi[ticker] = _compute_rsi(closes)
+            index_5d[ticker] = _compute_5d_change(closes)
 
     sorted_sectors = sorted(sectors, key=lambda s: s["pct"], reverse=True)
     top_gainers = [s["ticker"] for s in sorted_sectors[:3]]
@@ -273,38 +351,24 @@ def fetch_us_market_snapshot() -> dict:
         "date_kst": date_kst,
         "us_close_date": us_close_date,
         "is_us_market_holiday": False,
-        "indices": indices,
+        "indices": indices_full,
         "vix": vix,
         "sectors": sectors,
         "top_gainers_sectors": top_gainers,
         "top_losers_sectors": top_losers,
         "narrative_hint": None,
+        "bonds": bonds,
+        "commodities": commodities,
+        "mag7": mag7,
+        "macro": macro,
+        "index_rsi": index_rsi,
+        "index_5d": index_5d,
+        "top_movers": top_movers,
     }
     snapshot["is_us_market_holiday"] = is_us_market_holiday(snapshot)
     snapshot["narrative_hint"] = classify_narrative(snapshot)
-
-    # 확장 데이터 병렬 수집
     snapshot["fear_greed"] = _compute_fear_greed(snapshot)
-
-    with ThreadPoolExecutor(max_workers=3) as ex:
-        fut_bonds = ex.submit(_fetch_extended_items, BOND_TICKERS, False)
-        fut_comms = ex.submit(_fetch_extended_items, COMMODITY_TICKERS, False)
-        fut_mag7 = ex.submit(_fetch_extended_items, MAG7_TICKERS, True)
-        snapshot["bonds"] = fut_bonds.result()
-        snapshot["commodities"] = fut_comms.result()
-        snapshot["mag7"] = fut_mag7.result()
-
-    # 지수 RSI 병렬 계산
-    index_rsi: dict[str, float | None] = {}
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        rsi_futures = {ex.submit(_fetch_history, ticker, "1mo"): ticker for ticker, _ in INDEX_TICKERS}
-        for fut in as_completed(rsi_futures):
-            ticker = rsi_futures[fut]
-            closes = fut.result()
-            index_rsi[ticker] = _compute_rsi(closes)
-    snapshot["index_rsi"] = index_rsi
-
-    snapshot["top_movers"] = _fetch_top_movers(MOVER_TICKERS)
+    snapshot["breadth"] = _compute_breadth(snapshot)
 
     return snapshot
 
@@ -360,13 +424,11 @@ def classify_narrative(snapshot: dict) -> str:
     if vix_pct >= 10.0:
         return "risk_off"
 
-    if top3 & GROWTH_SECTORS == GROWTH_SECTORS & {s["ticker"] for s in sorted_secs[:3]}:
-        growth_in_top = len(top3 & GROWTH_SECTORS)
-        defensive_in_top = len(top3 & DEFENSIVE_SECTORS)
-        if growth_in_top >= 2 and defensive_in_top == 0:
-            return "growth_led"
-
-    if len(top3 & DEFENSIVE_SECTORS) >= 2 and len(top3 & GROWTH_SECTORS) == 0:
+    growth_in_top = len(top3 & GROWTH_SECTORS)
+    defensive_in_top = len(top3 & DEFENSIVE_SECTORS)
+    if growth_in_top >= 2 and defensive_in_top == 0:
+        return "growth_led"
+    if defensive_in_top >= 2 and growth_in_top == 0:
         return "defensive_led"
 
     return "mixed"
@@ -430,10 +492,19 @@ def _build_description(snapshot: dict) -> str:
     leaders = snapshot.get("top_gainers_sectors") or []
     laggards = snapshot.get("top_losers_sectors") or []
     vix = snapshot.get("vix", {}).get("price", 0.0)
+    macro = snapshot.get("macro") or []
+    tnx = next((m for m in macro if m["ticker"] == "^TNX"), None)
+    dxy = next((m for m in macro if m["ticker"] == "DX-Y.NYB"), None)
+    macro_part = ""
+    if tnx and tnx.get("price", 0) > 0:
+        macro_part = f", 10Y {tnx['price']:.2f}%"
+    if dxy and dxy.get("price", 0) > 0:
+        macro_part += f", DXY {dxy['price']:.2f}"
     return (
         f"S&P500 {_format_pct(spy['pct']) if spy else ''}, "
         f"나스닥 {_format_pct(qqq['pct']) if qqq else ''}, "
-        f"VIX {vix:.2f}. 리더 섹터 {', '.join(leaders[:2])}, "
+        f"VIX {vix:.2f}{macro_part}. "
+        f"리더 섹터 {', '.join(leaders[:2])}, "
         f"래거 섹터 {', '.join(laggards[:2])}."
     )
 
@@ -495,16 +566,20 @@ def _rsi_badge(rsi: float | None) -> str:
 
 def _build_index_table(snapshot: dict) -> str:
     index_rsi = snapshot.get("index_rsi") or {}
+    index_5d = snapshot.get("index_5d") or {}
     rows = []
     rows.append("<table><caption>오늘 미국 주요 지수 마감</caption>")
-    rows.append("<tr><th>지수</th><th>티커</th><th>종가</th><th>등락률</th><th>RSI(14)</th><th>거래량</th></tr>")
+    rows.append("<tr><th>지수</th><th>티커</th><th>종가</th><th>등락률</th><th>5일</th><th>RSI(14)</th><th>거래량</th></tr>")
     for idx in snapshot["indices"]:
         vol_str = f"{idx['vol']/1_000_000:.1f}M" if idx["vol"] else "-"
         rsi = index_rsi.get(idx["ticker"])
+        d5 = index_5d.get(idx["ticker"])
+        d5_str = _format_pct(d5) if d5 is not None else "-"
         rows.append(
             f"<tr><td>{idx['name']}</td><td>{idx['ticker']}</td>"
             f"<td>{_format_price(idx['price'])}</td>"
             f"<td>{_format_pct(idx['pct'])}</td>"
+            f"<td>{d5_str}</td>"
             f"<td>{_rsi_badge(rsi)}</td>"
             f"<td>{vol_str}</td></tr>"
         )
@@ -514,10 +589,60 @@ def _build_index_table(snapshot: dict) -> str:
             f"<tr><td>VIX (변동성 지수)</td><td>^VIX</td>"
             f"<td>{vix.get('price', 0.0):.2f}</td>"
             f"<td>{_format_pct(vix.get('pct', 0.0))}</td>"
-            f"<td>-</td><td>-</td></tr>"
+            f"<td>-</td><td>-</td><td>-</td></tr>"
         )
     rows.append("</table>")
     return "\n".join(rows)
+
+
+def _build_macro_table(snapshot: dict) -> str:
+    """미 국채 수익률·달러 인덱스 핵심 매크로 테이블."""
+    macro = snapshot.get("macro") or []
+    if not any(m.get("price", 0) > 0 for m in macro):
+        return ""
+    rows = ["<table><caption>핵심 매크로 — 국채 수익률 · 달러 인덱스</caption>"]
+    rows.append("<tr><th>지표</th><th>티커</th><th>현재값</th><th>전일 대비</th></tr>")
+    for m in macro:
+        if m.get("price", 0) <= 0:
+            continue
+        # ^TNX/^TYX/^FVX 는 yield * 100 (yfinance 규칙) → '%' 단위 표기
+        is_yield = m["ticker"].startswith("^")
+        if is_yield:
+            value_str = f"{m['price']:.2f}%"
+        else:
+            value_str = f"{m['price']:.2f}"
+        rows.append(
+            f"<tr><td>{m['name']}</td><td>{m['ticker']}</td>"
+            f"<td>{value_str}</td>"
+            f"<td>{_format_pct(m['pct'])}</td></tr>"
+        )
+    rows.append("</table>")
+    return "\n".join(rows)
+
+
+def _build_breadth_block(snapshot: dict) -> str:
+    """섹터·Mag7 폭(breadth) 시각 박스."""
+    b = snapshot.get("breadth") or {}
+    sec_pos = b.get("sector_positive", 0)
+    sec_tot = b.get("sector_total", 0)
+    m7_pos = b.get("mag7_positive", 0)
+    m7_tot = b.get("mag7_total", 0)
+    if sec_tot == 0:
+        return ""
+    sec_ratio = (sec_pos / sec_tot) if sec_tot else 0
+    m7_ratio = (m7_pos / m7_tot) if m7_tot else 0
+    sec_emoji = "🟢" if sec_ratio >= 0.6 else "🟡" if sec_ratio >= 0.4 else "🔴"
+    m7_emoji = "🟢" if m7_ratio >= 0.6 else "🟡" if m7_ratio >= 0.4 else "🔴"
+    return (
+        f'<div class="breadth-box" style="background:#f8f9fa;border:1px solid #dee2e6;'
+        f'border-radius:8px;padding:0.8em 1.2em;margin:0 0 1.5em 0;font-size:0.95em;">'
+        f"<strong>📊 시장 폭(Breadth)</strong> · "
+        f"{sec_emoji} 섹터 {sec_pos}/{sec_tot} 상승 "
+        f"({sec_ratio*100:.0f}%) · "
+        f"{m7_emoji} Mag7 {m7_pos}/{m7_tot} 상승 "
+        f"({m7_ratio*100:.0f}%)"
+        f"</div>"
+    )
 
 
 def _build_fear_greed_block(snapshot: dict) -> str:
@@ -561,16 +686,20 @@ def _build_bond_commodity_table(snapshot: dict) -> str:
 
 def _build_mag7_table(snapshot: dict) -> str:
     mag7 = snapshot.get("mag7") or []
-    rows = ["<table><caption>Magnificent 7 — 오늘 퍼포먼스</caption>"]
+    visible = [m for m in mag7 if m.get("price", 0) > 0]
+    visible.sort(key=lambda m: m["pct"], reverse=True)
+    rows = ["<table><caption>Magnificent 7 — 오늘 퍼포먼스 (내림차순·히트맵)</caption>"]
     rows.append("<tr><th>기업</th><th>티커</th><th>종가</th><th>등락률</th><th>RSI(14)</th></tr>")
-    for item in mag7:
-        if item["price"] > 0:
-            rows.append(
-                f"<tr><td>{item['name']}</td><td>{item['ticker']}</td>"
-                f"<td>{_format_price(item['price'])}</td>"
-                f"<td>{_format_pct(item['pct'])}</td>"
-                f"<td>{_rsi_badge(item.get('rsi'))}</td></tr>"
-            )
+    for item in visible:
+        bg = _heatmap_bg(item["pct"])
+        fg = _heatmap_fg(item["pct"])
+        cell_style = f'style="background:{bg};color:{fg};font-weight:600;"'
+        rows.append(
+            f"<tr><td>{item['name']}</td><td>{item['ticker']}</td>"
+            f"<td>{_format_price(item['price'])}</td>"
+            f"<td {cell_style}>{_format_pct(item['pct'])}</td>"
+            f"<td>{_rsi_badge(item.get('rsi'))}</td></tr>"
+        )
     rows.append("</table>")
     return "\n".join(rows)
 
@@ -582,24 +711,57 @@ def _build_top_movers(snapshot: dict) -> str:
     if not gainers and not losers:
         return ""
     rows = ["<table><caption>오늘 대형주 상승/하락 주도 종목 (Top 3)</caption>"]
-    rows.append("<tr><th>구분</th><th>티커</th><th>등락률</th></tr>")
+    rows.append("<tr><th>구분</th><th>종목</th><th>티커</th><th>종가</th><th>등락률</th></tr>")
     for g in gainers:
-        rows.append(f"<tr><td>📈 상승</td><td>{g['ticker']}</td><td>{_format_pct(g['pct'])}</td></tr>")
+        name = g.get("name") or g["ticker"]
+        rows.append(
+            f"<tr><td>📈 상승</td><td>{name}</td><td>{g['ticker']}</td>"
+            f"<td>{_format_price(g['price'])}</td><td>{_format_pct(g['pct'])}</td></tr>"
+        )
     for l in losers:
-        rows.append(f"<tr><td>📉 하락</td><td>{l['ticker']}</td><td>{_format_pct(l['pct'])}</td></tr>")
+        name = l.get("name") or l["ticker"]
+        rows.append(
+            f"<tr><td>📉 하락</td><td>{name}</td><td>{l['ticker']}</td>"
+            f"<td>{_format_price(l['price'])}</td><td>{_format_pct(l['pct'])}</td></tr>"
+        )
     rows.append("</table>")
     return "\n".join(rows)
 
 
+def _heatmap_bg(pct: float) -> str:
+    """등락률 → 인라인 셀 배경색 (그린 그라디언트 / 레드 그라디언트)."""
+    if pct >= 1.5:
+        return "#15803d"   # deep green
+    if pct >= 0.5:
+        return "#22c55e"   # green
+    if pct > 0:
+        return "#bbf7d0"   # light green
+    if pct == 0:
+        return "#f3f4f6"   # neutral
+    if pct > -0.5:
+        return "#fecaca"   # light red
+    if pct > -1.5:
+        return "#ef4444"   # red
+    return "#991b1b"       # deep red
+
+
+def _heatmap_fg(pct: float) -> str:
+    """배경 채도에 맞춘 글자색."""
+    return "#fff" if abs(pct) >= 0.5 else "#1f2937"
+
+
 def _build_sector_table(snapshot: dict) -> str:
     sectors = sorted(snapshot.get("sectors", []), key=lambda s: s["pct"], reverse=True)
-    rows = ["<table><caption>오늘 11개 섹터 ETF 변화율 (내림차순)</caption>"]
+    rows = ["<table><caption>오늘 11개 섹터 ETF 변화율 (히트맵·내림차순)</caption>"]
     rows.append("<tr><th>순위</th><th>섹터</th><th>티커</th><th>등락률</th></tr>")
     for i, s in enumerate(sectors, 1):
+        bg = _heatmap_bg(s["pct"])
+        fg = _heatmap_fg(s["pct"])
+        cell_style = f'style="background:{bg};color:{fg};font-weight:600;"'
         rows.append(
             f"<tr><td>{i}</td><td>{s['name']}</td>"
             f"<td>{s['ticker']}</td>"
-            f"<td>{_format_pct(s['pct'])}</td></tr>"
+            f"<td {cell_style}>{_format_pct(s['pct'])}</td></tr>"
         )
     rows.append("</table>")
     return "\n".join(rows)
@@ -687,11 +849,73 @@ def build_markdown(snapshot: dict, lang: str = "ko") -> str:
 
     movers_table = _build_top_movers(snapshot)
 
+    macro_table = _build_macro_table(snapshot)
+    breadth_block = _build_breadth_block(snapshot)
+    breadth = snapshot.get("breadth") or {}
+
+    # 매크로 데이터 기반 동적 코멘트
+    macro_list = snapshot.get("macro") or []
+    tnx = next((m for m in macro_list if m["ticker"] == "^TNX"), None)
+    tyx = next((m for m in macro_list if m["ticker"] == "^TYX"), None)
+    dxy = next((m for m in macro_list if m["ticker"] == "DX-Y.NYB"), None)
+    macro_note_parts: list[str] = []
+    if tnx and tnx.get("price", 0) > 0:
+        direction = "상승" if tnx["pct"] >= 0 else "하락"
+        macro_note_parts.append(
+            f"10년물 수익률은 {tnx['price']:.2f}% ({_format_pct(tnx['pct'])}) {direction}했다."
+        )
+    if tyx and tyx.get("price", 0) > 0 and tnx and tnx.get("price", 0) > 0:
+        spread = tyx["price"] - tnx["price"]
+        spread_note = "정상" if spread >= 0 else "역전"
+        macro_note_parts.append(
+            f"30년-10년 스프레드는 {spread:+.2f}%p ({spread_note})."
+        )
+    if dxy and dxy.get("price", 0) > 0:
+        direction = "강세" if dxy["pct"] >= 0 else "약세"
+        macro_note_parts.append(
+            f"달러 인덱스(DXY)는 {dxy['price']:.2f} ({_format_pct(dxy['pct'])}) {direction}."
+        )
+    macro_note = " ".join(macro_note_parts) if macro_note_parts else ""
+
+    # RSI 과열/과매도 카운트
+    index_rsi = snapshot.get("index_rsi") or {}
+    overbought = [t for t, r in index_rsi.items() if r is not None and r >= 70]
+    oversold = [t for t, r in index_rsi.items() if r is not None and r <= 30]
+    rsi_note = ""
+    if overbought:
+        rsi_note = f"현재 {', '.join(overbought)} 지수 RSI(14)가 70선을 넘어 단기 과매수 구간이다. "
+    elif oversold:
+        rsi_note = f"현재 {', '.join(oversold)} 지수 RSI(14)가 30선 아래로 단기 과매도 구간이다. "
+
+    # VIX 임계 동적 가이드
+    vix_price = vix.get("price", 20.0)
+    if vix_price < 15:
+        vix_focus = f"VIX {vix_price:.2f} — 낮은 변동성 구간(15 이하). 갭 위험은 낮으나 안주는 금물"
+    elif vix_price < 20:
+        vix_focus = f"VIX {vix_price:.2f} — 중립 구간(15~20). 임계 20선 돌파 여부가 분수령"
+    elif vix_price < 30:
+        vix_focus = f"VIX {vix_price:.2f} — 경계 구간(20~30). 패닉 매도 가능성 점검"
+    else:
+        vix_focus = f"VIX {vix_price:.2f} — 패닉 구간(30 초과). 단기 반등 가능성과 추가 하락 모두 열려 있음"
+
+    # 섹터 폭 코멘트
+    sec_pos = breadth.get("sector_positive", 0)
+    sec_tot = breadth.get("sector_total", 0)
+    breadth_focus = ""
+    if sec_tot:
+        if sec_pos >= sec_tot - 2:
+            breadth_focus = f"섹터 {sec_pos}/{sec_tot} 상승 — 폭 넓은 위험 선호"
+        elif sec_pos <= 2:
+            breadth_focus = f"섹터 {sec_pos}/{sec_tot} 만 상승 — 폭 좁은 약세 시장"
+        else:
+            breadth_focus = f"섹터 {sec_pos}/{sec_tot} 상승 — 혼조 구간"
+
     body_parts = [
         fm,
         _DISCLAIMER_BANNER,
         "",
         _build_fear_greed_block(snapshot),
+        breadth_block,
         summary,
         "",
         "## 📊 지수 한눈에 보기",
@@ -701,7 +925,21 @@ def build_markdown(snapshot: dict, lang: str = "ko") -> str:
         (
             "위 표는 미국 4대 지수(S&P 500, Nasdaq-100, Dow 30, Russell 2000)와 VIX 변동성 지수의 "
             "오늘 마감 수치를 한 줄로 정리한 것이다. RSI(14)가 70 이상이면 단기 과매수, "
-            "30 이하면 과매도 구간으로 해석한다. VIX는 어제 대비 변화율의 방향이 핵심이다."
+            "30 이하면 과매도 구간으로 해석한다. 5일 컬럼은 최근 한 주 추세를 나타내며 "
+            "당일 등락과 추세가 같은 방향이면 모멘텀 지속, 반대 방향이면 반전 시그널 후보다. "
+            "VIX는 어제 대비 변화율의 방향이 핵심이다."
+        ),
+        "",
+        "## 🌐 핵심 매크로 — 국채 수익률 · 달러",
+        "",
+        macro_table if macro_table else "_(매크로 데이터 없음)_",
+        "",
+        (
+            "10년물 수익률(^TNX)은 위험자산 할인율의 핵심 변수다. "
+            "수익률이 빠르게 오르면 성장주(특히 PER이 높은 기술주)에 압력이 가해지고, "
+            "달러 인덱스(DXY)가 동반 강세면 외국인 자금 유입이 둔화될 수 있다. "
+            "30년-10년 스프레드가 역전되어 있으면 장기 경기 둔화 신호로 본다."
+            + (" " + macro_note if macro_note else "")
         ),
         "",
         "## 📈 섹터별 강약",
@@ -710,6 +948,7 @@ def build_markdown(snapshot: dict, lang: str = "ko") -> str:
         "",
         (
             f"리더 섹터는 **{', '.join(leaders[:3])}**, 래거 섹터는 **{', '.join(laggards[:3])}** 로 집계됐다. "
+            f"오늘 11개 섹터 중 {sec_pos}개가 상승 마감했다. "
             "성장주 섹터(XLK·XLC·XLY)가 상위에 있으면 위험 선호 구간, "
             "방어주 섹터(XLP·XLU·XLV)가 상위에 있으면 위험 회피 구간으로 해석한다."
         ),
@@ -732,6 +971,7 @@ def build_markdown(snapshot: dict, lang: str = "ko") -> str:
         (
             f"빅테크 7개 종목 중 오늘 가장 강했던 종목은 **{mag7_leader}**, "
             f"가장 약했던 종목은 **{mag7_laggard}** 다. "
+            f"Mag7 중 {breadth.get('mag7_positive', 0)}/{breadth.get('mag7_total', 0)}개 종목이 상승 마감했다. "
             "Mag7의 방향은 나스닥100(QQQ) 추세에 직결되므로 지수 등락과 함께 확인한다."
         ) if mag7_leader else "",
         "",
@@ -745,18 +985,45 @@ def build_markdown(snapshot: dict, lang: str = "ko") -> str:
         "",
         (
             f"시장 심리 지수는 **{fg_label}({fg_score})** 으로 집계됐다. "
+            f"{breadth_focus}. "
             "내러티브를 읽을 때는 한 요인만 보지 않는 것이 중요하다. 지수 한 곳이 올라도 섹터별 분포가 "
             "편중되어 있으면 추세 지속성이 약할 수 있고, 반대로 지수가 약해도 섹터 폭이 넓게 오르면 "
             "체감 건강도는 더 좋을 수 있다."
         ),
         "",
+        "## 🎯 시나리오 박스 (정보 제공·투자 자문 아님)",
+        "",
+        (
+            "**상승 시나리오**: "
+            f"{rsi_note}이 구간에서 추가 상승이 이어지려면 (1) VIX가 현재 {vix_price:.2f} 에서 추가로 안정, "
+            "(2) 채권 수익률이 상단을 시도하지 않고 박스권 유지, "
+            "(3) 섹터 폭이 더 넓게 확장되며 방어주가 함께 따라오는 흐름이 필요하다."
+        ),
+        "",
+        (
+            "**하락 시나리오**: 반대로 단기 조정 가능성을 견인할 수 있는 요인은 "
+            "(1) VIX 20선 돌파, (2) 10년물 수익률 급등 + DXY 동반 강세 (위험자산 압박), "
+            "(3) 섹터 폭 급락(상승 섹터 3개 미만)과 Mag7 동반 약세, (4) 어닝 시즌 가이던스 하향이다. "
+            "어느 시나리오로 갈지는 단정할 수 없으며 양쪽 시나리오 모두 사전에 점검하는 것이 위험관리의 핵심이다."
+        ),
+        "",
         "## 🔮 내일 주목할 포인트",
         "",
+        f"- {vix_focus}",
+        f"- {breadth_focus}" if breadth_focus else "- 섹터 폭(상승 섹터 비중) 확장 또는 축소 여부",
+        (
+            f"- 10년물 수익률 (현재 {tnx['price']:.2f}%) — 4.5% 돌파 시 성장주 압력 확대"
+            if tnx and tnx.get("price", 0) > 0
+            else "- 10년물 미국채 수익률 방향성"
+        ),
+        (
+            f"- 달러 인덱스(DXY {dxy['price']:.2f}) — 강세 지속 시 다국적 기업·신흥국 자산 압박"
+            if dxy and dxy.get("price", 0) > 0
+            else "- 달러 인덱스(DXY) 강세/약세 흐름"
+        ),
         "- 미국 경제지표 발표 시간 (CPI/PPI/소매판매/ISM 등) 확인",
         "- FOMC 의사록 발표일과 주요 연준 위원 발언 일정",
         "- 실적 발표 시즌이면 어닝 컨센서스와 실제 차이",
-        "- VIX 가 20선을 돌파하거나 이탈하는지 모니터링",
-        "- 10년물 미국채 수익률 방향성",
         "- 채권(TLT) · 달러(DXY) · 금(GLD) 동반 움직임 여부",
         "",
         "## ⚡ Action Point (정보 제공)",
@@ -765,6 +1032,7 @@ def build_markdown(snapshot: dict, lang: str = "ko") -> str:
         "- 내가 보유한 섹터·티커가 오늘의 리더/래거 중 어디에 속하는지 확인만 한다.",
         "- VIX 흐름과 개별 포지션의 변동성을 비교해 리스크 허용도를 점검한다.",
         "- Mag7 RSI가 70 이상이면 단기 과열 신호로 추가 진입 시 유의한다.",
+        "- 10년물 수익률·DXY가 동반 급등하는 구간에서는 성장주 비중을 점검한다.",
         "- 다음 발표 이벤트(경제지표/FOMC/어닝)까지는 포지션 변경을 서두르지 않는다.",
         "",
         _FOOTER_DISCLAIMER,
