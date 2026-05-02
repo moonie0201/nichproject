@@ -826,7 +826,9 @@ def health_full() -> dict:
             tok = json.loads(tiktok_path.read_text())
             expires_at = tok.get("expires_at") or tok.get("expires_in")
             if expires_at:
-                tiktok_info["expires_in_sec"] = int(float(expires_at) - time.time())
+                expires_in_sec = int(float(expires_at) - time.time())
+                tiktok_info["expires_in_sec"] = expires_in_sec
+                tiktok_info["warning"] = "expires soon" if expires_in_sec < 3600 else None
         except Exception:
             pass
     result["tiktok_token"] = tiktok_info
@@ -994,7 +996,17 @@ class BridgeHandler(BaseHTTPRequestHandler):
             if params.get("deep") in ("true", "1", "yes"):
                 self._respond(200, deep_health())
             else:
-                self._respond(200, {"status": "ok"})
+                tiktok_warn = False
+                tiktok_path = NICHPROJECT / ".tiktok_secrets" / "token.json"
+                if tiktok_path.exists():
+                    try:
+                        tok = json.loads(tiktok_path.read_text())
+                        expires_at = tok.get("expires_at") or tok.get("expires_in")
+                        if expires_at:
+                            tiktok_warn = int(float(expires_at) - time.time()) < 3600
+                    except Exception:
+                        pass
+                self._respond(200, {"status": "warning" if tiktok_warn else "ok"})
             return
         if path == "/health/full":
             if not self._check_auth():
