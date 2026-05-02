@@ -565,14 +565,17 @@ def build_localized_weekly_markdown(snapshot: dict, lang: str) -> str:
         "A strong week does not guarantee the same pace next week.",
     ])
 
-    # 매크로 섹션 (weekly 도 macro snapshot 보유)
-    from auto_publisher.market_wrap import _build_macro_table
+    # 매크로·Mag7·FG 섹션 (weekly 도 모두 보유)
+    from auto_publisher.market_wrap import _build_macro_table, _build_mag7_table, _build_fear_greed_block
     weekly_macro_table = _build_macro_table(snapshot, lang=lang)
+    weekly_mag7_table = _build_mag7_table(snapshot, lang=lang)
+    weekly_fg_block = _build_fear_greed_block(snapshot, lang=lang)
 
     body = [
         fm,
         i18n["disclaimer_banner_html"],
         "",
+        weekly_fg_block,
         summary,
         "",
         weekly_intro,
@@ -590,6 +593,12 @@ def build_localized_weekly_markdown(snapshot: dict, lang: str) -> str:
         f"## {i18n['section_h2_sector']}",
         "",
         _build_sector_table_localized(snapshot, lang, "pct_5d"),
+        "",
+        f"## {i18n['section_h2_mag7']}",
+        "",
+        weekly_mag7_table or "_(no mag7 data)_",
+        "",
+        i18n.get("mag7_note", ""),
         "",
         f"## {i18n['section_h2_narrative']}",
         "",

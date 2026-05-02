@@ -17,6 +17,7 @@ from auto_publisher.market_wrap import (
     SECTOR_TICKERS,
     VIX_TICKER,
     MACRO_TICKERS,
+    MAG7_TICKERS,
     GROWTH_SECTORS,
     DEFENSIVE_SECTORS,
     KST,
@@ -25,6 +26,7 @@ from auto_publisher.market_wrap import (
     _fetch_extended_items,
     _heatmap_bg,
     _heatmap_fg,
+    _compute_fear_greed,
 )
 
 logger = logging.getLogger(__name__)
@@ -89,12 +91,13 @@ def fetch_weekly_snapshot() -> dict:
         us_week_end_dt -= timedelta(days=1)
     us_week_start_dt = us_week_end_dt - timedelta(days=4)
 
-    # 5일 요약 + 매크로 병렬 수집
-    with ThreadPoolExecutor(max_workers=10) as ex:
+    # 5일 요약 + 매크로 + Mag7 병렬 수집
+    with ThreadPoolExecutor(max_workers=12) as ex:
         idx_futs = {ticker: ex.submit(_fetch_5d_summary, ticker) for ticker, _ in INDEX_TICKERS}
         vix_fut = ex.submit(_fetch_5d_summary, VIX_TICKER)
         sec_futs = {ticker: ex.submit(_fetch_5d_summary, ticker) for ticker, _ in SECTOR_TICKERS}
         macro_fut = ex.submit(_fetch_extended_items, MACRO_TICKERS, False)
+        mag7_fut = ex.submit(_fetch_extended_items, MAG7_TICKERS, True)
 
         indices = []
         for ticker, name in INDEX_TICKERS:
@@ -127,10 +130,22 @@ def fetch_weekly_snapshot() -> dict:
             })
 
         macro = macro_fut.result()
+        mag7 = mag7_fut.result()
 
     sorted_secs = sorted(sectors, key=lambda s: s["pct_5d"], reverse=True)
     pos_sec = sum(1 for s in sectors if s["pct_5d"] > 0)
     neg_sec = sum(1 for s in sectors if s["pct_5d"] < 0)
+    pos_m7 = sum(1 for m in mag7 if m.get("price", 0) > 0 and m.get("pct", 0) > 0)
+    neg_m7 = sum(1 for m in mag7 if m.get("price", 0) > 0 and m.get("pct", 0) < 0)
+    m7_total = sum(1 for m in mag7 if m.get("price", 0) > 0)
+
+    # FG: 주간용 — VIX 종가 + SPY 5일 모멘텀 기반
+    spy_weekly = next((i for i in indices if i["ticker"] == "SPY"), None)
+    fg_proxy_snapshot = {
+        "vix": {"price": vix_close},
+        "indices": [{"ticker": "SPY", "pct": (spy_weekly or {}).get("pct_5d", 0.0) / 5.0}],
+    }
+    fear_greed = _compute_fear_greed(fg_proxy_snapshot)
 
     # 다음 주 캘린더 (정적 템플릿 — 추후 자동 수집 가능)
     next_week_calendar = [
@@ -155,10 +170,15 @@ def fetch_weekly_snapshot() -> dict:
         "narrative_hint": None,
         "next_week_calendar": next_week_calendar,
         "macro": macro,
+        "mag7": mag7,
+        "fear_greed": fear_greed,
         "breadth": {
             "sector_positive": pos_sec,
             "sector_negative": neg_sec,
             "sector_total": len(sectors),
+            "mag7_positive": pos_m7,
+            "mag7_negative": neg_m7,
+            "mag7_total": m7_total,
         },
     }
     snapshot["narrative_hint"] = classify_weekly_narrative(snapshot)
@@ -427,6 +447,11 @@ def build_weekly_markdown(snapshot: dict, lang: str = "ko") -> str:
     macro_table = _build_weekly_macro_table(snapshot)
     breadth_box = _build_weekly_breadth(snapshot)
 
+    # Mag7 + FG (cycle 18)
+    from auto_publisher.market_wrap import _build_mag7_table, _build_fear_greed_block
+    weekly_mag7_table = _build_mag7_table(snapshot, lang="ko")
+    weekly_fg_block = _build_fear_greed_block(snapshot, lang="ko")
+
     macro_list = snapshot.get("macro") or []
     tnx = next((m for m in macro_list if m["ticker"] == "^TNX"), None)
     dxy = next((m for m in macro_list if m["ticker"] == "DX-Y.NYB"), None)
@@ -441,6 +466,7 @@ def build_weekly_markdown(snapshot: dict, lang: str = "ko") -> str:
         fm,
         _DISCLAIMER_BANNER,
         "",
+        weekly_fg_block,
         breadth_box,
         summary,
         "",
@@ -478,6 +504,16 @@ def build_weekly_markdown(snapshot: dict, lang: str = "ko") -> str:
             f"**{', '.join(laggards[:3])}** 다. 일별 리더가 매일 바뀌는 구간과 한 주 내내 같은 섹터가 "
             "상위인 구간은 의미가 다르다. 후자는 자금이 한 방향으로 누적된다는 뜻이고, 전자는 회전이 "
             "빠른 단기 트레이딩 구간일 가능성이 크다."
+        ),
+        "",
+        "## 🚀 Magnificent 7 (오늘 일봉 기준)",
+        "",
+        weekly_mag7_table,
+        "",
+        (
+            "주간 정리 글에서 Mag7 일봉은 한 주의 마지막 모습을 압축해서 보여준다. "
+            "주간 누적 기준으로 Mag7이 함께 강했다면 위험 선호 회복, 흐트러져 있다면 "
+            "성장주 내부의 회전이 빠르게 일어난 한 주로 본다."
         ),
         "",
         "## 💡 한 주 시장 내러티브",
