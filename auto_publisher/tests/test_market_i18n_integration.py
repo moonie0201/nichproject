@@ -197,6 +197,110 @@ def test_wrap_en_contains_market_close_keyword(fake_wrap_snapshot):
     assert any(kw in md for kw in ("Market Close", "Daily Wrap", "Closing", "S&P 500"))
 
 
+# ── 6. wrap 5개 언어 섹션 패리티 (10/10 강화 회귀 보호) ────────
+
+@pytest.fixture
+def full_wrap_snapshot(fake_wrap_snapshot):
+    """ko 기준 풀 데이터 — 매크로/breadth/asia/crypto/mag7/movers/bonds 포함."""
+    snap = dict(fake_wrap_snapshot)
+    snap.update({
+        "macro": [
+            {"ticker": "^TNX", "name": "미국 10년물 수익률", "price": 4.38, "pct": -0.27},
+            {"ticker": "^TYX", "name": "미국 30년물 수익률", "price": 4.97, "pct": -0.42},
+            {"ticker": "^FVX", "name": "미국 5년물 수익률", "price": 4.02, "pct": -0.05},
+            {"ticker": "DX-Y.NYB", "name": "달러 인덱스 (DXY)", "price": 98.21, "pct": 0.13},
+        ],
+        "asia": [
+            {"ticker": "^N225", "name": "Nikkei 225 (일본)", "price": 38000.0, "pct": 0.4},
+            {"ticker": "^HSI", "name": "Hang Seng (홍콩)", "price": 17500.0, "pct": -1.2},
+            {"ticker": "^KS11", "name": "KOSPI Composite (한국)", "price": 2700.0, "pct": -0.8},
+            {"ticker": "000001.SS", "name": "Shanghai (중국)", "price": 3100.0, "pct": 0.2},
+        ],
+        "crypto": [
+            {"ticker": "BTC-USD", "name": "Bitcoin", "price": 65000.0, "pct": 1.5},
+            {"ticker": "ETH-USD", "name": "Ethereum", "price": 3300.0, "pct": 2.1},
+        ],
+        "mag7": [
+            {"ticker": t, "name": n, "price": p, "pct": pct, "rsi": rsi}
+            for t, n, p, pct, rsi in [
+                ("AAPL", "Apple", 245.0, 1.2, 65.0),
+                ("MSFT", "Microsoft", 420.0, 0.8, 60.0),
+                ("NVDA", "NVIDIA", 130.0, -0.5, 55.0),
+                ("GOOGL", "Alphabet", 175.0, 0.3, 58.0),
+                ("AMZN", "Amazon", 200.0, 1.0, 62.0),
+                ("META", "Meta", 580.0, -0.3, 50.0),
+                ("TSLA", "Tesla", 250.0, 2.0, 70.0),
+            ]
+        ],
+        "bonds": [
+            {"ticker": "TLT", "name": "TLT", "price": 90.0, "pct": -0.2},
+            {"ticker": "IEF", "name": "IEF", "price": 95.0, "pct": -0.1},
+            {"ticker": "SHY", "name": "SHY", "price": 82.0, "pct": -0.05},
+        ],
+        "commodities": [
+            {"ticker": "GLD", "name": "GLD", "price": 250.0, "pct": 0.5},
+            {"ticker": "SLV", "name": "SLV", "price": 30.0, "pct": 1.5},
+            {"ticker": "USO", "name": "USO", "price": 75.0, "pct": -1.5},
+        ],
+        "fear_greed": {"score": 65, "label": "탐욕"},
+        "breadth": {"sector_positive": 6, "sector_negative": 5, "sector_total": 11,
+                    "mag7_positive": 5, "mag7_negative": 2, "mag7_total": 7},
+        "index_rsi": {"SPY": 65.0, "QQQ": 72.0, "DIA": 60.0, "IWM": 55.0},
+        "index_5d": {"SPY": 1.2, "QQQ": 2.0, "DIA": 0.5, "IWM": -0.5},
+        "top_movers": {
+            "gainers": [
+                {"ticker": "INTC", "name": "Intel", "price": 25.0, "pct": 5.4},
+                {"ticker": "CRM", "name": "Salesforce", "price": 280.0, "pct": 4.1},
+                {"ticker": "MRK", "name": "Merck", "price": 105.0, "pct": 2.7},
+            ],
+            "losers": [
+                {"ticker": "ABBV", "name": "AbbVie", "price": 180.0, "pct": -2.2},
+                {"ticker": "COP", "name": "ConocoPhillips", "price": 105.0, "pct": -2.0},
+                {"ticker": "WFC", "name": "Wells Fargo", "price": 75.0, "pct": -1.7},
+            ],
+        },
+    })
+    return snap
+
+
+REQUIRED_TICKER_TOKENS = ["^TNX", "DX-Y.NYB", "BTC-USD", "AAPL", "INTC", "TLT", "GLD"]
+
+
+@pytest.mark.parametrize("lang", ["ko", "en", "ja", "vi", "id"])
+def test_wrap_all_required_data_tokens_present(full_wrap_snapshot, lang):
+    """모든 언어가 핵심 데이터 토큰(매크로/asia/crypto/mag7/movers/bonds/comms)을 노출."""
+    from auto_publisher.market_wrap import build_markdown
+    md = build_markdown(full_wrap_snapshot, lang=lang)
+    for token in REQUIRED_TICKER_TOKENS:
+        assert token in md, f"{lang}: 필수 데이터 토큰 누락: {token}"
+
+
+@pytest.mark.parametrize("lang", ["ko", "en", "ja", "vi", "id"])
+def test_wrap_fg_gauge_present(full_wrap_snapshot, lang):
+    """모든 언어가 Fear & Greed 게이지 박스를 렌더링."""
+    from auto_publisher.market_wrap import build_markdown
+    md = build_markdown(full_wrap_snapshot, lang=lang)
+    assert "fg-gauge" in md, f"{lang}: FG 게이지 누락"
+    assert "🧭" in md, f"{lang}: FG 이모지 누락"
+
+
+@pytest.mark.parametrize("lang", ["ko", "en", "ja", "vi", "id"])
+def test_wrap_breadth_box_present(full_wrap_snapshot, lang):
+    """모든 언어가 시장 폭(Breadth) 박스를 렌더링."""
+    from auto_publisher.market_wrap import build_markdown
+    md = build_markdown(full_wrap_snapshot, lang=lang)
+    assert "breadth-box" in md, f"{lang}: breadth 박스 누락"
+
+
+@pytest.mark.parametrize("lang", ["en", "ja", "vi", "id"])
+def test_wrap_h2_count_at_least_9(full_wrap_snapshot, lang):
+    """비-한국어가 최소 9개 H2 섹션을 가져야 한다 (ko 11개 / non-ko 10개 목표)."""
+    from auto_publisher.market_wrap import build_markdown
+    md = build_markdown(full_wrap_snapshot, lang=lang)
+    h2_count = len(re.findall(r"^## ", md, re.MULTILINE))
+    assert h2_count >= 9, f"{lang}: H2 카운트 부족 ({h2_count} < 9)"
+
+
 def test_intraday_en_contains_intraday_keyword(fake_intraday_snapshot):
     from auto_publisher.market_intraday import build_intraday_markdown
     md = build_intraday_markdown(fake_intraday_snapshot, lang="en")
