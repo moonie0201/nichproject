@@ -17,8 +17,15 @@ pre{background:#0f172a;padding:12px;border-radius:6px;overflow:auto;font-size:12
 </head>
 <body>
 <script>
-const pw = prompt('대시보드 비밀번호');
-if (pw !== 'investiqs2026') { document.body.innerHTML = '<h1>Access denied</h1>'; throw new Error('denied'); }
+(async () => {
+  const pw = prompt('대시보드 비밀번호');
+  if (!pw) { document.body.innerHTML = '<h1>Access denied</h1>'; throw new Error('denied'); }
+  const enc = new TextEncoder().encode(pw);
+  const hash = await crypto.subtle.digest('SHA-256', enc);
+  const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const EXPECTED = 'f9e384d6d15c8e94e3697e575c21e1dccc52ae2b1680c453716925c322b770f1';
+  if (hex !== EXPECTED) { document.body.innerHTML = '<h1>Wrong password</h1>'; throw new Error('denied'); }
+})();
 </script>
 <h1>📊 InvestIQs Auto Publisher Dashboard</h1>
 <button onclick="refresh()">🔄 새로고침</button>
