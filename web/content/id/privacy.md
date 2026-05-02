@@ -51,6 +51,24 @@ Informasi investasi yang disediakan di Layanan ini hanya untuk tujuan referensi.
 
 ---
 
+## 4-2. Integrasi TikTok Content Posting API
+
+Layanan ini menggunakan TikTok Content Posting API v2 untuk publikasi video otomatis. Pengungkapan berikut berlaku untuk integrasi ini.
+
+- **Scope yang digunakan**: `user.info.basic`, `video.upload`, `video.publish` — izin minimum yang diperlukan untuk unggah dan publikasi video
+- **Data yang diakses dari akun TikTok**: open_id (identifier internal TikTok), access token — hanya digunakan untuk autentikasi publikasi
+- **Penyimpanan**: access token disimpan dalam direktori terenkripsi (`.tiktok_secrets/`) di server operasional layanan kami dan tidak pernah dipublikasikan
+- **Retensi**: token disimpan hingga kedaluwarsa (~24 jam) dan langsung dibuang setelah refresh otomatis
+- **Data yang TIDAK dikumpulkan**: kami TIDAK mengumpulkan, menyimpan, atau mentransmisikan data TikTok lain seperti followers, likes, komentar, DM, atau riwayat tontonan
+- **Konten yang dipublikasikan otomatis**: konten informasi yang dihasilkan AI berdasarkan data pasar yfinance publik, dengan disclaimer eksplisit
+- **Pencabutan**: pengguna dapat mencabut akses layanan kami kapan saja melalui TikTok app → Settings and privacy → Security and login → Manage app permissions. Setelah pencabutan, layanan kami langsung membuang token
+- **Frekuensi publikasi**: 1–3 video informasi per hari (penutupan pasar AS, intraday, ringkasan mingguan)
+- **Keamanan**: data ditransmisikan melalui HTTPS dan mengikuti standar OAuth 2.0
+
+Layanan ini mematuhi TikTok Developer Terms of Service dan Content Posting API Guidelines.
+
+---
+
 ## 5. Hak Pengguna
 
 Berdasarkan undang-undang perlindungan data yang berlaku termasuk PIPA dan GDPR, Anda memiliki hak-hak berikut:

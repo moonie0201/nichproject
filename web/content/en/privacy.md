@@ -54,6 +54,24 @@ Investment information provided on this Service is for informational purposes on
 
 ---
 
+## 4-2. TikTok Content Posting API Integration
+
+This service uses the TikTok Content Posting API v2 for automated video publishing. The following disclosures apply to this integration.
+
+- **Scopes used**: `user.info.basic`, `video.upload`, `video.publish` — minimum permissions required for video upload and publication
+- **Data accessed from TikTok account**: open_id (TikTok internal identifier), access token — used solely for publishing authentication
+- **Storage**: access tokens are stored in an encrypted directory (`.tiktok_secrets/`) on our service's operational server and are never publicly exposed
+- **Retention**: tokens are kept until expiration (~24 hours) and immediately discarded after automatic refresh
+- **Data NOT collected**: we do NOT collect, store, or transmit any other TikTok user data such as followers, likes, comments, DMs, or watch history
+- **Auto-published content**: AI-generated informational content based on publicly available yfinance market data, with explicit disclaimers
+- **Revocation**: users may revoke our service's access at any time via TikTok app → Settings and privacy → Security and login → Manage app permissions. Upon revocation, our service immediately discards the token
+- **Publishing frequency**: 1–3 informational videos per day (US market close, intraday, weekly summaries)
+- **Security**: data is transmitted via HTTPS and follows the OAuth 2.0 standard
+
+This service complies with TikTok's Developer Terms of Service and Content Posting API Guidelines.
+
+---
+
 ## 5. Your Rights
 
 Under applicable data protection laws including PIPA and GDPR, you have the following rights:

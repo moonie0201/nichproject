@@ -51,6 +51,24 @@ Google AdSense의 데이터 처리 방식에 대한 상세 내용은 [Google 개
 
 ---
 
+## 4-2. TikTok Content Posting API 연동
+
+본 서비스는 자동 영상 게시를 위해 TikTok Content Posting API v2를 사용합니다. 본 통합과 관련하여 다음 사항을 안내합니다.
+
+- **사용 권한 범위(Scopes)**: `user.info.basic`, `video.upload`, `video.publish` — 영상 업로드 및 게시에 필요한 최소 권한
+- **TikTok 계정에서 접근하는 정보**: open_id (TikTok 내부 식별자), 액세스 토큰 — 게시 인증에만 사용
+- **저장 위치**: 액세스 토큰은 본 서비스 운영 서버의 암호화된 저장소(`.tiktok_secrets/`)에 보관되며 외부에 공개되지 않음
+- **저장 기간**: 토큰은 만료 시까지(약 24시간) 보관되며 자동 갱신(refresh) 후 즉시 폐기
+- **수집하지 않는 정보**: TikTok 사용자의 팔로워, 좋아요, 댓글, DM, 시청 기록 등 콘텐츠 외 데이터는 일체 수집·저장·전송하지 않음
+- **자동 게시 콘텐츠**: yfinance 공개 금융 데이터를 기반으로 자동 생성된 정보 콘텐츠. AI 생성물이며, 면책조항을 명시함
+- **권한 철회**: 이용자는 TikTok 앱 → Settings and privacy → Security and login → Manage app permissions 에서 언제든지 본 서비스의 액세스 권한을 철회할 수 있음. 철회 시 본 서비스는 즉시 토큰을 폐기함
+- **자동 게시 빈도**: 일 1~3회의 정보 영상(미국 시장 마감/장중/주간 시황) 자동 발행
+- **데이터 보안**: HTTPS를 통해 전송되며, OAuth 2.0 표준을 따름
+
+본 서비스는 TikTok Developer Terms of Service 및 Content Posting API Guidelines를 준수합니다.
+
+---
+
 ## 5. 이용자의 권리
 
 대한민국 개인정보 보호법 및 GDPR에 따라 이용자는 다음의 권리를 가집니다.
