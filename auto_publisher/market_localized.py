@@ -411,6 +411,10 @@ def build_localized_intraday_markdown(snapshot: dict, lang: str) -> str:
         f"Gap: {gap}. Leaders: {', '.join(leaders[:3])} / Laggards: {', '.join(laggards[:3])}."
     )
 
+    # 매크로 섹션 (intraday 도 macro snapshot 보유)
+    from auto_publisher.market_wrap import _build_macro_table
+    intraday_macro_table = _build_macro_table(snapshot, lang=lang)
+
     body = [
         fm,
         i18n["disclaimer_banner_html"],
@@ -420,6 +424,12 @@ def build_localized_intraday_markdown(snapshot: dict, lang: str) -> str:
         f"## {i18n['section_h2_index']}",
         "",
         _build_index_table_localized(snapshot, lang, "intraday"),
+        "",
+        f"## {i18n['section_h2_macro']}",
+        "",
+        intraday_macro_table or "_(no macro data)_",
+        "",
+        i18n.get("macro_note", ""),
         "",
         f"## {i18n['section_h2_sector']}",
         "",
@@ -540,6 +550,10 @@ def build_localized_weekly_markdown(snapshot: dict, lang: str) -> str:
         "A strong week does not guarantee the same pace next week.",
     ])
 
+    # 매크로 섹션 (weekly 도 macro snapshot 보유)
+    from auto_publisher.market_wrap import _build_macro_table
+    weekly_macro_table = _build_macro_table(snapshot, lang=lang)
+
     body = [
         fm,
         i18n["disclaimer_banner_html"],
@@ -551,6 +565,12 @@ def build_localized_weekly_markdown(snapshot: dict, lang: str) -> str:
         f"## {i18n['section_h2_index']}",
         "",
         _build_index_table_localized(snapshot, lang, "weekly"),
+        "",
+        f"## {i18n['section_h2_macro']}",
+        "",
+        weekly_macro_table or "_(no macro data)_",
+        "",
+        i18n.get("macro_note", ""),
         "",
         f"## {i18n['section_h2_sector']}",
         "",
