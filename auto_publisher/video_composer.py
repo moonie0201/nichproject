@@ -206,14 +206,13 @@ def _make_text_card_clip(
             f"drawtext=text='{subhead}'{font_arg}:fontsize=30:fontcolor={_c('text-muted', '#D7E3F4')}:"
             f"x=72:y=(h*0.62):line_spacing=10"
         )
-    args = [
-        "-f", "lavfi", "-i", filter_expr,
-        "-c:v", os.getenv("FFMPEG_VIDEO_CODEC", "h264_nvenc"),
-        "-preset", os.getenv("FFMPEG_PRESET", "p1"),
-        "-tune", "stillimage",
-        "-pix_fmt", "yuv420p",
-        str(out_path),
-    ]
+    # encoder profile 사용: static_card 는 libx264 강제 (정지 영상 품질 + NVENC 호환 회귀 방지)
+    from auto_publisher.video_encoder import build_ffmpeg_args
+    args = build_ffmpeg_args(
+        profile_name="static_card",
+        input_args=["-f", "lavfi", "-i", filter_expr],
+        out_path=out_path,
+    )
     return _ffmpeg_run(args, "fallback_card")
 
 
