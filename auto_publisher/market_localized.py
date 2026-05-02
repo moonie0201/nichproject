@@ -245,14 +245,45 @@ def build_localized_wrap_markdown(snapshot: dict, lang: str) -> str:
     )
 
     # 신규 섹션 빌더 (i18n 라벨만 다국어, 표 본문은 ticker/price 로 만국 공통)
-    from auto_publisher.market_wrap import _build_macro_table, _build_asia_crypto_table
-    macro_table = _build_macro_table(snapshot)
-    asia_table = _build_asia_crypto_table(snapshot)
+    from auto_publisher.market_wrap import (
+        _build_macro_table, _build_asia_crypto_table,
+        _build_mag7_table, _build_top_movers,
+    )
+    macro_table = _build_macro_table(snapshot, lang=lang)
+    asia_table = _build_asia_crypto_table(snapshot, lang=lang)
+    mag7_table = _build_mag7_table(snapshot, lang=lang)
+    movers_table = _build_top_movers(snapshot, lang=lang)
+
+    # Breadth 박스 (i18n 라벨)
+    breadth_box = ""
+    b = snapshot.get("breadth") or {}
+    sec_pos = b.get("sector_positive", 0)
+    sec_tot = b.get("sector_total", 0)
+    m7_pos = b.get("mag7_positive", 0)
+    m7_tot = b.get("mag7_total", 0)
+    if sec_tot:
+        sec_ratio = sec_pos / sec_tot if sec_tot else 0
+        m7_ratio = m7_pos / m7_tot if m7_tot else 0
+        sec_emoji = "🟢" if sec_ratio >= 0.6 else "🟡" if sec_ratio >= 0.4 else "🔴"
+        m7_emoji = "🟢" if m7_ratio >= 0.6 else "🟡" if m7_ratio >= 0.4 else "🔴"
+        b_label = i18n.get("breadth_label", "Market Breadth")
+        s_word = i18n.get("breadth_sector_word", "sectors")
+        m7_word = i18n.get("breadth_mag7_word", "Mag7")
+        up_word = i18n.get("breadth_up_word", "advancing")
+        breadth_box = (
+            f'<div class="breadth-box" style="background:#f8f9fa;border:1px solid #dee2e6;'
+            f'border-radius:8px;padding:0.8em 1.2em;margin:0 0 1.5em 0;font-size:0.95em;">'
+            f"<strong>📊 {b_label}</strong> · "
+            f"{sec_emoji} {s_word} {sec_pos}/{sec_tot} {up_word} ({sec_ratio*100:.0f}%) · "
+            f"{m7_emoji} {m7_word} {m7_pos}/{m7_tot} {up_word} ({m7_ratio*100:.0f}%)"
+            f"</div>"
+        )
 
     body = [
         fm,
         i18n["disclaimer_banner_html"],
         "",
+        breadth_box,
         summary,
         "",
         f"## {i18n['section_h2_index']}",
@@ -268,6 +299,18 @@ def build_localized_wrap_markdown(snapshot: dict, lang: str) -> str:
         f"## {i18n['section_h2_sector']}",
         "",
         _build_sector_table_localized(snapshot, lang, "pct"),
+        "",
+        f"## {i18n['section_h2_mag7']}",
+        "",
+        mag7_table or "_(no mag7 data)_",
+        "",
+        i18n.get("mag7_note", ""),
+        "",
+        f"## {i18n['section_h2_movers']}",
+        "",
+        movers_table or "_(no movers data)_",
+        "",
+        i18n.get("movers_note", ""),
         "",
         f"## {i18n['section_h2_asia_crypto']}",
         "",

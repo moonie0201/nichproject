@@ -615,24 +615,76 @@ def _build_index_table(snapshot: dict) -> str:
     return "\n".join(rows)
 
 
-def _build_macro_table(snapshot: dict) -> str:
-    """미 국채 수익률·달러 인덱스 핵심 매크로 테이블."""
+_MACRO_NAMES_BY_LANG = {
+    "ko": {
+        "^TNX": "미국 10년물 수익률", "^TYX": "미국 30년물 수익률",
+        "^FVX": "미국 5년물 수익률", "DX-Y.NYB": "달러 인덱스 (DXY)",
+    },
+    "en": {
+        "^TNX": "US 10Y Treasury Yield", "^TYX": "US 30Y Treasury Yield",
+        "^FVX": "US 5Y Treasury Yield", "DX-Y.NYB": "Dollar Index (DXY)",
+    },
+    "ja": {
+        "^TNX": "米国10年国債利回り", "^TYX": "米国30年国債利回り",
+        "^FVX": "米国5年国債利回り", "DX-Y.NYB": "ドル指数 (DXY)",
+    },
+    "vi": {
+        "^TNX": "Lợi suất TPCP Mỹ 10 năm", "^TYX": "Lợi suất TPCP Mỹ 30 năm",
+        "^FVX": "Lợi suất TPCP Mỹ 5 năm", "DX-Y.NYB": "Chỉ số USD (DXY)",
+    },
+    "id": {
+        "^TNX": "Imbal Hasil Treasury AS 10Y", "^TYX": "Imbal Hasil Treasury AS 30Y",
+        "^FVX": "Imbal Hasil Treasury AS 5Y", "DX-Y.NYB": "Indeks Dolar (DXY)",
+    },
+}
+
+_ASIA_NAMES_BY_LANG = {
+    "ko": {"^N225": "Nikkei 225 (일본)", "^HSI": "Hang Seng (홍콩)",
+           "^KS11": "KOSPI Composite (한국)", "000001.SS": "Shanghai Composite (중국)"},
+    "en": {"^N225": "Nikkei 225 (Japan)", "^HSI": "Hang Seng (Hong Kong)",
+           "^KS11": "KOSPI Composite (Korea)", "000001.SS": "Shanghai Composite (China)"},
+    "ja": {"^N225": "日経平均株価", "^HSI": "ハンセン指数 (香港)",
+           "^KS11": "KOSPI総合 (韓国)", "000001.SS": "上海総合指数"},
+    "vi": {"^N225": "Nikkei 225 (Nhật)", "^HSI": "Hang Seng (Hồng Kông)",
+           "^KS11": "KOSPI Composite (Hàn Quốc)", "000001.SS": "Shanghai Composite (Trung Quốc)"},
+    "id": {"^N225": "Nikkei 225 (Jepang)", "^HSI": "Hang Seng (Hong Kong)",
+           "^KS11": "KOSPI Composite (Korea)", "000001.SS": "Shanghai Composite (Tiongkok)"},
+}
+
+_MACRO_CAPTIONS = {
+    "ko": ("핵심 매크로 — 국채 수익률 · 달러 인덱스", "지표", "티커", "현재값", "전일 대비"),
+    "en": ("Macro Pulse — Treasury Yields · Dollar Index", "Indicator", "Ticker", "Current", "vs Prior"),
+    "ja": ("マクロ — 国債利回り・ドル指数", "指標", "ティッカー", "現在値", "前日比"),
+    "vi": ("Vĩ mô — Lợi suất TPCP · Chỉ số USD", "Chỉ báo", "Mã", "Hiện tại", "So với trước"),
+    "id": ("Makro — Imbal Hasil Treasury · Indeks USD", "Indikator", "Ticker", "Saat ini", "vs Sebelumnya"),
+}
+
+_ASIA_CAPTIONS = {
+    "ko": ("아시아 지수 · 디지털 자산 — 미국 마감 → 다음 시장 핸드오프", "구분", "자산", "티커", "현재값", "등락률", "🌏 아시아", "₿ 디지털"),
+    "en": ("Asia Indices · Digital Assets — US close → next market handoff", "Type", "Asset", "Ticker", "Current", "Change", "🌏 Asia", "₿ Crypto"),
+    "ja": ("アジア指数・デジタル資産 — 米国引け → 次市場への引継ぎ", "区分", "資産", "ティッカー", "現在値", "騰落率", "🌏 アジア", "₿ デジタル"),
+    "vi": ("Chỉ số châu Á · Tài sản số — Bàn giao sau khi Mỹ đóng cửa", "Loại", "Tài sản", "Mã", "Hiện tại", "Thay đổi", "🌏 Châu Á", "₿ Số"),
+    "id": ("Indeks Asia · Aset Digital — Sambungan setelah pasar AS tutup", "Jenis", "Aset", "Ticker", "Saat ini", "Perubahan", "🌏 Asia", "₿ Digital"),
+}
+
+
+def _build_macro_table(snapshot: dict, lang: str = "ko") -> str:
+    """미 국채 수익률·달러 인덱스 핵심 매크로 테이블 (lang-aware)."""
     macro = snapshot.get("macro") or []
     if not any(m.get("price", 0) > 0 for m in macro):
         return ""
-    rows = ["<table><caption>핵심 매크로 — 국채 수익률 · 달러 인덱스</caption>"]
-    rows.append("<tr><th>지표</th><th>티커</th><th>현재값</th><th>전일 대비</th></tr>")
+    name_map = _MACRO_NAMES_BY_LANG.get(lang) or _MACRO_NAMES_BY_LANG["en"]
+    cap, h_ind, h_tk, h_cur, h_pct = _MACRO_CAPTIONS.get(lang) or _MACRO_CAPTIONS["en"]
+    rows = [f"<table><caption>{cap}</caption>"]
+    rows.append(f"<tr><th>{h_ind}</th><th>{h_tk}</th><th>{h_cur}</th><th>{h_pct}</th></tr>")
     for m in macro:
         if m.get("price", 0) <= 0:
             continue
-        # ^TNX/^TYX/^FVX 는 yield * 100 (yfinance 규칙) → '%' 단위 표기
         is_yield = m["ticker"].startswith("^")
-        if is_yield:
-            value_str = f"{m['price']:.2f}%"
-        else:
-            value_str = f"{m['price']:.2f}"
+        value_str = f"{m['price']:.2f}%" if is_yield else f"{m['price']:.2f}"
+        display_name = name_map.get(m["ticker"], m.get("name") or m["ticker"])
         rows.append(
-            f"<tr><td>{m['name']}</td><td>{m['ticker']}</td>"
+            f"<tr><td>{display_name}</td><td>{m['ticker']}</td>"
             f"<td>{value_str}</td>"
             f"<td>{_format_pct(m['pct'])}</td></tr>"
         )
@@ -640,22 +692,30 @@ def _build_macro_table(snapshot: dict) -> str:
     return "\n".join(rows)
 
 
-def _build_asia_crypto_table(snapshot: dict) -> str:
-    """아시아 지수 + 비트코인/이더리움 — 미국 마감 후 한국 독자가 만나는 다음 시장."""
+def _build_asia_crypto_table(snapshot: dict, lang: str = "ko") -> str:
+    """아시아 지수 + 비트코인/이더리움 — lang-aware 자산명."""
     asia = snapshot.get("asia") or []
     crypto = snapshot.get("crypto") or []
     if not any(a.get("price", 0) > 0 for a in asia) and not any(c.get("price", 0) > 0 for c in crypto):
         return ""
-    rows = ["<table><caption>아시아 지수 · 디지털 자산 — 미국 마감 → 다음 시장 핸드오프</caption>"]
-    rows.append("<tr><th>구분</th><th>자산</th><th>티커</th><th>현재값</th><th>등락률</th></tr>")
+    name_map = _ASIA_NAMES_BY_LANG.get(lang) or _ASIA_NAMES_BY_LANG["en"]
+    cap, h_type, h_asset, h_tk, h_cur, h_chg, asia_label, crypto_label = (
+        _ASIA_CAPTIONS.get(lang) or _ASIA_CAPTIONS["en"]
+    )
+    rows = [f"<table><caption>{cap}</caption>"]
+    rows.append(
+        f"<tr><th>{h_type}</th><th>{h_asset}</th><th>{h_tk}</th>"
+        f"<th>{h_cur}</th><th>{h_chg}</th></tr>"
+    )
     for a in asia:
         if a.get("price", 0) <= 0:
             continue
         bg = _heatmap_bg(a["pct"])
         fg = _heatmap_fg(a["pct"])
         cell_style = f'style="background:{bg};color:{fg};font-weight:600;"'
+        display_name = name_map.get(a["ticker"], a.get("name") or a["ticker"])
         rows.append(
-            f"<tr><td>🌏 아시아</td><td>{a['name']}</td><td>{a['ticker']}</td>"
+            f"<tr><td>{asia_label}</td><td>{display_name}</td><td>{a['ticker']}</td>"
             f"<td>{a['price']:,.2f}</td><td {cell_style}>{_format_pct(a['pct'])}</td></tr>"
         )
     for c in crypto:
@@ -665,7 +725,7 @@ def _build_asia_crypto_table(snapshot: dict) -> str:
         fg = _heatmap_fg(c["pct"])
         cell_style = f'style="background:{bg};color:{fg};font-weight:600;"'
         rows.append(
-            f"<tr><td>₿ 디지털</td><td>{c['name']}</td><td>{c['ticker']}</td>"
+            f"<tr><td>{crypto_label}</td><td>{c['name']}</td><td>{c['ticker']}</td>"
             f"<td>${c['price']:,.0f}</td><td {cell_style}>{_format_pct(c['pct'])}</td></tr>"
         )
     rows.append("</table>")
@@ -736,12 +796,30 @@ def _build_bond_commodity_table(snapshot: dict) -> str:
     return "\n".join(rows)
 
 
-def _build_mag7_table(snapshot: dict) -> str:
+_MAG7_CAPTIONS = {
+    "ko": ("Magnificent 7 — 오늘 퍼포먼스 (내림차순·히트맵)", "기업", "티커", "종가", "등락률"),
+    "en": ("Magnificent 7 — Today's Performance (sorted, heatmap)", "Company", "Ticker", "Close", "Change"),
+    "ja": ("Magnificent 7 — 本日のパフォーマンス (降順・ヒートマップ)", "企業", "ティッカー", "終値", "騰落率"),
+    "vi": ("Magnificent 7 — Hiệu suất hôm nay (giảm dần, heatmap)", "Công ty", "Mã", "Giá đóng", "Thay đổi"),
+    "id": ("Magnificent 7 — Performa Hari Ini (terurut, heatmap)", "Perusahaan", "Ticker", "Penutupan", "Perubahan"),
+}
+
+_MOVERS_CAPTIONS = {
+    "ko": ("오늘 대형주 상승/하락 주도 종목 (Top 3)", "구분", "종목", "티커", "종가", "등락률", "📈 상승", "📉 하락"),
+    "en": ("Top 3 Large-Cap Movers Today", "Type", "Name", "Ticker", "Close", "Change", "📈 Up", "📉 Down"),
+    "ja": ("本日の大型株 値上がり/値下がり主導 (Top 3)", "区分", "銘柄", "ティッカー", "終値", "騰落率", "📈 上昇", "📉 下落"),
+    "vi": ("Top 3 cổ phiếu vốn hóa lớn dẫn dắt hôm nay", "Loại", "Tên", "Mã", "Giá đóng", "Thay đổi", "📈 Tăng", "📉 Giảm"),
+    "id": ("Top 3 Saham Large-Cap Pendorong Hari Ini", "Tipe", "Nama", "Ticker", "Penutupan", "Perubahan", "📈 Naik", "📉 Turun"),
+}
+
+
+def _build_mag7_table(snapshot: dict, lang: str = "ko") -> str:
     mag7 = snapshot.get("mag7") or []
     visible = [m for m in mag7 if m.get("price", 0) > 0]
     visible.sort(key=lambda m: m["pct"], reverse=True)
-    rows = ["<table><caption>Magnificent 7 — 오늘 퍼포먼스 (내림차순·히트맵)</caption>"]
-    rows.append("<tr><th>기업</th><th>티커</th><th>종가</th><th>등락률</th><th>RSI(14)</th></tr>")
+    cap, h_co, h_tk, h_cl, h_pct = _MAG7_CAPTIONS.get(lang) or _MAG7_CAPTIONS["en"]
+    rows = [f"<table><caption>{cap}</caption>"]
+    rows.append(f"<tr><th>{h_co}</th><th>{h_tk}</th><th>{h_cl}</th><th>{h_pct}</th><th>RSI(14)</th></tr>")
     for item in visible:
         bg = _heatmap_bg(item["pct"])
         fg = _heatmap_fg(item["pct"])
@@ -756,24 +834,30 @@ def _build_mag7_table(snapshot: dict) -> str:
     return "\n".join(rows)
 
 
-def _build_top_movers(snapshot: dict) -> str:
+def _build_top_movers(snapshot: dict, lang: str = "ko") -> str:
     movers = snapshot.get("top_movers") or {}
     gainers = movers.get("gainers") or []
     losers = movers.get("losers") or []
     if not gainers and not losers:
         return ""
-    rows = ["<table><caption>오늘 대형주 상승/하락 주도 종목 (Top 3)</caption>"]
-    rows.append("<tr><th>구분</th><th>종목</th><th>티커</th><th>종가</th><th>등락률</th></tr>")
+    cap, h_type, h_name, h_tk, h_cl, h_pct, up_label, down_label = (
+        _MOVERS_CAPTIONS.get(lang) or _MOVERS_CAPTIONS["en"]
+    )
+    rows = [f"<table><caption>{cap}</caption>"]
+    rows.append(
+        f"<tr><th>{h_type}</th><th>{h_name}</th><th>{h_tk}</th>"
+        f"<th>{h_cl}</th><th>{h_pct}</th></tr>"
+    )
     for g in gainers:
         name = g.get("name") or g["ticker"]
         rows.append(
-            f"<tr><td>📈 상승</td><td>{name}</td><td>{g['ticker']}</td>"
+            f"<tr><td>{up_label}</td><td>{name}</td><td>{g['ticker']}</td>"
             f"<td>{_format_price(g['price'])}</td><td>{_format_pct(g['pct'])}</td></tr>"
         )
     for l in losers:
         name = l.get("name") or l["ticker"]
         rows.append(
-            f"<tr><td>📉 하락</td><td>{name}</td><td>{l['ticker']}</td>"
+            f"<tr><td>{down_label}</td><td>{name}</td><td>{l['ticker']}</td>"
             f"<td>{_format_price(l['price'])}</td><td>{_format_pct(l['pct'])}</td></tr>"
         )
     rows.append("</table>")
