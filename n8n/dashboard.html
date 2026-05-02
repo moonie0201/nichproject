@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>InvestIQs Auto Publisher Dashboard</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#0f172a;color:#fff;padding:24px;max-width:1100px;margin:0 auto;line-height:1.6}
+h1{color:#38bdf8;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.card{background:#1e293b;padding:20px;border-radius:12px;border:1px solid #334155}
+.label{color:#94a3b8;font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.value{font-size:24px;font-weight:600}
+.status-ok{color:#22c55e}.status-warn{color:#f59e0b}.status-err{color:#ef4444}
+button{background:#0ea5e9;color:#fff;border:0;padding:8px 16px;border-radius:6px;cursor:pointer;margin-top:16px}
+pre{background:#0f172a;padding:12px;border-radius:6px;overflow:auto;font-size:12px;max-height:400px}
+</style>
+</head>
+<body>
+<h1>📊 InvestIQs Auto Publisher Dashboard</h1>
+<button onclick="refresh()">🔄 새로고침</button>
+<div class="grid" id="grid"></div>
+<h2 style="margin-top:32px">📋 Raw JSON</h2>
+<pre id="raw">로딩 중...</pre>
+
+<script>
+async function refresh() {
+  try {
+    const r = await fetch('https://callback.investiqs.net/health/full', {
+      headers: {'Authorization': 'Bearer placeholder'}
+    });
+    const d = await r.json();
+    document.getElementById('raw').textContent = JSON.stringify(d, null, 2);
+
+    const cards = [];
+    cards.push(`<div class="card"><div class="label">Bridge Status</div><div class="value status-${d.status === 'ok' ? 'ok' : 'warn'}">${d.status || '?'}</div><div>Uptime: ${Math.round((d.bridge_uptime_sec || 0)/60)} min</div></div>`);
+
+    if (d.tiktok_token) {
+      const t = d.tiktok_token;
+      cards.push(`<div class="card"><div class="label">TikTok Token</div><div class="value status-${t.exists ? (t.warning ? 'warn' : 'ok') : 'err'}">${t.exists ? '✅' : '❌ Re-auth needed'}</div>${t.exists ? `<div>${Math.round(t.expires_in_sec/3600)}h remaining</div>` : ''}</div>`);
+    }
+
+    if (d.last_published) {
+      cards.push(`<div class="card"><div class="label">Last Published</div><div class="value">${d.last_published.lang || '?'}</div><div>${d.last_published.timestamp || d.last_published.date || '?'}</div></div>`);
+    }
+
+    cards.push(`<div class="card"><div class="label">Disk Usage</div><div class="value status-${(d.disk_usage_percent || 0) < 80 ? 'ok' : 'warn'}">${d.disk_usage_percent || '?'}%</div></div>`);
+    cards.push(`<div class="card"><div class="label">GPU</div><div class="value">${d.gpu_utilization_percent || 0}%</div></div>`);
+    cards.push(`<div class="card"><div class="label">n8n</div><div class="value status-${d.n8n_running ? 'ok' : 'err'}">${d.n8n_running ? '✅' : '❌'}</div></div>`);
+    cards.push(`<div class="card"><div class="label">Tunnel</div><div class="value status-${d.tunnel_active ? 'ok' : 'err'}">${d.tunnel_active ? '✅' : '❌'}</div></div>`);
+
+    document.getElementById('grid').innerHTML = cards.join('');
+  } catch (e) {
+    document.getElementById('raw').textContent = 'Error: ' + e.message;
+  }
+}
+refresh();
+setInterval(refresh, 30000);
+</script>
+</body>
+</html>
