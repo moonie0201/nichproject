@@ -24,6 +24,9 @@ theme = 'PaperMod'
   canonifyURLs = true
   mainSections = ["blog"]
 
+  # 커버 이미지 없는 페이지의 기본 og:image
+  images = ["/images/og-default.png"]
+
   [params.assets]
     disableHLJS = true
 

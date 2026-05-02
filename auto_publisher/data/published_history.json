@@ -30,6 +30,18 @@
     "published_at": "2026-04-19T20:54:14.385991"
   },
   {
+    "topic_id": "ko-prediction-tracker",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ko/blog/prediction-tracker.md",
+    "published_at": "2026-04-30T00:00:00.000000",
+    "lang": "ko",
+    "slug": "prediction-tracker",
+    "title": "AI 분석 예측 트랙레코드",
+    "primary_keyword": null,
+    "category": "Blog",
+    "date": "2026-04-30"
+  },
+  {
     "topic_id": "ko-editorial-process",
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ko/about/editorial-process.md",
@@ -462,18 +474,6 @@
     "date": "2026-04-30T23:00:05+09:00"
   },
   {
-    "topic_id": "ja-intraday-2026-5-1-30-s-p-500-0-41-0-87",
-    "platform": "hugo",
-    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-5-1-30-s-p-500-0-41-0-87.md",
-    "published_at": "2026-05-01T23:00:05.000000",
-    "lang": "ja",
-    "slug": "intraday-2026-5-1-30-s-p-500-0-41-0-87",
-    "title": "2026年5月1日 米国市場の場中: 寄り付き30分 S&P 500 +0.41%、ナスダック +0.87%",
-    "primary_keyword": null,
-    "category": "マーケット分析",
-    "date": "2026-05-01T23:00:05+09:00"
-  },
-  {
     "topic_id": "ja-emaxis-slim-全世界株式-vs-emaxis-slim-sp50020",
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/emaxis-slim-全世界株式-vs-emaxis-slim-sp50020年で見える地域分散の差.md",
@@ -592,18 +592,6 @@
     "primary_keyword": null,
     "category": "Phân tích thị trường",
     "date": "2026-04-30T08:06:00+09:00"
-  },
-  {
-    "topic_id": "vi-intraday-01-05-2026-th-tr-ng-m-trong-phi",
-    "platform": "hugo",
-    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-01-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-44-nasdaq-0-92.md",
-    "published_at": "2026-05-01T23:15:05.000000",
-    "lang": "vi",
-    "slug": "intraday-01-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-44-nasdaq-0-92",
-    "title": "01/05/2026 Thị trường Mỹ trong phiên: 30 phút đầu S&P 500 +0.44%, Nasdaq +0.92%",
-    "primary_keyword": null,
-    "category": "Phân tích thị trường",
-    "date": "2026-05-01T23:15:05+09:00"
   },
   {
     "topic_id": "vi-intraday-27-04-2026-th-tr-ng-m-trong-phi",
@@ -762,18 +750,6 @@
     "date": "2026-04-30T08:15:02+09:00"
   },
   {
-    "topic_id": "id-intraday-1-mei-2026-pasar-as-dalam-sesi-",
-    "platform": "hugo",
-    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/id/daily/intraday-1-mei-2026-pasar-as-dalam-sesi-30-menit-pertama-s-p-500-0-41-nasdaq-0-85.md",
-    "published_at": "2026-05-01T23:30:05.000000",
-    "lang": "id",
-    "slug": "intraday-1-mei-2026-pasar-as-dalam-sesi-30-menit-pertama-s-p-500-0-41-nasdaq-0-85",
-    "title": "1 Mei 2026 Pasar AS dalam sesi: 30 menit pertama S&P 500 +0.41%, Nasdaq +0.85%",
-    "primary_keyword": null,
-    "category": "Analisis Pasar",
-    "date": "2026-05-01T23:30:05+09:00"
-  },
-  {
     "topic_id": "id-intraday-27-april-2026-pasar-as-dalam-se",
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/id/daily/intraday-27-april-2026-pasar-as-dalam-sesi-30-menit-pertama-s-p-500-0-04-nasdaq-0-18.md",
@@ -880,5 +856,65 @@
     "primary_keyword": null,
     "category": "Investasi",
     "date": "2026-04-28"
+  },
+  {
+    "topic_id": "ja-intraday-2026-5-1-30-s-p-500-0-41-0-87",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-5-1-30-s-p-500-0-41-0-87.md",
+    "published_at": "2026-05-01T23:00:05.000000",
+    "lang": "ja",
+    "slug": "intraday-2026-5-1-30-s-p-500-0-41-0-87",
+    "title": "2026年5月1日 米国市場の場中: 寄り付き30分 S&P 500 +0.41%、ナスダック +0.87%",
+    "primary_keyword": null,
+    "category": "マーケット分析",
+    "date": "2026-05-01T23:00:05+09:00"
+  },
+  {
+    "topic_id": "vi-intraday-01-05-2026-th-tr-ng-m-trong-phi",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-01-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-44-nasdaq-0-92.md",
+    "published_at": "2026-05-01T23:15:05.000000",
+    "lang": "vi",
+    "slug": "intraday-01-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-44-nasdaq-0-92",
+    "title": "01/05/2026 Thị trường Mỹ trong phiên: 30 phút đầu S&P 500 +0.44%, Nasdaq +0.92%",
+    "primary_keyword": null,
+    "category": "Phân tích thị trường",
+    "date": "2026-05-01T23:15:05+09:00"
+  },
+  {
+    "topic_id": "id-intraday-1-mei-2026-pasar-as-dalam-sesi-",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/id/daily/intraday-1-mei-2026-pasar-as-dalam-sesi-30-menit-pertama-s-p-500-0-41-nasdaq-0-85.md",
+    "published_at": "2026-05-01T23:30:05.000000",
+    "lang": "id",
+    "slug": "intraday-1-mei-2026-pasar-as-dalam-sesi-30-menit-pertama-s-p-500-0-41-nasdaq-0-85",
+    "title": "1 Mei 2026 Pasar AS dalam sesi: 30 menit pertama S&P 500 +0.41%, Nasdaq +0.85%",
+    "primary_keyword": null,
+    "category": "Analisis Pasar",
+    "date": "2026-05-01T23:30:05+09:00"
+  },
+  {
+    "topic_id": "ko-daily-20260502",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ko/daily/2026nyeon-5wol-2il-migug-jeungsi-magam-s-p500-720-65-0-28-naseudag-0-96.md",
+    "published_at": "2026-05-02T07:15:00.000000",
+    "lang": "ko",
+    "slug": "2026nyeon-5wol-2il-migug-jeungsi-magam-s-p500-720-65-0-28-naseudag-0-96",
+    "title": "2026년 5월 2일 미국 증시 마감: S&P500 $720.65 +0.28%, 나스닥 +0.96%",
+    "primary_keyword": "미국 증시 마감",
+    "category": "Daily Market",
+    "date": "2026-05-02"
+  },
+  {
+    "topic_id": "ko-weekly-2026-may-w1",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ko/weekly/weekly-2026nyeon-5wol-1jucha-4wol-27il-1il-migug-jeungsi-jugan-jeongri-s-p500-1-05-naseudag-1-62.md",
+    "published_at": "2026-05-02T09:00:02.000000",
+    "lang": "ko",
+    "slug": "weekly-2026nyeon-5wol-1jucha-4wol-27il-1il-migug-jeungsi-jugan-jeongri-s-p500-1-05-naseudag-1-62",
+    "title": "2026년 5월 1주차 (4월 27일~1일) 미국 증시 주간 정리: S&P500 +1.05%, 나스닥 +1.62%",
+    "primary_keyword": "미국 증시 주간",
+    "category": "Daily Market",
+    "date": "2026-05-02"
   }
 ]

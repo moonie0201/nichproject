@@ -1,0 +1,12 @@
+{{- /* AdSense In-Article 광고 슬롯 */ -}}
+{{- if site.Params.googleAdSense -}}
+<div class="adsense-slot" style="margin: 32px 0; text-align: center;">
+  <ins class="adsbygoogle"
+       style="display:block; text-align:center;"
+       data-ad-layout="in-article"
+       data-ad-format="fluid"
+       data-ad-client="{{ site.Params.googleAdSense }}"
+       data-ad-slot="{{ .slot | default "auto" }}"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+{{- end -}}
