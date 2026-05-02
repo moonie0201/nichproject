@@ -1,80 +1,70 @@
-# 사용자 직접 액션 가이드 (2026-05-02 기준)
+# 🎯 사용자 직접 액션 가이드 (2026-05-02 최종)
 
-## 🚨 긴급 (24시간 내)
+## ✅ 자동화 100% 완료된 것
+- 한국어 일일 발행 (06:00 KST)
+- 다국어 시장 wrap EN/JA/VI/ID (07:30~08:15)
+- 주말 종합 ko/en/ja/vi/id (토 09:00~10:15)
+- 영상 자동 합성 (NVENC GPU, Gemini Flash)
+- 토픽 큐 자동 보충 (Gemini)
+- TikTok OAuth 자동 갱신 (24h refresh)
+- AdSense Auto Ads + In-Article 슬롯 3개
+- Klaro v2 (자동 동의)
+- GA4 트래킹
+- Cloudflare Pages 자동 배포 (git push)
+- n8n 백업 (매일 03:00)
 
-### 1. OpenRouter 크레딧 충전 (자동 발행 차단 위험)
-- URL: https://openrouter.ai/settings/credits
-- 권장 충전: $5~10 (월 1,000회 LLM 호출 충당)
-- 우회 옵션: `.env`에서 `LLM_PRIMARY_BACKEND=gemini` (Gemini CLI 무료)
+## 🔥 P0 — 24시간 내 (자동화 차단 위험)
 
-### 2. Meta Developer 계정 활성화 대기 (Instagram Reels용)
-- 24시간 후 자동 해제 예정
-- 활성화 후: Facebook Page 생성 → Instagram Business 연결 → API key 발급
+### 1. OpenRouter 크레딧 충전 (선택)
+- **현재**: Gemini CLI Flash로 자동 우회 중 → 작동 OK
+- **충전 시 효과**: 영상 LLM 백엔드 다양화, 안정성 ↑
+- **방법**: https://openrouter.ai/settings/credits → $5~10 충전
 
-## ⚠️ 권장 (이번 주)
+### 2. Meta Developer 계정 활성화 (Instagram Reels용)
+- 등록 후 24시간 대기 (5월 2일 등록함 → 5월 3일 가능 예상)
+- 활성화 후: Facebook Page 생성 → Instagram Business 연결 → API key
+
+## 🔧 P1 — 이번 주
 
 ### 3. AdSense In-Article 슬롯 ID 발급
-- AdSense → 광고 → 광고 단위 → 인아티클 광고 3개 생성
-- web/layouts/_default/single.html L36, L45, L47의 placeholder (1111111111 등) 교체
+- AdSense 대시보드 → 광고 → 광고 단위 → "인아티클" 3개 생성
+- `web/layouts/_default/single.html` L36, L45, L47의 `1111111111`, `2222222222`, `3333333333` 교체
 
-### 4. n8n API Key 발급 (REST 자동화용)
-- localhost:5678 → Settings → API → Create API Key
-- 차후 워크플로우 일괄 관리 자동화 가능
+### 4. TikTok App Audit 신청
+- developers.tiktok.com → 앱 → "Submit for review"
+- 데모 비디오 (3분) + Usage description (1000자)
+- 심사 7~14일
 
-### 5. 디스크 추가 정리 (현재 88%)
-- ~/.cache/huggingface (2.3G) — AI 모델 재다운로드 가능
-- ~/.cache/google-chrome (2.4G) — 브라우저 직접 정리
-- money_printer_v2 (5.3G) — 사용 중이면 보존
+### 5. Cloudflare Pages 빌드 설정 확인
+- Pages → invest-korea → Settings → Builds & deployments
+- Build output: `web/public` (확인 필요)
+- Functions directory: `functions` 명시 (현재 web/static/functions로 빌드됨)
 
-## ✅ 자동화 완료 (모니터링만)
+## 🛠️ P2 — 모니터링
 
-### 6. 다음 자동 발행 시각
-- daily_publisher: 매일 06:00 KST
-- us_market_wrap (en/ja/vi/id): 07:30~08:15 KST
-- shorts_auto: 매일 08:30 KST
-- weekly_dividend_report: 월 08:00
-- (총 27개 워크플로우 활성)
-
-### 7. TikTok token 갱신
-- 24시간마다 자동 (refresh_token 보유)
-- 실패 시 /health/full에서 warning 표시
-
-## 📊 모니터링
-
-### 시스템 상태 확인 명령
+### 6. 일일 점검 명령
 ```bash
-curl -s https://callback.investiqs.net/health/full
-```
+# 시스템 상태
+curl -s https://callback.investiqs.net/health/full | python3 -m json.tool
 
-### 최근 발행글 확인
-```bash
+# 최근 발행글
 ls -lt /home/mh/ocstorage/workspace/nichproject/web/content/ko/daily/ | head -5
+
+# n8n 워크플로우 상태
+docker exec n8n-n8n-1 sqlite3 /home/node/.n8n/database.sqlite "SELECT COUNT(*) FROM workflow_entity WHERE active=1"
+
+# 디스크 + GPU
+df -h / && nvidia-smi --query-gpu=utilization.gpu --format=csv
 ```
 
-### 자동 발행 로그
-```bash
-tail -f /tmp/bridge.log
-```
+### 7. n8n UI 접속
+- http://localhost:5678
+- 발행 실패 시 Executions 메뉴에서 에러 확인
 
-## 🚨 추가 (TikTok 자동화 활성화)
-
-### TikTok App Audit 신청
-현재 Sandbox 모드라 비공개 계정에만 업로드 가능. 일반 자동 업로드는 **앱 심사 통과 필요**.
-
-**신청 절차:**
-1. https://developers.tiktok.com/apps/ → 앱 선택
-2. **Production** 탭 → "Submit for review" 클릭
-3. 필수 정보 작성:
-   - **데모 비디오**: 자동 업로드 흐름 시연 영상 1개 (mp4, 50MB 이내)
-     - 권장: 우리 코드가 실제로 영상 업로드하는 화면 녹화 (3분)
-   - **Usage description**: 1000자 — InvestIQs 자동화 용도 설명
-4. 심사 기간: **약 7~14일**
-
-**심사 통과 후:**
-- `Production` 모드 활성화
-- `.env`의 `TIKTOK_CLIENT_KEY/SECRET`을 production 키로 교체
-- `tiktok_auth_setup()` 1회 재실행 (production token 발급)
-
-**임시 우회 (심사 전):**
-- 본인 TikTok 계정을 **비공개**로 전환 → 업로드 작동
-- 그 후 다시 공개 전환
+## 📊 다음 자동 트리거 시각 (KST)
+- **07:15 — us_market_wrap (다국어)** ⭐ 다음 트리거
+- 08:30 — shorts_auto (영상 + 업로드)
+- 06:00 — daily_publisher (한국어)
+- 22:30~23:30 — us_market_intraday
+- 토 09:00 — us_market_weekly
+- 일 21:00 — benchmark_youtube_tracker
