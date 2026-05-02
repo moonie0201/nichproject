@@ -66,8 +66,6 @@
 
 </script>
 <script async
-  data-type="application/javascript"
-  data-name="google-adsense"
   src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3459019439429067"
   crossorigin="anonymous"></script>
 
@@ -78,10 +76,11 @@ var klaroConfig = {
   version: 1,
   elementID: 'klaro',
   storageMethod: 'localStorage',
-  cookieName: 'klaro',
+  cookieName: 'klaro_v2',
   privacyPolicy: '/ko/privacy/',
   default: true,
   mustConsent: false,
+  acceptAll: true,
   services: [
     {
       name: 'google-adsense',
@@ -143,8 +142,10 @@ var klaroConfig = {
     <meta property="article:section" content="about">
     <meta property="article:published_time" content="2026-04-30T00:00:00+00:00">
     <meta property="article:modified_time" content="2026-04-30T00:00:00+00:00">
+      <meta property="og:image" content="https://investiqs.net/images/og-default.png">
 
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://investiqs.net/images/og-default.png">
   <meta name="twitter:title" content="편집 프로세스 및 AI 사용 정책">
   <meta name="twitter:description" content="InvestIQs의 콘텐츠 생성, AI 사용 범위, 2단계 자동 검증 절차, 이해충돌 고지 및 정정 정책을 투명하게 공개합니다.">
 
@@ -182,7 +183,7 @@ var klaroConfig = {
   "articleBody": "AI 생성 범위 InvestIQs의 블로그 콘텐츠는 Claude(Anthropic) 및 Gemini(Google) AI 모델이 초안을 작성합니다. 인간 편집자의 개별 원고 검토는 현재 제공하지 않으며, 자동화된 품질 검증 시스템으로 대체합니다.\n2단계 자동 검증 절차 1단계 — 규칙 기반 검증\n최소 글자수 준수 확인 비교 표(table) 포함 여부 금지 표현(권유·추천 문구) 필터링 원본 데이터(yfinance) 수치 반영 확인 시나리오 박스 사용 시 하락 시나리오 포함 의무 2단계 — AI 의미 검증\nGemini API를 통해 할루시네이션 탐지 (없어야 통과) 본문 내 모순 감지 (1건 이하 허용) 투자 권유성 표현 감지 (1건 이하 허용) 존재하지 않는 차트 참조 감지 데이터 출처 및 지연 모든 시세 데이터는 Yahoo Finance(yfinance)를 통해 수집하며, 최대 15분 지연이 발생합니다. 실시간 투자 결정에 사용하지 마십시오.\n예측 트랙레코드 방법론 발행된 분석 신호(강세/약세/관망)는 발행 당시 가격과 함께 기록됩니다. 60일 경과 후 실제 가격과 비교하여 방향 정확도를 측정합니다.\n충분 표본: n≥30건 도달 후 정확도 % 공개 (그 전에는 “예비 통계” 표시) 신뢰구간: Wilson 95% CI 함께 표시 벤치마크: SPY(S\u0026P 500 ETF) 동기간 수익률 대비 초과수익(α) 비교 트랙레코드는 예측 추적 페이지에서 확인할 수 있습니다.\n이해충돌 고지 본 사이트는 Google AdSense 광고를 게재합니다 특정 금융상품 운용사·증권사로부터 협찬·보상을 받지 않습니다 본 사이트 운영자는 분석 대상 종목을 보유하거나 보유하지 않을 수 있으며, 이를 명시하지 않습니다 정정 정책 오류를 발견하신 경우 문의 페이지를 통해 알려주세요. 중요한 수치 오류는 48시간 이내 정정하고 정정 내용을 해당 글에 표시합니다.\n",
   "wordCount" : "214",
   "inLanguage": "ko",
-  "datePublished": "2026-04-30T00:00:00Z",
+  "image": "https://investiqs.net/images/og-default.png","datePublished": "2026-04-30T00:00:00Z",
   "dateModified": "2026-04-30T00:00:00Z",
   "mainEntityOfPage": {
     "@type": "WebPage",
@@ -284,7 +285,15 @@ var klaroConfig = {
     <div class="post-meta"><span class='relative-time' data-published='2026-04-30T00:00:00Z' title='2026-04-30T00:00:00Z'>2026년 4월 30일</span>
 
 </div>
-  </header> 
+  </header> <div class="adsense-slot" style="margin: 32px 0; text-align: center;">
+  <ins class="adsbygoogle"
+       style="display:block; text-align:center;"
+       data-ad-layout="in-article"
+       data-ad-format="fluid"
+       data-ad-client="ca-pub-3459019439429067"
+       data-ad-slot="1111111111"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
   <div class="post-content md-content"><h2 id="ai-생성-범위">AI 생성 범위<a hidden class="anchor" aria-hidden="true" href="#ai-생성-범위">#</a></h2>
 <p>InvestIQs의 블로그 콘텐츠는 Claude(Anthropic) 및 Gemini(Google) AI 모델이 초안을 작성합니다. 인간 편집자의 개별 원고 검토는 현재 제공하지 않으며, 자동화된 품질 검증 시스템으로 대체합니다.</p>
 <h2 id="2단계-자동-검증-절차">2단계 자동 검증 절차<a hidden class="anchor" aria-hidden="true" href="#2단계-자동-검증-절차">#</a></h2>
@@ -323,9 +332,25 @@ var klaroConfig = {
 <p>오류를 발견하신 경우 <a href="/ko/contact/">문의 페이지</a>를 통해 알려주세요. 중요한 수치 오류는 48시간 이내 정정하고 정정 내용을 해당 글에 표시합니다.</p>
 
 
-  </div>
+  </div><div class="adsense-slot" style="margin: 32px 0; text-align: center;">
+  <ins class="adsbygoogle"
+       style="display:block; text-align:center;"
+       data-ad-layout="in-article"
+       data-ad-format="fluid"
+       data-ad-client="ca-pub-3459019439429067"
+       data-ad-slot="2222222222"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 
-
+<div class="adsense-slot" style="margin: 32px 0; text-align: center;">
+  <ins class="adsbygoogle"
+       style="display:block; text-align:center;"
+       data-ad-layout="in-article"
+       data-ad-format="fluid"
+       data-ad-client="ca-pub-3459019439429067"
+       data-ad-slot="3333333333"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
 
   <footer class="post-footer">
     <ul class="post-tags">

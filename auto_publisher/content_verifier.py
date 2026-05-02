@@ -213,7 +213,11 @@ def verify_semantic_gemini(
                 timeout=90,
             )
             resp.raise_for_status()
-            raw = resp.json()["choices"][0]["message"]["content"].strip()
+            _resp_data = resp.json()
+            if "choices" not in _resp_data:
+                _err = _resp_data.get("error", {})
+                raise RuntimeError(f"OpenRouter error: {_err.get('message', str(_resp_data))[:200]}")
+            raw = _resp_data["choices"][0]["message"]["content"].strip()
             break
         except Exception as e:
             last_err = e

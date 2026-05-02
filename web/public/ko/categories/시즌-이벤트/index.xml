@@ -4,6 +4,11 @@
     <title>시즌 이벤트 on InvestIQs — 투자 정보 블로그</title>
     <link>https://investiqs.net/ko/categories/%EC%8B%9C%EC%A6%8C-%EC%9D%B4%EB%B2%A4%ED%8A%B8/</link>
     <description>Recent content in 시즌 이벤트 on InvestIQs — 투자 정보 블로그</description>
+    <image>
+      <title>InvestIQs — 투자 정보 블로그</title>
+      <url>https://investiqs.net/images/og-default.png</url>
+      <link>https://investiqs.net/images/og-default.png</link>
+    </image>
     <generator>Hugo</generator>
     <language>ko</language>
     <lastBuildDate>Mon, 27 Apr 2026 00:00:00 +0000</lastBuildDate>

@@ -1,7 +1,5 @@
 {{- if site.Params.googleAdSense }}
 <script async
-  data-type="application/javascript"
-  data-name="google-adsense"
   src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ site.Params.googleAdSense }}"
   crossorigin="anonymous"></script>
 {{- end }}
@@ -13,10 +11,11 @@ var klaroConfig = {
   version: 1,
   elementID: 'klaro',
   storageMethod: 'localStorage',
-  cookieName: 'klaro',
+  cookieName: 'klaro_v2',
   privacyPolicy: '/ko/privacy/',
   default: true,
   mustConsent: false,
+  acceptAll: true,
   services: [
     {
       name: 'google-adsense',

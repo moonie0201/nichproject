@@ -72,6 +72,9 @@ def _call_openrouter(prompt: str) -> str:
         try:
             with urllib.request.urlopen(req, timeout=VIDEO_LLM_TIMEOUT_SEC) as resp:
                 data = json.loads(resp.read())
+            if "choices" not in data:
+                _err = data.get("error", {})
+                raise RuntimeError(f"OpenRouter error: {_err.get('message', str(data))[:200]}")
             logger.info("[openrouter] 모델 성공: %s", model)
             return data["choices"][0]["message"]["content"]
         except urllib.error.HTTPError as exc:

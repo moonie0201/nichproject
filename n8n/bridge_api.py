@@ -166,7 +166,11 @@ def publish_market_post() -> dict:
             json={"model": "google/gemini-2.0-flash-001", "messages": [{"role": "user", "content": prompt}], "temperature": 0.7, "max_tokens": 6000},
             timeout=120,
         )
-        raw = resp.json()["choices"][0]["message"]["content"].strip()
+        _resp_data = resp.json()
+        if "choices" not in _resp_data:
+            _err = _resp_data.get("error", {})
+            raise RuntimeError(f"OpenRouter error: {_err.get('message', str(_resp_data))[:200]}")
+        raw = _resp_data["choices"][0]["message"]["content"].strip()
         if raw.startswith("```"):
             raw = "\n".join(l for l in raw.split("\n") if not l.strip().startswith("```"))
         return json.loads(raw)
