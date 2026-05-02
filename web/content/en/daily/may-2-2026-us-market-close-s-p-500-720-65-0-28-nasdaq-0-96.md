@@ -1,7 +1,7 @@
 ---
 title: "May 2, 2026 US Market Close: S&P 500 $720.65 +0.28%, Nasdaq +0.96%"
-date: 2026-05-02T19:10:22+09:00
-lastmod: 2026-05-02T19:10:22+09:00
+date: 2026-05-02T19:22:28+09:00
+lastmod: 2026-05-02T19:22:28+09:00
 draft: false
 description: "S&P 500 +0.28%, Nasdaq +0.96%, VIX 16.99."
 schema: "NewsArticle"
