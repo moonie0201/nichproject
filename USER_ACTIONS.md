@@ -30,6 +30,31 @@
 
 ## 🔥 P0 — 24시간 내 (자동화 차단 위험)
 
+### 🚨 0. TikTok OAuth 재인증 (token.json 사라짐)
+
+**증상**: `.tiktok_secrets/token.json` 파일 없음 → 자동 업로드 실패
+
+**해결 (3분):**
+```bash
+cd /home/mh/ocstorage/workspace/nichproject
+venv/bin/python3 -c "
+from dotenv import load_dotenv
+load_dotenv('.env')
+from auto_publisher.video_uploader import tiktok_auth_setup
+tiktok_auth_setup()
+"
+```
+
+→ 출력된 OAuth URL 브라우저에서 열기
+→ 권한 부여 → 자동으로 callback.investiqs.net로 리다이렉트
+→ token.json 자동 저장 완료
+
+**확인:**
+```bash
+ls -la .tiktok_secrets/token.json
+# 파일 존재 + 권한 600
+```
+
 ### 1. OpenRouter 크레딧 충전 (선택)
 - **현재**: Gemini CLI Flash로 자동 우회 중 → 작동 OK
 - **충전 시 효과**: 영상 LLM 백엔드 다양화, 안정성 ↑
