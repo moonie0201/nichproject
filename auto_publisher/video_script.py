@@ -4,10 +4,12 @@ YouTube 영상 대사 생성 — 블로그 → 롱폼 + 쇼츠 대사 변환
 - 쇼츠: 60초 (~300자, hook 1포인트, 롱폼 링크 CTA)
 """
 
+import hashlib
 import json
 import logging
 import os
 import re
+import urllib.request
 from pathlib import Path
 
 from auto_publisher.content_generator import _call_llm, _parse_json_response
@@ -18,6 +20,41 @@ _NUMBER_PATTERN = re.compile(r"(?:\$?\d[\d,]*\.?\d*%?|[0-9]+년|[0-9]+개월|[0-
 _QUALITY_TARGET_SCORE = 90
 _RULE_TARGET_SCORE = 95
 _VIDEO_THINK_MODE = os.getenv("OLLAMA_THINK_MODE", "script").strip().lower()
+
+# --- 스크립트 캐시 설정 ---
+CACHE_DIR = Path(os.getenv("WORKSPACE", "/home/mh/ocstorage/workspace/nichproject")) / ".omc" / "script_cache"
+
+
+def _cache_key(slug: str, lang: str, kind: str) -> Path:
+    return CACHE_DIR / f"{slug}_{lang}_{kind}.json"
+
+
+# --- Video LLM 백엔드 설정 ---
+LLM_VIDEO_BACKEND = os.getenv("LLM_VIDEO_BACKEND", "openrouter").strip().lower()
+VIDEO_LLM_MODEL = os.getenv("VIDEO_LLM_MODEL", "google/gemini-2.0-flash-exp:free")
+VIDEO_LLM_TIMEOUT_SEC = int(os.getenv("VIDEO_LLM_TIMEOUT_SEC", "60"))
+_OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+
+
+def _call_openrouter(prompt: str) -> str:
+    """OpenRouter HTTP API 직접 호출 (Gemini CLI 대체)."""
+    if not _OPENROUTER_API_KEY:
+        raise RuntimeError("OPENROUTER_API_KEY 미설정")
+    body = json.dumps({
+        "model": VIDEO_LLM_MODEL,
+        "messages": [{"role": "user", "content": prompt}],
+    }).encode()
+    req = urllib.request.Request(
+        "https://openrouter.ai/api/v1/chat/completions",
+        data=body,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {_OPENROUTER_API_KEY}",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=VIDEO_LLM_TIMEOUT_SEC) as resp:
+        data = json.loads(resp.read())
+    return data["choices"][0]["message"]["content"]
 
 
 def _strip_html(html: str) -> str:
@@ -632,14 +669,30 @@ def _build_short_script_prompt(long_script: dict, blog_url: str, lang: str = "ko
 
 
 def _video_llm_json(prompt: str, context: str) -> dict:
-    """Call LLM for video JSON, allowing Qwen think mode with safe fallback."""
+    """Call LLM for video JSON — OpenRouter HTTP API 우선, 실패 시 CLI 폴백."""
+    if LLM_VIDEO_BACKEND == "openrouter":
+        try:
+            logger.info("[%s] LLM_START backend=openrouter model=%s", context, VIDEO_LLM_MODEL)
+            raw = _call_openrouter(prompt)
+            logger.info("[%s] LLM_END backend=openrouter response_len=%d", context, len(raw))
+            return _parse_json_response(raw, context)
+        except Exception as exc:
+            logger.warning("[%s] OpenRouter 실패, CLI 폴백: %s", context, exc)
+
+    # CLI 폴백 (기존 _call_llm 경로)
     use_think = _VIDEO_THINK_MODE in {"script", "video", "all", "true", "1", "yes"}
     if use_think:
         try:
-            return _parse_json_response(_call_llm(prompt, think=True), context)
+            logger.info("[%s] LLM_START backend=cli think=True", context)
+            raw = _call_llm(prompt, think=True)
+            logger.info("[%s] LLM_END backend=cli response_len=%d", context, len(raw))
+            return _parse_json_response(raw, context)
         except Exception as exc:
             logger.warning("[%s] think mode JSON 실패, no-think 재시도: %s", context, exc)
-    return _parse_json_response(_call_llm(prompt, think=False), context)
+    logger.info("[%s] LLM_START backend=cli think=False", context)
+    raw = _call_llm(prompt, think=False)
+    logger.info("[%s] LLM_END backend=cli response_len=%d", context, len(raw))
+    return _parse_json_response(raw, context)
 
 
 def _rewrite_short_part(script: dict, data_pack: dict, blog_url: str, part: str, critique: dict) -> dict:
@@ -879,6 +932,12 @@ def generate_long_video_script(
           'hashtags': list[str],
         }
     """
+    slug = blog_md_path.stem
+    cache_path = _cache_key(slug, lang, "long")
+    if cache_path.exists() and not os.getenv("FORCE_REGEN_SCRIPT"):
+        logger.info("[long_video_script] 캐시 적중: %s", cache_path)
+        return json.loads(cache_path.read_text(encoding="utf-8"))
+
     data_pack = data_pack or build_video_data_pack(blog_md_path, blog_url=blog_url)
     title = data_pack["title"]
     body_text = data_pack["body_text"]
@@ -930,6 +989,10 @@ def generate_long_video_script(
         for issue in issues:
             logger.warning("[long_video_script] 스크립트 검증 경고: %s", issue)
 
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    cache_path.write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")
+    logger.info("[long_video_script] 캐시 저장: %s", cache_path)
+
     return result
 
 
@@ -943,8 +1006,15 @@ def generate_short_video_script(
 
     Returns: long_script와 동일 구조, 60초 짧은 버전 + 롱폼 링크 CTA
     """
+    long_title = long_script.get("title", "")
+    slug = hashlib.md5(long_title.encode()).hexdigest()[:16]
+    cache_path = _cache_key(slug, lang, "short")
+    if cache_path.exists() and not os.getenv("FORCE_REGEN_SCRIPT"):
+        logger.info("[short_video_script] 캐시 적중: %s", cache_path)
+        return json.loads(cache_path.read_text(encoding="utf-8"))
+
     data_pack = data_pack or {
-        "title": long_script.get("title", ""),
+        "title": long_title,
         "source_data_points": long_script.get("source_data_points", []),
     }
 
@@ -990,6 +1060,10 @@ def generate_short_video_script(
     if result.get("total_duration_sec", 0) > _short_max_sec:
         result["total_duration_sec"] = _short_max_sec
         logger.info(f"[short_video_script] total_duration_sec 캡 적용: {_short_max_sec}s")
+
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    cache_path.write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")
+    logger.info("[short_video_script] 캐시 저장: %s", cache_path)
 
     return result
 
