@@ -9,17 +9,22 @@ market_wrap/intraday 와 차별점:
 from __future__ import annotations
 
 import logging
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
 from auto_publisher.market_wrap import (
     INDEX_TICKERS,
     SECTOR_TICKERS,
     VIX_TICKER,
+    MACRO_TICKERS,
     GROWTH_SECTORS,
     DEFENSIVE_SECTORS,
     KST,
     _format_pct,
     _format_price,
+    _fetch_extended_items,
+    _heatmap_bg,
+    _heatmap_fg,
 )
 
 logger = logging.getLogger(__name__)
@@ -84,37 +89,48 @@ def fetch_weekly_snapshot() -> dict:
         us_week_end_dt -= timedelta(days=1)
     us_week_start_dt = us_week_end_dt - timedelta(days=4)
 
-    indices = []
-    for ticker, name in INDEX_TICKERS:
-        s = _fetch_5d_summary(ticker)
-        indices.append({
-            "ticker": ticker, "name": name,
-            "open": s["open"], "close": s["close"],
-            "pct_5d": s["pct_5d"],
-            "max_drawdown_5d": s["max_drawdown_5d"],
-            "vol_avg_5d": s["vol_avg_5d"],
-        })
+    # 5일 요약 + 매크로 병렬 수집
+    with ThreadPoolExecutor(max_workers=10) as ex:
+        idx_futs = {ticker: ex.submit(_fetch_5d_summary, ticker) for ticker, _ in INDEX_TICKERS}
+        vix_fut = ex.submit(_fetch_5d_summary, VIX_TICKER)
+        sec_futs = {ticker: ex.submit(_fetch_5d_summary, ticker) for ticker, _ in SECTOR_TICKERS}
+        macro_fut = ex.submit(_fetch_extended_items, MACRO_TICKERS, False)
 
-    vix_raw = _fetch_5d_summary(VIX_TICKER)
-    vix_close = vix_raw["close"]
-    vix_level = "low" if vix_close < 15 else "mid" if vix_close < 22 else "high"
-    vix = {
-        "week_open": vix_raw["open"],
-        "week_close": vix_close,
-        "pct_5d": vix_raw["pct_5d"],
-        "level": vix_level,
-    }
+        indices = []
+        for ticker, name in INDEX_TICKERS:
+            s = idx_futs[ticker].result()
+            indices.append({
+                "ticker": ticker, "name": name,
+                "open": s["open"], "close": s["close"],
+                "pct_5d": s["pct_5d"],
+                "max_drawdown_5d": s["max_drawdown_5d"],
+                "vol_avg_5d": s["vol_avg_5d"],
+            })
 
-    sectors = []
-    for ticker, name in SECTOR_TICKERS:
-        s = _fetch_5d_summary(ticker)
-        sectors.append({
-            "ticker": ticker, "name": name,
-            "pct_5d": s["pct_5d"],
-            "open": s["open"], "close": s["close"],
-        })
+        vix_raw = vix_fut.result()
+        vix_close = vix_raw["close"]
+        vix_level = "low" if vix_close < 15 else "mid" if vix_close < 22 else "high"
+        vix = {
+            "week_open": vix_raw["open"],
+            "week_close": vix_close,
+            "pct_5d": vix_raw["pct_5d"],
+            "level": vix_level,
+        }
+
+        sectors = []
+        for ticker, name in SECTOR_TICKERS:
+            s = sec_futs[ticker].result()
+            sectors.append({
+                "ticker": ticker, "name": name,
+                "pct_5d": s["pct_5d"],
+                "open": s["open"], "close": s["close"],
+            })
+
+        macro = macro_fut.result()
 
     sorted_secs = sorted(sectors, key=lambda s: s["pct_5d"], reverse=True)
+    pos_sec = sum(1 for s in sectors if s["pct_5d"] > 0)
+    neg_sec = sum(1 for s in sectors if s["pct_5d"] < 0)
 
     # 다음 주 캘린더 (정적 템플릿 — 추후 자동 수집 가능)
     next_week_calendar = [
@@ -138,6 +154,12 @@ def fetch_weekly_snapshot() -> dict:
         "top_losers_sectors": [s["ticker"] for s in sorted_secs[-3:][::-1]],
         "narrative_hint": None,
         "next_week_calendar": next_week_calendar,
+        "macro": macro,
+        "breadth": {
+            "sector_positive": pos_sec,
+            "sector_negative": neg_sec,
+            "sector_total": len(sectors),
+        },
     }
     snapshot["narrative_hint"] = classify_weekly_narrative(snapshot)
     return snapshot
@@ -289,16 +311,58 @@ def _build_weekly_index_table(snapshot: dict) -> str:
 
 def _build_weekly_sector_table(snapshot: dict) -> str:
     sectors = sorted(snapshot.get("sectors", []), key=lambda s: s["pct_5d"], reverse=True)
-    rows = ["<table><caption>한 주 11개 섹터 ETF 5일 누적 (내림차순)</caption>"]
+    rows = ["<table><caption>한 주 11개 섹터 ETF 5일 누적 (히트맵·내림차순)</caption>"]
     rows.append("<tr><th>순위</th><th>섹터</th><th>티커</th><th>5일 누적</th></tr>")
     for i, s in enumerate(sectors, 1):
+        bg = _heatmap_bg(s["pct_5d"])
+        fg = _heatmap_fg(s["pct_5d"])
+        cell_style = f'style="background:{bg};color:{fg};font-weight:600;"'
         rows.append(
             f"<tr><td>{i}</td><td>{s['name']}</td>"
             f"<td>{s['ticker']}</td>"
-            f"<td>{_format_pct(s['pct_5d'])}</td></tr>"
+            f"<td {cell_style}>{_format_pct(s['pct_5d'])}</td></tr>"
         )
     rows.append("</table>")
     return "\n".join(rows)
+
+
+def _build_weekly_macro_table(snapshot: dict) -> str:
+    """주간 매크로: 국채 수익률·DXY (전일 종가 기준)."""
+    macro = snapshot.get("macro") or []
+    if not any(m.get("price", 0) > 0 for m in macro):
+        return ""
+    rows = ["<table><caption>한 주 핵심 매크로 — 국채 수익률 · 달러</caption>"]
+    rows.append("<tr><th>지표</th><th>티커</th><th>현재값</th><th>전일 대비</th></tr>")
+    for m in macro:
+        if m.get("price", 0) <= 0:
+            continue
+        is_yield = m["ticker"].startswith("^")
+        value_str = f"{m['price']:.2f}%" if is_yield else f"{m['price']:.2f}"
+        rows.append(
+            f"<tr><td>{m['name']}</td><td>{m['ticker']}</td>"
+            f"<td>{value_str}</td>"
+            f"<td>{_format_pct(m['pct'])}</td></tr>"
+        )
+    rows.append("</table>")
+    return "\n".join(rows)
+
+
+def _build_weekly_breadth(snapshot: dict) -> str:
+    b = snapshot.get("breadth") or {}
+    pos = b.get("sector_positive", 0)
+    tot = b.get("sector_total", 0)
+    if tot == 0:
+        return ""
+    ratio = pos / tot if tot else 0
+    emoji = "🟢" if ratio >= 0.6 else "🟡" if ratio >= 0.4 else "🔴"
+    return (
+        f'<div class="breadth-box" style="background:#f8f9fa;border:1px solid #dee2e6;'
+        f'border-radius:8px;padding:0.8em 1.2em;margin:0 0 1.5em 0;font-size:0.95em;">'
+        f"<strong>📊 주간 시장 폭(Breadth)</strong> · "
+        f"{emoji} 섹터 {pos}/{tot} 주간 누적 상승 ({ratio*100:.0f}%) — "
+        f"{'폭 넓은 상승' if ratio >= 0.6 else '폭 좁은 약세' if ratio <= 0.3 else '혼조'}"
+        f"</div>"
+    )
 
 
 def _build_weekly_narrative(snapshot: dict) -> str:
@@ -360,14 +424,28 @@ def build_weekly_markdown(snapshot: dict, lang: str = "ko") -> str:
         f"리더 섹터 {', '.join(leaders[:3])} / 래거 {', '.join(laggards[:3])}."
     )
 
+    macro_table = _build_weekly_macro_table(snapshot)
+    breadth_box = _build_weekly_breadth(snapshot)
+
+    macro_list = snapshot.get("macro") or []
+    tnx = next((m for m in macro_list if m["ticker"] == "^TNX"), None)
+    dxy = next((m for m in macro_list if m["ticker"] == "DX-Y.NYB"), None)
+    macro_note_parts: list[str] = []
+    if tnx and tnx.get("price", 0) > 0:
+        macro_note_parts.append(f"10년물 수익률 {tnx['price']:.2f}% ({_format_pct(tnx['pct'])}).")
+    if dxy and dxy.get("price", 0) > 0:
+        macro_note_parts.append(f"DXY {dxy['price']:.2f} ({_format_pct(dxy['pct'])}).")
+    macro_note = " ".join(macro_note_parts)
+
     body = [
         fm,
         _DISCLAIMER_BANNER,
         "",
+        breadth_box,
         summary,
         "",
         f"한 주 5거래일을 누적해 보면, 매일의 잡음을 빼고 흐름의 방향과 폭이 더 분명히 보인다. "
-        f"이번 주 ({snapshot.get('week_label')}) 데이터를 지수·섹터·변동성 세 축으로 정리한다.",
+        f"이번 주 ({snapshot.get('week_label')}) 데이터를 지수·섹터·매크로·변동성 네 축으로 정리한다.",
         "",
         "## 📊 주간 지수 누적 흐름",
         "",
@@ -378,6 +456,17 @@ def build_weekly_markdown(snapshot: dict, lang: str = "ko") -> str:
             "단순 종가 변화만 보면 흐름의 강도를 놓치기 쉽다. 주중 최대낙폭과 평균 거래량을 함께 보면, "
             "추세가 일관됐는지 변동성이 컸는지 가늠할 수 있다. VIX 종가 흐름은 옵션 시장이 다음 주를 "
             "어떻게 예상하는지의 단서가 된다."
+        ),
+        "",
+        "## 🌐 주간 매크로 — 국채 수익률 · 달러",
+        "",
+        macro_table if macro_table else "_(매크로 데이터 없음)_",
+        "",
+        (
+            "한 주 동안 국채 수익률·달러 인덱스 흐름은 주식시장의 펀더멘털 배경을 결정한다. "
+            "10년물 수익률이 빠르게 오르면 성장주 압력, DXY 강세는 외국인 자금 둔화·신흥국 자산 압박 신호다. "
+            "30년-10년 스프레드가 역전되어 있으면 장기 경기 둔화 우려가 가격에 반영되어 있다는 의미다."
+            + (" " + macro_note if macro_note else "")
         ),
         "",
         "## 📈 주간 섹터 강약",

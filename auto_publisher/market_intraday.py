@@ -9,18 +9,23 @@ market_wrap.py 와 차별점:
 from __future__ import annotations
 
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 
 from auto_publisher.market_wrap import (
     INDEX_TICKERS,
     SECTOR_TICKERS,
     VIX_TICKER,
+    MACRO_TICKERS,
     GROWTH_SECTORS,
     DEFENSIVE_SECTORS,
     KST,
     _format_pct,
     _format_price,
     _parse_kst_date,
+    _fetch_extended_items,
+    _heatmap_bg,
+    _heatmap_fg,
 )
 
 logger = logging.getLogger(__name__)
@@ -94,41 +99,55 @@ def fetch_intraday_snapshot() -> dict:
             "gap": "gap_flat", "narrative_hint": "mixed",
         }
 
-    indices = []
-    for ticker, name in INDEX_TICKERS:
-        p = _fetch_intraday_price(ticker)
-        indices.append({
-            "ticker": ticker,
-            "name": name,
-            "open": p["open"],
-            "current": p["current"],
-            "pct_from_open": p["pct_from_open"],
-            "pct_gap_from_prev": p["pct_gap_from_prev"],
-            "vol_30m": p["vol_30m"],
-            "prev_close_ts": p["prev_close_ts"],
-        })
+    # 인덱스·VIX·섹터·매크로 병렬 수집
+    with ThreadPoolExecutor(max_workers=10) as ex:
+        # 5분봉 기반 (intraday 로직): indices, vix, sectors
+        idx_futures = {ticker: ex.submit(_fetch_intraday_price, ticker) for ticker, _ in INDEX_TICKERS}
+        vix_future = ex.submit(_fetch_intraday_price, VIX_TICKER)
+        sec_futures = {ticker: ex.submit(_fetch_intraday_price, ticker) for ticker, _ in SECTOR_TICKERS}
+        # 매크로 (yields/DXY) 는 일봉 기반 → market_wrap 헬퍼 재사용
+        macro_future = ex.submit(_fetch_extended_items, MACRO_TICKERS, False)
 
-    vix_raw = _fetch_intraday_price(VIX_TICKER)
-    vix_price = vix_raw["current"] or 0.0
-    vix_level = "low" if vix_price < 15 else "mid" if vix_price < 22 else "high"
-    vix = {
-        "price": vix_price,
-        "pct_from_prev": vix_raw["pct_gap_from_prev"],
-        "level": vix_level,
-    }
+        indices = []
+        for ticker, name in INDEX_TICKERS:
+            p = idx_futures[ticker].result()
+            indices.append({
+                "ticker": ticker,
+                "name": name,
+                "open": p["open"],
+                "current": p["current"],
+                "pct_from_open": p["pct_from_open"],
+                "pct_gap_from_prev": p["pct_gap_from_prev"],
+                "vol_30m": p["vol_30m"],
+                "prev_close_ts": p["prev_close_ts"],
+            })
 
-    sectors = []
-    for ticker, name in SECTOR_TICKERS:
-        p = _fetch_intraday_price(ticker)
-        sectors.append({
-            "ticker": ticker,
-            "name": name,
-            "pct_from_open": p["pct_from_open"],
-            "open": p["open"],
-            "current": p["current"],
-        })
+        vix_raw = vix_future.result()
+        vix_price = vix_raw["current"] or 0.0
+        vix_level = "low" if vix_price < 15 else "mid" if vix_price < 22 else "high"
+        vix = {
+            "price": vix_price,
+            "pct_from_prev": vix_raw["pct_gap_from_prev"],
+            "level": vix_level,
+        }
+
+        sectors = []
+        for ticker, name in SECTOR_TICKERS:
+            p = sec_futures[ticker].result()
+            sectors.append({
+                "ticker": ticker,
+                "name": name,
+                "pct_from_open": p["pct_from_open"],
+                "open": p["open"],
+                "current": p["current"],
+            })
+
+        macro = macro_future.result()
 
     sorted_secs = sorted(sectors, key=lambda s: s["pct_from_open"], reverse=True)
+    pos_sec = sum(1 for s in sectors if s["pct_from_open"] > 0)
+    neg_sec = sum(1 for s in sectors if s["pct_from_open"] < 0)
+
     snapshot = {
         "date_kst": date_kst,
         "us_session_date": us_session_date,
@@ -141,6 +160,12 @@ def fetch_intraday_snapshot() -> dict:
         "top_losers_sectors": [s["ticker"] for s in sorted_secs[-3:][::-1]],
         "gap": None,
         "narrative_hint": None,
+        "macro": macro,
+        "breadth": {
+            "sector_positive": pos_sec,
+            "sector_negative": neg_sec,
+            "sector_total": len(sectors),
+        },
     }
     snapshot["gap"] = classify_gap(snapshot)
     snapshot["narrative_hint"] = classify_intraday_narrative(snapshot)
@@ -247,6 +272,7 @@ def _build_frontmatter_intraday(snapshot: dict) -> tuple[str, str]:
         f"미국 증시 장중, S&P500 장중, 나스닥 장중, 미국증시 개장, 개장 30분, "
         f"{d.year}-{d.month:02d}-{d.day:02d} 시황"
     )
+    _fetched_at = snapshot.get("fetched_at") or datetime.now(tz=KST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
     fm = (
         "---\n"
         f'title: "{title}"\n'
@@ -258,6 +284,10 @@ def _build_frontmatter_intraday(snapshot: dict) -> tuple[str, str]:
         'schema: "NewsArticle"\n'
         'primary_keyword: "미국 증시 장중"\n'
         "toc: true\n"
+        "ai_generated: true\n"
+        'ai_models: ["claude-sonnet-4.6", "yfinance"]\n'
+        f'data_fetched_at: "{_fetched_at}"\n'
+        'data_source: "yfinance"\n'
         "tags:\n"
         '  - "SPY"\n'
         '  - "QQQ"\n'
@@ -305,16 +335,58 @@ def _build_intraday_index_table(snapshot: dict) -> str:
 
 def _build_intraday_sector_table(snapshot: dict) -> str:
     sectors = sorted(snapshot.get("sectors", []), key=lambda s: s["pct_from_open"], reverse=True)
-    rows = ["<table><caption>개장 30분 후 11개 섹터 ETF 변화율 (내림차순)</caption>"]
+    rows = ["<table><caption>개장 30분 후 11개 섹터 ETF 변화율 (히트맵·내림차순)</caption>"]
     rows.append("<tr><th>순위</th><th>섹터</th><th>티커</th><th>개장가 대비</th></tr>")
     for i, s in enumerate(sectors, 1):
+        bg = _heatmap_bg(s["pct_from_open"])
+        fg = _heatmap_fg(s["pct_from_open"])
+        cell_style = f'style="background:{bg};color:{fg};font-weight:600;"'
         rows.append(
             f"<tr><td>{i}</td><td>{s['name']}</td>"
             f"<td>{s['ticker']}</td>"
-            f"<td>{_format_pct(s['pct_from_open'])}</td></tr>"
+            f"<td {cell_style}>{_format_pct(s['pct_from_open'])}</td></tr>"
         )
     rows.append("</table>")
     return "\n".join(rows)
+
+
+def _build_intraday_macro_table(snapshot: dict) -> str:
+    """미 국채 수익률·달러 인덱스 (전일종가 기준)."""
+    macro = snapshot.get("macro") or []
+    if not any(m.get("price", 0) > 0 for m in macro):
+        return ""
+    rows = ["<table><caption>핵심 매크로 — 국채 수익률 · 달러 (전일종가 기준)</caption>"]
+    rows.append("<tr><th>지표</th><th>티커</th><th>현재값</th><th>전일 대비</th></tr>")
+    for m in macro:
+        if m.get("price", 0) <= 0:
+            continue
+        is_yield = m["ticker"].startswith("^")
+        value_str = f"{m['price']:.2f}%" if is_yield else f"{m['price']:.2f}"
+        rows.append(
+            f"<tr><td>{m['name']}</td><td>{m['ticker']}</td>"
+            f"<td>{value_str}</td>"
+            f"<td>{_format_pct(m['pct'])}</td></tr>"
+        )
+    rows.append("</table>")
+    return "\n".join(rows)
+
+
+def _build_intraday_breadth(snapshot: dict) -> str:
+    b = snapshot.get("breadth") or {}
+    pos = b.get("sector_positive", 0)
+    tot = b.get("sector_total", 0)
+    if tot == 0:
+        return ""
+    ratio = pos / tot if tot else 0
+    emoji = "🟢" if ratio >= 0.6 else "🟡" if ratio >= 0.4 else "🔴"
+    return (
+        f'<div class="breadth-box" style="background:#f8f9fa;border:1px solid #dee2e6;'
+        f'border-radius:8px;padding:0.8em 1.2em;margin:0 0 1.5em 0;font-size:0.95em;">'
+        f"<strong>📊 개장 30분 시장 폭(Breadth)</strong> · "
+        f"{emoji} 섹터 {pos}/{tot} 상승 ({ratio*100:.0f}%) — "
+        f"{'폭 넓은 위험 선호' if ratio >= 0.6 else '폭 좁은 약세' if ratio <= 0.3 else '혼조'}"
+        f"</div>"
+    )
 
 
 def _build_intraday_narrative(snapshot: dict) -> str:
@@ -384,10 +456,29 @@ def build_intraday_markdown(snapshot: dict, lang: str = "ko") -> str:
         f"초반 리더 {', '.join(leaders[:3])} / 약세 {', '.join(laggards[:3])}."
     )
 
+    macro_table = _build_intraday_macro_table(snapshot)
+    breadth_box = _build_intraday_breadth(snapshot)
+
+    # 매크로 데이터 기반 동적 코멘트
+    macro_list = snapshot.get("macro") or []
+    tnx = next((m for m in macro_list if m["ticker"] == "^TNX"), None)
+    dxy = next((m for m in macro_list if m["ticker"] == "DX-Y.NYB"), None)
+    macro_note_parts: list[str] = []
+    if tnx and tnx.get("price", 0) > 0:
+        macro_note_parts.append(
+            f"10년물 수익률은 {tnx['price']:.2f}% ({_format_pct(tnx['pct'])})."
+        )
+    if dxy and dxy.get("price", 0) > 0:
+        macro_note_parts.append(
+            f"DXY는 {dxy['price']:.2f} ({_format_pct(dxy['pct'])})."
+        )
+    macro_note = " ".join(macro_note_parts)
+
     body = [
         fm,
         _DISCLAIMER_BANNER,
         "",
+        breadth_box,
         summary,
         "",
         "## 📊 개장 30분 지수 스냅샷",
@@ -400,6 +491,17 @@ def build_intraday_markdown(snapshot: dict, lang: str = "ko") -> str:
             "갭은 장 시작 직전의 수급 의지를 압축적으로 보여주고, 개장가 대비 변화율은 첫 30분 동안의 "
             "참여자 심리 변화를 반영한다. 두 수치를 함께 보면 단기 모멘텀이 갭 방향과 일치하는지, "
             "아니면 되돌리는지 판단할 수 있다."
+        ),
+        "",
+        "## 🌐 핵심 매크로 — 국채 수익률 · 달러",
+        "",
+        macro_table if macro_table else "_(매크로 데이터 없음)_",
+        "",
+        (
+            "국채 수익률(특히 10년물)이 장중 빠르게 변하면 성장주에 즉시 영향이 간다. "
+            "DXY 강세는 외국인 매수 둔화·신흥국 자산 압박 신호로 해석되며, "
+            "30년물과 10년물 스프레드는 장기 경기 전망을 나타낸다."
+            + (" " + macro_note if macro_note else "")
         ),
         "",
         "## 📈 섹터 초반 강약",
