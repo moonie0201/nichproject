@@ -164,7 +164,7 @@ def publish_market_post() -> dict:
                 resp = req.post(
                     "https://openrouter.ai/api/v1/chat/completions",
                     headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-                    json={"model": "google/gemini-2.0-flash-001", "messages": [{"role": "user", "content": prompt}], "temperature": 0.7, "max_tokens": 6000},
+                    json={"model": "google/gemini-2.0-flash-001", "messages": [{"role": "user", "content": prompt}], "temperature": 0.7, "max_tokens": int(os.getenv("OPENROUTER_MAX_TOKENS", "2000"))},
                     timeout=120,
                 )
                 _resp_data = resp.json()
