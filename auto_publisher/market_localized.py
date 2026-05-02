@@ -41,6 +41,10 @@ def _build_localized_frontmatter(
 
     slug = make_eeat_slug(title)
 
+    _fetched_at = snapshot.get("fetched_at") if isinstance(snapshot, dict) else ""
+    if not _fetched_at:
+        from datetime import datetime, timezone, timedelta
+        _fetched_at = datetime.now(tz=timezone(timedelta(hours=9))).strftime("%Y-%m-%dT%H:%M:%S+09:00")
     fm = (
         "---\n"
         f'title: "{title}"\n'
@@ -51,6 +55,10 @@ def _build_localized_frontmatter(
         'schema: "NewsArticle"\n'
         f'primary_keyword: "{primary_keyword}"\n'
         "toc: true\n"
+        "ai_generated: true\n"
+        'ai_models: ["claude-sonnet-4.6", "yfinance"]\n'
+        f'data_fetched_at: "{_fetched_at}"\n'
+        'data_source: "yfinance"\n'
         "tags:\n"
         f"{tags_lines}\n"
         "categories:\n"
@@ -236,6 +244,11 @@ def build_localized_wrap_markdown(snapshot: dict, lang: str) -> str:
         f"Leaders: {', '.join(leaders[:3])} / Laggards: {', '.join(laggards[:3])}."
     )
 
+    # 신규 섹션 빌더 (i18n 라벨만 다국어, 표 본문은 ticker/price 로 만국 공통)
+    from auto_publisher.market_wrap import _build_macro_table, _build_asia_crypto_table
+    macro_table = _build_macro_table(snapshot)
+    asia_table = _build_asia_crypto_table(snapshot)
+
     body = [
         fm,
         i18n["disclaimer_banner_html"],
@@ -246,29 +259,52 @@ def build_localized_wrap_markdown(snapshot: dict, lang: str) -> str:
         "",
         _build_index_table_localized(snapshot, lang, "wrap"),
         "",
+        f"## {i18n['section_h2_macro']}",
+        "",
+        macro_table or "_(no macro data)_",
+        "",
+        i18n.get("macro_note", ""),
+        "",
         f"## {i18n['section_h2_sector']}",
         "",
         _build_sector_table_localized(snapshot, lang, "pct"),
         "",
+        f"## {i18n['section_h2_asia_crypto']}",
+        "",
+        asia_table or "_(no asia/crypto data)_",
+        "",
+        i18n.get("asia_crypto_note", ""),
+        "",
         f"## {i18n['section_h2_narrative']}",
         "",
-        f"S&P 500 closed {_format_pct(spy['pct']) if spy else '-'}, "
-        f"Nasdaq {_format_pct(qqq['pct']) if qqq else '-'}, "
-        f"with VIX at {vix.get('price', 0.0):.2f} ({_format_pct(vix.get('pct', 0.0))}). "
-        f"Sector leaders today: {', '.join(leaders[:3])}. Laggards: {', '.join(laggards[:3])}.",
+        i18n.get("wrap_narrative", (
+            "S&P 500 closed {spy_pct}, Nasdaq {qqq_pct}, with VIX at {vix_price} ({vix_pct}). "
+            "Sector leaders today: {leaders}. Laggards: {laggards}."
+        )).format(
+            spy_pct=_format_pct(spy["pct"]) if spy else "-",
+            qqq_pct=_format_pct(qqq["pct"]) if qqq else "-",
+            vix_price=f"{vix.get('price', 0.0):.2f}",
+            vix_pct=_format_pct(vix.get("pct", 0.0)),
+            leaders=", ".join(leaders[:3]),
+            laggards=", ".join(laggards[:3]),
+        ),
         "",
         f"## {i18n['section_h2_calendar']}",
         "",
-        "- Watch upcoming US economic releases (CPI/PPI/Retail Sales/PCE).",
-        "- Monitor Fed officials' speeches and FOMC schedule.",
-        "- Track 10-year Treasury yield and DXY direction.",
-        "- VIX trend vs prior session close.",
+        *[f"- {item}" for item in i18n.get("wrap_calendar", [
+            "Watch upcoming US economic releases (CPI/PPI/Retail Sales/PCE).",
+            "Monitor Fed officials' speeches and FOMC schedule.",
+            "Track 10-year Treasury yield and DXY direction.",
+            "VIX trend vs prior session close.",
+        ])],
         "",
         f"## {i18n['section_h2_action']}",
         "",
-        "- A single session is not a trend; check sector breadth.",
-        "- Verify whether your held sectors are among today's leaders or laggards.",
-        "- Compare VIX vs your portfolio volatility tolerance.",
+        *[f"- {item}" for item in i18n.get("wrap_action", [
+            "A single session is not a trend; check sector breadth.",
+            "Verify whether your held sectors are among today's leaders or laggards.",
+            "Compare VIX vs your portfolio volatility tolerance.",
+        ])],
         "",
         i18n["footer_disclaimer"],
     ]
@@ -338,25 +374,35 @@ def build_localized_intraday_markdown(snapshot: dict, lang: str) -> str:
         "",
         f"## {i18n['section_h2_narrative']}",
         "",
-        f"US market just opened ~30 minutes ago. S&P 500 is "
-        f"{_format_pct(spy['pct_from_open']) if spy else '-'} from open, "
-        f"Nasdaq {_format_pct(qqq['pct_from_open']) if qqq else '-'}. "
-        f"VIX prints {vix.get('price', 0.0):.2f} ({_format_pct(vix.get('pct_from_prev', 0.0))}). "
-        f"First-30-minute leaders: {', '.join(leaders[:3])}. "
-        f"Laggards: {', '.join(laggards[:3])}.",
+        i18n.get("intraday_narrative", (
+            "US market just opened ~30 minutes ago. S&P 500 is {spy_pct} from open, "
+            "Nasdaq {qqq_pct}. VIX prints {vix_price} ({vix_pct}). "
+            "First-30-minute leaders: {leaders}. Laggards: {laggards}."
+        )).format(
+            spy_pct=_format_pct(spy["pct_from_open"]) if spy else "-",
+            qqq_pct=_format_pct(qqq["pct_from_open"]) if qqq else "-",
+            vix_price=f"{vix.get('price', 0.0):.2f}",
+            vix_pct=_format_pct(vix.get("pct_from_prev", 0.0)),
+            leaders=", ".join(leaders[:3]),
+            laggards=", ".join(laggards[:3]),
+        ),
         "",
         f"## {i18n['section_h2_calendar']}",
         "",
-        "- Watch 10:00 EST data releases (KST 23:00) for surprises.",
-        "- Confirm whether the gap holds through 11:00 EST.",
-        "- Track VIX co-movement with index direction.",
-        "- Monitor mega-cap names (NVDA/MSFT/AAPL/AMZN/GOOG/META/TSLA).",
+        *[f"- {item}" for item in i18n.get("intraday_calendar", [
+            "Watch 10:00 EST data releases (KST 23:00) for surprises.",
+            "Confirm whether the gap holds through 11:00 EST.",
+            "Track VIX co-movement with index direction.",
+            "Monitor mega-cap names (NVDA/MSFT/AAPL/AMZN/GOOG/META/TSLA).",
+        ])],
         "",
         f"## {i18n['section_h2_action']}",
         "",
-        "- Do not size new positions based on the first 30 minutes alone.",
-        "- Verify whether your held sectors are leaders or laggards today.",
-        "- Cross-check VIX and index direction for normal correlation.",
+        *[f"- {item}" for item in i18n.get("intraday_action", [
+            "Do not size new positions based on the first 30 minutes alone.",
+            "Verify whether your held sectors are leaders or laggards today.",
+            "Cross-check VIX and index direction for normal correlation.",
+        ])],
         "",
         i18n["footer_disclaimer"],
     ]
@@ -409,14 +455,45 @@ def build_localized_weekly_markdown(snapshot: dict, lang: str) -> str:
         f"Leaders: {', '.join(leaders[:3])} / Laggards: {', '.join(laggards[:3])}."
     )
 
+    weekly_intro = i18n.get("weekly_intro", (
+        "This 5-day cumulative wrap covers {label}, smoothing intraday noise to highlight "
+        "directional bias and breadth. Reading three axes (indices, sectors, volatility) "
+        "together is more reliable than any single number."
+    )).format(label=label)
+
+    weekly_narrative = i18n.get("weekly_narrative", (
+        "Across 5 trading days, S&P 500 cumulative return: {spy_pct}, Nasdaq: {qqq_pct}. "
+        "VIX moved from {vix_open} to {vix_close} ({vix_pct}). "
+        "Top sectors: {leaders}. Bottom: {laggards}."
+    )).format(
+        spy_pct=_format_pct(spy["pct_5d"]) if spy else "-",
+        qqq_pct=_format_pct(qqq["pct_5d"]) if qqq else "-",
+        vix_open=f"{vix.get('week_open', 0.0):.2f}",
+        vix_close=f"{vix.get('week_close', 0.0):.2f}",
+        vix_pct=_format_pct(vix.get("pct_5d", 0.0)),
+        leaders=", ".join(leaders[:3]),
+        laggards=", ".join(laggards[:3]),
+    )
+
+    weekly_calendar_fallback = i18n.get("weekly_calendar_fallback", [
+        "FOMC minutes and Fed officials' speeches",
+        "Major economic releases (CPI/PPI/Retail Sales/PCE)",
+        "Mega-cap earnings (NVDA/AAPL/MSFT/META/AMZN/GOOG/TSLA)",
+    ])
+    weekly_action = i18n.get("weekly_action", [
+        "Compare your held sectors against the week's leaders and laggards.",
+        "Track whether the same sector leadership persists into next week.",
+        "Reassess position sizing if 5-day max drawdown widened materially.",
+        "A strong week does not guarantee the same pace next week.",
+    ])
+
     body = [
         fm,
         i18n["disclaimer_banner_html"],
         "",
         summary,
         "",
-        f"This 5-day cumulative wrap covers {label}, smoothing intraday noise to highlight directional bias and breadth. "
-        "Reading three axes (indices, sectors, volatility) together is more reliable than any single number.",
+        weekly_intro,
         "",
         f"## {i18n['section_h2_index']}",
         "",
@@ -428,12 +505,7 @@ def build_localized_weekly_markdown(snapshot: dict, lang: str) -> str:
         "",
         f"## {i18n['section_h2_narrative']}",
         "",
-        f"Across 5 trading days, S&P 500 cumulative return: "
-        f"{_format_pct(spy['pct_5d']) if spy else '-'}, "
-        f"Nasdaq: {_format_pct(qqq['pct_5d']) if qqq else '-'}. "
-        f"VIX moved from {vix.get('week_open', 0.0):.2f} to {vix.get('week_close', 0.0):.2f} "
-        f"({_format_pct(vix.get('pct_5d', 0.0))}). "
-        f"Top sectors: {', '.join(leaders[:3])}. Bottom: {', '.join(laggards[:3])}.",
+        weekly_narrative,
         "",
         f"## {i18n['section_h2_calendar']}",
         "",
@@ -442,19 +514,13 @@ def build_localized_weekly_markdown(snapshot: dict, lang: str) -> str:
         for item in calendar:
             body.append(f"- {item}")
     else:
-        body.extend([
-            "- FOMC minutes and Fed officials' speeches",
-            "- Major economic releases (CPI/PPI/Retail Sales/PCE)",
-            "- Mega-cap earnings (NVDA/AAPL/MSFT/META/AMZN/GOOG/TSLA)",
-        ])
+        for item in weekly_calendar_fallback:
+            body.append(f"- {item}")
     body += [
         "",
         f"## {i18n['section_h2_action']}",
         "",
-        "- Compare your held sectors against the week's leaders and laggards.",
-        "- Track whether the same sector leadership persists into next week.",
-        "- Reassess position sizing if 5-day max drawdown widened materially.",
-        "- A strong week does not guarantee the same pace next week.",
+        *[f"- {item}" for item in weekly_action],
         "",
         i18n["footer_disclaimer"],
     ]

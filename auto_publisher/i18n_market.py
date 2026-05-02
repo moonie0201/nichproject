@@ -12,10 +12,14 @@ _KO = {
     "title_pattern_intraday": "{date} 미국 증시 장중: 개장 30분 S&P500 {spy_pct}, 나스닥 {qqq_pct}",
     "title_pattern_weekly": "{label} 미국 증시 주간 정리: S&P500 {spy_pct}, 나스닥 {qqq_pct}",
     "section_h2_index": "📊 지수 한눈에 보기",
+    "section_h2_macro": "🌐 핵심 매크로 — 국채 수익률 · 달러",
     "section_h2_sector": "📈 섹터별 강약",
+    "section_h2_asia_crypto": "🌏 아시아 핸드오프 · 디지털 자산",
     "section_h2_narrative": "💡 오늘의 시장 내러티브",
     "section_h2_calendar": "🔮 내일 주목 포인트",
     "section_h2_action": "⚡ Action Point (정보 제공)",
+    "macro_note": "10년물 수익률(^TNX)은 위험자산 할인율의 핵심 변수다. DXY 강세는 외국인 자금 유입 둔화 신호로 해석된다.",
+    "asia_crypto_note": "한국 독자에게 미국 마감 → 아시아 개장은 자금 흐름의 다음 페이지다. 비트코인/이더리움은 24시간 위험선호 바로미터다.",
     "summary_label": "요약",
     "disclaimer_banner_html": (
         '<div class="reg-banner" style="background:#fff3cd;border:1px solid #ffc107;'
@@ -45,10 +49,14 @@ _EN = {
     "title_pattern_intraday": "{date} US Market Intraday: First 30 min S&P 500 {spy_pct}, Nasdaq {qqq_pct}",
     "title_pattern_weekly": "{label} US Market Weekly Wrap: S&P 500 {spy_pct}, Nasdaq {qqq_pct}",
     "section_h2_index": "📊 Index Snapshot",
+    "section_h2_macro": "🌐 Macro Pulse — Treasury Yields & Dollar",
     "section_h2_sector": "📈 Sector Strength & Weakness",
+    "section_h2_asia_crypto": "🌏 Asia Handoff & Digital Assets",
     "section_h2_narrative": "💡 Today's Market Narrative",
     "section_h2_calendar": "🔮 What to Watch Next",
     "section_h2_action": "⚡ Action Points (Informational)",
+    "macro_note": "The 10-year Treasury yield (^TNX) is a core discount-rate variable for risk assets. A stronger DXY tends to slow foreign inflows.",
+    "asia_crypto_note": "After the US close, Asian markets (Nikkei/HangSeng/KOSPI/Shanghai) open next. Bitcoin and Ethereum trade 24/7, serving as a real-time risk-appetite barometer.",
     "summary_label": "Summary",
     "disclaimer_banner_html": (
         '<div class="reg-banner" style="background:#fff3cd;border:1px solid #ffc107;'
@@ -70,6 +78,61 @@ _EN = {
         "weekly_market": "Weekly Market",
     },
     "tags_extra": ["US Stocks", "S&P 500"],
+    # intraday body texts
+    "intraday_narrative": (
+        "US market just opened ~30 minutes ago. S&P 500 is {spy_pct} from open, "
+        "Nasdaq {qqq_pct}. VIX prints {vix_price} ({vix_pct}). "
+        "First-30-minute leaders: {leaders}. Laggards: {laggards}."
+    ),
+    "intraday_calendar": [
+        "Watch 10:00 EST data releases (KST 23:00) for surprises.",
+        "Confirm whether the gap holds through 11:00 EST.",
+        "Track VIX co-movement with index direction.",
+        "Monitor mega-cap names (NVDA/MSFT/AAPL/AMZN/GOOG/META/TSLA).",
+    ],
+    "intraday_action": [
+        "Do not size new positions based on the first 30 minutes alone.",
+        "Verify whether your held sectors are leaders or laggards today.",
+        "Cross-check VIX and index direction for normal correlation.",
+    ],
+    # wrap body texts
+    "wrap_narrative": (
+        "S&P 500 closed {spy_pct}, Nasdaq {qqq_pct}, with VIX at {vix_price} ({vix_pct}). "
+        "Sector leaders today: {leaders}. Laggards: {laggards}."
+    ),
+    "wrap_calendar": [
+        "Watch upcoming US economic releases (CPI/PPI/Retail Sales/PCE).",
+        "Monitor Fed officials' speeches and FOMC schedule.",
+        "Track 10-year Treasury yield and DXY direction.",
+        "VIX trend vs prior session close.",
+    ],
+    "wrap_action": [
+        "A single session is not a trend; check sector breadth.",
+        "Verify whether your held sectors are among today's leaders or laggards.",
+        "Compare VIX vs your portfolio volatility tolerance.",
+    ],
+    # weekly body texts
+    "weekly_intro": (
+        "This 5-day cumulative wrap covers {label}, smoothing intraday noise to highlight "
+        "directional bias and breadth. Reading three axes (indices, sectors, volatility) "
+        "together is more reliable than any single number."
+    ),
+    "weekly_narrative": (
+        "Across 5 trading days, S&P 500 cumulative return: {spy_pct}, Nasdaq: {qqq_pct}. "
+        "VIX moved from {vix_open} to {vix_close} ({vix_pct}). "
+        "Top sectors: {leaders}. Bottom: {laggards}."
+    ),
+    "weekly_calendar_fallback": [
+        "FOMC minutes and Fed officials' speeches",
+        "Major economic releases (CPI/PPI/Retail Sales/PCE)",
+        "Mega-cap earnings (NVDA/AAPL/MSFT/META/AMZN/GOOG/TSLA)",
+    ],
+    "weekly_action": [
+        "Compare your held sectors against the week's leaders and laggards.",
+        "Track whether the same sector leadership persists into next week.",
+        "Reassess position sizing if 5-day max drawdown widened materially.",
+        "A strong week does not guarantee the same pace next week.",
+    ],
 }
 
 
@@ -78,10 +141,14 @@ _JA = {
     "title_pattern_intraday": "{date} 米国市場の場中: 寄り付き30分 S&P 500 {spy_pct}、ナスダック {qqq_pct}",
     "title_pattern_weekly": "{label} 米国株 週間まとめ: S&P 500 {spy_pct}、ナスダック {qqq_pct}",
     "section_h2_index": "📊 主要指数スナップショット",
+    "section_h2_macro": "🌐 マクロ指標 — 米国債利回り・ドル",
     "section_h2_sector": "📈 セクターの強弱",
+    "section_h2_asia_crypto": "🌏 アジア市場・デジタル資産",
     "section_h2_narrative": "💡 本日のマーケット・ナラティブ",
     "section_h2_calendar": "🔮 翌営業日の注目ポイント",
     "section_h2_action": "⚡ Action Point(情報提供)",
+    "macro_note": "10年国債利回り(^TNX)はリスク資産の割引率を決める重要変数です。DXY上昇は海外資金流入の鈍化シグナルと解釈されます。",
+    "asia_crypto_note": "米国市場引け後、アジア市場(日経・香港H・KOSPI・上海)が次に開きます。ビットコイン/イーサリアムは24時間取引のリスク選好バロメーターです。",
     "summary_label": "要約",
     "disclaimer_banner_html": (
         '<div class="reg-banner" style="background:#fff3cd;border:1px solid #ffc107;'
@@ -103,6 +170,61 @@ _JA = {
         "weekly_market": "ウィークリー市況",
     },
     "tags_extra": ["米国株", "S&P 500"],
+    # intraday body texts
+    "intraday_narrative": (
+        "米国市場が開場してから約30分が経過しました。S&P 500は始値から{spy_pct}、"
+        "ナスダックは{qqq_pct}。VIXは{vix_price}（{vix_pct}）です。"
+        "寄り付き30分のリーダー：{leaders}。出遅れ：{laggards}。"
+    ),
+    "intraday_calendar": [
+        "米国東部時間10:00（KST 23:00）の経済指標発表を確認。",
+        "ギャップが11:00 ESTまで維持されるか確認。",
+        "VIXと指数の連動性を追う。",
+        "大型株（NVDA/MSFT/AAPL/AMZN/GOOG/META/TSLA）の動向を監視。",
+    ],
+    "intraday_action": [
+        "最初の30分だけで新規ポジションを取らない。",
+        "保有セクター・銘柄が今日のリーダー・出遅れのどちらにいるか確認する。",
+        "VIXと指数の逆相関が正常かクロスチェックする。",
+    ],
+    # wrap body texts
+    "wrap_narrative": (
+        "S&P 500は{spy_pct}で引け、ナスダックは{qqq_pct}、VIXは{vix_price}（{vix_pct}）でした。"
+        "本日のセクターリーダー：{leaders}。出遅れ：{laggards}。"
+    ),
+    "wrap_calendar": [
+        "米国の主要経済指標（CPI/PPI/小売売上/PCE）に注目。",
+        "FRB高官発言とFOMCスケジュールを確認。",
+        "10年国債利回りとDXYの方向性を追う。",
+        "前日終値比のVIXトレンドを確認。",
+    ],
+    "wrap_action": [
+        "1セッションはトレンドではない。セクター全体の強弱を確認する。",
+        "保有セクターが今日のリーダー・出遅れのどちらに入っているか確認する。",
+        "VIXとポートフォリオのボラティリティ許容度を比較する。",
+    ],
+    # weekly body texts
+    "weekly_intro": (
+        "この週間まとめは{label}をカバーし、日中ノイズを平滑化して"
+        "方向性とブレッドスを浮き彫りにします。"
+        "指数・セクター・ボラティリティの3軸を合わせて読むことが最も信頼できます。"
+    ),
+    "weekly_narrative": (
+        "5営業日の累計リターン：S&P 500 {spy_pct}、ナスダック {qqq_pct}。"
+        "VIXは{vix_open}から{vix_close}へ（{vix_pct}）。"
+        "トップセクター：{leaders}。最下位：{laggards}。"
+    ),
+    "weekly_calendar_fallback": [
+        "FOMC議事録とFRB高官発言",
+        "主要経済指標（CPI/PPI/小売売上/PCE）",
+        "大型株決算（NVDA/AAPL/MSFT/META/AMZN/GOOG/TSLA）",
+    ],
+    "weekly_action": [
+        "保有セクターを今週のリーダー・出遅れと比較する。",
+        "同じセクターリーダーシップが来週も続くか追う。",
+        "5日間の最大下落幅が広がった場合はポジションサイズを見直す。",
+        "強い週が来週も同じペースを保証するわけではない。",
+    ],
 }
 
 
@@ -111,10 +233,14 @@ _VI = {
     "title_pattern_intraday": "{date} Thị trường Mỹ trong phiên: 30 phút đầu S&P 500 {spy_pct}, Nasdaq {qqq_pct}",
     "title_pattern_weekly": "{label} Tổng kết tuần thị trường Mỹ: S&P 500 {spy_pct}, Nasdaq {qqq_pct}",
     "section_h2_index": "📊 Tổng quan chỉ số",
+    "section_h2_macro": "🌐 Chỉ báo vĩ mô — Lợi suất TPCP & USD",
     "section_h2_sector": "📈 Sức mạnh từng nhóm ngành",
+    "section_h2_asia_crypto": "🌏 Bàn giao châu Á & Tài sản số",
     "section_h2_narrative": "💡 Câu chuyện thị trường hôm nay",
     "section_h2_calendar": "🔮 Điều cần theo dõi tiếp theo",
     "section_h2_action": "⚡ Hành động tham khảo (Thông tin)",
+    "macro_note": "Lợi suất Trái phiếu Mỹ 10 năm (^TNX) là biến số chiết khấu chính cho tài sản rủi ro. DXY mạnh lên thường làm chậm dòng tiền nước ngoài.",
+    "asia_crypto_note": "Sau khi thị trường Mỹ đóng cửa, các thị trường châu Á (Nikkei/HangSeng/KOSPI/Shanghai) mở tiếp theo. Bitcoin và Ethereum giao dịch 24/7 như phong vũ biểu khẩu vị rủi ro thời gian thực.",
     "summary_label": "Tóm tắt",
     "disclaimer_banner_html": (
         '<div class="reg-banner" style="background:#fff3cd;border:1px solid #ffc107;'
@@ -136,6 +262,61 @@ _VI = {
         "weekly_market": "Thị trường hằng tuần",
     },
     "tags_extra": ["Cổ phiếu Mỹ", "S&P 500"],
+    # intraday body texts
+    "intraday_narrative": (
+        "Thị trường Mỹ vừa mở cửa khoảng 30 phút. S&P 500 {spy_pct} so với giá mở, "
+        "Nasdaq {qqq_pct}. VIX ở mức {vix_price} ({vix_pct}). "
+        "Dẫn đầu 30 phút đầu: {leaders}. Yếu nhất: {laggards}."
+    ),
+    "intraday_calendar": [
+        "Theo dõi dữ liệu kinh tế 10:00 EST (KST 23:00) có bất ngờ không.",
+        "Xác nhận gap có duy trì đến 11:00 EST không.",
+        "Theo dõi sự đồng pha giữa VIX và hướng chỉ số.",
+        "Quan sát biến động cổ phiếu vốn hóa lớn (NVDA/MSFT/AAPL/AMZN/GOOG/META/TSLA).",
+    ],
+    "intraday_action": [
+        "Không mở vị thế mới chỉ dựa trên 30 phút đầu.",
+        "Kiểm tra xem ngành bạn đang nắm giữ thuộc nhóm dẫn đầu hay yếu nhất hôm nay.",
+        "Kiểm tra tương quan ngược giữa VIX và chỉ số có bình thường không.",
+    ],
+    # wrap body texts
+    "wrap_narrative": (
+        "S&P 500 đóng cửa {spy_pct}, Nasdaq {qqq_pct}, VIX ở mức {vix_price} ({vix_pct}). "
+        "Ngành dẫn đầu hôm nay: {leaders}. Yếu nhất: {laggards}."
+    ),
+    "wrap_calendar": [
+        "Theo dõi các số liệu kinh tế Mỹ sắp công bố (CPI/PPI/Doanh thu bán lẻ/PCE).",
+        "Theo dõi phát biểu của quan chức Fed và lịch FOMC.",
+        "Theo dõi lợi suất trái phiếu 10 năm và hướng DXY.",
+        "Xu hướng VIX so với phiên trước.",
+    ],
+    "wrap_action": [
+        "Một phiên không phải xu hướng; kiểm tra độ rộng toàn ngành.",
+        "Xác nhận ngành bạn đang nắm thuộc nhóm dẫn đầu hay yếu nhất hôm nay.",
+        "So sánh VIX với mức chịu đựng biến động của danh mục.",
+    ],
+    # weekly body texts
+    "weekly_intro": (
+        "Tổng kết tuần này bao gồm {label}, làm mịn nhiễu trong ngày để làm nổi bật "
+        "xu hướng và độ rộng thị trường. Đọc ba trục (chỉ số, ngành, biến động) "
+        "cùng nhau đáng tin cậy hơn bất kỳ con số đơn lẻ nào."
+    ),
+    "weekly_narrative": (
+        "Trong 5 ngày giao dịch, S&P 500 tích lũy {spy_pct}, Nasdaq {qqq_pct}. "
+        "VIX di chuyển từ {vix_open} đến {vix_close} ({vix_pct}). "
+        "Ngành đứng đầu: {leaders}. Cuối bảng: {laggards}."
+    ),
+    "weekly_calendar_fallback": [
+        "Biên bản FOMC và phát biểu quan chức Fed",
+        "Số liệu kinh tế lớn (CPI/PPI/Doanh thu bán lẻ/PCE)",
+        "Kết quả kinh doanh vốn hóa lớn (NVDA/AAPL/MSFT/META/AMZN/GOOG/TSLA)",
+    ],
+    "weekly_action": [
+        "So sánh ngành đang nắm với nhóm dẫn đầu và yếu nhất trong tuần.",
+        "Theo dõi liệu cùng nhóm ngành dẫn đầu có tiếp tục sang tuần tới không.",
+        "Xem xét lại kích thước vị thế nếu biên độ giảm tối đa 5 ngày mở rộng đáng kể.",
+        "Một tuần tăng mạnh không đảm bảo cùng tốc độ tuần tới.",
+    ],
 }
 
 
@@ -144,10 +325,14 @@ _ID = {
     "title_pattern_intraday": "{date} Pasar AS dalam sesi: 30 menit pertama S&P 500 {spy_pct}, Nasdaq {qqq_pct}",
     "title_pattern_weekly": "{label} Rangkuman Mingguan Pasar AS: S&P 500 {spy_pct}, Nasdaq {qqq_pct}",
     "section_h2_index": "📊 Ringkasan Indeks Utama",
+    "section_h2_macro": "🌐 Indikator Makro — Imbal Hasil Treasury & USD",
     "section_h2_sector": "📈 Kekuatan & Kelemahan Sektor",
+    "section_h2_asia_crypto": "🌏 Sambungan Pasar Asia & Aset Digital",
     "section_h2_narrative": "💡 Narasi Pasar Hari Ini",
     "section_h2_calendar": "🔮 Yang Perlu Dipantau Berikutnya",
     "section_h2_action": "⚡ Action Point (Informasi)",
+    "macro_note": "Imbal hasil Treasury AS 10 tahun (^TNX) adalah variabel diskon utama untuk aset berisiko. DXY yang menguat cenderung memperlambat aliran dana asing.",
+    "asia_crypto_note": "Setelah pasar AS tutup, pasar Asia (Nikkei/HangSeng/KOSPI/Shanghai) buka berikutnya. Bitcoin dan Ethereum diperdagangkan 24/7 sebagai barometer selera risiko real-time.",
     "summary_label": "Ringkasan",
     "disclaimer_banner_html": (
         '<div class="reg-banner" style="background:#fff3cd;border:1px solid #ffc107;'
@@ -169,6 +354,61 @@ _ID = {
         "weekly_market": "Pasar Mingguan",
     },
     "tags_extra": ["Saham AS", "S&P 500"],
+    # intraday body texts
+    "intraday_narrative": (
+        "Pasar AS baru saja dibuka ~30 menit lalu. S&P 500 {spy_pct} dari pembukaan, "
+        "Nasdaq {qqq_pct}. VIX di {vix_price} ({vix_pct}). "
+        "Pemimpin 30 menit pertama: {leaders}. Tertinggal: {laggards}."
+    ),
+    "intraday_calendar": [
+        "Pantau rilis data pukul 10:00 EST (KST 23:00) untuk kejutan.",
+        "Konfirmasi apakah gap bertahan hingga 11:00 EST.",
+        "Pantau pergerakan VIX bersamaan dengan arah indeks.",
+        "Monitor saham mega-cap (NVDA/MSFT/AAPL/AMZN/GOOG/META/TSLA).",
+    ],
+    "intraday_action": [
+        "Jangan buka posisi baru hanya berdasarkan 30 menit pertama.",
+        "Verifikasi apakah sektor yang dipegang termasuk pemimpin atau tertinggal hari ini.",
+        "Periksa korelasi negatif normal antara VIX dan arah indeks.",
+    ],
+    # wrap body texts
+    "wrap_narrative": (
+        "S&P 500 ditutup {spy_pct}, Nasdaq {qqq_pct}, VIX di {vix_price} ({vix_pct}). "
+        "Sektor pemimpin hari ini: {leaders}. Tertinggal: {laggards}."
+    ),
+    "wrap_calendar": [
+        "Pantau rilis ekonomi AS mendatang (CPI/PPI/Penjualan Ritel/PCE).",
+        "Monitor pidato pejabat Fed dan jadwal FOMC.",
+        "Pantau imbal hasil Treasury 10 tahun dan arah DXY.",
+        "Tren VIX dibanding penutupan sesi sebelumnya.",
+    ],
+    "wrap_action": [
+        "Satu sesi bukan tren; periksa luasnya sektor.",
+        "Verifikasi apakah sektor yang dipegang termasuk pemimpin atau tertinggal hari ini.",
+        "Bandingkan VIX dengan toleransi volatilitas portofolio Anda.",
+    ],
+    # weekly body texts
+    "weekly_intro": (
+        "Rangkuman mingguan ini mencakup {label}, memperhalus noise harian untuk "
+        "menyoroti bias arah dan luasnya pasar. Membaca tiga sumbu (indeks, sektor, "
+        "volatilitas) bersama lebih andal daripada satu angka saja."
+    ),
+    "weekly_narrative": (
+        "Selama 5 hari perdagangan, return kumulatif S&P 500: {spy_pct}, Nasdaq: {qqq_pct}. "
+        "VIX bergerak dari {vix_open} ke {vix_close} ({vix_pct}). "
+        "Sektor teratas: {leaders}. Terbawah: {laggards}."
+    ),
+    "weekly_calendar_fallback": [
+        "Risalah FOMC dan pidato pejabat Fed",
+        "Rilis ekonomi besar (CPI/PPI/Penjualan Ritel/PCE)",
+        "Earnings mega-cap (NVDA/AAPL/MSFT/META/AMZN/GOOG/TSLA)",
+    ],
+    "weekly_action": [
+        "Bandingkan sektor yang dipegang dengan pemimpin dan tertinggal minggu ini.",
+        "Pantau apakah kepemimpinan sektor yang sama berlanjut ke minggu depan.",
+        "Tinjau kembali ukuran posisi jika max drawdown 5 hari melebar signifikan.",
+        "Minggu yang kuat tidak menjamin kecepatan yang sama minggu depan.",
+    ],
 }
 
 
