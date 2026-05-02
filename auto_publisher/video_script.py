@@ -23,6 +23,7 @@ _VIDEO_THINK_MODE = os.getenv("OLLAMA_THINK_MODE", "script").strip().lower()
 
 # --- 스크립트 캐시 설정 ---
 CACHE_DIR = Path(os.getenv("WORKSPACE", "/home/mh/ocstorage/workspace/nichproject")) / ".omc" / "script_cache"
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def _cache_key(slug: str, lang: str, kind: str) -> Path:
@@ -31,30 +32,59 @@ def _cache_key(slug: str, lang: str, kind: str) -> Path:
 
 # --- Video LLM 백엔드 설정 ---
 LLM_VIDEO_BACKEND = os.getenv("LLM_VIDEO_BACKEND", "openrouter").strip().lower()
-VIDEO_LLM_MODEL = os.getenv("VIDEO_LLM_MODEL", "google/gemini-2.0-flash-exp:free")
+VIDEO_LLM_MODEL = os.getenv("VIDEO_LLM_MODEL", "meta-llama/llama-3.3-70b-instruct:free")
 VIDEO_LLM_TIMEOUT_SEC = int(os.getenv("VIDEO_LLM_TIMEOUT_SEC", "60"))
 _OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 
+# 환경변수 VIDEO_LLM_MODELS_FALLBACK (콤마 구분) 또는 하드코딩 기본 리스트
+def _build_fallback_models() -> list[str]:
+    env_fallback = os.getenv("VIDEO_LLM_MODELS_FALLBACK", "").strip()
+    if env_fallback:
+        return [m.strip() for m in env_fallback.split(",") if m.strip()]
+    return [
+        os.getenv("VIDEO_LLM_MODEL", "meta-llama/llama-3.3-70b-instruct:free"),
+        "qwen/qwen3-next-80b-a3b-instruct:free",
+        "nousresearch/hermes-3-llama-3.1-405b:free",
+        "meta-llama/llama-3.2-3b-instruct:free",
+    ]
+
+FALLBACK_MODELS = _build_fallback_models()
+
 
 def _call_openrouter(prompt: str) -> str:
-    """OpenRouter HTTP API 직접 호출 (Gemini CLI 대체)."""
+    """OpenRouter HTTP API 직접 호출 — 429/5xx 시 다음 무료 모델로 순차 폴백."""
     if not _OPENROUTER_API_KEY:
         raise RuntimeError("OPENROUTER_API_KEY 미설정")
-    body = json.dumps({
-        "model": VIDEO_LLM_MODEL,
-        "messages": [{"role": "user", "content": prompt}],
-    }).encode()
-    req = urllib.request.Request(
-        "https://openrouter.ai/api/v1/chat/completions",
-        data=body,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {_OPENROUTER_API_KEY}",
-        },
-    )
-    with urllib.request.urlopen(req, timeout=VIDEO_LLM_TIMEOUT_SEC) as resp:
-        data = json.loads(resp.read())
-    return data["choices"][0]["message"]["content"]
+    last_exc: Exception | None = None
+    for model in FALLBACK_MODELS:
+        body = json.dumps({
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+        }).encode()
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=body,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {_OPENROUTER_API_KEY}",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=VIDEO_LLM_TIMEOUT_SEC) as resp:
+                data = json.loads(resp.read())
+            logger.info("[openrouter] 모델 성공: %s", model)
+            return data["choices"][0]["message"]["content"]
+        except urllib.error.HTTPError as exc:
+            if exc.code in (429, 500, 502, 503, 504):
+                logger.warning("[openrouter] 모델 %s HTTP %d, 다음 모델 시도", model, exc.code)
+                last_exc = exc
+                continue
+            raise
+        except Exception as exc:
+            logger.warning("[openrouter] 모델 %s 오류: %s, 다음 모델 시도", model, exc)
+            last_exc = exc
+            continue
+    raise RuntimeError(f"OpenRouter 모든 모델 실패: {last_exc}") from last_exc
 
 
 def _strip_html(html: str) -> str:
