@@ -13,6 +13,9 @@ keywords:
 reviewed: false
 reviewedBy: "편집자 미검토 — AI 자동 발행"
 analysis_confidence: "medium"
+ai_generated: true
+ai_models: ["claude-sonnet-4.6"]
+data_source: "yfinance"
 ---
 
 ## AI 생성 범위

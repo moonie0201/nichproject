@@ -2,8 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://investiqs.net/en/weekly/weekly-2026nyeon-5wol-1jucha-4wol-27il-1il-us-market-weekly-wrap-s-p-500-1-05-nasdaq-1-62/</loc>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url><url>
     <loc>https://investiqs.net/en/categories/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link
@@ -32,43 +37,8 @@
                 href="https://investiqs.net/en/categories/"
                 />
   </url><url>
-    <loc>https://investiqs.net/en/categories/daily-market/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url><url>
-    <loc>https://investiqs.net/en/daily/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="ko"
-                href="https://investiqs.net/ko/daily/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja"
-                href="https://investiqs.net/ja/daily/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="vi"
-                href="https://investiqs.net/vi/daily/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="id"
-                href="https://investiqs.net/id/daily/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://investiqs.net/en/daily/"
-                />
-  </url><url>
     <loc>https://investiqs.net/en/tags/dia/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link
@@ -98,7 +68,7 @@
                 />
   </url><url>
     <loc>https://investiqs.net/en/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link
@@ -128,7 +98,7 @@
                 />
   </url><url>
     <loc>https://investiqs.net/en/tags/iwm/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link
@@ -158,17 +128,12 @@
                 />
   </url><url>
     <loc>https://investiqs.net/en/categories/market-analysis/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url><url>
-    <loc>https://investiqs.net/en/daily/may-1-2026-us-market-close-s-p-500-718-66-0-99-nasdaq-0-93/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url><url>
     <loc>https://investiqs.net/en/tags/qqq/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link
@@ -198,7 +163,7 @@
                 />
   </url><url>
     <loc>https://investiqs.net/en/tags/sp-500/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link
@@ -223,7 +188,7 @@
                 />
   </url><url>
     <loc>https://investiqs.net/en/tags/spy/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link
@@ -253,7 +218,7 @@
                 />
   </url><url>
     <loc>https://investiqs.net/en/tags/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link
@@ -283,17 +248,17 @@
                 />
   </url><url>
     <loc>https://investiqs.net/en/categories/us-market/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url><url>
     <loc>https://investiqs.net/en/tags/us-stocks/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url><url>
     <loc>https://investiqs.net/en/tags/vix/</loc>
-    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link
@@ -321,6 +286,86 @@
                 hreflang="en"
                 href="https://investiqs.net/en/tags/vix/"
                 />
+  </url><url>
+    <loc>https://investiqs.net/en/weekly/</loc>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="ko"
+                href="https://investiqs.net/ko/weekly/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="ja"
+                href="https://investiqs.net/ja/weekly/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="vi"
+                href="https://investiqs.net/vi/weekly/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="id"
+                href="https://investiqs.net/id/weekly/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://investiqs.net/en/weekly/"
+                />
+  </url><url>
+    <loc>https://investiqs.net/en/categories/weekly-market/</loc>
+    <lastmod>2026-05-02T09:30:02+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url><url>
+    <loc>https://investiqs.net/en/categories/daily-market/</loc>
+    <lastmod>2026-05-02T07:30:02+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url><url>
+    <loc>https://investiqs.net/en/daily/</loc>
+    <lastmod>2026-05-02T07:30:02+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="ko"
+                href="https://investiqs.net/ko/daily/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="ja"
+                href="https://investiqs.net/ja/daily/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="vi"
+                href="https://investiqs.net/vi/daily/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="id"
+                href="https://investiqs.net/id/daily/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://investiqs.net/en/daily/"
+                />
+  </url><url>
+    <loc>https://investiqs.net/en/daily/may-2-2026-us-market-close-s-p-500-720-65-0-28-nasdaq-0-96/</loc>
+    <lastmod>2026-05-02T07:30:02+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url><url>
+    <loc>https://investiqs.net/en/daily/may-1-2026-us-market-close-s-p-500-718-66-0-99-nasdaq-0-93/</loc>
+    <lastmod>2026-05-01T07:30:08+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url><url>
     <loc>https://investiqs.net/en/daily/april-30-2026-us-market-close-s-p-500-711-58-0-02-nasdaq-0-61/</loc>
     <lastmod>2026-04-30T07:30:02+09:00</lastmod>

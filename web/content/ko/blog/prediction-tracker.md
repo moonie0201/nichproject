@@ -14,6 +14,8 @@ keywords:
 reviewed: false
 reviewedBy: "편집자 미검토 — AI 자동 발행"
 analysis_confidence: "medium"
+ai_models: ["claude-sonnet-4.6"]
+data_source: "yfinance"
 ---
 
 <div id="tracker-summary" style="background:#f0f4ff;border-radius:8px;padding:1.2em 1.5em;margin-bottom:1.5em;">

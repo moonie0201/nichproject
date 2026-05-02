@@ -18,6 +18,9 @@ keywords:
 primary_keyword: "VOO"
 schema: "Article"
 toc: true
+ai_generated: true
+ai_models: ["claude-sonnet-4.6"]
+data_source: "yfinance"
 comments: true
 cover:
     image: "/images/voo-5년-수익률과-밸류에이션으로-본-흐름/price-history.png"

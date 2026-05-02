@@ -17,6 +17,9 @@ keywords:
 primary_keyword: "VOO"
 schema: "HowTo"
 toc: true
+ai_generated: true
+ai_models: ["claude-sonnet-4.6"]
+data_source: "yfinance"
 comments: true
 cover:
     image: "/images/sp500-etf-비교-리포트-voo-vs-tiger-미국sp500-운용보수추적오차/etf-comparison.png"

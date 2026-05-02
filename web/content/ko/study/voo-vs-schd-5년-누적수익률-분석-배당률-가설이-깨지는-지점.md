@@ -18,6 +18,9 @@ keywords:
 primary_keyword: "VOO"
 schema: "HowTo"
 toc: true
+ai_generated: true
+ai_models: ["claude-sonnet-4.6"]
+data_source: "yfinance"
 comments: true
 cover:
     image: "/images/voo-vs-schd-5년-누적수익률-분석-배당률-가설이-깨지는-지점/etf-comparison.png"
