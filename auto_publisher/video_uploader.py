@@ -204,7 +204,7 @@ def tiktok_auth_setup(code: str | None = None):
     if not client_key or not client_secret:
         raise RuntimeError("TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET 환경변수를 먼저 설정하세요.")
 
-    redirect_uri = "https://investiqs.net/tiktok-callback/"
+    redirect_uri = "https://callback.investiqs.net/tiktok-callback"
 
     if not code:
         auth_url = (
@@ -220,7 +220,7 @@ def tiktok_auth_setup(code: str | None = None):
         print(f"   tiktok_auth_setup(code='복사한_코드')로 다시 실행하세요.\n")
         return None
 
-    payload = json.dumps({
+    payload = urllib.parse.urlencode({
         "client_key": client_key,
         "client_secret": client_secret,
         "code": code,
@@ -230,11 +230,21 @@ def tiktok_auth_setup(code: str | None = None):
     req = urllib.request.Request(
         "https://open.tiktokapis.com/v2/oauth/token/",
         data=payload,
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Cache-Control": "no-cache",
+        },
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        data = json.loads(resp.read().decode())
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read().decode())
+    except urllib.error.HTTPError as e:
+        body = e.read().decode(errors="replace")
+        raise RuntimeError(f"TikTok token exchange failed: {e.code} {body}") from e
+
+    if "access_token" not in data:
+        raise RuntimeError(f"TikTok token response missing access_token: {data}")
 
     token = {
         "access_token": data["access_token"],

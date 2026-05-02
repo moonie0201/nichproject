@@ -951,6 +951,34 @@ class BridgeHandler(BaseHTTPRequestHandler):
         if path in STUB_ROUTES:
             self._respond(200, stub_response(path))
             return
+        if path == "/tiktok-callback":
+            try:
+                from urllib.parse import urlparse, parse_qs
+                qs = parse_qs(urlparse(self.path).query)
+                code = (qs.get("code") or [""])[0]
+                err = (qs.get("error") or [""])[0]
+                if err:
+                    self._respond(400, {"success": False, "error": err, "description": (qs.get("error_description") or [""])[0]})
+                    return
+                if not code:
+                    self._respond(400, {"success": False, "error": "missing code parameter"})
+                    return
+                from auto_publisher.video_uploader import tiktok_auth_setup
+                tiktok_auth_setup(code=code)
+                html = (
+                    "<!DOCTYPE html><html><head><meta charset='utf-8'><title>TikTok 인증 완료</title>"
+                    "<style>body{font-family:system-ui,sans-serif;background:#0f172a;color:#fff;padding:60px;text-align:center}h1{color:#22c55e}</style></head>"
+                    "<body><h1>✅ TikTok 토큰 발급 완료</h1><p>이 창을 닫아도 됩니다.</p></body></html>"
+                )
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(html.encode("utf-8"))
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                self._respond(500, {"success": False, "error": str(e)})
+            return
         if path == "/instagram/auth-test":
             try:
                 import urllib.request as _ureq
