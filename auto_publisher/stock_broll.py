@@ -18,6 +18,7 @@ from __future__ import annotations
 import logging
 import os
 import random
+import time
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -83,7 +84,35 @@ def _select_from_pool(category: str) -> Path | None:
     files = sorted(cdir.glob("*.mp4"))
     if not files:
         return None
-    return random.choice(files)
+    pick = random.choice(files)
+    # LRU 보호: 사용한 파일의 atime/mtime 갱신
+    now = time.time()
+    try:
+        os.utime(pick, (now, now))
+    except OSError:
+        pass
+    return pick
+
+
+def _evict_oldest_if_over_limit(cdir: Path) -> None:
+    """카테고리 디렉토리 mp4 개수가 STOCK_BROLL_MAX_PER_CATEGORY 초과 시
+    가장 오래 안 쓴 파일부터 삭제. 0/음수면 무제한 (no-op)."""
+    try:
+        max_per = int(os.getenv("STOCK_BROLL_MAX_PER_CATEGORY", "10"))
+    except ValueError:
+        max_per = 10
+    if max_per <= 0:
+        return
+    files = list(cdir.glob("*.mp4"))
+    if len(files) <= max_per:
+        return
+    files.sort(key=lambda p: p.stat().st_atime)
+    for old in files[: len(files) - max_per]:
+        try:
+            old.unlink()
+            logger.info(f"LRU evict: {old.name} (cat={cdir.name})")
+        except OSError as e:
+            logger.warning(f"LRU evict 실패 {old}: {e}")
 
 
 def _pick_best_file(video: dict, target_w: int = 1080, target_h: int = 960) -> str | None:
@@ -149,6 +178,7 @@ def _download_via_pexels(category: str, duration_sec: float) -> Path | None:
     out = cdir / f"pexels-{pid}.mp4"
     out.write_bytes(dl.content)
     logger.info(f"Pexels B-roll 캐시 저장: {out} ({len(dl.content)//1024} KB)")
+    _evict_oldest_if_over_limit(cdir)
     return out
 
 
@@ -204,6 +234,7 @@ def _download_via_pixabay(category: str, duration_sec: float) -> Path | None:
     out = cdir / f"pixabay-{pid}.mp4"
     out.write_bytes(dl.content)
     logger.info(f"Pixabay B-roll 캐시 저장: {out} ({len(dl.content)//1024} KB)")
+    _evict_oldest_if_over_limit(cdir)
     return out
 
 
