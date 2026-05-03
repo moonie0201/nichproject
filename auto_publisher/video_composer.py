@@ -483,6 +483,16 @@ def compose_video(
                                    video_duration, audio_duration_sec, is_shorts=is_shorts):
             return None
 
+        if is_shorts and os.getenv("SHORTS_SPLIT_SCREEN", "false").lower() in ("true", "1", "yes"):
+            category = os.getenv("SHORTS_CATEGORY", "default")
+            tmp_split = out_path.with_name(out_path.stem + ".split.mp4")
+            if apply_split_screen_broll(out_path, category, tmp_split):
+                shutil.move(str(tmp_split), str(out_path))
+                logger.info(f"split-screen 적용 완료 (category={category}): {out_path}")
+            else:
+                tmp_split.unlink(missing_ok=True)
+                logger.warning("split-screen 적용 실패 — 원본 영상 유지")
+
         logger.info(f"영상 합성 완료: {out_path}")
         return out_path
     finally:
