@@ -489,6 +489,104 @@ def compose_video(
         shutil.rmtree(work_dir, ignore_errors=True)
 
 
+# ─────────────────────────────────────────────────────────────────
+# Split-screen Shorts: 위 절반 차트 + 아래 절반 Pixelle B-roll
+# ─────────────────────────────────────────────────────────────────
+
+def apply_split_screen_broll(
+    input_mp4: Path, category: str, output_mp4: Path,
+) -> bool:
+    """1080x1920 input 의 위 960px 만 보존 + 아래 960px Pixelle B-roll 합성.
+
+    Pixelle 비활성/실패 시 fallback placeholder (정적 그라디언트 + 라벨) 사용.
+    PIXELLE_ENABLED=false 면 input 그대로 복사 (no-op pass-through).
+
+    Returns:
+        True: split-screen 합성 성공
+        False: ffmpeg 실패 (호출자 fallback)
+    """
+    import shutil as _sh
+    if os.getenv("SHORTS_SPLIT_SCREEN", "false").lower() not in ("true", "1", "yes"):
+        # 기능 비활성: input 그대로 복사
+        _sh.copy(input_mp4, output_mp4)
+        return True
+
+    from auto_publisher.pixelle_client import get_broll
+
+    # 입력 길이 측정 (B-roll 길이 매칭용)
+    probe = subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+         "-of", "default=noprint_wrappers=1:nokey=1", str(input_mp4)],
+        capture_output=True, text=True, timeout=10,
+    )
+    duration = float(probe.stdout.strip()) if probe.stdout.strip() else 60.0
+
+    broll = get_broll(category=category, duration_sec=duration)
+
+    work = output_mp4.parent / f"_splitscreen_{output_mp4.stem}"
+    work.mkdir(parents=True, exist_ok=True)
+    top_mp4 = work / "top.mp4"
+    bottom_mp4 = work / "bottom.mp4"
+
+    try:
+        # Top: input 위 960px crop
+        top_args = build_ffmpeg_args(
+            "short_form",
+            ["-i", str(input_mp4), "-vf", "crop=1080:960:0:0", "-an"],
+            top_mp4,
+        ) if False else [  # build_ffmpeg_args 는 audio 처리도 해서 -an 직접 안 먹음
+            "-i", str(input_mp4),
+            "-vf", "crop=1080:960:0:0",
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+            "-an", str(top_mp4),
+        ]
+        if not _ffmpeg_run(top_args, "split_top_crop"):
+            return False
+
+        # Bottom: B-roll 또는 placeholder
+        if broll is not None and broll.exists():
+            # B-roll 을 1080x960 으로 scale + 길이 매칭
+            bot_args = [
+                "-stream_loop", "-1", "-i", str(broll),
+                "-t", f"{duration:.2f}",
+                "-vf", "scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+                "-an", str(bottom_mp4),
+            ]
+        else:
+            # Placeholder: 그라디언트 + 라벨
+            font = _resolve_font_file()
+            font_arg = f":fontfile='{font}'" if font else ""
+            bot_args = [
+                "-f", "lavfi",
+                "-i", f"color=c=0x1e3a5f:size=1080x960:duration={duration:.2f}:rate=30",
+                "-vf",
+                f"format=yuv420p,drawbox=x=0:y=0:w=iw:h=ih:color=0x38bdf8@0.15:t=fill,"
+                f"drawtext=text='InvestIQs'{font_arg}:fontsize=64:fontcolor=white:"
+                f"x=(w-text_w)/2:y=(h-text_h)/2",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "22",
+                "-an", str(bottom_mp4),
+            ]
+        if not _ffmpeg_run(bot_args, "split_bottom_broll"):
+            return False
+
+        # vstack + 원본 audio 보존
+        stack_args = [
+            "-i", str(top_mp4), "-i", str(bottom_mp4), "-i", str(input_mp4),
+            "-filter_complex", "[0:v][1:v]vstack=inputs=2[vout]",
+            "-map", "[vout]", "-map", "2:a?",
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+            "-c:a", "copy", "-shortest",
+            str(output_mp4),
+        ]
+        if not _ffmpeg_run(stack_args, "split_vstack"):
+            return False
+
+        return True
+    finally:
+        _sh.rmtree(work, ignore_errors=True)
+
+
 if __name__ == "__main__":
     import sys
     logging.basicConfig(level=logging.INFO)
