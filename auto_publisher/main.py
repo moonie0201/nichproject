@@ -724,6 +724,37 @@ def cmd_translate(args):
     do_translate_publish(source_lang=args.source_lang, target_lang=args.target_lang)
 
 
+def cmd_prefill_broll(args):
+    """카테고리별 stock B-roll 풀 미리 채우기 — 첫 합성도 캐시 hit 보장."""
+    import os
+    from auto_publisher.stock_broll import (
+        _CATEGORY_QUERIES, _cache_dir, _download_via_pexels, _download_via_pixabay,
+    )
+    has_pexels = bool(os.getenv("PEXELS_API_KEY", "").strip())
+    has_pixabay = bool(os.getenv("PIXABAY_API_KEY", "").strip())
+    if not has_pexels and not has_pixabay:
+        print("ERROR: PEXELS_API_KEY 또는 PIXABAY_API_KEY 가 .env 에 필요합니다.")
+        return
+    cats = list(_CATEGORY_QUERIES.keys()) if args.category == "all" else [args.category]
+    n = args.per_category
+    for cat in cats:
+        cdir = _cache_dir() / cat
+        cdir.mkdir(parents=True, exist_ok=True)
+        existing = len(list(cdir.glob("*.mp4")))
+        needed = max(0, n - existing)
+        if needed == 0:
+            print(f"[{cat}] {existing}개 보유 → skip")
+            continue
+        print(f"[{cat}] {existing}개 보유, {needed}개 다운로드 중...")
+        for i in range(needed):
+            result = None
+            if has_pexels:
+                result = _download_via_pexels(cat, 60.0)
+            if result is None and has_pixabay:
+                result = _download_via_pixabay(cat, 60.0)
+            print(f"  [{i+1}/{needed}] {'OK ' + result.name if result else 'FAIL'}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Auto Publisher Bot — 한국 투자 니치 콘텐츠 자동 발행",
@@ -759,6 +790,13 @@ def main():
     p_video.add_argument("--no-upload", action="store_true", help="로컬 mp4만 생성, YouTube 업로드 스킵")
     p_video.add_argument("--privacy", default="public", choices=["public", "unlisted", "private"])
 
+    p_pre = subparsers.add_parser("prefill-broll",
+                                  help="stock B-roll 캐시 풀 미리 채우기 (첫 합성도 캐시 hit)")
+    p_pre.add_argument("--category", default="all",
+                       help="카테고리 ('all' = 전체 8개, 또는 'etf-analysis' 등 특정)")
+    p_pre.add_argument("--per-category", type=int, default=3,
+                       help="카테고리당 보유 목표 개수 (default 3)")
+
     args = parser.parse_args()
 
     commands = {
@@ -771,6 +809,7 @@ def main():
         "analyze": cmd_analyze,
         "translate": cmd_translate,
         "make-video": cmd_make_video,
+        "prefill-broll": cmd_prefill_broll,
     }
 
     if args.command in commands:

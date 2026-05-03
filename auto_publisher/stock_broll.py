@@ -29,15 +29,17 @@ PIXABAY_SEARCH_URL = "https://pixabay.com/api/videos/"
 
 
 # 카테고리 → Pexels 검색 키워드 매핑
+# 정책: 데이터/차트/추상 키워드 중심으로 사람 얼굴 클로즈업 빈도 ↓
+# (Pexels API 는 negative keyword 미지원이라 검색어 자체를 추상화)
 _CATEGORY_QUERIES = {
-    "etf-analysis": "stock market chart finance",
-    "market-wrap": "stock market trading floor",
-    "intraday": "stock ticker financial data",
-    "weekly": "business meeting analytics",
-    "crypto": "bitcoin cryptocurrency blockchain",
-    "tax": "money calculator office",
-    "dividend": "money cash flow business",
-    "default": "finance business money",
+    "etf-analysis": "stock chart graph data finance",
+    "market-wrap": "stock market screen ticker display",
+    "intraday": "stock ticker chart financial data",
+    "weekly": "business analytics dashboard data",
+    "crypto": "bitcoin cryptocurrency blockchain digital",
+    "tax": "money calculator finance numbers",
+    "dividend": "money cash flow finance graph",
+    "default": "finance business chart data",
 }
 
 
@@ -161,8 +163,8 @@ def _download_via_pexels(category: str, duration_sec: float) -> Path | None:
         logger.warning(f"Pexels 검색 결과 없음 ({query})")
         return None
 
-    # 첫 번째 비디오의 best file
-    pick = videos[0]
+    # 검색 결과 중 random 선택 (다양성 확보, 같은 영상 반복 방지)
+    pick = random.choice(videos)
     url = _pick_best_file(pick)
     if not url:
         return None
@@ -211,8 +213,8 @@ def _download_via_pixabay(category: str, duration_sec: float) -> Path | None:
         logger.warning(f"Pixabay 검색 결과 없음 ({query})")
         return None
 
-    # videos.large > medium > small > tiny 우선순위
-    pick = hits[0]
+    # 검색 결과 중 random 선택 (다양성 확보)
+    pick = random.choice(hits)
     videos = pick.get("videos", {})
     url = None
     for size_key in ("large", "medium", "small", "tiny"):
