@@ -22,7 +22,7 @@ theme = 'PaperMod'
   ai_content_policy = "https://investiqs.net/ko/about/editorial-process/"
   enableRobotsTXT = true
   canonifyURLs = true
-  mainSections = ["blog"]
+  mainSections = ["daily", "weekly", "study", "blog"]
 
   # 커버 이미지 없는 페이지의 기본 og:image
   images = ["/images/og-default.png"]
