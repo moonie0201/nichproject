@@ -45,6 +45,29 @@ def category_to_query(category: str) -> str:
     return _CATEGORY_QUERIES.get(category, _CATEGORY_QUERIES["default"])
 
 
+# slug 키워드 → 카테고리 매핑 (우선순위 위에서 아래로)
+_SLUG_PATTERNS: list[tuple[tuple[str, ...], str]] = [
+    (("etf", "voo", "spy", "qqq", "tqqq", "schd", "vti", "운용보수", "추적오차"), "etf-analysis"),
+    (("bitcoin", "btc", "ethereum", "eth", "crypto", "blockchain", "비트코인", "이더리움", "코인"), "crypto"),
+    (("dividend", "배당"), "dividend"),
+    (("market-close", "market_close", "market-wrap", "market_wrap", "종가", "마감"), "market-wrap"),
+    (("intraday", "장중", "실시간"), "intraday"),
+    (("weekly", "주간"), "weekly"),
+    (("tax", "세금", "절세", "소득세", "연말정산", "환급"), "tax"),
+]
+
+
+def slug_to_category(slug: str) -> str:
+    """slug 키워드 → 카테고리 자동 추론. 매칭 안되면 'default'."""
+    if not slug:
+        return "default"
+    s = slug.lower()
+    for keywords, category in _SLUG_PATTERNS:
+        if any(kw in s for kw in keywords):
+            return category
+    return "default"
+
+
 def _cache_dir() -> Path:
     base = os.getenv(
         "STOCK_BROLL_CACHE_DIR",

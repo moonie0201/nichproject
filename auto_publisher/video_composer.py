@@ -484,7 +484,8 @@ def compose_video(
             return None
 
         if is_shorts and os.getenv("SHORTS_SPLIT_SCREEN", "false").lower() in ("true", "1", "yes"):
-            category = os.getenv("SHORTS_CATEGORY", "default")
+            from auto_publisher.stock_broll import slug_to_category
+            category = os.getenv("SHORTS_CATEGORY") or slug_to_category(slug)
             tmp_split = out_path.with_name(out_path.stem + ".split.mp4")
             if apply_split_screen_broll(out_path, category, tmp_split):
                 shutil.move(str(tmp_split), str(out_path))
