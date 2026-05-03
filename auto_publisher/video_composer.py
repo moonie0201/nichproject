@@ -266,11 +266,16 @@ def _resolve_card_type_from_point(point: dict) -> str:
 
 
 def _make_kenburns_clip(image_path: Path, duration_sec: float, out_path: Path,
-                       width: int, height: int) -> bool:
-    """단일 이미지 → Ken Burns(zoom-in) 영상 클립"""
+                       width: int, height: int, zoom_max: float = 1.15) -> bool:
+    """단일 이미지 → Ken Burns(zoom-in) 영상 클립.
+
+    zoom_max: 최대 줌 배율. 쇼츠 차트는 정보 잘림 방지를 위해 1.03 권장.
+    """
     fps = 30
     total_frames = int(duration_sec * fps)
-    zoom_expr = f"zoom='min(zoom+0.0008,1.15)'"
+    # zoom 증분도 zoom_max 도달까지 분포되도록 조정 (정확히 끝에 max 도달)
+    zoom_step = max((zoom_max - 1.0) / max(total_frames, 1), 0.0001)
+    zoom_expr = f"zoom='min(zoom+{zoom_step:.6f},{zoom_max})'"
     args = [
         "-loop", "1", "-i", str(image_path),
         "-t", f"{duration_sec:.2f}",
@@ -450,7 +455,12 @@ def compose_video(
                     clip_paths.append(chart)
                     continue
                 clip_out = work_dir / f"clip_{i:02d}.mp4"
-                if not _make_kenburns_clip(chart, per_chart_sec, clip_out, img_w, img_h):
+                # 쇼츠 차트는 정보 잘림 방지 위해 줌 최소화 (default 1.03 = 3%)
+                zoom_env = "SHORTS_KENBURNS_ZOOM_MAX" if is_shorts else "LONG_KENBURNS_ZOOM_MAX"
+                zoom_default = "1.03" if is_shorts else "1.15"
+                zoom_max = float(os.getenv(zoom_env, zoom_default))
+                if not _make_kenburns_clip(chart, per_chart_sec, clip_out, img_w, img_h,
+                                            zoom_max=zoom_max):
                     logger.warning(f"클립 생성 실패: {chart}")
                     continue
                 clip_paths.append(clip_out)
