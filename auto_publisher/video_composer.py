@@ -511,7 +511,9 @@ def apply_split_screen_broll(
         _sh.copy(input_mp4, output_mp4)
         return True
 
-    from auto_publisher.pixelle_client import get_broll
+    # B-roll 소스 우선순위: Pexels stock (안정) → Pixelle AI (모션) → placeholder
+    from auto_publisher.stock_broll import get_stock_broll
+    from auto_publisher.pixelle_client import get_broll as pixelle_broll
 
     # 입력 길이 측정 (B-roll 길이 매칭용)
     probe = subprocess.run(
@@ -521,7 +523,9 @@ def apply_split_screen_broll(
     )
     duration = float(probe.stdout.strip()) if probe.stdout.strip() else 60.0
 
-    broll = get_broll(category=category, duration_sec=duration)
+    broll = get_stock_broll(category=category, duration_sec=duration)
+    if broll is None:
+        broll = pixelle_broll(category=category, duration_sec=duration)
 
     work = output_mp4.parent / f"_splitscreen_{output_mp4.stem}"
     work.mkdir(parents=True, exist_ok=True)
