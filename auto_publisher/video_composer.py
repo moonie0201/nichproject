@@ -456,9 +456,14 @@ def compose_video(
                     continue
                 clip_out = work_dir / f"clip_{i:02d}.mp4"
                 # 쇼츠 차트는 정보 잘림 방지 위해 줌 최소화 (default 1.03 = 3%)
-                zoom_env = "SHORTS_KENBURNS_ZOOM_MAX" if is_shorts else "LONG_KENBURNS_ZOOM_MAX"
-                zoom_default = "1.03" if is_shorts else "1.15"
-                zoom_max = float(os.getenv(zoom_env, zoom_default))
+                # PPT 슬라이드 (slide_*.png) 도 페이지 번호/브랜드 잘림 방지 위해 줌 최소
+                is_slide = chart.name.startswith("slide_")
+                if is_slide:
+                    zoom_max = float(os.getenv("SLIDE_KENBURNS_ZOOM_MAX", "1.02"))
+                else:
+                    zoom_env = "SHORTS_KENBURNS_ZOOM_MAX" if is_shorts else "LONG_KENBURNS_ZOOM_MAX"
+                    zoom_default = "1.03" if is_shorts else "1.15"
+                    zoom_max = float(os.getenv(zoom_env, zoom_default))
                 if not _make_kenburns_clip(chart, per_chart_sec, clip_out, img_w, img_h,
                                             zoom_max=zoom_max):
                     logger.warning(f"클립 생성 실패: {chart}")

@@ -336,6 +336,29 @@ def do_make_video(slug: str, lang: str = "ko",
         long_charts = authoritative_charts + [c for c in valid_llm_long if c not in authoritative_charts]
         if not long_charts:
             logger.warning(f"[{slug}] 블로그에 차트 없음 — fallback 카드 비주얼로 합성")
+
+        # Sonnet PPT 슬라이드 prepend (롱폼 시각 풍부도 ↑)
+        if os.getenv("USE_SONNET_SLIDES", "true").lower() in ("true", "1", "yes"):
+            try:
+                from auto_publisher.sonnet_slides import generate_slides
+                from auto_publisher.slide_renderer import render_slides
+                slide_summary = (video_data_pack.get("summary")
+                                 or video_data_pack.get("description")
+                                 or long_text[:500])
+                slides_data = generate_slides(
+                    title=video_data_pack.get("title", slug),
+                    summary=slide_summary[:500],
+                    num_slides=int(os.getenv("SONNET_SLIDES_COUNT", "5")),
+                )
+                if slides_data:
+                    slide_pngs = render_slides(slides_data, cache_dir / "slides")
+                    if slide_pngs:
+                        long_charts = [str(p) for p in slide_pngs] + long_charts
+                        logger.info(f"[{slug}] PPT 슬라이드 {len(slide_pngs)}개 prepend "
+                                    f"→ 총 차트 {len(long_charts)}개")
+            except Exception as e:
+                logger.warning(f"PPT 슬라이드 생성 실패 (원본 차트만 사용): {e}")
+
         long_mp4 = cache_dir / "long.mp4"
         _t0 = time.time()
         logger.info(f"[STEP_START] long_video_compose slug={slug}")
