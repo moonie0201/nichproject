@@ -106,3 +106,80 @@ def test_category_to_query_mapping():
     assert category_to_query("market-wrap") != category_to_query("etf-analysis")
     # 알 수 없는 카테고리도 generic finance 키워드 반환
     assert category_to_query("unknown-xyz") is not None
+
+
+# ── Pixabay fallback ─────────────────────────────────────
+
+def test_pixabay_fallback_when_pexels_unavailable(tmp_path, monkeypatch):
+    """PEXELS_API_KEY 없고 PIXABAY_API_KEY 있으면 Pixabay 시도."""
+    monkeypatch.delenv("PEXELS_API_KEY", raising=False)
+    monkeypatch.setenv("PIXABAY_API_KEY", "pix-key")
+    monkeypatch.setenv("STOCK_BROLL_CACHE_DIR", str(tmp_path))
+
+    from auto_publisher.stock_broll import get_stock_broll
+
+    search_resp = MagicMock()
+    search_resp.status_code = 200
+    search_resp.raise_for_status = MagicMock()
+    search_resp.json.return_value = {
+        "hits": [
+            {
+                "id": 88888,
+                "videos": {
+                    "large": {"url": "https://cdn.pixabay.com/video/large.mp4",
+                              "width": 1080, "height": 1920},
+                    "medium": {"url": "https://cdn.pixabay.com/video/medium.mp4",
+                               "width": 960, "height": 540},
+                },
+            }
+        ]
+    }
+    dl_resp = MagicMock()
+    dl_resp.status_code = 200
+    dl_resp.raise_for_status = MagicMock()
+    dl_resp.content = b"\xab" * 2048
+
+    with patch("httpx.get", side_effect=[search_resp, dl_resp]) as mock_get:
+        result = get_stock_broll(category="etf-analysis", duration_sec=60)
+
+    assert result is not None
+    assert result.exists()
+    # Pixabay API endpoint 호출 확인
+    assert "pixabay.com" in str(mock_get.call_args_list[0])
+
+
+def test_no_keys_at_all_returns_none(tmp_path, monkeypatch):
+    """PEXELS + PIXABAY 둘 다 없으면 None."""
+    monkeypatch.delenv("PEXELS_API_KEY", raising=False)
+    monkeypatch.delenv("PIXABAY_API_KEY", raising=False)
+    monkeypatch.setenv("STOCK_BROLL_CACHE_DIR", str(tmp_path))
+
+    from auto_publisher.stock_broll import get_stock_broll
+    with patch("httpx.get") as mock_get:
+        result = get_stock_broll(category="etf-analysis", duration_sec=60)
+    assert result is None
+    mock_get.assert_not_called()
+
+
+def test_pexels_priority_over_pixabay(tmp_path, monkeypatch):
+    """둘 다 키 있으면 Pexels 우선."""
+    monkeypatch.setenv("PEXELS_API_KEY", "px-key")
+    monkeypatch.setenv("PIXABAY_API_KEY", "pix-key")
+    monkeypatch.setenv("STOCK_BROLL_CACHE_DIR", str(tmp_path))
+
+    from auto_publisher.stock_broll import get_stock_broll
+    search_resp = MagicMock(status_code=200)
+    search_resp.raise_for_status = MagicMock()
+    search_resp.json.return_value = {
+        "videos": [{"id": 1, "video_files": [
+            {"link": "https://pexels.com/v.mp4", "width": 1080, "height": 1920, "quality": "hd"}
+        ]}]
+    }
+    dl_resp = MagicMock(status_code=200, content=b"\x11" * 1024)
+    dl_resp.raise_for_status = MagicMock()
+
+    with patch("httpx.get", side_effect=[search_resp, dl_resp]) as mock_get:
+        get_stock_broll(category="etf-analysis", duration_sec=60)
+
+    # 첫 호출은 Pexels
+    assert "pexels.com" in str(mock_get.call_args_list[0])

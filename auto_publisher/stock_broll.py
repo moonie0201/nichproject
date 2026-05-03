@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 PEXELS_SEARCH_URL = "https://api.pexels.com/videos/search"
+PIXABAY_SEARCH_URL = "https://pixabay.com/api/videos/"
 
 
 # 카테고리 → Pexels 검색 키워드 매핑
@@ -128,22 +129,93 @@ def _download_via_pexels(category: str, duration_sec: float) -> Path | None:
     return out
 
 
+def _download_via_pixabay(category: str, duration_sec: float) -> Path | None:
+    """Pixabay Videos API → 카테고리 검색 → 첫 결과 mp4 저장."""
+    import httpx
+
+    api_key = os.getenv("PIXABAY_API_KEY", "").strip()
+    if not api_key:
+        return None
+
+    cdir = _cache_dir() / category
+    cdir.mkdir(parents=True, exist_ok=True)
+
+    query = category_to_query(category)
+    params = {
+        "key": api_key, "q": query,
+        "video_type": "all", "per_page": 5,
+    }
+    try:
+        resp = httpx.get(PIXABAY_SEARCH_URL, params=params, timeout=30.0)
+        resp.raise_for_status()
+        data = resp.json()
+    except Exception as e:
+        logger.warning(f"Pixabay search 실패 ({category}): {e}")
+        return None
+
+    hits = data.get("hits", [])
+    if not hits:
+        logger.warning(f"Pixabay 검색 결과 없음 ({query})")
+        return None
+
+    # videos.large > medium > small > tiny 우선순위
+    pick = hits[0]
+    videos = pick.get("videos", {})
+    url = None
+    for size_key in ("large", "medium", "small", "tiny"):
+        v = videos.get(size_key)
+        if v and v.get("url"):
+            url = v["url"]
+            break
+    if not url:
+        return None
+
+    try:
+        dl = httpx.get(url, timeout=120.0)
+        dl.raise_for_status()
+    except Exception as e:
+        logger.warning(f"Pixabay mp4 다운로드 실패: {e}")
+        return None
+
+    pid = pick.get("id", "unk")
+    out = cdir / f"pixabay-{pid}.mp4"
+    out.write_bytes(dl.content)
+    logger.info(f"Pixabay B-roll 캐시 저장: {out} ({len(dl.content)//1024} KB)")
+    return out
+
+
 def get_stock_broll(category: str, duration_sec: float = 60.0) -> Path | None:
-    """카테고리에 맞는 stock B-roll mp4 경로 반환. 없으면 Pexels API 호출.
+    """카테고리에 맞는 stock B-roll mp4 경로 반환.
+
+    우선순위:
+    1. 캐시 풀 (.omc/stock_broll/<category>/*.mp4)
+    2. Pexels API (PEXELS_API_KEY 설정 시)
+    3. Pixabay API (PIXABAY_API_KEY 설정 시)
+    4. None (호출자 fallback)
 
     Args:
         category: 'etf-analysis' / 'market-wrap' / 'crypto' / etc.
-        duration_sec: 필요한 길이 (현재 정보용 — 영상 트림은 호출자 책임)
-
-    Returns:
-        Path: 캐시 또는 신규 다운로드된 mp4
-        None: PEXELS_API_KEY 미설정 또는 API 실패
+        duration_sec: 필요한 길이 (정보용 — 트림은 호출자 책임)
     """
-    if not os.getenv("PEXELS_API_KEY", "").strip():
+    has_pexels = bool(os.getenv("PEXELS_API_KEY", "").strip())
+    has_pixabay = bool(os.getenv("PIXABAY_API_KEY", "").strip())
+
+    if not has_pexels and not has_pixabay:
         return None
 
+    # 캐시 우선
     pooled = _select_from_pool(category)
     if pooled is not None:
         return pooled
 
-    return _download_via_pexels(category, duration_sec)
+    # Pexels 우선 시도
+    if has_pexels:
+        result = _download_via_pexels(category, duration_sec)
+        if result is not None:
+            return result
+
+    # Pixabay fallback
+    if has_pixabay:
+        return _download_via_pixabay(category, duration_sec)
+
+    return None
