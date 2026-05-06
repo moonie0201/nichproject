@@ -74,7 +74,13 @@ def _parse_srt(srt_text: str) -> list[tuple[float, float, str]]:
     return cues
 
 
-def _ass_header(fontsize: int) -> str:
+def _ass_header(fontsize: int, alignment: int = 8, margin_v: int = 850) -> str:
+    """ASS header.
+
+    alignment: 1=BL 2=BC 3=BR 4=ML 5=MC 6=MR 7=TL 8=TC 9=TR
+    split-screen 모드 default: 8 (top center) + MarginV=850 → 위 절반의 하단부
+    (split-screen 의 top crop 0:960 안에 자막 보존됨)
+    """
     return (
         "[Script Info]\n"
         "Title: kinetic\n"
@@ -88,7 +94,7 @@ def _ass_header(fontsize: int) -> str:
         "ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, "
         "MarginL, MarginR, MarginV, Encoding\n"
         f"Style: Default,Noto Sans CJK KR,{fontsize},&H00FFFFFF,&H000000FF,"
-        "&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,5,2,2,40,40,200,1\n"
+        f"&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,5,2,{alignment},40,40,{margin_v},1\n"
         "\n"
         "[Events]\n"
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, "
@@ -97,11 +103,12 @@ def _ass_header(fontsize: int) -> str:
 
 
 def srt_to_kinetic_ass(srt_text: str, fontsize: int = 80,
-                       words_per_chunk: int = 2) -> str:
+                       words_per_chunk: int = 2, alignment: int = 8,
+                       margin_v: int = 850) -> str:
     """SRT → ASS (kinetic 큰 글씨 + 단어 N개씩 chunk)."""
     if words_per_chunk < 1:
         words_per_chunk = 1
-    header = _ass_header(fontsize)
+    header = _ass_header(fontsize, alignment=alignment, margin_v=margin_v)
     cues = _parse_srt(srt_text)
     dialogues: list[str] = []
     for start, end, text in cues:
@@ -137,4 +144,7 @@ def build_kinetic_ass_or_skip(srt_text: str) -> Optional[str]:
         return None
     fontsize = int(os.getenv("KINETIC_FONTSIZE", "80"))
     wpc = int(os.getenv("KINETIC_WORDS_PER_CHUNK", "2"))
-    return srt_to_kinetic_ass(srt_text, fontsize=fontsize, words_per_chunk=wpc)
+    alignment = int(os.getenv("KINETIC_ALIGNMENT", "8"))
+    margin_v = int(os.getenv("KINETIC_MARGIN_V", "850"))
+    return srt_to_kinetic_ass(srt_text, fontsize=fontsize, words_per_chunk=wpc,
+                              alignment=alignment, margin_v=margin_v)

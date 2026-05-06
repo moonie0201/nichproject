@@ -372,7 +372,11 @@ def _mux_audio_subtitle(video_path: Path, audio_path: Path, srt_path: Path,
             "OutlineColour=&H000000,Outline=2,Shadow=0,Alignment=2,MarginV=80"
         )
 
-    sub_filter = f"subtitles='{srt_escaped}':force_style='{sub_style}'"
+    # ASS 는 자체 Style 사용 — force_style 적용 시 ASS Alignment/MarginV override 됨
+    if sub_path.suffix.lower() == ".ass":
+        sub_filter = f"subtitles='{srt_escaped}'"
+    else:
+        sub_filter = f"subtitles='{srt_escaped}':force_style='{sub_style}'"
 
     # Codex 자문: short_form 프로파일 적용 (8M 비트레이트 + loudnorm 오디오 정규화)
     from auto_publisher.video_encoder import get_profile
