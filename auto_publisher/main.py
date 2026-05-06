@@ -408,6 +408,20 @@ def do_make_video(slug: str, lang: str = "ko",
     logger.info(f"[STEP_END] generate_short_video_script took {time.time()-_t0:.1f}s")
     short_text = script_to_plain_text(short_script)
 
+    # Sonnet hook (첫 3초 임팩트) — 한국어만 우선 적용
+    if lang == "ko":
+        try:
+            from auto_publisher.shorts_hook import generate_hook
+            hook = generate_hook(
+                title=short_script.get("title", slug),
+                summary=short_text[:200],
+            )
+            if hook:
+                short_text = f"{hook}. {short_text}"
+                logger.info(f"[{slug}] hook prepended: {hook!r}")
+        except Exception as e:
+            logger.warning(f"shorts_hook 생성 실패: {e}")
+
     short_mp3 = cache_dir / "short.mp3"
     short_srt = cache_dir / "short.srt"
     _t0 = time.time()
