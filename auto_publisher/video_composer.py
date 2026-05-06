@@ -346,9 +346,22 @@ def _mux_audio_subtitle(video_path: Path, audio_path: Path, srt_path: Path,
     else:
         video_in = "[0:v]"
 
-    srt_escaped = str(srt_path.absolute()).replace(":", "\\:").replace("'", "\\'")
+    sub_path = srt_path
     if is_shorts:
-        # 하단 960px 영역 중앙: 전체 1920에서 bottom 기준 440px 위 = 하단 절반 중앙
+        try:
+            from auto_publisher.kinetic_subtitles import build_kinetic_ass_or_skip
+            ass_text = build_kinetic_ass_or_skip(srt_path.read_text(encoding="utf-8"))
+            if ass_text:
+                ass_p = srt_path.with_suffix(".ass")
+                ass_p.write_text(ass_text, encoding="utf-8")
+                sub_path = ass_p
+                logger.info(f"kinetic ASS 자막 적용: {ass_p.name}")
+        except Exception as e:
+            logger.warning(f"kinetic ASS 변환 실패, SRT 사용: {e}")
+
+    srt_escaped = str(sub_path.absolute()).replace(":", "\\:").replace("'", "\\'")
+    if is_shorts:
+        # 하단 960px 영역 중앙 — SRT 사용 시에만 적용 (ASS 는 자체 style)
         sub_style = (
             "FontName=Noto Sans CJK KR,FontSize=32,PrimaryColour=&HFFFFFF,"
             "OutlineColour=&H000000,Outline=3,Shadow=0,Alignment=2,MarginV=440"
