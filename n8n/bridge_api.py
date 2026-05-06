@@ -1352,8 +1352,36 @@ class BridgeHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
 
+def _start_health_alerter_thread() -> None:
+    """30분 간격 health 점검 + Discord 알림 (background daemon).
+
+    - HEALTH_ALERTER_ENABLED=false 면 run_health_check 자체에서 no-op
+    - HEALTH_ALERTER_INTERVAL_SEC 으로 간격 조정 (default 1800초)
+    - bridge_api crash 시 alert 도 죽음 → 별도 시스템 cron 추가 권장
+    """
+    from auto_publisher.health_alerter import run_health_check
+    repo = Path("/home/mh/ocstorage/workspace/nichproject")
+    interval_sec = int(os.getenv("HEALTH_ALERTER_INTERVAL_SEC", "1800"))
+
+    def _loop():
+        while True:
+            time.sleep(interval_sec)
+            try:
+                run_health_check(
+                    token_file=repo / ".tiktok_secrets" / "token.json",
+                    history_file=repo / "auto_publisher" / "data" / "published_history.json",
+                )
+            except Exception as e:
+                print(f"[health_alerter] loop error: {e}", flush=True)
+
+    t = threading.Thread(target=_loop, daemon=True, name="health_alerter")
+    t.start()
+    print(f"[bridge] health_alerter thread 시작 (interval={interval_sec}s)", flush=True)
+
+
 if __name__ == "__main__":
     acquire_bridge_lock()
+    _start_health_alerter_thread()
     port = int(os.getenv("BRIDGE_PORT", "8765"))
     server = HTTPServer(("127.0.0.1", port), BridgeHandler)
     print(f"n8n Bridge API running on http://127.0.0.1:{port}")
