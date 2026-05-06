@@ -240,6 +240,34 @@ def _download_via_pixabay(category: str, duration_sec: float) -> Path | None:
     return out
 
 
+def get_broll_pool(category: str, n: int = 5) -> list[Path]:
+    """카테고리 캐시 풀에서 random N개 (중복 없음) B-roll mp4 반환.
+
+    부족하면 가용한 만큼만 반환 (no exception).
+    캐시 비어있으면 빈 리스트.
+
+    split-screen Shorts 의 17초 ladder 전환에 사용.
+    """
+    if n <= 0:
+        return []
+    cdir = _cache_dir() / category
+    if not cdir.exists():
+        return []
+    files = sorted(cdir.glob("*.mp4"))
+    if not files:
+        return []
+    pick_count = min(n, len(files))
+    picks = random.sample(files, pick_count)
+    # 사용 표시: atime 갱신 (LRU 보호)
+    now = time.time()
+    for p in picks:
+        try:
+            os.utime(p, (now, now))
+        except OSError:
+            pass
+    return picks
+
+
 def get_stock_broll(category: str, duration_sec: float = 60.0) -> Path | None:
     """카테고리에 맞는 stock B-roll mp4 경로 반환.
 

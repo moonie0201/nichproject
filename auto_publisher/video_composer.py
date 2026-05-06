@@ -537,8 +537,8 @@ def apply_split_screen_broll(
         _sh.copy(input_mp4, output_mp4)
         return True
 
-    # B-roll 소스 우선순위: Pexels stock (안정) → Pixelle AI (모션) → placeholder
-    from auto_publisher.stock_broll import get_stock_broll
+    # B-roll 소스 우선순위: Pexels stock pool (다양성) → 단일 stock → Pixelle AI → placeholder
+    from auto_publisher.stock_broll import get_stock_broll, get_broll_pool
     from auto_publisher.pixelle_client import get_broll as pixelle_broll
 
     # 입력 길이 측정 (B-roll 길이 매칭용)
@@ -549,9 +549,16 @@ def apply_split_screen_broll(
     )
     duration = float(probe.stdout.strip()) if probe.stdout.strip() else 60.0
 
-    broll = get_stock_broll(category=category, duration_sec=duration)
-    if broll is None:
-        broll = pixelle_broll(category=category, duration_sec=duration)
+    # ladder: 캐시 풀에서 N개 가져와서 각 segment 합성 → 시청자 지루함 방지
+    ladder_count = int(os.getenv("BROLL_LADDER_COUNT", "5"))
+    brolls = get_broll_pool(category=category, n=ladder_count)
+    # 풀 비어있으면 단일 다운로드 시도 → fallback chain
+    if not brolls:
+        single = get_stock_broll(category=category, duration_sec=duration)
+        if single is None:
+            single = pixelle_broll(category=category, duration_sec=duration)
+        brolls = [single] if single else []
+    broll = brolls[0] if brolls else None  # 단일 모드 호환
 
     work = output_mp4.parent / f"_splitscreen_{output_mp4.stem}"
     work.mkdir(parents=True, exist_ok=True)
@@ -573,9 +580,29 @@ def apply_split_screen_broll(
         if not _ffmpeg_run(top_args, "split_top_crop"):
             return False
 
-        # Bottom: B-roll 또는 placeholder
-        if broll is not None and broll.exists():
-            # B-roll 을 1080x960 으로 scale + 길이 매칭
+        # Bottom: B-roll ladder (N개) 또는 단일 또는 placeholder
+        if len(brolls) >= 2:
+            # Ladder: 각 segment 만들고 concat → 시청자 지루함 방지
+            seg_dur = duration / len(brolls)
+            seg_files: list[Path] = []
+            for i, br in enumerate(brolls):
+                seg = work / f"seg_{i:02d}.mp4"
+                seg_args = [
+                    "-stream_loop", "-1", "-i", str(br),
+                    "-t", f"{seg_dur:.2f}",
+                    "-vf", "scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,fps=30",
+                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+                    "-an", str(seg),
+                ]
+                if not _ffmpeg_run(seg_args, f"split_bottom_seg_{i}"):
+                    return False
+                seg_files.append(seg)
+            if not _concat_clips(seg_files, bottom_mp4):
+                return False
+            bot_args = None  # ladder 합성 완료, 아래 single-broll 분기 skip
+            logger.info(f"split-screen ladder: {len(brolls)}개 B-roll, 각 {seg_dur:.1f}s")
+        elif broll is not None and broll.exists():
+            # 단일 B-roll → 1080x960 으로 scale + 길이 매칭
             bot_args = [
                 "-stream_loop", "-1", "-i", str(broll),
                 "-t", f"{duration:.2f}",
@@ -597,8 +624,10 @@ def apply_split_screen_broll(
                 "-c:v", "libx264", "-preset", "veryfast", "-crf", "22",
                 "-an", str(bottom_mp4),
             ]
-        if not _ffmpeg_run(bot_args, "split_bottom_broll"):
-            return False
+        # ladder 모드는 bot_args=None 이고 bottom_mp4 가 이미 concat 으로 생성됨
+        if bot_args is not None:
+            if not _ffmpeg_run(bot_args, "split_bottom_broll"):
+                return False
 
         # vstack + 원본 audio 보존
         stack_args = [
