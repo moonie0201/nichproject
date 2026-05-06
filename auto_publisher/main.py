@@ -443,12 +443,15 @@ def do_make_video(slug: str, lang: str = "ko",
                 from auto_publisher.video_uploader import upload_youtube
                 _t0 = time.time()
                 logger.info(f"[STEP_START] short_youtube_upload slug={slug}")
+                from auto_publisher.stock_broll import slug_to_category
                 up = upload_youtube(
                     video_path=short_mp4,
                     title=short_script["title"],
                     description=short_script.get("description", "") + f"\n\n전체 영상: {long_url}",
                     tags=short_script.get("tags", []),
                     is_short=True, privacy=privacy,
+                    blog_url=blog_url,
+                    shorts_category=slug_to_category(slug),
                 )
                 logger.info(f"[STEP_END] short_youtube_upload took {time.time()-_t0:.1f}s")
                 results["short_youtube"] = up

@@ -70,6 +70,8 @@ def upload_youtube(
     category_id: str = "25",
     thumbnail_path: Path | None = None,
     md_path: Path | None = None,  # 썸네일 자동 생성용 .md 경로
+    blog_url: str = "",
+    shorts_category: str = "default",
 ) -> dict:
     """mp4 업로드 → {video_id, url, status} 반환. 실패 시 RuntimeError"""
     from googleapiclient.discovery import build
@@ -80,8 +82,9 @@ def upload_youtube(
 
     if is_short and "#shorts" not in title.lower():
         title = f"{title} #shorts"
-    if is_short and "#shorts" not in description.lower():
-        description = f"{description}\n\n#shorts"
+    if is_short:
+        from auto_publisher.shorts_description import enrich_shorts_description
+        description = enrich_shorts_description(description, blog_url, shorts_category)
 
     body = {
         "snippet": {
