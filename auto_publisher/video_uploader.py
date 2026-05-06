@@ -180,6 +180,8 @@ def _load_tiktok_credentials() -> dict:
         token["access_token"] = data["access_token"]
         token["refresh_token"] = data.get("refresh_token", token["refresh_token"])
         token["expires_at"] = time.time() + data["expires_in"]
+        if "refresh_expires_in" in data:
+            token["refresh_expires_at"] = time.time() + data["refresh_expires_in"]
         token["open_id"] = data.get("open_id", token.get("open_id", ""))
         TIKTOK_SECRETS_DIR.mkdir(parents=True, exist_ok=True)
         TIKTOK_TOKEN_FILE.write_text(json.dumps(token, indent=2), encoding="utf-8")
@@ -252,6 +254,8 @@ def tiktok_auth_setup(code: str | None = None):
         "expires_at": time.time() + data["expires_in"],
         "open_id": data.get("open_id", ""),
     }
+    if "refresh_expires_in" in data:
+        token["refresh_expires_at"] = time.time() + data["refresh_expires_in"]
     TIKTOK_SECRETS_DIR.mkdir(parents=True, exist_ok=True)
     TIKTOK_TOKEN_FILE.write_text(json.dumps(token, indent=2), encoding="utf-8")
     print(f"TikTok 인증 성공! 토큰 저장 완료: {TIKTOK_TOKEN_FILE}")
