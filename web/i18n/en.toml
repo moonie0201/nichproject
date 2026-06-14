@@ -1,0 +1,43 @@
+# Calculator / tools UI strings
+[calc_principal]
+other = "Investment amount"
+[calc_period]
+other = "Holding period (years)"
+[calc_dividend_growth]
+other = "Annual dividend growth (%)"
+[calc_reinvest]
+other = "Reinvest dividends (DRIP)"
+[calc_currency]
+other = "Display currency"
+[calc_button]
+other = "Calculate"
+[calc_reset]
+other = "Reset"
+[calc_share]
+other = "Share result"
+[calc_share_copied]
+other = "Link copied to clipboard"
+[calc_result_title]
+other = "Estimated result (based on assumptions)"
+[res_annual_div]
+other = "Annual dividend"
+[res_monthly_div]
+other = "Monthly dividend"
+[res_cumulative_div]
+other = "Cumulative dividends"
+[res_final_value]
+other = "Final balance"
+[tbl_year]
+other = "Year"
+[tbl_balance]
+other = "Balance"
+[tbl_annual_div]
+other = "Dividend that year"
+[calc_yield]
+other = "Dividend yield"
+[calc_expense]
+other = "Expense ratio"
+[calc_data_as_of]
+other = "Data as of"
+[calc_disclaimer]
+other = "Actual dividends vary. Taxes, FX, and tracking error are not reflected. This is information only, not investment advice."

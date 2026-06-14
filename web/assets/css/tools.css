@@ -1,0 +1,102 @@
+/* InvestIQs interactive tools — shared styles */
+.iq-tool {
+  margin: 28px 0;
+  padding: 20px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  background: var(--entry, #fafafa);
+}
+.iq-tool__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 640px) {
+  .iq-tool__grid { grid-template-columns: 1fr 1fr; }
+}
+.iq-field { display: flex; flex-direction: column; gap: 6px; }
+.iq-field label { font-size: 0.9rem; font-weight: 600; }
+.iq-field input[type="number"],
+.iq-field select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid var(--border, #d1d5db);
+  border-radius: 8px;
+  background: var(--theme, #fff);
+  color: var(--primary, #111);
+  box-sizing: border-box;
+}
+.iq-field--check {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.iq-field--check input { width: auto; }
+.iq-tool__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.iq-btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--primary, #2563eb);
+  color: #fff;
+}
+.iq-btn--ghost {
+  background: transparent;
+  color: var(--primary, #2563eb);
+  border: 1px solid var(--border, #d1d5db);
+}
+.iq-result { margin-top: 22px; }
+.iq-result__title { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; }
+.iq-result__cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (min-width: 640px) {
+  .iq-result__cards { grid-template-columns: repeat(4, 1fr); }
+}
+.iq-card {
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--code-bg, #f3f4f6);
+  text-align: center;
+}
+.iq-card__label { font-size: 0.8rem; opacity: 0.7; }
+.iq-card__value { font-size: 1.25rem; font-weight: 700; margin-top: 4px; }
+.iq-table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 0.9rem; }
+.iq-table th, .iq-table td { padding: 8px 10px; border-bottom: 1px solid var(--border, #e5e7eb); text-align: right; }
+.iq-table th:first-child, .iq-table td:first-child { text-align: left; }
+.iq-meta { font-size: 0.8rem; opacity: 0.7; margin-top: 12px; }
+.iq-disclaimer {
+  margin-top: 14px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.iq-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+  z-index: 9999;
+}
+.iq-toast--show { opacity: 1; }

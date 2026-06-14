@@ -8,8 +8,20 @@ theme = 'PaperMod'
   priority = 0.7
   filename = "sitemap.xml"
 
+[minify]
+  disableXML = false
+  minifyOutput = true
+
+[imaging]
+  resampleFilter = "CatmullRom"
+  quality = 82
+  anchor = "smart"
+
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+  # 택소노미(tags/categories) RSS .xml 생성 차단 — 크롤 예산 낭비 + thin content 방지
+  taxonomy = ["HTML"]
+  term = ["HTML"]
 
 [params]
   defaultTheme = "auto"
@@ -63,6 +75,11 @@ theme = 'PaperMod'
       identifier = "ko-weekly"
       url = "/ko/weekly/"
       weight = 3
+    [[languages.ko.menu.main]]
+      name = "도구"
+      identifier = "ko-tools"
+      url = "/ko/tools/"
+      weight = 4
     [[languages.ko.menu.footer]]
       name = "개인정보처리방침"
       identifier = "ko-privacy"
@@ -97,6 +114,11 @@ theme = 'PaperMod'
       identifier = "en-weekly"
       url = "/en/weekly/"
       weight = 3
+    [[languages.en.menu.main]]
+      name = "Tools"
+      identifier = "en-tools"
+      url = "/en/tools/"
+      weight = 4
     [[languages.en.menu.footer]]
       name = "Privacy Policy"
       identifier = "en-privacy"
@@ -131,6 +153,11 @@ theme = 'PaperMod'
       identifier = "ja-weekly"
       url = "/ja/weekly/"
       weight = 3
+    [[languages.ja.menu.main]]
+      name = "ツール"
+      identifier = "ja-tools"
+      url = "/ja/tools/"
+      weight = 4
     [[languages.ja.menu.footer]]
       name = "プライバシーポリシー"
       identifier = "ja-privacy"
@@ -165,6 +192,11 @@ theme = 'PaperMod'
       identifier = "vi-weekly"
       url = "/vi/weekly/"
       weight = 3
+    [[languages.vi.menu.main]]
+      name = "Công cụ"
+      identifier = "vi-tools"
+      url = "/vi/tools/"
+      weight = 4
     [[languages.vi.menu.footer]]
       name = "Chính sách Bảo mật"
       identifier = "vi-privacy"
@@ -199,6 +231,11 @@ theme = 'PaperMod'
       identifier = "id-weekly"
       url = "/id/weekly/"
       weight = 3
+    [[languages.id.menu.main]]
+      name = "Alat"
+      identifier = "id-tools"
+      url = "/id/tools/"
+      weight = 4
     [[languages.id.menu.footer]]
       name = "Kebijakan Privasi"
       identifier = "id-privacy"
@@ -211,7 +248,7 @@ theme = 'PaperMod'
       weight = 2
 
 [related]
-  threshold = 60
+  threshold = 80
   includeNewer = true
   toLower = false
   [[related.indices]]
@@ -219,7 +256,7 @@ theme = 'PaperMod'
     weight = 100
   [[related.indices]]
     name = "tags"
-    weight = 50
+    weight = 80
   [[related.indices]]
     name = "date"
     weight = 10

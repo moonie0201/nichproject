@@ -1,0 +1,43 @@
+# Calculator / tools UI strings
+[calc_principal]
+other = "투자 원금"
+[calc_period]
+other = "보유 기간(년)"
+[calc_dividend_growth]
+other = "연 배당 성장률(%)"
+[calc_reinvest]
+other = "배당 재투자(DRIP)"
+[calc_currency]
+other = "표시 통화"
+[calc_button]
+other = "계산하기"
+[calc_reset]
+other = "초기화"
+[calc_share]
+other = "결과 공유"
+[calc_share_copied]
+other = "링크를 복사했습니다"
+[calc_result_title]
+other = "가정에 따른 예상 결과"
+[res_annual_div]
+other = "연 배당금"
+[res_monthly_div]
+other = "월 배당금"
+[res_cumulative_div]
+other = "누적 배당금"
+[res_final_value]
+other = "최종 평가액"
+[tbl_year]
+other = "연차"
+[tbl_balance]
+other = "평가액"
+[tbl_annual_div]
+other = "해당 연도 배당"
+[calc_yield]
+other = "배당수익률"
+[calc_expense]
+other = "운용보수"
+[calc_data_as_of]
+other = "데이터 기준일"
+[calc_disclaimer]
+other = "실제 배당은 변동하며 세금·환율·추적오차는 반영되지 않습니다. 본 콘텐츠는 정보 제공 목적이며 투자 권유가 아닙니다."

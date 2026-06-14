@@ -1,0 +1,43 @@
+# Calculator / tools UI strings
+[calc_principal]
+other = "Số tiền đầu tư"
+[calc_period]
+other = "Thời gian nắm giữ (năm)"
+[calc_dividend_growth]
+other = "Tăng trưởng cổ tức hằng năm (%)"
+[calc_reinvest]
+other = "Tái đầu tư cổ tức (DRIP)"
+[calc_currency]
+other = "Tiền tệ hiển thị"
+[calc_button]
+other = "Tính toán"
+[calc_reset]
+other = "Đặt lại"
+[calc_share]
+other = "Chia sẻ kết quả"
+[calc_share_copied]
+other = "Đã sao chép liên kết"
+[calc_result_title]
+other = "Kết quả ước tính (dựa trên giả định)"
+[res_annual_div]
+other = "Cổ tức hằng năm"
+[res_monthly_div]
+other = "Cổ tức hằng tháng"
+[res_cumulative_div]
+other = "Cổ tức tích lũy"
+[res_final_value]
+other = "Giá trị cuối kỳ"
+[tbl_year]
+other = "Năm"
+[tbl_balance]
+other = "Giá trị"
+[tbl_annual_div]
+other = "Cổ tức năm đó"
+[calc_yield]
+other = "Tỷ suất cổ tức"
+[calc_expense]
+other = "Tỷ lệ chi phí"
+[calc_data_as_of]
+other = "Dữ liệu tính đến"
+[calc_disclaimer]
+other = "Cổ tức thực tế có thể thay đổi. Thuế, tỷ giá và sai số theo dõi chưa được tính. Nội dung chỉ mang tính thông tin, không phải lời khuyên đầu tư."

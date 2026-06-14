@@ -1,0 +1,43 @@
+# Calculator / tools UI strings
+[calc_principal]
+other = "Jumlah investasi"
+[calc_period]
+other = "Jangka waktu (tahun)"
+[calc_dividend_growth]
+other = "Pertumbuhan dividen tahunan (%)"
+[calc_reinvest]
+other = "Investasikan ulang dividen (DRIP)"
+[calc_currency]
+other = "Mata uang tampilan"
+[calc_button]
+other = "Hitung"
+[calc_reset]
+other = "Atur ulang"
+[calc_share]
+other = "Bagikan hasil"
+[calc_share_copied]
+other = "Tautan disalin"
+[calc_result_title]
+other = "Perkiraan hasil (berdasarkan asumsi)"
+[res_annual_div]
+other = "Dividen tahunan"
+[res_monthly_div]
+other = "Dividen bulanan"
+[res_cumulative_div]
+other = "Dividen kumulatif"
+[res_final_value]
+other = "Nilai akhir"
+[tbl_year]
+other = "Tahun"
+[tbl_balance]
+other = "Nilai"
+[tbl_annual_div]
+other = "Dividen tahun itu"
+[calc_yield]
+other = "Imbal hasil dividen"
+[calc_expense]
+other = "Rasio biaya"
+[calc_data_as_of]
+other = "Data per"
+[calc_disclaimer]
+other = "Dividen aktual dapat berubah. Pajak, kurs, dan tracking error tidak diperhitungkan. Konten ini hanya untuk informasi, bukan saran investasi."

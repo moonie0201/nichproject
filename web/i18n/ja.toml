@@ -1,0 +1,43 @@
+# Calculator / tools UI strings
+[calc_principal]
+other = "投資金額"
+[calc_period]
+other = "保有期間(年)"
+[calc_dividend_growth]
+other = "年間増配率(%)"
+[calc_reinvest]
+other = "配当を再投資(DRIP)"
+[calc_currency]
+other = "表示通貨"
+[calc_button]
+other = "計算する"
+[calc_reset]
+other = "リセット"
+[calc_share]
+other = "結果を共有"
+[calc_share_copied]
+other = "リンクをコピーしました"
+[calc_result_title]
+other = "想定に基づく試算結果"
+[res_annual_div]
+other = "年間配当"
+[res_monthly_div]
+other = "月間配当"
+[res_cumulative_div]
+other = "累計配当"
+[res_final_value]
+other = "最終評価額"
+[tbl_year]
+other = "年数"
+[tbl_balance]
+other = "評価額"
+[tbl_annual_div]
+other = "その年の配当"
+[calc_yield]
+other = "配当利回り"
+[calc_expense]
+other = "経費率"
+[calc_data_as_of]
+other = "データ基準日"
+[calc_disclaimer]
+other = "実際の配当は変動します。税金・為替・トラッキングエラーは反映されていません。本情報は投資勧誘ではなく情報提供のみを目的としています。"

@@ -1,0 +1,66 @@
+{{- define "main" }}
+{{- /* tool -> js file map */ -}}
+{{- $jsmap := dict
+  "dividend-calculator" "js/tools/dividend-calc.js"
+  "dca-calculator" "js/tools/dca-calc.js"
+  "fee-calculator" "js/tools/fee-calc.js"
+-}}
+{{- $tool := .Params.tool -}}
+
+{{- /* assets: css + concat(core, tool js), minified + fingerprinted */ -}}
+{{- with resources.Get "css/tools.css" }}
+{{- $css := . | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" crossorigin="anonymous">
+{{- end }}
+
+<article class="post-single">
+  <header class="post-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1 class="post-title entry-hint-parent">{{ .Title }}</h1>
+    {{- if .Description }}
+    <div class="post-description">{{ .Description }}</div>
+    {{- end }}
+    {{- if not (.Param "hideMeta") }}
+    <div class="post-meta">
+      {{- partial "post_meta.html" . -}}
+      {{- partial "translation_list.html" . -}}
+    </div>
+    {{- end }}
+  </header>
+
+  {{- partial "legal-disclaimer.html" . }}
+
+  {{- /* editorial intro (markdown body before the tool) */ -}}
+  {{- if .Content }}
+  <div class="post-content md-content">{{ .Content }}</div>
+  {{- end }}
+
+  {{- /* interactive calculator */ -}}
+  {{- with $tool }}
+  {{- partial (printf "tools/%s.html" .) $ }}
+  {{- end }}
+
+  {{- /* ads only AFTER the calculator/results */ -}}
+  {{- partial "article_ads.html" (dict "slot" "8171345112") }}
+  {{- partial "related.html" . }}
+  {{- partial "article_ads.html" (dict "slot" "5913906921") }}
+
+  <footer class="post-footer">
+    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+    <ul class="post-tags">
+      {{- range ($.GetTerms $tags) }}
+      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- if (.Param "ShowPostNavLinks") }}{{- partial "post_nav_links.html" . }}{{- end }}
+  </footer>
+</article>
+
+{{- /* JS bundle: core + tool-specific, deferred */ -}}
+{{- $core := resources.Get "js/tools/calc-core.js" }}
+{{- $tooljs := resources.Get (index $jsmap $tool) }}
+{{- if and $core $tooljs }}
+{{- $bundle := slice $core $tooljs | resources.Concat (printf "js/tools/%s.bundle.js" $tool) | minify | fingerprint }}
+<script defer src="{{ $bundle.RelPermalink }}" integrity="{{ $bundle.Data.Integrity }}" crossorigin="anonymous"></script>
+{{- end }}
+{{- end }}{{/* end main */}}
