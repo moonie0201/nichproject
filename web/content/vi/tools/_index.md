@@ -1,6 +1,16 @@
 ---
 title: "Công cụ & Máy tính đầu tư"
-description: "Kiểm tra tái đầu tư cổ tức, chi phí ETF và quy đổi tiền tệ bằng dữ liệu — bộ công cụ của InvestIQs."
+description: "Kiểm tra tái đầu tư cổ tức, DCA, chi phí ETF, FIRE và lạm phát bằng dữ liệu — bộ công cụ của InvestIQs."
 ---
 
-Kiểm tra các con số trước khi đầu tư. Mô phỏng cổ tức, so sánh chi phí ETF và nhiều hơn nữa.
+Kiểm tra các con số trước khi đầu tư.
+
+## Máy tính
+
+- [Máy tính DCA (đầu tư định kỳ)](/vi/tools/dca-calculator/)
+- [Máy tính FIRE · Mục tiêu](/vi/tools/fire-calculator/)
+- [Máy tính so sánh phí ETF](/vi/tools/etf-fee-calculator/)
+- [Máy tính tác động lạm phát](/vi/tools/inflation-calculator/)
+- [Máy tính ETF cổ tức (SCHD·JEPI·VYM·JEPQ·QYLD)](/vi/tools/dividend-calculator/schd/)
+
+Các công cụ này chỉ mang tính thông tin, không phải lời khuyên đầu tư.

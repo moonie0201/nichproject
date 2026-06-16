@@ -41,3 +41,55 @@ other = "Tỷ lệ chi phí"
 other = "Dữ liệu tính đến"
 [calc_disclaimer]
 other = "Cổ tức thực tế có thể thay đổi. Thuế, tỷ giá và sai số theo dõi chưa được tính. Nội dung chỉ mang tính thông tin, không phải lời khuyên đầu tư."
+
+# Máy tính DCA
+[dca_initial]
+other = "Vốn đầu tư ban đầu"
+[dca_monthly]
+other = "Đóng góp hằng tháng"
+[dca_return]
+other = "Lợi suất hằng năm (%)"
+[res_final_balance]
+other = "Số dư cuối kỳ"
+[res_total_contributed]
+other = "Tổng đã đóng góp"
+[res_total_gain]
+other = "Tổng lợi nhuận"
+[tbl_contributed]
+other = "Đã đóng góp"
+[tbl_gain]
+other = "Lợi nhuận"
+
+# Máy tính so sánh phí
+[fee_a]
+other = "Tỷ lệ chi phí ETF A"
+[fee_b]
+other = "Tỷ lệ chi phí ETF B"
+[res_etf_a]
+other = "ETF A cuối kỳ"
+[res_etf_b]
+other = "ETF B cuối kỳ"
+[res_difference]
+other = "Chênh lệch"
+
+# Máy tính FIRE
+[fire_current]
+other = "Tiết kiệm hiện tại"
+[fire_target]
+other = "Mục tiêu"
+[fire_reached]
+other = "Đạt mục tiêu"
+[fire_not_reached]
+other = "Chưa đạt trong 70 năm"
+
+# Máy tính lạm phát
+[infl_amount]
+other = "Số tiền hiện tại"
+[infl_rate]
+other = "Lạm phát hằng năm (%)"
+[res_future_cost]
+other = "Chi phí tương lai"
+[res_present_value]
+other = "Giá trị hiện tại"
+[res_lost_pct]
+other = "Sức mua bị mất"

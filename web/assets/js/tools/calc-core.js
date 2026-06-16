@@ -75,6 +75,111 @@
     };
   };
 
+  /* ---- monthly rate helpers ---- */
+  IQ.monthlyReturn = function (annualPct) {
+    return Math.pow(1 + IQ.clampNonNeg(annualPct) / 100, 1 / 12) - 1;
+  };
+  IQ.monthlyFee = function (annualFeePct) {
+    return IQ.clampNonNeg(annualFeePct) / 100 / 12;
+  };
+
+  /* ---- DCA (적립식) projection ----
+     opts: { initialUsd, monthlyUsd, years, annualReturnPct }
+     Returns { rows:[{year,balanceUsd,contributedUsd,gainUsd}], finalBalanceUsd,
+               totalContributedUsd, totalGainUsd } */
+  IQ.projectDCA = function (opts) {
+    var balance = IQ.clampNonNeg(opts.initialUsd);
+    var monthly = IQ.clampNonNeg(opts.monthlyUsd);
+    var years = Math.max(1, Math.min(70, Math.round(IQ.num(opts.years, 1))));
+    var mRet = IQ.monthlyReturn(opts.annualReturnPct);
+    var contributed = balance;
+    var rows = [];
+    for (var m = 1; m <= years * 12; m++) {
+      balance = balance * (1 + mRet) + monthly;
+      contributed += monthly;
+      if (m % 12 === 0) {
+        rows.push({
+          year: m / 12,
+          balanceUsd: balance,
+          contributedUsd: contributed,
+          gainUsd: balance - contributed
+        });
+      }
+    }
+    return {
+      rows: rows,
+      finalBalanceUsd: balance,
+      totalContributedUsd: contributed,
+      totalGainUsd: balance - contributed
+    };
+  };
+
+  /* ---- ETF fee comparison (A vs B) ----
+     opts: { initialUsd, monthlyUsd, years, annualReturnPct, feeAPct, feeBPct }
+     monthly compound minus monthly fee. Returns finals + difference + yearly rows. */
+  IQ.compareFees = function (opts) {
+    var years = Math.max(1, Math.min(70, Math.round(IQ.num(opts.years, 1))));
+    var monthly = IQ.clampNonNeg(opts.monthlyUsd);
+    var init = IQ.clampNonNeg(opts.initialUsd);
+    var mRet = IQ.monthlyReturn(opts.annualReturnPct);
+    var mFeeA = IQ.monthlyFee(opts.feeAPct);
+    var mFeeB = IQ.monthlyFee(opts.feeBPct);
+    var a = init, b = init, rows = [];
+    for (var m = 1; m <= years * 12; m++) {
+      a = a * (1 + mRet - mFeeA) + monthly;
+      b = b * (1 + mRet - mFeeB) + monthly;
+      if (m % 12 === 0) rows.push({ year: m / 12, aUsd: a, bUsd: b, diffUsd: a - b });
+    }
+    return { rows: rows, finalAUsd: a, finalBUsd: b, differenceUsd: a - b };
+  };
+
+  /* ---- FIRE / target-amount: months until balance >= target ----
+     opts: { currentUsd, monthlyUsd, annualReturnPct, targetUsd }
+     Returns { reached, years, months, rows, finalBalanceUsd } (cap 70y). */
+  IQ.projectFIRE = function (opts) {
+    var balance = IQ.clampNonNeg(opts.currentUsd);
+    var monthly = IQ.clampNonNeg(opts.monthlyUsd);
+    var target = IQ.clampNonNeg(opts.targetUsd);
+    var mRet = IQ.monthlyReturn(opts.annualReturnPct);
+    var rows = [];
+    var reached = false, hitMonth = 0;
+    for (var m = 1; m <= 70 * 12; m++) {
+      balance = balance * (1 + mRet) + monthly;
+      if (!reached && target > 0 && balance >= target) { reached = true; hitMonth = m; }
+      if (m % 12 === 0) rows.push({ year: m / 12, balanceUsd: balance });
+      if (reached && m % 12 === 0 && m >= hitMonth) { /* keep one year past for table */ }
+    }
+    return {
+      reached: reached,
+      years: reached ? Math.floor(hitMonth / 12) : null,
+      months: reached ? hitMonth % 12 : null,
+      hitMonth: reached ? hitMonth : null,
+      rows: rows,
+      finalBalanceUsd: balance
+    };
+  };
+
+  /* ---- inflation impact ----
+     opts: { amountUsd, years, annualInflationPct }
+     futureCostUsd = 같은 구매력 유지에 필요한 미래 명목금액; presentValueUsd = 미래 amount의 현재가치 */
+  IQ.inflation = function (opts) {
+    var amount = IQ.clampNonNeg(opts.amountUsd);
+    var years = Math.max(1, Math.min(100, Math.round(IQ.num(opts.years, 1))));
+    var f = IQ.clampNonNeg(opts.annualInflationPct) / 100;
+    var factor = Math.pow(1 + f, years);
+    var rows = [];
+    for (var y = 1; y <= years; y++) {
+      var ff = Math.pow(1 + f, y);
+      rows.push({ year: y, futureCostUsd: amount * ff, presentValueUsd: amount / ff });
+    }
+    return {
+      rows: rows,
+      futureCostUsd: amount * factor,
+      presentValueUsd: amount / factor,
+      lostPct: (1 - 1 / factor) * 100
+    };
+  };
+
   /* ---- URL param share / restore ---- */
   IQ.readParams = function () {
     var out = {};

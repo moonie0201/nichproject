@@ -41,3 +41,55 @@ other = "운용보수"
 other = "데이터 기준일"
 [calc_disclaimer]
 other = "실제 배당은 변동하며 세금·환율·추적오차는 반영되지 않습니다. 본 콘텐츠는 정보 제공 목적이며 투자 권유가 아닙니다."
+
+# DCA 계산기
+[dca_initial]
+other = "초기 투자금"
+[dca_monthly]
+other = "월 적립금"
+[dca_return]
+other = "연 수익률(%)"
+[res_final_balance]
+other = "최종 금액"
+[res_total_contributed]
+other = "총 납입금"
+[res_total_gain]
+other = "총 수익"
+[tbl_contributed]
+other = "납입 누계"
+[tbl_gain]
+other = "수익"
+
+# 수수료 비교 계산기
+[fee_a]
+other = "ETF A 운용보수"
+[fee_b]
+other = "ETF B 운용보수"
+[res_etf_a]
+other = "ETF A 최종"
+[res_etf_b]
+other = "ETF B 최종"
+[res_difference]
+other = "차이"
+
+# FIRE 계산기
+[fire_current]
+other = "현재 보유 자산"
+[fire_target]
+other = "목표 금액"
+[fire_reached]
+other = "목표 도달"
+[fire_not_reached]
+other = "70년 내 미도달"
+
+# 인플레이션 계산기
+[infl_amount]
+other = "현재 금액"
+[infl_rate]
+other = "연 물가상승률(%)"
+[res_future_cost]
+other = "미래 필요금액"
+[res_present_value]
+other = "현재가치"
+[res_lost_pct]
+other = "구매력 손실"

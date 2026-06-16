@@ -1,0 +1,60 @@
+{{- /* Inflation impact calculator UI. */ -}}
+{{- $fx := site.Data.tools.fx -}}
+{{- $defCur := "USD" -}}
+{{- if eq site.Language.Lang "ko" }}{{ $defCur = "KRW" }}
+{{- else if eq site.Language.Lang "ja" }}{{ $defCur = "JPY" }}
+{{- else if eq site.Language.Lang "vi" }}{{ $defCur = "VND" }}
+{{- else if eq site.Language.Lang "id" }}{{ $defCur = "IDR" }}
+{{- end }}
+
+<div id="iq-inflation" class="iq-tool"
+     data-currency="{{ $defCur }}"
+     data-copied-msg="{{ i18n "calc_share_copied" }}">
+
+  <div class="iq-tool__grid">
+    <div class="iq-field">
+      <label for="iq-amount">{{ i18n "infl_amount" }} (USD)</label>
+      <input type="number" id="iq-amount" min="0" step="1000" value="10000">
+    </div>
+    <div class="iq-field">
+      <label for="iq-period">{{ i18n "calc_period" }}</label>
+      <input type="number" id="iq-period" min="1" max="100" step="1" value="20">
+    </div>
+    <div class="iq-field">
+      <label for="iq-rate">{{ i18n "infl_rate" }}</label>
+      <input type="number" id="iq-rate" min="0" max="50" step="0.1" value="3">
+    </div>
+    <div class="iq-field">
+      <label for="iq-currency">{{ i18n "calc_currency" }}</label>
+      <select id="iq-currency">
+        <option value="USD">USD ($)</option>
+        <option value="KRW">KRW (₩)</option>
+        <option value="JPY">JPY (¥)</option>
+        <option value="VND">VND (₫)</option>
+        <option value="IDR">IDR (Rp)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="iq-tool__actions">
+    <button type="button" id="iq-calc" class="iq-btn">{{ i18n "calc_button" }}</button>
+    <button type="button" id="iq-reset" class="iq-btn iq-btn--ghost">{{ i18n "calc_reset" }}</button>
+    <button type="button" id="iq-share" class="iq-btn iq-btn--ghost">{{ i18n "calc_share" }}</button>
+  </div>
+
+  <div id="iq-result" class="iq-result" hidden>
+    <div class="iq-result__title">{{ i18n "calc_result_title" }}</div>
+    <div class="iq-result__cards">
+      <div class="iq-card"><div class="iq-card__label">{{ i18n "res_future_cost" }}</div><div class="iq-card__value" id="iq-res-future">–</div></div>
+      <div class="iq-card"><div class="iq-card__label">{{ i18n "res_present_value" }}</div><div class="iq-card__value" id="iq-res-pv">–</div></div>
+      <div class="iq-card"><div class="iq-card__label">{{ i18n "res_lost_pct" }}</div><div class="iq-card__value" id="iq-res-lost">–</div></div>
+    </div>
+    <table class="iq-table">
+      <thead><tr><th>{{ i18n "tbl_year" }}</th><th>{{ i18n "res_future_cost" }}</th><th>{{ i18n "res_present_value" }}</th></tr></thead>
+      <tbody id="iq-tbody"></tbody>
+    </table>
+    <div class="iq-disclaimer">{{ i18n "calc_disclaimer" }}</div>
+  </div>
+</div>
+
+<script type="application/json" id="iq-fx">{{ $fx | jsonify }}</script>

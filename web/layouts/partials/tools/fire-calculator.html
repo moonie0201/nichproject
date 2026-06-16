@@ -1,0 +1,65 @@
+{{- /* FIRE calculator UI. */ -}}
+{{- $fx := site.Data.tools.fx -}}
+{{- $defCur := "USD" -}}
+{{- if eq site.Language.Lang "ko" }}{{ $defCur = "KRW" }}
+{{- else if eq site.Language.Lang "ja" }}{{ $defCur = "JPY" }}
+{{- else if eq site.Language.Lang "vi" }}{{ $defCur = "VND" }}
+{{- else if eq site.Language.Lang "id" }}{{ $defCur = "IDR" }}
+{{- end }}
+
+<div id="iq-fire" class="iq-tool"
+     data-currency="{{ $defCur }}"
+     data-copied-msg="{{ i18n "calc_share_copied" }}"
+     data-reached-msg="{{ i18n "fire_reached" }}"
+     data-not-reached-msg="{{ i18n "fire_not_reached" }}">
+
+  <div class="iq-tool__grid">
+    <div class="iq-field">
+      <label for="iq-current">{{ i18n "fire_current" }} (USD)</label>
+      <input type="number" id="iq-current" min="0" step="1000" value="50000">
+    </div>
+    <div class="iq-field">
+      <label for="iq-monthly">{{ i18n "dca_monthly" }} (USD)</label>
+      <input type="number" id="iq-monthly" min="0" step="100" value="1000">
+    </div>
+    <div class="iq-field">
+      <label for="iq-return">{{ i18n "dca_return" }}</label>
+      <input type="number" id="iq-return" min="0" max="50" step="0.5" value="7">
+    </div>
+    <div class="iq-field">
+      <label for="iq-target">{{ i18n "fire_target" }} (USD)</label>
+      <input type="number" id="iq-target" min="0" step="10000" value="1000000">
+    </div>
+    <div class="iq-field">
+      <label for="iq-currency">{{ i18n "calc_currency" }}</label>
+      <select id="iq-currency">
+        <option value="USD">USD ($)</option>
+        <option value="KRW">KRW (₩)</option>
+        <option value="JPY">JPY (¥)</option>
+        <option value="VND">VND (₫)</option>
+        <option value="IDR">IDR (Rp)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="iq-tool__actions">
+    <button type="button" id="iq-calc" class="iq-btn">{{ i18n "calc_button" }}</button>
+    <button type="button" id="iq-reset" class="iq-btn iq-btn--ghost">{{ i18n "calc_reset" }}</button>
+    <button type="button" id="iq-share" class="iq-btn iq-btn--ghost">{{ i18n "calc_share" }}</button>
+  </div>
+
+  <div id="iq-result" class="iq-result" hidden>
+    <div class="iq-result__title">{{ i18n "calc_result_title" }}</div>
+    <div class="iq-result__cards">
+      <div class="iq-card" style="grid-column: span 2;"><div class="iq-card__label">{{ i18n "fire_reached" }} / {{ i18n "fire_not_reached" }}</div><div class="iq-card__value" id="iq-res-status">–</div></div>
+      <div class="iq-card"><div class="iq-card__label">{{ i18n "res_final_balance" }}</div><div class="iq-card__value" id="iq-res-final">–</div></div>
+    </div>
+    <table class="iq-table">
+      <thead><tr><th>{{ i18n "tbl_year" }}</th><th>{{ i18n "tbl_balance" }}</th></tr></thead>
+      <tbody id="iq-tbody"></tbody>
+    </table>
+    <div class="iq-disclaimer">{{ i18n "calc_disclaimer" }}</div>
+  </div>
+</div>
+
+<script type="application/json" id="iq-fx">{{ $fx | jsonify }}</script>

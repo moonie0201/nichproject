@@ -41,3 +41,55 @@ other = "Expense ratio"
 other = "Data as of"
 [calc_disclaimer]
 other = "Actual dividends vary. Taxes, FX, and tracking error are not reflected. This is information only, not investment advice."
+
+# DCA calculator
+[dca_initial]
+other = "Initial investment"
+[dca_monthly]
+other = "Monthly contribution"
+[dca_return]
+other = "Annual return (%)"
+[res_final_balance]
+other = "Final balance"
+[res_total_contributed]
+other = "Total contributed"
+[res_total_gain]
+other = "Total gain"
+[tbl_contributed]
+other = "Contributed"
+[tbl_gain]
+other = "Gain"
+
+# Fee comparison calculator
+[fee_a]
+other = "ETF A expense ratio"
+[fee_b]
+other = "ETF B expense ratio"
+[res_etf_a]
+other = "ETF A final"
+[res_etf_b]
+other = "ETF B final"
+[res_difference]
+other = "Difference"
+
+# FIRE calculator
+[fire_current]
+other = "Current savings"
+[fire_target]
+other = "Target amount"
+[fire_reached]
+other = "Goal reached"
+[fire_not_reached]
+other = "Not reached in 70 years"
+
+# Inflation calculator
+[infl_amount]
+other = "Amount today"
+[infl_rate]
+other = "Annual inflation (%)"
+[res_future_cost]
+other = "Future cost"
+[res_present_value]
+other = "Present value"
+[res_lost_pct]
+other = "Purchasing power lost"

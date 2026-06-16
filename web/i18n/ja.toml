@@ -41,3 +41,55 @@ other = "経費率"
 other = "データ基準日"
 [calc_disclaimer]
 other = "実際の配当は変動します。税金・為替・トラッキングエラーは反映されていません。本情報は投資勧誘ではなく情報提供のみを目的としています。"
+
+# DCA計算機
+[dca_initial]
+other = "初期投資額"
+[dca_monthly]
+other = "毎月の積立額"
+[dca_return]
+other = "年間リターン(%)"
+[res_final_balance]
+other = "最終金額"
+[res_total_contributed]
+other = "累計積立額"
+[res_total_gain]
+other = "総利益"
+[tbl_contributed]
+other = "積立累計"
+[tbl_gain]
+other = "利益"
+
+# 手数料比較計算機
+[fee_a]
+other = "ETF A 経費率"
+[fee_b]
+other = "ETF B 経費率"
+[res_etf_a]
+other = "ETF A 最終額"
+[res_etf_b]
+other = "ETF B 最終額"
+[res_difference]
+other = "差額"
+
+# FIRE計算機
+[fire_current]
+other = "現在の資産"
+[fire_target]
+other = "目標金額"
+[fire_reached]
+other = "目標達成"
+[fire_not_reached]
+other = "70年以内に未達成"
+
+# インフレ計算機
+[infl_amount]
+other = "現在の金額"
+[infl_rate]
+other = "年間インフレ率(%)"
+[res_future_cost]
+other = "将来必要な金額"
+[res_present_value]
+other = "現在価値"
+[res_lost_pct]
+other = "購買力の損失"

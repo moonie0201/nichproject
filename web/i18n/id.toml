@@ -41,3 +41,55 @@ other = "Rasio biaya"
 other = "Data per"
 [calc_disclaimer]
 other = "Dividen aktual dapat berubah. Pajak, kurs, dan tracking error tidak diperhitungkan. Konten ini hanya untuk informasi, bukan saran investasi."
+
+# Kalkulator DCA
+[dca_initial]
+other = "Investasi awal"
+[dca_monthly]
+other = "Kontribusi bulanan"
+[dca_return]
+other = "Return tahunan (%)"
+[res_final_balance]
+other = "Saldo akhir"
+[res_total_contributed]
+other = "Total disetorkan"
+[res_total_gain]
+other = "Total keuntungan"
+[tbl_contributed]
+other = "Setoran kumulatif"
+[tbl_gain]
+other = "Keuntungan"
+
+# Kalkulator perbandingan biaya
+[fee_a]
+other = "Rasio biaya ETF A"
+[fee_b]
+other = "Rasio biaya ETF B"
+[res_etf_a]
+other = "ETF A akhir"
+[res_etf_b]
+other = "ETF B akhir"
+[res_difference]
+other = "Selisih"
+
+# Kalkulator FIRE
+[fire_current]
+other = "Tabungan saat ini"
+[fire_target]
+other = "Target jumlah"
+[fire_reached]
+other = "Target tercapai"
+[fire_not_reached]
+other = "Tidak tercapai dalam 70 tahun"
+
+# Kalkulator inflasi
+[infl_amount]
+other = "Jumlah saat ini"
+[infl_rate]
+other = "Inflasi tahunan (%)"
+[res_future_cost]
+other = "Biaya masa depan"
+[res_present_value]
+other = "Nilai sekarang"
+[res_lost_pct]
+other = "Daya beli hilang"
