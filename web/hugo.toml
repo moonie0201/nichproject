@@ -119,6 +119,11 @@ theme = 'PaperMod'
       identifier = "en-tools"
       url = "/en/tools/"
       weight = 4
+    [[languages.en.menu.main]]
+      name = "Research"
+      identifier = "en-research"
+      url = "/en/research/"
+      weight = 5
     [[languages.en.menu.footer]]
       name = "Privacy Policy"
       identifier = "en-privacy"
