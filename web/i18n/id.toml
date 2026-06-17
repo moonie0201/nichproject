@@ -125,3 +125,39 @@ other = "Imbal hasil lebih tinggi"
 other = "Biaya lebih rendah"
 [compare_data_as_of]
 other = "Data per"
+
+# Alat rebalancing portofolio + pendapatan portofolio
+[pf_label]
+other = "Ticker / Label"
+[pf_current]
+other = "Nilai saat ini (USD)"
+[pf_current_pct]
+other = "Bobot saat ini%"
+[pf_target]
+other = "Target bobot%"
+[pf_target_value]
+other = "Nilai target"
+[pf_add_row]
+other = "Tambah baris"
+[pf_remove]
+other = "Hapus"
+[pf_ticker]
+other = "Ticker"
+[pf_amount]
+other = "Jumlah (USD)"
+[pf_weight_pct]
+other = "Bobot%"
+[res_total_value]
+other = "Total nilai portofolio"
+[res_trade]
+other = "Transaksi (+beli / −jual)"
+[res_drift]
+other = "Deviasi"
+[res_total_invested]
+other = "Total diinvestasikan"
+[res_total_annual_div]
+other = "Total dividen tahunan"
+[res_blended_yield]
+other = "Imbal hasil rata-rata tertimbang"
+[res_blended_expense]
+other = "Biaya rata-rata tertimbang"

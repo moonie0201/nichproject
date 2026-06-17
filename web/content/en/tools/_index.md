@@ -23,3 +23,8 @@ Check the numbers before you invest.
 - [SCHD vs VOO](/en/tools/compare/schd-vs-voo/)
 
 These tools are for information only, not investment advice.
+
+## Portfolio
+
+- [Portfolio Rebalance Calculator](/en/tools/portfolio-rebalance/)
+- [Portfolio Income Calculator](/en/tools/portfolio-income/)

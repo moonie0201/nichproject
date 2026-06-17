@@ -23,3 +23,8 @@ Kiểm tra các con số trước khi đầu tư.
 - [SCHD vs VOO](/vi/tools/compare/schd-vs-voo/)
 
 Các công cụ này chỉ mang tính thông tin, không phải lời khuyên đầu tư.
+
+## Danh mục
+
+- [Máy tính cân bằng danh mục](/vi/tools/portfolio-rebalance/)
+- [Máy tính thu nhập danh mục](/vi/tools/portfolio-income/)

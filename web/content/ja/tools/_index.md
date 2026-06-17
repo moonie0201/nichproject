@@ -23,3 +23,8 @@ description: "配当再投資、積立、ETF費用、FIRE、インフレをデ�
 - [SCHD vs VOO](/ja/tools/compare/schd-vs-voo/)
 
 本ツールは情報提供のみを目的とし、投資勧誘ではありません。
+
+## ポートフォリオ
+
+- [ポートフォリオリバランス計算機](/ja/tools/portfolio-rebalance/)
+- [ポートフォリオ収益計算機](/ja/tools/portfolio-income/)

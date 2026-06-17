@@ -23,3 +23,8 @@ Periksa angkanya sebelum berinvestasi.
 - [SCHD vs VOO](/id/tools/compare/schd-vs-voo/)
 
 Alat ini hanya untuk informasi, bukan saran investasi.
+
+## Portofolio
+
+- [Kalkulator Rebalancing Portofolio](/id/tools/portfolio-rebalance/)
+- [Kalkulator Pendapatan Portofolio](/id/tools/portfolio-income/)

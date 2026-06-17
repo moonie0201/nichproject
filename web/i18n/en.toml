@@ -125,3 +125,39 @@ other = "Higher yield"
 other = "Lower fee"
 [compare_data_as_of]
 other = "Data as of"
+
+# Portfolio rebalance + portfolio income tools
+[pf_label]
+other = "Label / Ticker"
+[pf_current]
+other = "Current value (USD)"
+[pf_current_pct]
+other = "Current %"
+[pf_target]
+other = "Target %"
+[pf_target_value]
+other = "Target value"
+[pf_add_row]
+other = "Add row"
+[pf_remove]
+other = "Remove"
+[pf_ticker]
+other = "Ticker"
+[pf_amount]
+other = "Amount (USD)"
+[pf_weight_pct]
+other = "Weight %"
+[res_total_value]
+other = "Total portfolio value"
+[res_trade]
+other = "Trade (+buy / −sell)"
+[res_drift]
+other = "Drift"
+[res_total_invested]
+other = "Total invested"
+[res_total_annual_div]
+other = "Total annual dividend"
+[res_blended_yield]
+other = "Blended yield"
+[res_blended_expense]
+other = "Blended expense ratio"

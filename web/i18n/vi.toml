@@ -125,3 +125,39 @@ other = "Lợi suất cao hơn"
 other = "Phí thấp hơn"
 [compare_data_as_of]
 other = "Dữ liệu tính đến"
+
+# Công cụ cân bằng danh mục + thu nhập danh mục
+[pf_label]
+other = "Mã / Nhãn"
+[pf_current]
+other = "Giá trị hiện tại (USD)"
+[pf_current_pct]
+other = "Tỷ trọng hiện tại%"
+[pf_target]
+other = "Tỷ trọng mục tiêu%"
+[pf_target_value]
+other = "Giá trị mục tiêu"
+[pf_add_row]
+other = "Thêm hàng"
+[pf_remove]
+other = "Xóa"
+[pf_ticker]
+other = "Mã cổ phiếu"
+[pf_amount]
+other = "Số tiền (USD)"
+[pf_weight_pct]
+other = "Tỷ trọng%"
+[res_total_value]
+other = "Tổng giá trị danh mục"
+[res_trade]
+other = "Giao dịch (+mua / −bán)"
+[res_drift]
+other = "Lệch mục tiêu"
+[res_total_invested]
+other = "Tổng đầu tư"
+[res_total_annual_div]
+other = "Tổng cổ tức hằng năm"
+[res_blended_yield]
+other = "Lợi suất bình quân"
+[res_blended_expense]
+other = "Chi phí bình quân"

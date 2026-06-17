@@ -160,5 +160,86 @@ t("compareTickerIncome: amount 0 → zero divs", () => {
   assert.equal(r.a.monthlyDivUsd, 0);
 });
 
+/* ---- IQ.rebalance ---- */
+t("rebalance: trades sum to ~0", () => {
+  const r = IQ.rebalance({ holdings: [
+    { label: "SCHD", currentUsd: 5000, targetPct: 50 },
+    { label: "VYM",  currentUsd: 3000, targetPct: 30 },
+    { label: "VOO",  currentUsd: 2000, targetPct: 20 },
+  ]});
+  const tradeSum = r.rows.reduce((s, row) => s + row.tradeUsd, 0);
+  near(tradeSum, 0, 0.01);
+  assert.equal(r.totalUsd, 10000);
+});
+t("rebalance: already-balanced → trades ~0", () => {
+  const r = IQ.rebalance({ holdings: [
+    { label: "A", currentUsd: 5000, targetPct: 50 },
+    { label: "B", currentUsd: 5000, targetPct: 50 },
+  ]});
+  r.rows.forEach(row => near(row.tradeUsd, 0, 0.01));
+});
+t("rebalance: NaN-safe — all fields finite", () => {
+  const r = IQ.rebalance({ holdings: [
+    { label: "X", currentUsd: NaN, targetPct: undefined },
+    { label: "Y", currentUsd: 1000, targetPct: "abc" },
+  ]});
+  r.rows.forEach(row => {
+    finite(row.currentUsd); finite(row.targetUsd); finite(row.tradeUsd); finite(row.driftPct);
+  });
+  finite(r.totalUsd);
+});
+t("rebalance: targets not summing to 100 — no crash", () => {
+  const r = IQ.rebalance({ holdings: [
+    { label: "A", currentUsd: 4000, targetPct: 60 },
+    { label: "B", currentUsd: 6000, targetPct: 60 }, // 120 total — odd but allowed
+  ]});
+  assert.ok(r.rows.length === 2);
+  r.rows.forEach(row => { finite(row.tradeUsd); finite(row.driftPct); });
+});
+
+/* ---- IQ.portfolioIncome ---- */
+const TDP = {
+  SCHD: { yield_pct: 3.25, expense_ratio_pct: 0.06 },
+  JEPI: { yield_pct: 8.45, expense_ratio_pct: 0.35 },
+  VYM:  { yield_pct: 2.21, expense_ratio_pct: 0.04 },
+};
+t("portfolioIncome: single position — blended yield == its yield", () => {
+  const r = IQ.portfolioIncome({ positions: [{ ticker: "SCHD", amountUsd: 10000 }], tickerData: TDP });
+  near(r.blendedYieldPct, 3.25, 0.001);
+  near(r.totalAnnualDivUsd, 325, 0.01);
+  near(r.monthlyDivUsd, 325 / 12, 0.01);
+  assert.equal(r.rows[0].weightPct, 100);
+});
+t("portfolioIncome: two positions — weighted correctly", () => {
+  const r = IQ.portfolioIncome({
+    positions: [
+      { ticker: "SCHD", amountUsd: 10000 },
+      { ticker: "JEPI", amountUsd: 10000 },
+    ],
+    tickerData: TDP
+  });
+  // blended = (3.25 + 8.45) / 2 = 5.85
+  near(r.blendedYieldPct, (3.25 + 8.45) / 2, 0.001);
+  near(r.totalAmountUsd, 20000, 0.01);
+  near(r.totalAnnualDivUsd, 325 + 845, 0.01);
+  r.rows.forEach(row => near(row.weightPct, 50, 0.001));
+});
+t("portfolioIncome: empty positions — returns zeros, no crash", () => {
+  const r = IQ.portfolioIncome({ positions: [], tickerData: TDP });
+  assert.equal(r.totalAmountUsd, 0);
+  assert.equal(r.totalAnnualDivUsd, 0);
+  assert.equal(r.blendedYieldPct, 0);
+  assert.equal(r.rows.length, 0);
+});
+t("portfolioIncome: NaN/zero-safe — no divide-by-zero, all finite", () => {
+  const r = IQ.portfolioIncome({
+    positions: [{ ticker: "SCHD", amountUsd: NaN }, { ticker: "VYM", amountUsd: undefined }],
+    tickerData: TDP
+  });
+  finite(r.totalAmountUsd); finite(r.blendedYieldPct); finite(r.blendedExpensePct);
+  assert.equal(r.totalAmountUsd, 0);
+  assert.equal(r.blendedYieldPct, 0);
+});
+
 console.log(`\ncalc-core: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -1,0 +1,66 @@
+{{- /* Portfolio rebalance tool UI */ -}}
+{{- $fx := site.Data.tools.fx -}}
+{{- $defCur := "USD" -}}
+{{- if eq site.Language.Lang "ko" }}{{ $defCur = "KRW" }}
+{{- else if eq site.Language.Lang "ja" }}{{ $defCur = "JPY" }}
+{{- else if eq site.Language.Lang "vi" }}{{ $defCur = "VND" }}
+{{- else if eq site.Language.Lang "id" }}{{ $defCur = "IDR" }}
+{{- end }}
+
+<div id="iq-rebalance" class="iq-tool"
+     data-currency="{{ $defCur }}"
+     data-copied-msg="{{ i18n "calc_share_copied" }}"
+     data-lbl-add="{{ i18n "pf_add_row" }}"
+     data-lbl-remove="{{ i18n "pf_remove" }}">
+
+  <div id="iq-rb-rows">
+    {{- /* default rows rendered by JS */ -}}
+  </div>
+
+  <div class="iq-tool__actions">
+    <button type="button" id="iq-rb-add" class="iq-btn iq-btn--ghost">{{ i18n "pf_add_row" }}</button>
+    <button type="button" id="iq-rb-calc" class="iq-btn">{{ i18n "calc_button" }}</button>
+    <button type="button" id="iq-rb-reset" class="iq-btn iq-btn--ghost">{{ i18n "calc_reset" }}</button>
+    <button type="button" id="iq-rb-share" class="iq-btn iq-btn--ghost">{{ i18n "calc_share" }}</button>
+  </div>
+
+  <div class="iq-field" style="max-width:200px;margin-top:0.5rem">
+    <label for="iq-rb-currency">{{ i18n "calc_currency" }}</label>
+    <select id="iq-rb-currency">
+      <option value="USD">USD ($)</option>
+      <option value="KRW">KRW (₩)</option>
+      <option value="JPY">JPY (¥)</option>
+      <option value="VND">VND (₫)</option>
+      <option value="IDR">IDR (Rp)</option>
+    </select>
+  </div>
+
+  <div id="iq-rb-result" class="iq-result" hidden>
+    <div class="iq-result__title">{{ i18n "calc_result_title" }}</div>
+    <div class="iq-result__cards">
+      <div class="iq-card">
+        <div class="iq-card__label">{{ i18n "res_total_value" }}</div>
+        <div class="iq-card__value" id="iq-rb-total">–</div>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="iq-table">
+        <thead>
+          <tr>
+            <th>{{ i18n "pf_label" }}</th>
+            <th>{{ i18n "pf_current" }}</th>
+            <th>{{ i18n "pf_current_pct" }}</th>
+            <th>{{ i18n "pf_target" }}</th>
+            <th>{{ i18n "pf_target_value" }}</th>
+            <th>{{ i18n "res_trade" }}</th>
+            <th>{{ i18n "res_drift" }}</th>
+          </tr>
+        </thead>
+        <tbody id="iq-rb-tbody"></tbody>
+      </table>
+    </div>
+    <div class="iq-disclaimer">{{ i18n "calc_disclaimer" }}</div>
+  </div>
+</div>
+
+<script type="application/json" id="iq-fx">{{ $fx | jsonify }}</script>

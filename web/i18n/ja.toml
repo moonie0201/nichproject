@@ -125,3 +125,39 @@ other = "配当利回りが高い"
 other = "経費率が低い"
 [compare_data_as_of]
 other = "データ基準日"
+
+# ポートフォリオリバランス + ポートフォリオ収益ツール
+[pf_label]
+other = "銘柄 / ラベル"
+[pf_current]
+other = "現在評価額 (USD)"
+[pf_current_pct]
+other = "現在比率%"
+[pf_target]
+other = "目標比率%"
+[pf_target_value]
+other = "目標評価額"
+[pf_add_row]
+other = "行を追加"
+[pf_remove]
+other = "削除"
+[pf_ticker]
+other = "銘柄"
+[pf_amount]
+other = "投資額 (USD)"
+[pf_weight_pct]
+other = "比率%"
+[res_total_value]
+other = "ポートフォリオ合計"
+[res_trade]
+other = "売買 (+買 / −売)"
+[res_drift]
+other = "ドリフト"
+[res_total_invested]
+other = "総投資額"
+[res_total_annual_div]
+other = "年間配当合計"
+[res_blended_yield]
+other = "加重配当利回り"
+[res_blended_expense]
+other = "加重経費率"

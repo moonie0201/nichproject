@@ -209,6 +209,89 @@
     };
   };
 
+  /* ---- portfolio rebalance ----
+     opts: { holdings: [{label, currentUsd, targetPct}] }
+     Returns { totalUsd, rows:[{label,currentUsd,currentPct,targetPct,targetUsd,tradeUsd,driftPct}] } */
+  IQ.rebalance = function (opts) {
+    var holdings = (opts && Array.isArray(opts.holdings)) ? opts.holdings : [];
+    var totalUsd = 0;
+    var i, h, cur;
+    for (i = 0; i < holdings.length; i++) {
+      cur = IQ.num(holdings[i].currentUsd, 0);
+      if (isFinite(cur) && cur > 0) totalUsd += cur;
+    }
+    var rows = [];
+    for (i = 0; i < holdings.length; i++) {
+      h = holdings[i];
+      var currentUsd = IQ.num(h.currentUsd, 0);
+      var targetPct = IQ.num(h.targetPct, 0);
+      var currentPct = totalUsd > 0 ? currentUsd / totalUsd * 100 : 0;
+      var targetUsd = totalUsd > 0 ? totalUsd * targetPct / 100 : 0;
+      var tradeUsd = targetUsd - currentUsd;
+      var driftPct = currentPct - targetPct;
+      rows.push({
+        label: h.label || "",
+        currentUsd: isFinite(currentUsd) ? currentUsd : 0,
+        currentPct: isFinite(currentPct) ? currentPct : 0,
+        targetPct: isFinite(targetPct) ? targetPct : 0,
+        targetUsd: isFinite(targetUsd) ? targetUsd : 0,
+        tradeUsd: isFinite(tradeUsd) ? tradeUsd : 0,
+        driftPct: isFinite(driftPct) ? driftPct : 0
+      });
+    }
+    return { totalUsd: isFinite(totalUsd) ? totalUsd : 0, rows: rows };
+  };
+
+  /* ---- portfolio income ----
+     opts: { positions:[{ticker,amountUsd}], tickerData:{TICKER:{yield_pct,expense_ratio_pct}} }
+     Returns { totalAmountUsd, totalAnnualDivUsd, monthlyDivUsd, blendedYieldPct, blendedExpensePct,
+               rows:[{ticker,amountUsd,weightPct,annualDivUsd,yieldPct}] } */
+  IQ.portfolioIncome = function (opts) {
+    var positions = (opts && Array.isArray(opts.positions)) ? opts.positions : [];
+    var td = (opts && opts.tickerData) ? opts.tickerData : {};
+    var totalAmount = 0, totalAnnualDiv = 0, weightedExpense = 0;
+    var i, pos, ticker, info, amount, yld, fee, annDiv;
+    var rows = [];
+
+    for (i = 0; i < positions.length; i++) {
+      pos = positions[i];
+      ticker = pos.ticker || "";
+      amount = IQ.num(pos.amountUsd, 0);
+      if (!isFinite(amount) || amount < 0) amount = 0;
+      info = (td[ticker]) ? td[ticker] : {};
+      yld = IQ.num(info.yield_pct, 0);
+      fee = IQ.num(info.expense_ratio_pct, 0);
+      annDiv = amount * yld / 100;
+      totalAmount += amount;
+      totalAnnualDiv += annDiv;
+      weightedExpense += amount * fee;
+      rows.push({
+        ticker: ticker,
+        amountUsd: amount,
+        weightPct: 0, /* filled below */
+        annualDivUsd: isFinite(annDiv) ? annDiv : 0,
+        yieldPct: isFinite(yld) ? yld : 0
+      });
+    }
+
+    /* fill weightPct */
+    for (i = 0; i < rows.length; i++) {
+      rows[i].weightPct = totalAmount > 0 ? rows[i].amountUsd / totalAmount * 100 : 0;
+    }
+
+    var blendedYield = totalAmount > 0 ? totalAnnualDiv / totalAmount * 100 : 0;
+    var blendedExpense = totalAmount > 0 ? weightedExpense / totalAmount : 0;
+
+    return {
+      totalAmountUsd: isFinite(totalAmount) ? totalAmount : 0,
+      totalAnnualDivUsd: isFinite(totalAnnualDiv) ? totalAnnualDiv : 0,
+      monthlyDivUsd: isFinite(totalAnnualDiv) ? totalAnnualDiv / 12 : 0,
+      blendedYieldPct: isFinite(blendedYield) ? blendedYield : 0,
+      blendedExpensePct: isFinite(blendedExpense) ? blendedExpense : 0,
+      rows: rows
+    };
+  };
+
   /* ---- URL param share / restore ---- */
   IQ.readParams = function () {
     var out = {};

@@ -125,3 +125,39 @@ other = "배당수익률 높음"
 other = "운용보수 낮음"
 [compare_data_as_of]
 other = "데이터 기준일"
+
+# 포트폴리오 리밸런싱 + 포트폴리오 인컴 도구
+[pf_label]
+other = "종목 / 레이블"
+[pf_current]
+other = "현재 평가액 (USD)"
+[pf_current_pct]
+other = "현재 비중%"
+[pf_target]
+other = "목표 비중%"
+[pf_target_value]
+other = "목표 평가액"
+[pf_add_row]
+other = "행 추가"
+[pf_remove]
+other = "삭제"
+[pf_ticker]
+other = "종목"
+[pf_amount]
+other = "투자금액 (USD)"
+[pf_weight_pct]
+other = "비중%"
+[res_total_value]
+other = "총 포트폴리오 가치"
+[res_trade]
+other = "매매 (+매수 / −매도)"
+[res_drift]
+other = "드리프트"
+[res_total_invested]
+other = "총 투자금"
+[res_total_annual_div]
+other = "총 연 배당금"
+[res_blended_yield]
+other = "가중 배당수익률"
+[res_blended_expense]
+other = "가중 운용보수"
