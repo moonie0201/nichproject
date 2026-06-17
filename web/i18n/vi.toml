@@ -161,3 +161,19 @@ other = "Tổng cổ tức hằng năm"
 other = "Lợi suất bình quân"
 [res_blended_expense]
 other = "Chi phí bình quân"
+
+# Danh sách theo dõi
+[wl_add]
+other = "Thêm vào danh sách"
+[wl_empty]
+other = "Danh sách theo dõi trống. Dùng các nút bên trên để thêm mã."
+[wl_remove]
+other = "Xóa"
+[wl_share]
+other = "Chia sẻ danh sách"
+[wl_reset]
+other = "Đặt lại"
+[wl_name]
+other = "Tên"
+[wl_risk]
+other = "Ghi chú rủi ro"

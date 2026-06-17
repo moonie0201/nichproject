@@ -161,3 +161,19 @@ other = "총 연 배당금"
 other = "가중 배당수익률"
 [res_blended_expense]
 other = "가중 운용보수"
+
+# 관심 종목 (Watchlist)
+[wl_add]
+other = "관심 종목 추가"
+[wl_empty]
+other = "관심 종목이 없습니다. 위 버튼으로 추가하세요."
+[wl_remove]
+other = "삭제"
+[wl_share]
+other = "목록 공유"
+[wl_reset]
+other = "초기화"
+[wl_name]
+other = "종목명"
+[wl_risk]
+other = "리스크 메모"

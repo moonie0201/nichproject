@@ -1,0 +1,46 @@
+{{- /* Watchlist tool. Embeds site.Data.tools.tickers as JSON for JS. */ -}}
+{{- $data := site.Data.tools.tickers -}}
+
+<div id="iq-watchlist" class="iq-tool">
+  <script type="application/json" id="iq-tickers">{{ $data | jsonify }}</script>
+
+  {{- /* Add ticker buttons */ -}}
+  <div class="iq-watchlist-add">
+    <span class="iq-watchlist-add__label">{{ i18n "wl_add" }}</span>
+    <div class="iq-watchlist-add__btns">
+      {{- range $sym, $t := $data.tickers }}
+      <button type="button" class="iq-btn iq-btn--sm iq-wl-add-btn" data-ticker="{{ $sym }}">{{ $sym }}</button>
+      {{- end }}
+    </div>
+  </div>
+
+  {{- /* Watchlist table (populated by JS) */ -}}
+  <div class="iq-watchlist-table-wrap" style="overflow-x:auto;">
+    <table class="iq-table iq-watchlist-table" id="iq-wl-table">
+      <thead>
+        <tr>
+          <th>{{ i18n "wl_name" }}</th>
+          <th>{{ i18n "calc_yield" }}</th>
+          <th>{{ i18n "calc_expense" }}</th>
+          <th>{{ i18n "metric_1y" }}</th>
+          <th>{{ i18n "metric_5y" }}</th>
+          <th>{{ i18n "metric_risk" }}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="iq-wl-body">
+        {{- /* filled by JS */ -}}
+      </tbody>
+    </table>
+    <p id="iq-wl-empty" class="iq-watchlist-empty" hidden>{{ i18n "wl_empty" }}</p>
+  </div>
+
+  {{- /* Actions */ -}}
+  <div class="iq-tool__actions">
+    <button type="button" id="iq-wl-share" class="iq-btn iq-btn--ghost">{{ i18n "wl_share" }}</button>
+    <button type="button" id="iq-wl-reset" class="iq-btn iq-btn--ghost">{{ i18n "wl_reset" }}</button>
+  </div>
+
+  <div class="iq-disclaimer">{{ i18n "calc_disclaimer" }}</div>
+  <div class="iq-compare-asof">{{ i18n "calc_data_as_of" }}: {{ $data.data_as_of }}</div>
+</div>

@@ -28,3 +28,7 @@ Alat ini hanya untuk informasi, bukan saran investasi.
 
 - [Kalkulator Rebalancing Portofolio](/id/tools/portfolio-rebalance/)
 - [Kalkulator Pendapatan Portofolio](/id/tools/portfolio-income/)
+
+## Lainnya
+
+- [Watchlist ETF](/id/tools/watchlist/)

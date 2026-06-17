@@ -161,3 +161,19 @@ other = "Total annual dividend"
 other = "Blended yield"
 [res_blended_expense]
 other = "Blended expense ratio"
+
+# Watchlist
+[wl_add]
+other = "Add to watchlist"
+[wl_empty]
+other = "Your watchlist is empty. Use the buttons above to add tickers."
+[wl_remove]
+other = "Remove"
+[wl_share]
+other = "Share list"
+[wl_reset]
+other = "Reset"
+[wl_name]
+other = "Name"
+[wl_risk]
+other = "Risk note"

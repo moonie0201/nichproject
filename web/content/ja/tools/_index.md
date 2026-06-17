@@ -28,3 +28,7 @@ description: "配当再投資、積立、ETF費用、FIRE、インフレをデ�
 
 - [ポートフォリオリバランス計算機](/ja/tools/portfolio-rebalance/)
 - [ポートフォリオ収益計算機](/ja/tools/portfolio-income/)
+
+## その他
+
+- [ETF ウォッチリスト](/ja/tools/watchlist/)

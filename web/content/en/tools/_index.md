@@ -28,3 +28,7 @@ These tools are for information only, not investment advice.
 
 - [Portfolio Rebalance Calculator](/en/tools/portfolio-rebalance/)
 - [Portfolio Income Calculator](/en/tools/portfolio-income/)
+
+## More
+
+- [ETF Watchlist](/en/tools/watchlist/)

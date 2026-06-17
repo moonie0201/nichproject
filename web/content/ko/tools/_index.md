@@ -28,3 +28,7 @@ description: "배당 재투자, 적립식 복리, ETF 비용, FIRE, 인플레이
 
 - [포트폴리오 리밸런싱 계산기](/ko/tools/portfolio-rebalance/)
 - [포트폴리오 인컴 계산기](/ko/tools/portfolio-income/)
+
+## 기타
+
+- [ETF 관심 종목 (Watchlist)](/ko/tools/watchlist/)

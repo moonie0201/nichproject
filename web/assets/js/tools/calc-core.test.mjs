@@ -241,5 +241,33 @@ t("portfolioIncome: NaN/zero-safe — no divide-by-zero, all finite", () => {
   assert.equal(r.blendedYieldPct, 0);
 });
 
+/* ---- IQ.parseWatchlist / IQ.serializeWatchlist ---- */
+const VALID = ["SCHD", "VYM", "JEPI", "JEPQ", "QYLD", "VOO", "SPY"];
+
+t("parseWatchlist: dedupes and uppercases", () => {
+  const r = IQ.parseWatchlist("schd,VYM,schd,VYM", VALID);
+  assert.deepEqual(r, ["SCHD", "VYM"]);
+});
+t("parseWatchlist: drops unknown tickers", () => {
+  const r = IQ.parseWatchlist("SCHD,AAPL,VYM,XYZ", VALID);
+  assert.deepEqual(r, ["SCHD", "VYM"]);
+});
+t("parseWatchlist: empty/null/undefined → []", () => {
+  assert.deepEqual(IQ.parseWatchlist("", VALID), []);
+  assert.deepEqual(IQ.parseWatchlist(null, VALID), []);
+  assert.deepEqual(IQ.parseWatchlist(undefined, VALID), []);
+  assert.deepEqual(IQ.parseWatchlist("   ", VALID), []);
+});
+t("serializeWatchlist: round-trip", () => {
+  const arr = ["SCHD", "VYM", "JEPI"];
+  const str = IQ.serializeWatchlist(arr);
+  assert.equal(str, "SCHD,VYM,JEPI");
+  assert.deepEqual(IQ.parseWatchlist(str, VALID), arr);
+});
+t("parseWatchlist: preserves order, handles whitespace around commas", () => {
+  const r = IQ.parseWatchlist(" VOO , SPY , SCHD ", VALID);
+  assert.deepEqual(r, ["VOO", "SPY", "SCHD"]);
+});
+
 console.log(`\ncalc-core: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

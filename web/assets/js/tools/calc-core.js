@@ -336,6 +336,38 @@
     } catch (e) { return null; }
   };
 
+  /* ---- watchlist helpers ---- */
+  /* IQ.parseWatchlist(str, validSet)
+     Given a comma-separated ticker string and a valid set/array,
+     returns a deduped, uppercased, validated array (drop unknowns, drop dupes).
+     NaN/empty/null-safe → []. */
+  IQ.parseWatchlist = function (str, validSet) {
+    if (!str || typeof str !== "string") return [];
+    var valid = {};
+    if (validSet) {
+      var keys = Array.isArray(validSet) ? validSet : Object.keys(validSet);
+      for (var i = 0; i < keys.length; i++) valid[keys[i].toUpperCase()] = 1;
+    }
+    var seen = {};
+    var result = [];
+    var parts = str.split(",");
+    for (var j = 0; j < parts.length; j++) {
+      var t = parts[j].trim().toUpperCase();
+      if (!t) continue;
+      if (seen[t]) continue;
+      seen[t] = 1;
+      if (validSet && !valid[t]) continue;
+      result.push(t);
+    }
+    return result;
+  };
+
+  /* IQ.serializeWatchlist(arr) → "SCHD,VYM" string. */
+  IQ.serializeWatchlist = function (arr) {
+    if (!Array.isArray(arr)) return "";
+    return arr.join(",");
+  };
+
   /* ---- toast ---- */
   IQ.toast = function (msg) {
     var el = document.querySelector(".iq-toast");

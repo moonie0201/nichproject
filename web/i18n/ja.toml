@@ -161,3 +161,19 @@ other = "年間配当合計"
 other = "加重配当利回り"
 [res_blended_expense]
 other = "加重経費率"
+
+# ウォッチリスト
+[wl_add]
+other = "ウォッチリストに追加"
+[wl_empty]
+other = "ウォッチリストは空です。上のボタンから銘柄を追加してください。"
+[wl_remove]
+other = "削除"
+[wl_share]
+other = "リストを共有"
+[wl_reset]
+other = "リセット"
+[wl_name]
+other = "銘柄名"
+[wl_risk]
+other = "リスクメモ"

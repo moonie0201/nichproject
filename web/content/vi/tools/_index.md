@@ -28,3 +28,7 @@ Các công cụ này chỉ mang tính thông tin, không phải lời khuyên đ
 
 - [Máy tính cân bằng danh mục](/vi/tools/portfolio-rebalance/)
 - [Máy tính thu nhập danh mục](/vi/tools/portfolio-income/)
+
+## Khác
+
+- [Danh sách theo dõi ETF](/vi/tools/watchlist/)

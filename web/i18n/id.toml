@@ -161,3 +161,19 @@ other = "Total dividen tahunan"
 other = "Imbal hasil rata-rata tertimbang"
 [res_blended_expense]
 other = "Biaya rata-rata tertimbang"
+
+# Watchlist
+[wl_add]
+other = "Tambah ke watchlist"
+[wl_empty]
+other = "Watchlist Anda kosong. Gunakan tombol di atas untuk menambahkan ticker."
+[wl_remove]
+other = "Hapus"
+[wl_share]
+other = "Bagikan daftar"
+[wl_reset]
+other = "Atur ulang"
+[wl_name]
+other = "Nama"
+[wl_risk]
+other = "Catatan risiko"
