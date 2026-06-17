@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["VYM", "dividend ETF", "dividend reinvestment", "DRIP"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [VYM]
 ---
 
 ## See VYM's dividends in numbers

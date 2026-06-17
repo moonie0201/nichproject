@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["SCHD", "ETF cổ tức", "tái đầu tư cổ tức", "DRIP"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [SCHD]
 ---
 
 ## Xem cổ tức của SCHD bằng những con số

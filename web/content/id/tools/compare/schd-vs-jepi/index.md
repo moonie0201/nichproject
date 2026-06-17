@@ -13,6 +13,7 @@ author: "InvestIQs Editorial"
 tags: ["SCHD", "JEPI", "perbandingan ETF", "ETF dividen"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [SCHD, JEPI]
 ---
 
 ## SCHD vs JEPI: Perbedaan Utama

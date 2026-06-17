@@ -254,9 +254,12 @@ summaryLength = 20
       weight = 2
 
 [related]
-  threshold = 80
+  threshold = 30
   includeNewer = true
   toLower = false
+  [[related.indices]]
+    name = "tickers"
+    weight = 110
   [[related.indices]]
     name = "keywords"
     weight = 100

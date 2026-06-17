@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["JEPI", "ETF dividen", "reinvestasi dividen", "DRIP"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [JEPI]
 ---
 
 ## Lihat dividen JEPI dalam angka

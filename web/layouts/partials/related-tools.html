@@ -1,0 +1,33 @@
+{{- /* related-tools.html: shown on study/blog single pages; lists up to 4 related tool pages */ -}}
+{{- $lang := site.Language.Lang }}
+{{- $headings := dict
+  "ko" "관련 도구"
+  "en" "Related tools"
+  "ja" "関連ツール"
+  "vi" "Công cụ liên quan"
+  "id" "Alat terkait"
+-}}
+{{- $heading := index $headings $lang | default "Related tools" }}
+
+{{- $related := .Site.RegularPages.Related . | first 20 }}
+{{- $toolPages := slice }}
+{{- range $related }}
+  {{- if eq .Type "tools" }}
+    {{- $toolPages = $toolPages | append . }}
+  {{- end }}
+{{- end }}
+{{- $toolPages = first 4 $toolPages }}
+
+{{- with $toolPages }}
+<aside class="iq-related-tools" style="margin-top:2em;padding:1.25em 1.5em;background:var(--entry,#fdfdfd);border:1px solid var(--border,#eee);border-radius:8px;">
+  <h2 style="margin-top:0;font-size:1.1em;">{{ $heading }}</h2>
+  <ul style="list-style:none;padding:0;margin:0;">
+    {{- range . }}
+    <li style="margin-bottom:.6em;">
+      <a href="{{ .RelPermalink }}" style="font-weight:600;text-decoration:none;color:var(--primary,#2563eb);">{{ .Title }}</a>
+      {{- with .Description }}<span style="display:block;font-size:.85em;color:var(--secondary,#666);margin-top:.1em;">{{ . | truncate 90 }}</span>{{- end }}
+    </li>
+    {{- end }}
+  </ul>
+</aside>
+{{- end }}

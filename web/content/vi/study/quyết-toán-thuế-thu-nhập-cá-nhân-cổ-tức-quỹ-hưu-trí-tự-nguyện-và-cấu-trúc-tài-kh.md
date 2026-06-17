@@ -24,6 +24,7 @@ tags:
 categories:
   - "Đầu tư"
   - "Tài chính cá nhân"
+tickers: [SCHD, SPY]
 ---
 
 <div class="summary-box"><ul><li>Thời hạn quyết toán thuế thu nhập cá nhân tại Việt Nam của cá nhân tự nộp thường rơi vào ngày cuối cùng của tháng 4; với thu nhập năm 2025, mốc thực tế trong năm 2026 là ngày 4 tháng 5 năm 2026 vì trùng kỳ nghỉ lễ.</li><li>Khoản đóng vào quỹ hưu trí tự nguyện được trừ khỏi thu nhập chịu thuế theo thực tế phát sinh, nhưng không vượt quá 1 triệu đồng mỗi tháng.</li><li>Cổ tức tiền mặt của nhà đầu tư cá nhân hiện thường bị khấu trừ 5% tại nguồn, nên lớp tài khoản quan trọng hơn tên quỹ.</li><li>Chậm nộp hồ sơ hoặc nộp tiền thuế trễ có thể kéo theo tiền chậm nộp 0,03% mỗi ngày; chi phí tuân thủ thường lớn hơn cảm giác ban đầu.</li><li>Nếu có dòng tiền từ kênh tích lũy dài hạn, việc chuyển sang quỹ hưu trí tự nguyện chỉ có ý nghĩa khi còn dư địa trong hạn mức giảm trừ.</li></ul></div>

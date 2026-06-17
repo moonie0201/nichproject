@@ -13,6 +13,7 @@ author: "InvestIQs Editorial"
 tags: ["SCHD", "VYM", "ETF 비교", "배당 ETF"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [SCHD, VYM]
 ---
 
 ## SCHD vs VYM: 주요 차이점

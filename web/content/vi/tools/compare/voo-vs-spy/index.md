@@ -13,6 +13,7 @@ author: "InvestIQs Editorial"
 tags: ["VOO", "SPY", "so sánh ETF", "ETF cổ tức"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [VOO, SPY]
 ---
 
 ## VOO vs SPY: Điểm khác biệt chính

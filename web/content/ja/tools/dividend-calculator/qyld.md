@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["QYLD", "配当ETF", "新NISA", "配当再投資"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [QYLD]
 ---
 
 ## QYLD の配当金を数字で確認する

@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["JEPQ", "配当ETF", "新NISA", "配当再投資"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [JEPQ]
 ---
 
 ## JEPQ の配当金を数字で確認する

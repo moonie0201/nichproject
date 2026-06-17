@@ -42,6 +42,7 @@ categories:
   - "재테크"
 aliases:
   - /ko/blog/voo-vs-schd-5년-누적수익률-분석-배당률-가설이-깨지는-지점/
+tickers: [SCHD, VOO]
 ---
 <div class="summary-box"><ul><li>VOO 현재가 $651.54, 약 967,035원(1달러=1,484.23원 기준), SCHD 현재가 $31.03, 약 46,056원이다.</li><li>5년 누적수익률은 VOO +85.0%, SCHD +49.8%로 격차가 35.2%p다.</li><li>배당수익률은 VOO 1.09%, SCHD 3.4%로 SCHD가 약 3.1배 높다.</li><li>1년 수익률은 VOO +36.3%, SCHD +26.8%, 3년 누적은 VOO +79.0%, SCHD +41.5%다.</li><li>운용보수는 VOO 0.03%, SCHD 0.060%로 차이는 0.03%p지만, 성과 격차는 그보다 훨씬 크다.</li></ul></div>
 

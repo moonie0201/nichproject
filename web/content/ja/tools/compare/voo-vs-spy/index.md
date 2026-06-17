@@ -13,6 +13,7 @@ author: "InvestIQs Editorial"
 tags: ["VOO", "SPY", "ETF比較", "配当ETF"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [VOO, SPY]
 ---
 
 ## VOO vs SPY: 主な違い

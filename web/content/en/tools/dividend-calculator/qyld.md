@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["QYLD", "dividend ETF", "dividend reinvestment", "DRIP"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [QYLD]
 ---
 
 ## See QYLD's dividends in numbers

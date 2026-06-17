@@ -31,6 +31,7 @@ categories:
   - "Personal Finance"
 aliases:
   - /en/blog/tqqq-five-year-drawdown-and-volatility-decomposition-when-3x-trails-2x/
+tickers: [SPY]
 ---
 <div class="summary-box"><ul><li>As of 2026-04-21, TQQQ’s 5-year total return was 120.40%, with a CAGR of 16.57%.</li><li>As of 2026-03-31, TQQQ’s 5-year maximum drawdown was 81.65%, compared with 35.12% for <a href="/en/blog/qqq-vs-spy-10-year-regression-tech-concentration-vs-diversification/">QQQ</a>.</li><li>5-year annualized monthly volatility was 61.28% for TQQQ, 20.23% for QQQ, and 40.61% for QLD.</li><li>Over the same 5-year window, QLD outperformed TQQQ with a total return of 137.48% and a CAGR of 18.77%.</li><li>Dividend yield sat at 0.53% for TQQQ, 0.15% for QLD, and 0.43% for QQQ. For leveraged ETFs, the core driver is not cash flow but path dependency.</li></ul></div>
 

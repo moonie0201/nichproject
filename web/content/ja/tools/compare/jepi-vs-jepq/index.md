@@ -13,6 +13,7 @@ author: "InvestIQs Editorial"
 tags: ["JEPI", "JEPQ", "ETF比較", "配当ETF"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [JEPI, JEPQ]
 ---
 
 ## JEPI vs JEPQ: 主な違い

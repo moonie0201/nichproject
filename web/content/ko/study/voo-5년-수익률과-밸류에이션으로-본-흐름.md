@@ -37,6 +37,7 @@ categories:
   - "AI분석"
 aliases:
   - /ko/blog/voo-5년-수익률과-밸류에이션으로-본-흐름/
+tickers: [SCHD, VOO, SPY]
 ---
 <div class="reg-banner" style="background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:0.8em 1em;margin:0 0 1.5em 0;font-size:0.9em;color:#664d03;"><strong>⚠️ 정보 제공용 데이터 분석</strong><br>본 글은 yfinance 공개 데이터와 AI 멀티에이전트 분석을 정리한 정보 콘텐츠입니다. 특정 종목의 매수·매도를 권유하지 않으며 투자 자문이 아닙니다. 모든 투자 결정과 손익은 본인 책임입니다.</div>
 

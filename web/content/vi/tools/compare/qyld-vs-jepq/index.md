@@ -13,6 +13,7 @@ author: "InvestIQs Editorial"
 tags: ["QYLD", "JEPQ", "so sánh ETF", "ETF cổ tức"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [QYLD, JEPQ]
 ---
 
 ## QYLD vs JEPQ: Điểm khác biệt chính

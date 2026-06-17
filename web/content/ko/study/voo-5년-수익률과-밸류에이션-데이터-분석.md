@@ -50,6 +50,7 @@ faq:
     answer: "모두 대형주 지수형 ETF로 읽히기 때문이다. VOO의 1년 34.3%, 3년 78.7%, 5년 83.7%와 P/E 28.2, 배당수익률 1.09%를 기준으로 비교하면 구조 차이를 파악하기 쉽다."
 aliases:
   - /ko/blog/voo-5년-수익률과-밸류에이션-데이터-분석/
+tickers: [VOO, SPY]
 ---
 <div class="reg-banner" style="background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:0.8em 1em;margin:0 0 1.5em 0;font-size:0.9em;color:#664d03;"><strong>⚠️ 정보 제공용 <a href="/ko/blog/2026년-4월-22일-시장-심층-분석-변동성-속-기회-포착-전략/">데이터 분석</a></strong><br>본 글은 yfinance 공개 데이터와 AI 멀티에이전트 분석을 정리한 정보 콘텐츠입니다. 특정 종목의 매수·매도를 권유하지 않으며 투자 자문이 아닙니다. 모든 투자 결정과 손익은 본인 책임입니다.</div>
 

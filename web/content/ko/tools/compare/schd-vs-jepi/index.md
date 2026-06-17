@@ -13,6 +13,7 @@ author: "InvestIQs Editorial"
 tags: ["SCHD", "JEPI", "ETF 비교", "배당 ETF"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [SCHD, JEPI]
 ---
 
 ## SCHD vs JEPI: 주요 차이점

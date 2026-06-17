@@ -13,6 +13,7 @@ author: "InvestIQs Editorial"
 tags: ["JEPI", "JEPQ", "perbandingan ETF", "ETF dividen"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [JEPI, JEPQ]
 ---
 
 ## JEPI vs JEPQ: Perbedaan Utama

@@ -13,6 +13,7 @@ author: "InvestIQs Editorial"
 tags: ["SCHD", "VYM", "perbandingan ETF", "ETF dividen"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [SCHD, VYM]
 ---
 
 ## SCHD vs VYM: Perbedaan Utama

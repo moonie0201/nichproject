@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["JEPQ", "dividend ETF", "dividend reinvestment", "DRIP"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [JEPQ]
 ---
 
 ## See JEPQ's dividends in numbers

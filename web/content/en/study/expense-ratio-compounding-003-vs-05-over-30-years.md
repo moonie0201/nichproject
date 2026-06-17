@@ -31,6 +31,7 @@ categories:
   - "Personal Finance"
 aliases:
   - /en/blog/expense-ratio-compounding-003-vs-05-over-30-years/
+tickers: [VOO]
 ---
 <div class="summary-box"><ul><li>A 0.47 percentage-point fee gap means 6.97% net versus 6.50% net on a 7.00% gross-return assumption.</li><li>With $1,500 invested monthly for 30 years, total contributions reach $540,000 and the projected ending balance is roughly $1.74 million at 0.03% versus $1.60 million at 0.50%.</li><li>The spread is about $143,000, or roughly 8% of the lower-fee ending balance, before taxes and slippage.</li><li>As of Apr. 15, 2026, VOO traded near $640.44 with a 1.11% dividend yield and a 27.19 P/E, while COWZ traded near $63.02 with a 2.05% yield and a 16.77 P/E.</li><li>Over the latest 5-year window cited by providers, VOO was at 12.81% annualized, SPLG at 11.42%, and COWZ at 14.61%, showing that fee alone does not explain every outcome.</li></ul></div>
 

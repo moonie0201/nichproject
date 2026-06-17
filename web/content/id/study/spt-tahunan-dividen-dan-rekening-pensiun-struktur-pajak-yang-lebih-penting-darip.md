@@ -25,6 +25,7 @@ tags:
 categories:
   - "Investasi"
   - "Keuangan Pribadi"
+tickers: [SCHD, VOO]
 ---
 
 <div class="summary-box"><ul><li>Batas normal penyampaian SPT Tahunan PPh Orang Pribadi tetap 31 Maret; untuk tahun pajak 2025 DJP memberi relaksasi sanksi hingga 30 April 2026.</li><li>Dividen domestik yang diterima Wajib Pajak Orang Pribadi dapat dikecualikan dari objek PPh jika diinvestasikan di Indonesia minimal 3 tahun pajak dan dilaporkan sesuai ketentuan.</li><li>Denda terlambat lapor SPT Tahunan Orang Pribadi adalah Rp100.000; untuk badan Rp1.000.000.</li><li>Perbedaan biaya antara VOO 0,03 persen dan SCHD 0,06 persen kecil; perbedaan return, yield, dan profil distribusi lebih terasa daripada selisih biaya semata.</li><li>Berbeda dari narasi yang hanya mengejar yield, struktur pajak dan disiplin reinvestasi sering menjadi penentu hasil bersih yang lebih besar.</li></ul></div>

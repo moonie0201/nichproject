@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["JEPI", "배당 ETF", "배당 재투자", "DRIP"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [JEPI]
 ---
 
 ## JEPI의 배당금을 숫자로 확인하세요

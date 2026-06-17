@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["VYM", "ETF cổ tức", "tái đầu tư cổ tức", "DRIP"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [VYM]
 ---
 
 ## Xem cổ tức của VYM bằng những con số

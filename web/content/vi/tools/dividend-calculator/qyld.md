@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["QYLD", "ETF cổ tức", "tái đầu tư cổ tức", "DRIP"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [QYLD]
 ---
 
 ## Xem cổ tức của QYLD bằng những con số

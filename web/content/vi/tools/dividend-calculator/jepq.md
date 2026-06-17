@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["JEPQ", "ETF cổ tức", "tái đầu tư cổ tức", "DRIP"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [JEPQ]
 ---
 
 ## Xem cổ tức của JEPQ bằng những con số

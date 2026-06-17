@@ -12,6 +12,7 @@ author: "InvestIQs Editorial"
 tags: ["VYM", "ETF dividen", "reinvestasi dividen", "DRIP"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [VYM]
 ---
 
 ## Lihat dividen VYM dalam angka

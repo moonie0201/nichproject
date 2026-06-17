@@ -1,0 +1,194 @@
+{{- define "main" }}
+{{- $lang := site.Language.Lang }}
+{{- $labels := dict
+  "ko" (dict
+    "filter"    "도구 검색..."
+    "cat_div"   "배당 ETF 계산기"
+    "cat_calc"  "범용 계산기"
+    "cat_cmp"   "티커 비교"
+    "cat_port"  "포트폴리오"
+    "cat_watch" "워치리스트"
+  )
+  "en" (dict
+    "filter"    "Filter tools..."
+    "cat_div"   "Dividend ETF calculators"
+    "cat_calc"  "General calculators"
+    "cat_cmp"   "Ticker comparison"
+    "cat_port"  "Portfolio"
+    "cat_watch" "Watchlist"
+  )
+  "ja" (dict
+    "filter"    "ツールを検索..."
+    "cat_div"   "配当ETF計算機"
+    "cat_calc"  "汎用計算機"
+    "cat_cmp"   "ティッカー比較"
+    "cat_port"  "ポートフォリオ"
+    "cat_watch" "ウォッチリスト"
+  )
+  "vi" (dict
+    "filter"    "Lọc công cụ..."
+    "cat_div"   "Máy tính ETF cổ tức"
+    "cat_calc"  "Máy tính thông dụng"
+    "cat_cmp"   "So sánh mã"
+    "cat_port"  "Danh mục đầu tư"
+    "cat_watch" "Danh sách theo dõi"
+  )
+  "id" (dict
+    "filter"    "Cari alat..."
+    "cat_div"   "Kalkulator ETF dividen"
+    "cat_calc"  "Kalkulator umum"
+    "cat_cmp"   "Perbandingan ticker"
+    "cat_port"  "Portofolio"
+    "cat_watch" "Watchlist"
+  )
+-}}
+{{- $L := index $labels $lang | default (index $labels "en") }}
+
+{{- $genCalcTools := slice "dca-calculator" "fire-calculator" "fee-calculator" "etf-fee-calculator" "inflation-calculator" }}
+{{- $portTools    := slice "portfolio-rebalance" "portfolio-income" }}
+
+{{- $allTools  := where site.RegularPages "Type" "tools" }}
+{{- $divCalc   := slice }}
+{{- $genCalc   := slice }}
+{{- $compare   := slice }}
+{{- $portfolio := slice }}
+{{- $watchlist := slice }}
+
+{{- range $allTools }}
+  {{- $t := .Params.tool }}
+  {{- if eq $t "dividend-calculator" }}
+    {{- $divCalc = $divCalc | append . }}
+  {{- else if eq $t "compare" }}
+    {{- $compare = $compare | append . }}
+  {{- else if eq $t "watchlist" }}
+    {{- $watchlist = $watchlist | append . }}
+  {{- else if in $portTools $t }}
+    {{- $portfolio = $portfolio | append . }}
+  {{- else if in $genCalcTools $t }}
+    {{- $genCalc = $genCalc | append . }}
+  {{- end }}
+{{- end }}
+
+<article class="post-single">
+  <header class="post-header">
+    {{ partial "breadcrumbs.html" . }}
+    <h1 class="post-title entry-hint-parent">{{ .Title }}</h1>
+    {{- with .Description }}<div class="post-description">{{ . }}</div>{{- end }}
+  </header>
+
+  {{- with .Content }}
+  <div class="post-content md-content">{{ . }}</div>
+  {{- end }}
+
+  <div style="margin:1.5em 0 1em;">
+    <input
+      id="tool-filter"
+      type="search"
+      placeholder="{{ $L.filter }}"
+      aria-label="{{ $L.filter }}"
+      style="width:100%;max-width:24em;padding:.45em .7em;border:1px solid #ccc;border-radius:6px;font-size:1em;"
+    >
+  </div>
+
+  <div id="tool-directory">
+
+    {{- if gt (len $divCalc) 0 }}
+    <section class="iq-tool-category">
+      <h2>{{ $L.cat_div }}</h2>
+      <ul class="iq-tool-list">
+        {{- range $divCalc }}
+        <li class="iq-tool-item">
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          {{- with .Description }}<span class="iq-tool-desc"> — {{ . | truncate 80 }}</span>{{- end }}
+        </li>
+        {{- end }}
+      </ul>
+    </section>
+    {{- end }}
+
+    {{- if gt (len $genCalc) 0 }}
+    <section class="iq-tool-category">
+      <h2>{{ $L.cat_calc }}</h2>
+      <ul class="iq-tool-list">
+        {{- range $genCalc }}
+        <li class="iq-tool-item">
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          {{- with .Description }}<span class="iq-tool-desc"> — {{ . | truncate 80 }}</span>{{- end }}
+        </li>
+        {{- end }}
+      </ul>
+    </section>
+    {{- end }}
+
+    {{- if gt (len $compare) 0 }}
+    <section class="iq-tool-category">
+      <h2>{{ $L.cat_cmp }}</h2>
+      <ul class="iq-tool-list">
+        {{- range $compare }}
+        <li class="iq-tool-item">
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          {{- with .Description }}<span class="iq-tool-desc"> — {{ . | truncate 80 }}</span>{{- end }}
+        </li>
+        {{- end }}
+      </ul>
+    </section>
+    {{- end }}
+
+    {{- if gt (len $portfolio) 0 }}
+    <section class="iq-tool-category">
+      <h2>{{ $L.cat_port }}</h2>
+      <ul class="iq-tool-list">
+        {{- range $portfolio }}
+        <li class="iq-tool-item">
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          {{- with .Description }}<span class="iq-tool-desc"> — {{ . | truncate 80 }}</span>{{- end }}
+        </li>
+        {{- end }}
+      </ul>
+    </section>
+    {{- end }}
+
+    {{- if gt (len $watchlist) 0 }}
+    <section class="iq-tool-category">
+      <h2>{{ $L.cat_watch }}</h2>
+      <ul class="iq-tool-list">
+        {{- range $watchlist }}
+        <li class="iq-tool-item">
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          {{- with .Description }}<span class="iq-tool-desc"> — {{ . | truncate 80 }}</span>{{- end }}
+        </li>
+        {{- end }}
+      </ul>
+    </section>
+    {{- end }}
+
+  </div>{{/* #tool-directory */}}
+
+  {{- partial "article_ads.html" (dict "slot" "8171345112") }}
+
+</article>
+
+<script>
+(function () {
+  var input = document.getElementById('tool-filter');
+  if (!input) return;
+  input.addEventListener('input', function () {
+    var q = (input.value || '').toLowerCase().trim();
+    var items = document.querySelectorAll('#tool-directory .iq-tool-item');
+    items.forEach(function (li) {
+      var text = (li.textContent || '').toLowerCase();
+      li.style.display = (!q || text.indexOf(q) !== -1) ? '' : 'none';
+    });
+    var cats = document.querySelectorAll('#tool-directory .iq-tool-category');
+    cats.forEach(function (sec) {
+      var visible = Array.prototype.some.call(
+        sec.querySelectorAll('.iq-tool-item'),
+        function (li) { return li.style.display !== 'none'; }
+      );
+      sec.style.display = visible ? '' : 'none';
+    });
+  });
+})();
+</script>
+
+{{- end }}{{/* end main */}}

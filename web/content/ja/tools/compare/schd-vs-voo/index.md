@@ -13,6 +13,7 @@ author: "InvestIQs Editorial"
 tags: ["SCHD", "VOO", "ETF比較", "配当ETF"]
 data_as_of: "2026-06-14"
 disclaimer: true
+tickers: [SCHD, VOO]
 ---
 
 ## SCHD vs VOO: 主な違い
