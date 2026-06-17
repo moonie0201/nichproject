@@ -2,6 +2,7 @@ baseURL = 'https://investiqs.net/'
 defaultContentLanguage = 'ko'
 defaultContentLanguageInSubdir = true
 theme = 'PaperMod'
+summaryLength = 20
 
 [sitemap]
   changefreq = "weekly"
@@ -31,10 +32,10 @@ theme = 'PaperMod'
   ShowBreadCrumbs = true
   ShowCodeCopyButtons = false
   googleAdSense = "ca-pub-3459019439429067"
-  ai_content_policy = "https://investiqs.net/ko/about/editorial-process/"
+  ai_content_policy = "https://investiqs.net/ko/about/editorial-policy/"
   enableRobotsTXT = true
   canonifyURLs = true
-  mainSections = ["daily", "weekly", "study", "blog"]
+  mainSections = ["study", "blog"]
 
   # 커버 이미지 없는 페이지의 기본 og:image
   images = ["/images/og-default.png"]

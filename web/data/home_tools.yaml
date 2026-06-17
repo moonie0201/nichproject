@@ -1,0 +1,35 @@
+ko:
+  - { title: "적립식(DCA) 복리 계산기", url: "/ko/tools/dca-calculator/", icon: "📈", desc: "매달 얼마씩 N년 투자하면 얼마가 되는지" }
+  - { title: "FIRE·목표금액 계산기", url: "/ko/tools/fire-calculator/", icon: "🔥", desc: "경제적 자립까지 몇 년 걸리는지" }
+  - { title: "배당 ETF 계산기", url: "/ko/tools/dividend-calculator/schd/", icon: "💵", desc: "SCHD·JEPI·VYM 배당 재투자 시뮬레이션" }
+  - { title: "ETF 수수료 비교", url: "/ko/tools/etf-fee-calculator/", icon: "⚖️", desc: "0.03% vs 0.6%, 30년 복리 격차" }
+  - { title: "포트폴리오 리밸런싱", url: "/ko/tools/portfolio-rebalance/", icon: "🧩", desc: "목표 비중까지 매매 금액 계산" }
+  - { title: "워치리스트", url: "/ko/tools/watchlist/", icon: "⭐", desc: "관심 티커 저장·비교(브라우저 저장)" }
+en:
+  - { title: "Dollar-Cost Averaging Calculator", url: "/en/tools/dca-calculator/", icon: "📈", desc: "How much your monthly investing becomes in N years" }
+  - { title: "FIRE / Target Calculator", url: "/en/tools/fire-calculator/", icon: "🔥", desc: "Years to financial independence" }
+  - { title: "Dividend ETF Calculator", url: "/en/tools/dividend-calculator/schd/", icon: "💵", desc: "SCHD/JEPI/VYM dividend reinvestment" }
+  - { title: "ETF Fee Comparison", url: "/en/tools/etf-fee-calculator/", icon: "⚖️", desc: "0.03% vs 0.6% over 30 years" }
+  - { title: "Portfolio Rebalancing", url: "/en/tools/portfolio-rebalance/", icon: "🧩", desc: "Trades needed to hit target weights" }
+  - { title: "Watchlist", url: "/en/tools/watchlist/", icon: "⭐", desc: "Save & compare tickers (browser-local)" }
+ja:
+  - { title: "積立(DCA)複利計算機", url: "/ja/tools/dca-calculator/", icon: "📈", desc: "毎月の積立がN年後いくらになるか" }
+  - { title: "FIRE・目標金額計算機", url: "/ja/tools/fire-calculator/", icon: "🔥", desc: "経済的自立まで何年か" }
+  - { title: "配当ETF計算機", url: "/ja/tools/dividend-calculator/schd/", icon: "💵", desc: "SCHD・JEPI・VYM 配当再投資" }
+  - { title: "ETF手数料比較", url: "/ja/tools/etf-fee-calculator/", icon: "⚖️", desc: "0.03% vs 0.6%、30年の差" }
+  - { title: "ポートフォリオ・リバランス", url: "/ja/tools/portfolio-rebalance/", icon: "🧩", desc: "目標比率までの売買額を計算" }
+  - { title: "ウォッチリスト", url: "/ja/tools/watchlist/", icon: "⭐", desc: "気になるティッカーを保存・比較" }
+vi:
+  - { title: "Máy tính DCA", url: "/vi/tools/dca-calculator/", icon: "📈", desc: "Đầu tư định kỳ thành bao nhiêu sau N năm" }
+  - { title: "Máy tính FIRE / Mục tiêu", url: "/vi/tools/fire-calculator/", icon: "🔥", desc: "Bao nhiêu năm đến tự do tài chính" }
+  - { title: "Máy tính ETF cổ tức", url: "/vi/tools/dividend-calculator/schd/", icon: "💵", desc: "Tái đầu tư cổ tức SCHD/JEPI/VYM" }
+  - { title: "So sánh phí ETF", url: "/vi/tools/etf-fee-calculator/", icon: "⚖️", desc: "0.03% so với 0.6% trong 30 năm" }
+  - { title: "Tái cân bằng danh mục", url: "/vi/tools/portfolio-rebalance/", icon: "🧩", desc: "Giao dịch cần để đạt tỷ trọng mục tiêu" }
+  - { title: "Danh sách theo dõi", url: "/vi/tools/watchlist/", icon: "⭐", desc: "Lưu & so sánh mã (lưu trên trình duyệt)" }
+id:
+  - { title: "Kalkulator DCA", url: "/id/tools/dca-calculator/", icon: "📈", desc: "Investasi bulanan jadi berapa dalam N tahun" }
+  - { title: "Kalkulator FIRE / Target", url: "/id/tools/fire-calculator/", icon: "🔥", desc: "Berapa tahun menuju kebebasan finansial" }
+  - { title: "Kalkulator ETF Dividen", url: "/id/tools/dividend-calculator/schd/", icon: "💵", desc: "Reinvestasi dividen SCHD/JEPI/VYM" }
+  - { title: "Perbandingan Biaya ETF", url: "/id/tools/etf-fee-calculator/", icon: "⚖️", desc: "0,03% vs 0,6% selama 30 tahun" }
+  - { title: "Rebalancing Portofolio", url: "/id/tools/portfolio-rebalance/", icon: "🧩", desc: "Transaksi untuk mencapai bobot target" }
+  - { title: "Watchlist", url: "/id/tools/watchlist/", icon: "⭐", desc: "Simpan & bandingkan ticker (lokal browser)" }

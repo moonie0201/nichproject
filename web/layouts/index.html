@@ -1,0 +1,88 @@
+{{- define "main" }}
+{{- $lang := site.Language.Lang }}
+{{- /* per-language UI labels (avoid extra i18n round-trip) */ -}}
+{{- $labels := dict
+  "ko" (dict "cta" "투자 계산기 전체 보기 →" "tools" "인기 투자 도구" "research" "대표 리서치" "latest" "최신 분석" "market" "오늘의 시황" "more" "도구 전체 보기")
+  "en" (dict "cta" "Browse all calculators →" "tools" "Popular tools" "research" "Featured research" "latest" "Latest analysis" "market" "Today's market" "more" "See all tools")
+  "ja" (dict "cta" "計算機をすべて見る →" "tools" "人気の投資ツール" "research" "注目のリサーチ" "latest" "最新の分析" "market" "本日の市況" "more" "ツール一覧")
+  "vi" (dict "cta" "Xem tất cả công cụ →" "tools" "Công cụ phổ biến" "research" "Nghiên cứu nổi bật" "latest" "Phân tích mới nhất" "market" "Thị trường hôm nay" "more" "Tất cả công cụ")
+  "id" (dict "cta" "Lihat semua kalkulator →" "tools" "Alat populer" "research" "Riset unggulan" "latest" "Analisis terbaru" "market" "Pasar hari ini" "more" "Semua alat")
+-}}
+{{- $L := index $labels $lang | default (index $labels "en") }}
+{{- $toolsUrl := "tools/" | relLangURL }}
+
+<section class="iq-hero">
+  <h1 class="iq-hero__title">{{ site.Title }}</h1>
+  {{- with site.Params.description }}<p class="iq-hero__desc">{{ . }}</p>{{- end }}
+  <a class="iq-hero__cta" href="{{ $toolsUrl }}">{{ $L.cta }}</a>
+</section>
+
+{{- /* popular tools grid from data/home_tools.yaml */ -}}
+{{- with index site.Data.home_tools $lang }}
+<section class="iq-home-section">
+  <div class="iq-home-section__head">
+    <h2>{{ $L.tools }}</h2>
+    <a class="iq-home-section__more" href="{{ $toolsUrl }}">{{ $L.more }}</a>
+  </div>
+  <div class="iq-tool-grid">
+    {{- range . }}
+    <a class="iq-tool-card" href="{{ .url }}">
+      <span class="iq-tool-card__ico">{{ .icon }}</span>
+      <span class="iq-tool-card__title">{{ .title }}</span>
+      <span class="iq-tool-card__desc">{{ .desc }}</span>
+    </a>
+    {{- end }}
+  </div>
+</section>
+{{- end }}
+
+{{- /* in-feed ad between grid and content */ -}}
+{{- partial "article_ads.html" (dict "slot" "6214213263") }}
+
+{{- /* featured research — only if research content exists for this language */ -}}
+{{- $research := where site.RegularPages "Section" "research" }}
+{{- with $research }}
+{{- $r := index . 0 }}
+<section class="iq-home-section">
+  <h2>{{ $L.research }}</h2>
+  <a class="iq-research-banner" href="{{ $r.RelPermalink }}">
+    <span class="iq-research-banner__badge">📑</span>
+    <span>
+      <strong>{{ $r.Title }}</strong>
+      <span class="iq-research-banner__desc">{{ $r.Description | default $r.Summary }}</span>
+    </span>
+  </a>
+</section>
+{{- end }}
+
+{{- /* latest study/analysis (evergreen) */ -}}
+{{- $study := first 4 (where site.RegularPages "Section" "study") }}
+{{- with $study }}
+<section class="iq-home-section">
+  <h2>{{ $L.latest }}</h2>
+  <div class="iq-post-grid">
+    {{- range . }}
+    <a class="iq-post-card" href="{{ .RelPermalink }}">
+      <span class="iq-post-card__title">{{ .Title }}</span>
+      <span class="iq-post-card__desc">{{ .Description | default .Summary | truncate 110 }}</span>
+    </a>
+    {{- end }}
+  </div>
+</section>
+{{- end }}
+
+{{- /* compressed market strip */ -}}
+{{- $daily := first 3 (where site.RegularPages "Section" "daily") }}
+{{- with $daily }}
+<section class="iq-home-section">
+  <h2>{{ $L.market }}</h2>
+  <ul class="iq-market-strip">
+    {{- range . }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <time>{{ .Date.Format "2006-01-02" }}</time></li>
+    {{- end }}
+  </ul>
+</section>
+{{- end }}
+
+{{- partial "article_ads.html" (dict "slot" "5913906921") }}
+{{- end }}{{/* end main */}}
