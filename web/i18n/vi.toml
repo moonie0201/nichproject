@@ -93,3 +93,35 @@ other = "Chi phí tương lai"
 other = "Giá trị hiện tại"
 [res_lost_pct]
 other = "Sức mua bị mất"
+
+# Công cụ so sánh ticker
+[compare_amount]
+other = "Số tiền đầu tư (USD)"
+[compare_result_title]
+other = "So sánh thu nhập ước tính (dựa trên giả định)"
+[res_a_annual]
+other = "Cổ tức hằng năm"
+[res_a_monthly]
+other = "Cổ tức hằng tháng"
+[res_b_annual]
+other = "Cổ tức hằng năm"
+[res_b_monthly]
+other = "Cổ tức hằng tháng"
+[tbl_metric]
+other = "Chỉ số"
+[metric_yield]
+other = "Tỷ suất cổ tức"
+[metric_expense]
+other = "Tỷ lệ chi phí"
+[metric_1y]
+other = "Lợi nhuận 1 năm"
+[metric_5y]
+other = "Lợi nhuận tổng 5 năm"
+[metric_risk]
+other = "Ghi chú rủi ro"
+[compare_higher_yield]
+other = "Lợi suất cao hơn"
+[compare_lower_fee]
+other = "Phí thấp hơn"
+[compare_data_as_of]
+other = "Dữ liệu tính đến"

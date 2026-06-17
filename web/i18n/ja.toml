@@ -93,3 +93,35 @@ other = "将来必要な金額"
 other = "現在価値"
 [res_lost_pct]
 other = "購買力の損失"
+
+# ティッカー比較ツール
+[compare_amount]
+other = "投資金額 (USD)"
+[compare_result_title]
+other = "想定に基づく収益比較"
+[res_a_annual]
+other = "年間配当"
+[res_a_monthly]
+other = "月間配当"
+[res_b_annual]
+other = "年間配当"
+[res_b_monthly]
+other = "月間配当"
+[tbl_metric]
+other = "項目"
+[metric_yield]
+other = "配当利回り"
+[metric_expense]
+other = "経費率"
+[metric_1y]
+other = "1年リターン"
+[metric_5y]
+other = "5年累積リターン"
+[metric_risk]
+other = "リスクメモ"
+[compare_higher_yield]
+other = "配当利回りが高い"
+[compare_lower_fee]
+other = "経費率が低い"
+[compare_data_as_of]
+other = "データ基準日"

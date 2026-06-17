@@ -13,4 +13,13 @@ description: "配当再投資、積立、ETF費用、FIRE、インフレをデ�
 - [インフレ影響 計算機](/ja/tools/inflation-calculator/)
 - [配当ETF計算機 (SCHD·JEPI·VYM·JEPQ·QYLD)](/ja/tools/dividend-calculator/schd/)
 
+## 比較
+
+- [SCHD vs VYM](/ja/tools/compare/schd-vs-vym/)
+- [SCHD vs JEPI](/ja/tools/compare/schd-vs-jepi/)
+- [JEPI vs JEPQ](/ja/tools/compare/jepi-vs-jepq/)
+- [QYLD vs JEPQ](/ja/tools/compare/qyld-vs-jepq/)
+- [VOO vs SPY](/ja/tools/compare/voo-vs-spy/)
+- [SCHD vs VOO](/ja/tools/compare/schd-vs-voo/)
+
 本ツールは情報提供のみを目的とし、投資勧誘ではありません。

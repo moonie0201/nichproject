@@ -13,4 +13,13 @@ Periksa angkanya sebelum berinvestasi.
 - [Kalkulator Dampak Inflasi](/id/tools/inflation-calculator/)
 - [Kalkulator ETF Dividen (SCHD·JEPI·VYM·JEPQ·QYLD)](/id/tools/dividend-calculator/schd/)
 
+## Perbandingan
+
+- [SCHD vs VYM](/id/tools/compare/schd-vs-vym/)
+- [SCHD vs JEPI](/id/tools/compare/schd-vs-jepi/)
+- [JEPI vs JEPQ](/id/tools/compare/jepi-vs-jepq/)
+- [QYLD vs JEPQ](/id/tools/compare/qyld-vs-jepq/)
+- [VOO vs SPY](/id/tools/compare/voo-vs-spy/)
+- [SCHD vs VOO](/id/tools/compare/schd-vs-voo/)
+
 Alat ini hanya untuk informasi, bukan saran investasi.

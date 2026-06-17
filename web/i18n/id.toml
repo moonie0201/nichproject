@@ -93,3 +93,35 @@ other = "Biaya masa depan"
 other = "Nilai sekarang"
 [res_lost_pct]
 other = "Daya beli hilang"
+
+# Alat perbandingan ticker
+[compare_amount]
+other = "Jumlah investasi (USD)"
+[compare_result_title]
+other = "Perbandingan pendapatan perkiraan (berdasarkan asumsi)"
+[res_a_annual]
+other = "Dividen tahunan"
+[res_a_monthly]
+other = "Dividen bulanan"
+[res_b_annual]
+other = "Dividen tahunan"
+[res_b_monthly]
+other = "Dividen bulanan"
+[tbl_metric]
+other = "Metrik"
+[metric_yield]
+other = "Imbal hasil dividen"
+[metric_expense]
+other = "Rasio biaya"
+[metric_1y]
+other = "Return 1 tahun"
+[metric_5y]
+other = "Return total 5 tahun"
+[metric_risk]
+other = "Catatan risiko"
+[compare_higher_yield]
+other = "Imbal hasil lebih tinggi"
+[compare_lower_fee]
+other = "Biaya lebih rendah"
+[compare_data_as_of]
+other = "Data per"

@@ -13,4 +13,13 @@ Kiểm tra các con số trước khi đầu tư.
 - [Máy tính tác động lạm phát](/vi/tools/inflation-calculator/)
 - [Máy tính ETF cổ tức (SCHD·JEPI·VYM·JEPQ·QYLD)](/vi/tools/dividend-calculator/schd/)
 
+## So sánh
+
+- [SCHD vs VYM](/vi/tools/compare/schd-vs-vym/)
+- [SCHD vs JEPI](/vi/tools/compare/schd-vs-jepi/)
+- [JEPI vs JEPQ](/vi/tools/compare/jepi-vs-jepq/)
+- [QYLD vs JEPQ](/vi/tools/compare/qyld-vs-jepq/)
+- [VOO vs SPY](/vi/tools/compare/voo-vs-spy/)
+- [SCHD vs VOO](/vi/tools/compare/schd-vs-voo/)
+
 Các công cụ này chỉ mang tính thông tin, không phải lời khuyên đầu tư.

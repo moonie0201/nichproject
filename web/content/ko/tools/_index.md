@@ -13,4 +13,13 @@ description: "배당 재투자, 적립식 복리, ETF 비용, FIRE, 인플레이
 - [인플레이션 영향 계산기](/ko/tools/inflation-calculator/)
 - [배당 ETF 계산기 (SCHD·JEPI·VYM·JEPQ·QYLD)](/ko/tools/dividend-calculator/schd/)
 
+## 비교
+
+- [SCHD vs VYM](/ko/tools/compare/schd-vs-vym/)
+- [SCHD vs JEPI](/ko/tools/compare/schd-vs-jepi/)
+- [JEPI vs JEPQ](/ko/tools/compare/jepi-vs-jepq/)
+- [QYLD vs JEPQ](/ko/tools/compare/qyld-vs-jepq/)
+- [VOO vs SPY](/ko/tools/compare/voo-vs-spy/)
+- [SCHD vs VOO](/ko/tools/compare/schd-vs-voo/)
+
 본 도구는 정보 제공 목적이며 투자 권유가 아닙니다.

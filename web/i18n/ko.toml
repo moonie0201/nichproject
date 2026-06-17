@@ -93,3 +93,35 @@ other = "미래 필요금액"
 other = "현재가치"
 [res_lost_pct]
 other = "구매력 손실"
+
+# 티커 비교 도구
+[compare_amount]
+other = "투자 금액 (USD)"
+[compare_result_title]
+other = "가정에 따른 예상 수익 비교"
+[res_a_annual]
+other = "연 배당금"
+[res_a_monthly]
+other = "월 배당금"
+[res_b_annual]
+other = "연 배당금"
+[res_b_monthly]
+other = "월 배당금"
+[tbl_metric]
+other = "항목"
+[metric_yield]
+other = "배당수익률"
+[metric_expense]
+other = "운용보수"
+[metric_1y]
+other = "1년 수익률"
+[metric_5y]
+other = "5년 누적 수익률"
+[metric_risk]
+other = "리스크 메모"
+[compare_higher_yield]
+other = "배당수익률 높음"
+[compare_lower_fee]
+other = "운용보수 낮음"
+[compare_data_as_of]
+other = "데이터 기준일"

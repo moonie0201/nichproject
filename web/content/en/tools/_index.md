@@ -13,4 +13,13 @@ Check the numbers before you invest.
 - [Inflation Impact Calculator](/en/tools/inflation-calculator/)
 - [Dividend ETF Calculator (SCHD·JEPI·VYM·JEPQ·QYLD)](/en/tools/dividend-calculator/schd/)
 
+## Compare
+
+- [SCHD vs VYM](/en/tools/compare/schd-vs-vym/)
+- [SCHD vs JEPI](/en/tools/compare/schd-vs-jepi/)
+- [JEPI vs JEPQ](/en/tools/compare/jepi-vs-jepq/)
+- [QYLD vs JEPQ](/en/tools/compare/qyld-vs-jepq/)
+- [VOO vs SPY](/en/tools/compare/voo-vs-spy/)
+- [SCHD vs VOO](/en/tools/compare/schd-vs-voo/)
+
 These tools are for information only, not investment advice.

@@ -1,0 +1,116 @@
+{{- /* Compare tool UI. Reads ticker_a / ticker_b from page Params + site.Data.tools.tickers */ -}}
+{{- $tickerA := .Params.ticker_a -}}
+{{- $tickerB := .Params.ticker_b -}}
+{{- $data := site.Data.tools.tickers -}}
+{{- $fx := site.Data.tools.fx -}}
+{{- $tA := index $data.tickers $tickerA -}}
+{{- $tB := index $data.tickers $tickerB -}}
+{{- $defCur := "USD" -}}
+{{- if eq site.Language.Lang "ko" }}{{ $defCur = "KRW" }}
+{{- else if eq site.Language.Lang "ja" }}{{ $defCur = "JPY" }}
+{{- else if eq site.Language.Lang "vi" }}{{ $defCur = "VND" }}
+{{- else if eq site.Language.Lang "id" }}{{ $defCur = "IDR" }}
+{{- end }}
+
+<div id="iq-compare" class="iq-tool"
+     data-ticker-a="{{ $tickerA }}"
+     data-ticker-b="{{ $tickerB }}"
+     data-yield-a="{{ with $tA }}{{ .yield_pct }}{{ else }}0{{ end }}"
+     data-yield-b="{{ with $tB }}{{ .yield_pct }}{{ else }}0{{ end }}"
+     data-fee-a="{{ with $tA }}{{ .expense_ratio_pct }}{{ else }}0{{ end }}"
+     data-fee-b="{{ with $tB }}{{ .expense_ratio_pct }}{{ else }}0{{ end }}"
+     data-currency="{{ $defCur }}"
+     data-copied-msg="{{ i18n "calc_share_copied" }}">
+
+  {{- /* Static comparison table */ -}}
+  <div class="iq-compare-table-wrap">
+    <table class="iq-table iq-compare-table">
+      <thead>
+        <tr>
+          <th>{{ i18n "tbl_metric" }}</th>
+          <th>{{ $tickerA }}</th>
+          <th>{{ $tickerB }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ i18n "metric_yield" }}</td>
+          <td>{{ with $tA }}{{ .yield_pct }}%{{ else }}–{{ end }}</td>
+          <td>{{ with $tB }}{{ .yield_pct }}%{{ else }}–{{ end }}</td>
+        </tr>
+        <tr>
+          <td>{{ i18n "metric_expense" }}</td>
+          <td>{{ with $tA }}{{ .expense_ratio_pct }}%{{ else }}–{{ end }}</td>
+          <td>{{ with $tB }}{{ .expense_ratio_pct }}%{{ else }}–{{ end }}</td>
+        </tr>
+        <tr>
+          <td>{{ i18n "metric_1y" }}</td>
+          <td>{{ with $tA }}{{ if .return_1y_pct }}{{ .return_1y_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
+          <td>{{ with $tB }}{{ if .return_1y_pct }}{{ .return_1y_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
+        </tr>
+        <tr>
+          <td>{{ i18n "metric_5y" }}</td>
+          <td>{{ with $tA }}{{ if .return_5y_total_pct }}{{ .return_5y_total_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
+          <td>{{ with $tB }}{{ if .return_5y_total_pct }}{{ .return_5y_total_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
+        </tr>
+        <tr>
+          <td>{{ i18n "metric_risk" }}</td>
+          <td>{{ with $tA }}{{ .risk_note }}{{ else }}–{{ end }}</td>
+          <td>{{ with $tB }}{{ .risk_note }}{{ else }}–{{ end }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="iq-compare-asof">{{ i18n "compare_data_as_of" }}: {{ $data.data_as_of }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  {{- /* Interactive income comparison block */ -}}
+  <div class="iq-tool__grid">
+    <div class="iq-field">
+      <label for="iq-cmp-amount">{{ i18n "compare_amount" }}</label>
+      <input type="number" id="iq-cmp-amount" min="0" step="1000" value="10000">
+    </div>
+    <div class="iq-field">
+      <label for="iq-cmp-currency">{{ i18n "calc_currency" }}</label>
+      <select id="iq-cmp-currency">
+        <option value="USD">USD ($)</option>
+        <option value="KRW">KRW (₩)</option>
+        <option value="JPY">JPY (¥)</option>
+        <option value="VND">VND (₫)</option>
+        <option value="IDR">IDR (Rp)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="iq-tool__actions">
+    <button type="button" id="iq-cmp-calc" class="iq-btn">{{ i18n "calc_button" }}</button>
+    <button type="button" id="iq-cmp-reset" class="iq-btn iq-btn--ghost">{{ i18n "calc_reset" }}</button>
+    <button type="button" id="iq-cmp-share" class="iq-btn iq-btn--ghost">{{ i18n "calc_share" }}</button>
+  </div>
+
+  <div id="iq-cmp-result" class="iq-result" hidden>
+    <div class="iq-result__title">{{ i18n "compare_result_title" }}</div>
+    <div class="iq-compare-result-grid">
+      <div class="iq-compare-col">
+        <div class="iq-compare-col__head" id="iq-cmp-head-a">{{ $tickerA }}</div>
+        <div class="iq-result__cards">
+          <div class="iq-card"><div class="iq-card__label">{{ i18n "res_a_annual" }}</div><div class="iq-card__value" id="iq-cmp-a-annual">–</div></div>
+          <div class="iq-card"><div class="iq-card__label">{{ i18n "res_a_monthly" }}</div><div class="iq-card__value" id="iq-cmp-a-monthly">–</div></div>
+        </div>
+      </div>
+      <div class="iq-compare-col">
+        <div class="iq-compare-col__head" id="iq-cmp-head-b">{{ $tickerB }}</div>
+        <div class="iq-result__cards">
+          <div class="iq-card"><div class="iq-card__label">{{ i18n "res_b_annual" }}</div><div class="iq-card__value" id="iq-cmp-b-annual">–</div></div>
+          <div class="iq-card"><div class="iq-card__label">{{ i18n "res_b_monthly" }}</div><div class="iq-card__value" id="iq-cmp-b-monthly">–</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="iq-disclaimer">{{ i18n "calc_disclaimer" }}</div>
+  </div>
+</div>
+
+<script type="application/json" id="iq-fx">{{ $fx | jsonify }}</script>

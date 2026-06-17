@@ -93,3 +93,35 @@ other = "Future cost"
 other = "Present value"
 [res_lost_pct]
 other = "Purchasing power lost"
+
+# Ticker compare tool
+[compare_amount]
+other = "Investment amount (USD)"
+[compare_result_title]
+other = "Estimated income comparison (based on assumptions)"
+[res_a_annual]
+other = "Annual dividend"
+[res_a_monthly]
+other = "Monthly dividend"
+[res_b_annual]
+other = "Annual dividend"
+[res_b_monthly]
+other = "Monthly dividend"
+[tbl_metric]
+other = "Metric"
+[metric_yield]
+other = "Dividend yield"
+[metric_expense]
+other = "Expense ratio"
+[metric_1y]
+other = "1-year return"
+[metric_5y]
+other = "5-year total return"
+[metric_risk]
+other = "Risk note"
+[compare_higher_yield]
+other = "Higher yield"
+[compare_lower_fee]
+other = "Lower fee"
+[compare_data_as_of]
+other = "Data as of"

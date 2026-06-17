@@ -124,5 +124,41 @@ t("buildShareUrl round-trips keys", () => {
   assert.ok(url.includes("p=1000") && url.includes("y=30"));
 });
 
+/* ---- compareTickerIncome ---- */
+const TD = {
+  SCHD: { yield_pct: 3.25, expense_ratio_pct: 0.06 },
+  JEPI: { yield_pct: 8.45, expense_ratio_pct: 0.35 },
+  VYM:  { yield_pct: 2.21, expense_ratio_pct: 0.04 },
+};
+
+t("compareTickerIncome: higher-yield detection", () => {
+  const r = IQ.compareTickerIncome({ amountUsd: 10000, tickerA: "SCHD", tickerB: "JEPI", tickerData: TD });
+  assert.equal(r.higherYield, "B"); // JEPI 8.45 > SCHD 3.25
+  near(r.b.annualDivUsd, 845, 0.01);
+  near(r.a.annualDivUsd, 325, 0.01);
+});
+t("compareTickerIncome: lower-fee detection", () => {
+  const r = IQ.compareTickerIncome({ amountUsd: 10000, tickerA: "SCHD", tickerB: "JEPI", tickerData: TD });
+  assert.equal(r.lowerFee, "A"); // SCHD 0.06 < JEPI 0.35
+});
+t("compareTickerIncome: tie cases", () => {
+  const same = { X: { yield_pct: 5, expense_ratio_pct: 0.1 }, Y: { yield_pct: 5, expense_ratio_pct: 0.1 } };
+  const r = IQ.compareTickerIncome({ amountUsd: 1000, tickerA: "X", tickerB: "Y", tickerData: same });
+  assert.equal(r.higherYield, "tie");
+  assert.equal(r.lowerFee, "tie");
+});
+t("compareTickerIncome: NaN-safe — garbage inputs stay finite", () => {
+  const r = IQ.compareTickerIncome({ amountUsd: NaN, tickerA: "SCHD", tickerB: "VYM", tickerData: TD });
+  finite(r.a.annualDivUsd);
+  finite(r.b.annualDivUsd);
+  assert.equal(r.a.annualDivUsd, 0);
+});
+t("compareTickerIncome: amount 0 → zero divs", () => {
+  const r = IQ.compareTickerIncome({ amountUsd: 0, tickerA: "SCHD", tickerB: "JEPI", tickerData: TD });
+  assert.equal(r.a.annualDivUsd, 0);
+  assert.equal(r.b.annualDivUsd, 0);
+  assert.equal(r.a.monthlyDivUsd, 0);
+});
+
 console.log(`\ncalc-core: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

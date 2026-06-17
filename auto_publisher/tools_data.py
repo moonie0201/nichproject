@@ -328,12 +328,278 @@ def refresh():
     print(f"refreshed seed data, data_as_of={today}")
 
 
+COMPARE_PAIRS = [
+    ("SCHD", "VYM"),
+    ("SCHD", "JEPI"),
+    ("JEPI", "JEPQ"),
+    ("QYLD", "JEPQ"),
+    ("VOO", "SPY"),
+    ("SCHD", "VOO"),
+]
+
+COMPARE_DATE = "2026-06-14"
+
+# Per-pair, per-lang editorial copy: (intro_para, outro_para)
+COMPARE_ANGLES = {
+    "en": {
+        ("SCHD", "VYM"): (
+            "SCHD and VYM are both U.S. large-cap dividend ETFs with very low costs and broad diversification. SCHD screens more tightly for dividend growth and quality, while VYM casts a wider net across higher-yielding stocks.",
+            "Both ETFs favor financial stability and broad exposure. SCHD's stricter quality screen results in a smaller, more concentrated portfolio, whereas VYM holds over 400 stocks for maximum breadth.",
+        ),
+        ("SCHD", "JEPI"): (
+            "SCHD and JEPI represent two distinct income approaches. SCHD pursues dividend growth through equity ownership; JEPI supplements equity income with an options overlay to deliver a higher monthly distribution.",
+            "SCHD's income tends to grow over time as portfolio companies raise dividends. JEPI's payout is partially driven by options premium, which can fluctuate with market volatility — a different risk profile.",
+        ),
+        ("JEPI", "JEPQ"): (
+            "JEPI and JEPQ share the same JPMorgan equity-premium-income strategy but differ in their equity base. JEPI uses a low-volatility U.S. stock portfolio; JEPQ applies the same overlay to Nasdaq-100-style holdings.",
+            "JEPQ carries greater growth potential through its tech-heavy Nasdaq base but also higher volatility. JEPI's lower-volatility equity selection has historically produced a smoother return profile.",
+        ),
+        ("QYLD", "JEPQ"): (
+            "Both QYLD and JEPQ are Nasdaq-linked covered-call funds, but with different coverage ratios. QYLD sells calls on 100% of its index exposure; JEPQ uses a selective options overlay that preserves more upside.",
+            "QYLD's full covered-call approach maximizes current distributions but heavily limits price appreciation. JEPQ retains more equity upside due to partial options coverage and launched in 2022 — its long-term track record is still developing.",
+        ),
+        ("VOO", "SPY"): (
+            "VOO and SPY both track the S&P 500 and hold virtually identical portfolios. The key practical difference is the expense ratio: VOO charges 0.03%, while SPY charges 0.0945%.",
+            "For long-term investors, the cost difference compounds meaningfully over decades. SPY has higher average daily trading volume and tighter bid-ask spreads, which may matter more to active traders.",
+        ),
+        ("SCHD", "VOO"): (
+            "SCHD and VOO represent income versus total-return orientations within U.S. large-cap equities. SCHD focuses on dividend-paying quality companies; VOO tracks the full S&P 500 with a much smaller yield but broader market coverage.",
+            "SCHD's income is higher and more visible quarter to quarter. VOO's total return has historically included capital appreciation across all S&P 500 sectors, including high-growth technology names that SCHD underweights.",
+        ),
+    },
+    "ja": {
+        ("SCHD", "VYM"): (
+            "SCHDとVYMは、どちらも超低コストで広く分散された米国大型配当ETFです。SCHDは配当成長と質でより厳格にスクリーニングし、VYMはより広い範囲の高配当株をカバーします。",
+            "両ETFとも財務安定性と幅広い分散を重視します。SCHDの厳格な質スクリーニングにより保有銘柄数は少なくなりますが、VYMは400銘柄以上を保有してより幅広い分散を提供します。",
+        ),
+        ("SCHD", "JEPI"): (
+            "SCHDとJEPIは2つの異なるインカムアプローチを代表しています。SCHDは株式保有を通じた配当成長を追求し、JEPIはオプション戦略を加えて高い月次分配を実現します。",
+            "SCHDのインカムはポートフォリオ企業が増配するにつれ時間とともに成長する傾向があります。JEPIの分配金は一部オプションプレミアム由来のため、市場ボラティリティにより変動します。",
+        ),
+        ("JEPI", "JEPQ"): (
+            "JEPIとJEPQはJPモルガンの同じエクイティ・プレミアム・インカム戦略を使いますが、株式基盤が異なります。JEPIは低ボラティリティの米国株ポートフォリオを使い、JEPQはナスダック100型の保有銘柄に同じオーバーレイを適用します。",
+            "JEPQはナスダックのハイテク比率が高い分、成長ポテンシャルとボラティリティの両方が高くなります。JEPIの低ボラティリティ株選択は、歴史的により安定したリターン推移をもたらしています。",
+        ),
+        ("QYLD", "JEPQ"): (
+            "QYLDとJEPQはどちらもナスダック連動のカバードコールファンドですが、カバー比率が異なります。QYLDは指数エクスポージャーの100%にコールを売り、JEPQはより選択的なオプションオーバーレイでより多くの上値を確保します。",
+            "QYLDの全量カバードコール戦略は現在の分配を最大化しますが、値上がり益を大きく制限します。JEPQは部分的なオプションカバーでより多くの株式上値を保持し、2022年設定と運用期間も短いため長期実績はまだ発展途上です。",
+        ),
+        ("VOO", "SPY"): (
+            "VOOとSPYはどちらもS&P500に連動しており、保有銘柄はほぼ同一です。実務上の主な違いは経費率で、VOOは0.03%、SPYは0.0945%です。",
+            "長期投資家にとって、コスト差は数十年にわたって大きく複利的に積み重なります。SPYの日次売買高は高く、ビッドアスクスプレッドも狭いため、アクティブトレーダーにとってはより重要になる場合があります。",
+        ),
+        ("SCHD", "VOO"): (
+            "SCHDとVOOは、米国大型株の中でインカム志向と総合リターン志向を代表しています。SCHDは配当を支払う質の高い企業に注目し、VOOはS&P500全体を追跡しますが利回りははるかに低くより広い市場カバレッジを持ちます。",
+            "SCHDのインカムは四半期ごとにより高く目に見える形で受け取れます。VOOの総合リターンは歴史的に、SCHDが低ウェイトとするハイテク成長株を含むS&P500全セクターにわたるキャピタルゲインを含んでいます。",
+        ),
+    },
+    "ko": {
+        ("SCHD", "VYM"): (
+            "SCHD와 VYM은 모두 초저비용으로 폭넓게 분산된 미국 대형주 배당 ETF입니다. SCHD는 배당 성장과 품질 기준으로 더 엄격히 종목을 걸러내고, VYM은 더 넓은 범위의 고배당 주식을 포괄합니다.",
+            "두 ETF 모두 재무 안정성과 광범위한 분산을 중시합니다. SCHD는 엄격한 품질 스크리닝으로 보유 종목 수가 적지만, VYM은 400개 이상의 종목으로 최대한 넓은 분산을 제공합니다.",
+        ),
+        ("SCHD", "JEPI"): (
+            "SCHD와 JEPI는 두 가지 서로 다른 인컴 접근법을 대표합니다. SCHD는 주식 보유를 통한 배당 성장을 추구하고, JEPI는 옵션 전략을 더해 높은 월 배당을 만들어냅니다.",
+            "SCHD의 수입은 포트폴리오 기업이 증배하면서 시간이 지남에 따라 성장하는 경향이 있습니다. JEPI의 분배금은 일부 옵션 프리미엄에서 나오기 때문에 시장 변동성에 따라 달라질 수 있습니다.",
+        ),
+        ("JEPI", "JEPQ"): (
+            "JEPI와 JEPQ는 JP모건의 동일한 에쿼티 프리미엄 인컴 전략을 사용하지만 주식 기반이 다릅니다. JEPI는 저변동성 미국 주식 포트폴리오를 사용하고, JEPQ는 같은 오버레이를 나스닥100형 보유 종목에 적용합니다.",
+            "JEPQ는 나스닥의 기술주 비중이 높아 성장 잠재력과 변동성이 모두 큽니다. JEPI의 저변동성 종목 선택은 역사적으로 더 안정적인 수익 흐름을 만들어왔습니다.",
+        ),
+        ("QYLD", "JEPQ"): (
+            "QYLD와 JEPQ는 모두 나스닥 연동 커버드콜 펀드이지만 커버 비율이 다릅니다. QYLD는 지수 노출의 100%에 콜을 매도하고, JEPQ는 더 선택적인 옵션 오버레이로 더 많은 상단을 보존합니다.",
+            "QYLD의 전량 커버드콜 전략은 현재 분배를 극대화하지만 가격 상승을 크게 제한합니다. JEPQ는 부분적인 옵션 커버로 더 많은 주가 상승 여력을 유지하며, 2022년 설정으로 운용 기간이 짧아 장기 실적은 아직 형성 중입니다.",
+        ),
+        ("VOO", "SPY"): (
+            "VOO와 SPY는 모두 S&P 500을 추종하며 보유 종목이 거의 동일합니다. 실질적인 주요 차이는 운용보수로, VOO는 0.03%, SPY는 0.0945%입니다.",
+            "장기 투자자에게 비용 차이는 수십 년에 걸쳐 복리로 유의미하게 누적됩니다. SPY는 일평균 거래량이 더 많고 매수·매도 스프레드가 좁아 단기 매매에서는 더 유리할 수 있습니다.",
+        ),
+        ("SCHD", "VOO"): (
+            "SCHD와 VOO는 미국 대형주 안에서 인컴 지향과 총수익 지향을 각각 대표합니다. SCHD는 배당을 지급하는 우량 기업에 집중하고, VOO는 S&P 500 전체를 추종하지만 배당수익률은 훨씬 낮고 시장 커버리지는 더 넓습니다.",
+            "SCHD의 인컴은 분기마다 더 높고 눈에 보이는 형태로 지급됩니다. VOO의 총수익에는 역사적으로 SCHD가 낮게 편입한 고성장 기술주를 포함한 S&P 500 전 섹터의 자본 차익이 포함됩니다.",
+        ),
+    },
+    "vi": {
+        ("SCHD", "VYM"): (
+            "SCHD và VYM đều là các ETF cổ tức vốn hóa lớn của Mỹ với chi phí rất thấp và đa dạng hóa rộng rãi. SCHD sàng lọc chặt chẽ hơn về tăng trưởng cổ tức và chất lượng, trong khi VYM bao phủ phạm vi rộng hơn các cổ phiếu có lợi suất cao.",
+            "Cả hai ETF đều ưu tiên sự ổn định tài chính và đa dạng hóa rộng. Tiêu chí chất lượng chặt chẽ hơn của SCHD dẫn đến danh mục nhỏ hơn, trong khi VYM nắm giữ hơn 400 cổ phiếu để tối đa hóa độ rộng.",
+        ),
+        ("SCHD", "JEPI"): (
+            "SCHD và JEPI đại diện cho hai phương pháp tạo thu nhập khác nhau. SCHD theo đuổi tăng trưởng cổ tức thông qua việc nắm giữ cổ phiếu; JEPI bổ sung thu nhập từ cổ phiếu bằng chiến lược quyền chọn để mang lại phân phối tháng cao hơn.",
+            "Thu nhập của SCHD có xu hướng tăng theo thời gian khi các công ty trong danh mục tăng cổ tức. Khoản chi trả của JEPI một phần được thúc đẩy bởi phí quyền chọn, có thể biến động theo biến động thị trường.",
+        ),
+        ("JEPI", "JEPQ"): (
+            "JEPI và JEPQ sử dụng cùng chiến lược thu nhập từ vốn cổ phần của JPMorgan nhưng khác nhau về danh mục cổ phiếu. JEPI sử dụng danh mục cổ phiếu Mỹ biến động thấp; JEPQ áp dụng overlay tương tự trên các cổ phiếu kiểu Nasdaq-100.",
+            "JEPQ mang lại tiềm năng tăng trưởng lớn hơn qua nền tảng Nasdaq nhiều công nghệ nhưng cũng có biến động cao hơn. Việc lựa chọn cổ phiếu biến động thấp của JEPI theo lịch sử đã tạo ra hồ sơ lợi nhuận ổn định hơn.",
+        ),
+        ("QYLD", "JEPQ"): (
+            "Cả QYLD và JEPQ đều là quỹ covered-call liên kết Nasdaq, nhưng với tỷ lệ bao phủ khác nhau. QYLD bán call trên 100% exposure chỉ số; JEPQ sử dụng overlay quyền chọn chọn lọc để giữ lại nhiều tiềm năng tăng hơn.",
+            "Cách tiếp cận covered-call đầy đủ của QYLD tối đa hóa phân phối hiện tại nhưng hạn chế đáng kể mức tăng giá. JEPQ giữ lại nhiều tiềm năng tăng hơn nhờ bao phủ quyền chọn một phần và ra mắt năm 2022 — hồ sơ dài hạn vẫn đang được xây dựng.",
+        ),
+        ("VOO", "SPY"): (
+            "VOO và SPY đều theo dõi S&P 500 và nắm giữ danh mục gần như giống nhau. Sự khác biệt thực tế chính là tỷ lệ chi phí: VOO tính 0.03%, trong khi SPY tính 0.0945%.",
+            "Đối với nhà đầu tư dài hạn, sự khác biệt về chi phí tích lũy đáng kể qua nhiều thập kỷ. SPY có khối lượng giao dịch trung bình hàng ngày cao hơn và chênh lệch bid-ask hẹp hơn, điều này có thể quan trọng hơn đối với nhà giao dịch tích cực.",
+        ),
+        ("SCHD", "VOO"): (
+            "SCHD và VOO đại diện cho định hướng thu nhập so với tổng lợi nhuận trong cổ phiếu vốn hóa lớn của Mỹ. SCHD tập trung vào các công ty chất lượng trả cổ tức; VOO theo dõi toàn bộ S&P 500 với lợi suất thấp hơn nhiều nhưng phạm vi thị trường rộng hơn.",
+            "Thu nhập của SCHD cao hơn và rõ ràng hơn theo từng quý. Tổng lợi nhuận của VOO theo lịch sử bao gồm tăng giá vốn trên tất cả các lĩnh vực S&P 500, bao gồm các cổ phiếu công nghệ tăng trưởng cao mà SCHD đang thiếu tỷ trọng.",
+        ),
+    },
+    "id": {
+        ("SCHD", "VYM"): (
+            "SCHD dan VYM keduanya adalah ETF dividen saham besar AS dengan biaya sangat rendah dan diversifikasi luas. SCHD menyaring lebih ketat untuk pertumbuhan dividen dan kualitas, sementara VYM mencakup lebih luas saham-saham berimbal hasil tinggi.",
+            "Kedua ETF mengutamakan stabilitas keuangan dan eksposur luas. Penyaringan kualitas SCHD yang lebih ketat menghasilkan portofolio yang lebih kecil dan terkonsentrasi, sedangkan VYM memegang lebih dari 400 saham untuk keluasan maksimal.",
+        ),
+        ("SCHD", "JEPI"): (
+            "SCHD dan JEPI mewakili dua pendekatan pendapatan yang berbeda. SCHD mengejar pertumbuhan dividen melalui kepemilikan saham; JEPI menambah pendapatan ekuitas dengan overlay opsi untuk memberikan distribusi bulanan yang lebih tinggi.",
+            "Pendapatan SCHD cenderung tumbuh seiring waktu saat perusahaan portofolio menaikkan dividen. Pembayaran JEPI sebagian didorong oleh premi opsi, yang dapat berfluktuasi dengan volatilitas pasar.",
+        ),
+        ("JEPI", "JEPQ"): (
+            "JEPI dan JEPQ berbagi strategi equity-premium-income JPMorgan yang sama tetapi berbeda dalam basis ekuitas mereka. JEPI menggunakan portofolio saham AS bervolatilitas rendah; JEPQ menerapkan overlay yang sama pada kepemilikan bergaya Nasdaq-100.",
+            "JEPQ membawa potensi pertumbuhan lebih besar melalui basis Nasdaq yang berat teknologi tetapi juga volatilitas lebih tinggi. Pemilihan ekuitas bervolatilitas rendah JEPI secara historis menghasilkan profil return yang lebih mulus.",
+        ),
+        ("QYLD", "JEPQ"): (
+            "QYLD dan JEPQ keduanya adalah dana covered-call terkait Nasdaq, tetapi dengan rasio cakupan berbeda. QYLD menjual call pada 100% eksposur indeksnya; JEPQ menggunakan overlay opsi selektif yang mempertahankan lebih banyak kenaikan.",
+            "Pendekatan covered-call penuh QYLD memaksimalkan distribusi saat ini tetapi sangat membatasi apresiasi harga. JEPQ mempertahankan lebih banyak kenaikan ekuitas karena cakupan opsi sebagian dan diluncurkan pada 2022 — rekam jejak jangka panjangnya masih berkembang.",
+        ),
+        ("VOO", "SPY"): (
+            "VOO dan SPY keduanya melacak S&P 500 dan memegang portofolio yang hampir identik. Perbedaan praktis utama adalah rasio biaya: VOO mengenakan 0,03%, sementara SPY mengenakan 0,0945%.",
+            "Bagi investor jangka panjang, perbedaan biaya terkumulasi secara bermakna selama beberapa dekade. SPY memiliki volume perdagangan harian rata-rata lebih tinggi dan spread bid-ask lebih ketat, yang mungkin lebih penting bagi trader aktif.",
+        ),
+        ("SCHD", "VOO"): (
+            "SCHD dan VOO mewakili orientasi pendapatan versus total return dalam saham besar AS. SCHD berfokus pada perusahaan berkualitas yang membayar dividen; VOO melacak seluruh S&P 500 dengan imbal hasil yang jauh lebih kecil tetapi cakupan pasar yang lebih luas.",
+            "Pendapatan SCHD lebih tinggi dan lebih terlihat dari kuartal ke kuartal. Total return VOO secara historis mencakup apresiasi modal di semua sektor S&P 500, termasuk saham teknologi pertumbuhan tinggi yang SCHD kekurangan bobot.",
+        ),
+    },
+}
+
+COMPARE_TPL = {
+    "en": {
+        "title": "{a} vs {b} — ETF Comparison",
+        "desc": "Side-by-side comparison of {a} and {b}: dividend yield, expense ratio, 1-year and 5-year returns, and risk notes. Estimate annual income from any investment amount.",
+        "h_compare": "{a} vs {b}: Key Differences",
+        "h_income": "Estimate Your Income",
+        "p_income": "Enter an investment amount above to compare estimated annual and monthly income from {a} and {b} side by side.",
+        "h_related": "Related tools",
+        "cta": "Every Friday we send a newsletter summarizing dividend ETF and U.S. market data.",
+        "tags": ["{a}", "{b}", "ETF comparison", "dividend ETF"],
+    },
+    "ja": {
+        "title": "{a} vs {b} — ETF 比較",
+        "desc": "{a}と{b}の並列比較：配当利回り・経費率・1年・5年リターン・リスクメモ。任意の投資額から年間インカムを試算できます。",
+        "h_compare": "{a} vs {b}: 主な違い",
+        "h_income": "インカムを試算する",
+        "p_income": "上の投資額を入力して、{a}と{b}の年間・月間インカム推計を並べて比較してください。",
+        "h_related": "関連ツール",
+        "cta": "毎週金曜、配当ETFと米国市場のデータをまとめたニュースレターをお届けします。",
+        "tags": ["{a}", "{b}", "ETF比較", "配当ETF"],
+    },
+    "ko": {
+        "title": "{a} vs {b} — ETF 비교",
+        "desc": "{a}과 {b}의 나란히 비교: 배당수익률·운용보수·1년·5년 수익률·리스크 메모. 투자 금액으로 연간 배당 수입을 추정해보세요.",
+        "h_compare": "{a} vs {b}: 주요 차이점",
+        "h_income": "배당 수입 추정하기",
+        "p_income": "위 투자 금액을 입력해 {a}과 {b}의 연간·월간 배당 추정값을 나란히 비교하세요.",
+        "h_related": "관련 도구",
+        "cta": "매주 금요일, 배당 ETF와 미국 시장 데이터를 정리한 뉴스레터를 보내드립니다.",
+        "tags": ["{a}", "{b}", "ETF 비교", "배당 ETF"],
+    },
+    "vi": {
+        "title": "{a} vs {b} — So sánh ETF",
+        "desc": "So sánh {a} và {b}: tỷ suất cổ tức, tỷ lệ chi phí, lợi nhuận 1 năm và 5 năm, ghi chú rủi ro. Ước tính thu nhập hàng năm từ bất kỳ số tiền đầu tư nào.",
+        "h_compare": "{a} vs {b}: Điểm khác biệt chính",
+        "h_income": "Ước tính thu nhập của bạn",
+        "p_income": "Nhập số tiền đầu tư ở trên để so sánh thu nhập hàng năm và hàng tháng ước tính từ {a} và {b} song song.",
+        "h_related": "Công cụ liên quan",
+        "cta": "Mỗi thứ Sáu, chúng tôi gửi bản tin tổng hợp dữ liệu quỹ ETF cổ tức và thị trường Mỹ.",
+        "tags": ["{a}", "{b}", "so sánh ETF", "ETF cổ tức"],
+    },
+    "id": {
+        "title": "{a} vs {b} — Perbandingan ETF",
+        "desc": "Perbandingan {a} dan {b} secara berdampingan: imbal hasil dividen, rasio biaya, return 1 tahun dan 5 tahun, catatan risiko. Perkirakan pendapatan tahunan dari jumlah investasi berapa pun.",
+        "h_compare": "{a} vs {b}: Perbedaan Utama",
+        "h_income": "Perkirakan Pendapatan Anda",
+        "p_income": "Masukkan jumlah investasi di atas untuk membandingkan perkiraan pendapatan tahunan dan bulanan dari {a} dan {b} secara berdampingan.",
+        "h_related": "Alat terkait",
+        "cta": "Setiap Jumat kami mengirim buletin yang merangkum data ETF dividen dan pasar AS.",
+        "tags": ["{a}", "{b}", "perbandingan ETF", "ETF dividen"],
+    },
+}
+
+
+def _compare_related_links(lang, a, b, tpl):
+    """Internal links: each ticker's dividend calculator + tools index."""
+    a_lower = a.lower()
+    b_lower = b.lower()
+    lines = [
+        f"- [{a} dividend calculator](/{lang}/tools/dividend-calculator/{a_lower}/)",
+        f"- [{b} dividend calculator](/{lang}/tools/dividend-calculator/{b_lower}/)",
+        f"- [{tpl['h_related']}](/{lang}/tools/)",
+    ]
+    return "\n".join(lines)
+
+
+def generate_compare():
+    data = _load_tickers()
+    as_of = data.get("data_as_of", COMPARE_DATE)
+    count = 0
+    for lang in LANGS:
+        tpl = COMPARE_TPL[lang]
+        for (a, b) in COMPARE_PAIRS:
+            intro, outro = COMPARE_ANGLES[lang][(a, b)]
+            slug = f"{a.lower()}-vs-{b.lower()}"
+            title = tpl["title"].format(a=a, b=b)
+            desc = tpl["desc"].format(a=a, b=b)
+            tags = ", ".join(f'"{t.format(a=a, b=b)}"' for t in tpl["tags"])
+            related = _compare_related_links(lang, a, b, tpl)
+            body = f"""---
+title: "{title}"
+description: "{desc}"
+date: {as_of}T00:00:00+09:00
+lastmod: {as_of}T00:00:00+09:00
+draft: false
+type: "tools"
+tool: "compare"
+ticker_a: "{a}"
+ticker_b: "{b}"
+schema: "Article"
+author: "InvestIQs Editorial"
+tags: [{tags}]
+data_as_of: "{as_of}"
+disclaimer: true
+---
+
+## {tpl['h_compare'].format(a=a, b=b)}
+
+{intro}
+
+{outro}
+
+## {tpl['h_income'].format(a=a, b=b)}
+
+{tpl['p_income'].format(a=a, b=b)}
+
+## {tpl['h_related']}
+
+{related}
+
+{tpl['cta']}
+"""
+            out = CONTENT / lang / "tools" / "compare" / slug / "index.md"
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(body, encoding="utf-8")
+            count += 1
+    print(f"generated {count} compare pages ({len(LANGS)} langs x {len(COMPARE_PAIRS)} pairs)")
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "generate"
     if cmd == "refresh":
         refresh()
     elif cmd == "generate":
         generate()
+    elif cmd == "generate-compare":
+        generate_compare()
     elif cmd == "all":
         refresh()
         generate()

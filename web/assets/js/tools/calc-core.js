@@ -180,6 +180,35 @@
     };
   };
 
+  /* ---- ticker income comparison ----
+     opts: { amountUsd, tickerA, tickerB, tickerData }
+     tickerData: object with ticker symbols as keys, each having yield_pct and expense_ratio_pct.
+     Returns {
+       a: { ticker, annualDivUsd, monthlyDivUsd, yieldPct, expenseRatioPct },
+       b: { ticker, annualDivUsd, monthlyDivUsd, yieldPct, expenseRatioPct },
+       higherYield: "A"|"B"|"tie",
+       lowerFee: "A"|"B"|"tie"
+     } */
+  IQ.compareTickerIncome = function (opts) {
+    var amount = IQ.clampNonNeg(IQ.num(opts.amountUsd, 0));
+    var tdA = (opts.tickerData && opts.tickerA && opts.tickerData[opts.tickerA]) || {};
+    var tdB = (opts.tickerData && opts.tickerB && opts.tickerData[opts.tickerB]) || {};
+    var yieldA = IQ.clampNonNeg(IQ.num(tdA.yield_pct, 0));
+    var yieldB = IQ.clampNonNeg(IQ.num(tdB.yield_pct, 0));
+    var feeA = IQ.clampNonNeg(IQ.num(tdA.expense_ratio_pct, 0));
+    var feeB = IQ.clampNonNeg(IQ.num(tdB.expense_ratio_pct, 0));
+    var annA = amount * yieldA / 100;
+    var annB = amount * yieldB / 100;
+    var higherYield = yieldA > yieldB ? "A" : yieldB > yieldA ? "B" : "tie";
+    var lowerFee = feeA < feeB ? "A" : feeB < feeA ? "B" : "tie";
+    return {
+      a: { ticker: opts.tickerA || "", annualDivUsd: annA, monthlyDivUsd: annA / 12, yieldPct: yieldA, expenseRatioPct: feeA },
+      b: { ticker: opts.tickerB || "", annualDivUsd: annB, monthlyDivUsd: annB / 12, yieldPct: yieldB, expenseRatioPct: feeB },
+      higherYield: higherYield,
+      lowerFee: lowerFee
+    };
+  };
+
   /* ---- URL param share / restore ---- */
   IQ.readParams = function () {
     var out = {};
