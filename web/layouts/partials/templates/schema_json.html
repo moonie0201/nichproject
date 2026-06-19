@@ -1,3 +1,6 @@
+{{- $articleSections := site.Params.mainSections | default (slice "blog" "study" "daily" "weekly") -}}
+{{- $hasCustomArticleSchema := and .IsPage (in $articleSections .Section) (not .Params.robotsNoIndex) -}}
+{{- $isTools := or (eq .Type "tools") (eq .Params.schema "WebApplication") -}}
 {{ if .IsHome }}
 <script type="application/ld+json">
 {
@@ -20,7 +23,7 @@
   ]
 }
 </script>
-{{- else if (or .IsPage .IsSection) }}
+{{- else if and (or .IsPage .IsSection) (not $hasCustomArticleSchema) (not $isTools) }}
 {{/* BreadcrumbList */}}
 {{- $url := replace .Parent.Permalink ( printf "%s" site.Home.Permalink) "" }}
 {{- $lang_url := strings.TrimPrefix ( printf "%s/" .Lang) $url }}

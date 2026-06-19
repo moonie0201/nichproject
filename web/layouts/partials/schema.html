@@ -1,24 +1,68 @@
-{{- /* Article / BlogPosting schema */ -}}
-{{- if and (eq .Type "blog") (not .IsHome) -}}
+{{- /* Determine if this is a tools/calculator page */ -}}
+{{- $isTools := or (eq .Type "tools") (eq .Params.schema "WebApplication") -}}
+
+{{- /* WebApplication schema for tools pages */ -}}
+{{- if and .IsPage $isTools -}}
+{{- $publisherName := site.Params.schema.publisherName | default "InvestIQs" -}}
+{{- $publisherLogo := site.Params.schema.publisherLogo | default (printf "%simages/logo-512.png" .Site.BaseURL) -}}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": {{ .Title | jsonify }},
-  "description": {{ .Summary | default .Description | jsonify }},
+  "@type": "WebApplication",
+  "name": {{ .Title | jsonify | safeJS }},
+  "description": {{ (.Description | default .Summary | plainify) | jsonify | safeJS }},
+  "url": {{ .Permalink | jsonify | safeJS }},
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "inLanguage": {{ .Site.LanguageCode | jsonify | safeJS }},
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ $publisherName | jsonify | safeJS }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ $publisherLogo | jsonify | safeJS }}
+    }
+  }
+}
+</script>
+{{- end -}}
+
+{{- /* Article / BlogPosting schema — only for non-tools article sections */ -}}
+{{- if not $isTools -}}
+{{- $schemaType := "Article" -}}
+{{- with .Params.schema -}}
+  {{- if reflect.IsMap . -}}
+    {{- with .type }}{{ $schemaType = . }}{{ end -}}
+  {{- else -}}
+    {{- $schemaType = . -}}
+  {{- end -}}
+{{- end -}}
+{{- $articleSections := site.Params.mainSections | default (slice "blog" "study" "daily" "weekly") -}}
+{{- if and .IsPage (in $articleSections .Section) (not .Params.robotsNoIndex) -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": {{ $schemaType | default "Article" | jsonify | safeJS }},
+  "headline": {{ .Title | jsonify | safeJS }},
+  "description": {{ (.Description | default .Summary | plainify) | jsonify | safeJS }},
   "image": [
     {{- with .Params.cover.image -}}
-      {{ (printf "%s%s" $.Site.BaseURL .) | jsonify }}
+      {{ (printf "%s%s" $.Site.BaseURL .) | jsonify | safeJS }}
     {{- else -}}
-      {{ (printf "%simages/og-default.png" $.Site.BaseURL) | jsonify }}
+      {{ (printf "%simages/og-default.png" $.Site.BaseURL) | jsonify | safeJS }}
     {{- end -}}
   ],
-  "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
-  "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify | safeJS }},
+  "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify | safeJS }},
   "author": {
     "@type": "Person",
-    "name": {{ .Params.author | default "InvestIQs Research" | jsonify }},
-    "url": {{ (printf "%sko/about/authors/" .Site.BaseURL) | jsonify }},
+    "name": {{ .Params.author | default "InvestIQs Research" | jsonify | safeJS }},
+    "url": {{ (printf "%sko/about/authors/" .Site.BaseURL) | jsonify | safeJS }},
     "jobTitle": "Investment Research Analyst"
   },
   "publisher": {
@@ -26,33 +70,33 @@
     "name": "InvestIQs",
     "logo": {
       "@type": "ImageObject",
-      "url": {{ (printf "%simages/logo-512.png" .Site.BaseURL) | jsonify }}
+      "url": {{ (printf "%simages/logo-512.png" .Site.BaseURL) | jsonify | safeJS }}
     }
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": {{ .Permalink | jsonify }}
+    "@id": {{ .Permalink | jsonify | safeJS }}
   },
-  "inLanguage": {{ .Site.LanguageCode | jsonify }},
-  "articleSection": {{ with .Params.categories }}{{ index . 0 | jsonify }}{{ else }}"Finance"{{ end }},
-  "keywords": {{ if .Params.tags }}{{ delimit .Params.tags "," | jsonify }}{{ else }}""{{ end }}
+  "inLanguage": {{ .Site.LanguageCode | jsonify | safeJS }},
+  "articleSection": {{ with .Params.categories }}{{ index . 0 | jsonify | safeJS }}{{ else }}"Finance"{{ end }},
+  "keywords": {{ with .Params.tags }}{{ delimit . "," | jsonify | safeJS }}{{ else }}""{{ end }}
 }
 </script>
+{{- end -}}
 {{- end -}}
 
 {{- /* BreadcrumbList schema */ -}}
 {{- if .IsPage -}}
+{{- $crumbs := slice (dict "@type" "ListItem" "position" 1 "name" "Home" "item" .Site.BaseURL) -}}
+{{- with (index .Params.categories 0) -}}
+  {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" . "item" (printf "%s%s/categories/%s/" $.Site.BaseURL $.Site.Language.Lang (. | urlize))) -}}
+{{- end -}}
+{{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" (add (len $crumbs) 1) "name" .Title "item" .Permalink) -}}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "itemListElement": [
-    {"@type":"ListItem","position":1,"name":"Home","item":{{ .Site.BaseURL | jsonify }}},
-    {{- with (index .Params.categories 0) -}}
-    {"@type":"ListItem","position":2,"name":{{ . | jsonify }},"item":{{ (printf "%s%s/categories/%s/" $.Site.BaseURL $.Site.Language.Lang (. | urlize)) | jsonify }}},
-    {{- end -}}
-    {"@type":"ListItem","position":3,"name":{{ .Title | jsonify }},"item":{{ .Permalink | jsonify }}}
-  ]
+  "itemListElement": {{ $crumbs | jsonify | safeJS }}
 }
 </script>
 {{- end -}}
@@ -64,45 +108,24 @@
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {{- range $i, $q := . -}}
-    {{- if $i }},{{ end -}}
+    {{- $first := true -}}
+    {{- range . -}}
+    {{- $question := .q | default .question -}}
+    {{- $answer := .a | default .answer -}}
+    {{- if and $question $answer -}}
+    {{- if not $first }},{{ end -}}
     {
       "@type": "Question",
-      "name": {{ $q.q | jsonify }},
+      "name": {{ $question | jsonify | safeJS }},
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": {{ $q.a | jsonify }}
+        "text": {{ $answer | jsonify | safeJS }}
       }
     }
+    {{- $first = false -}}
+    {{- end -}}
     {{- end -}}
   ]
-}
-</script>
-{{- end -}}
-
-{{- /* FinancialProduct + Review schema — 분석 포스트 전용 */ -}}
-{{- if eq .Params.content_type "analysis" -}}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "AnalysisNewsArticle",
-  "headline": {{ .Title | jsonify }},
-  "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
-  "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
-  "author": {
-    "@type": "Organization",
-    "name": "InvestIQs Research"
-  },
-  "about": {
-    "@type": "FinancialProduct",
-    "name": {{ .Params.primary_keyword | default .Title | jsonify }}
-  },
-  "reviewRating": {
-    "@type": "Rating",
-    "ratingValue": {{ .Params.analysis_confidence | default "medium" | jsonify }},
-    "bestRating": "very_high",
-    "worstRating": "low"
-  }
 }
 </script>
 {{- end -}}
