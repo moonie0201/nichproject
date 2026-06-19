@@ -274,6 +274,14 @@ summaryLength = 20
   category = "categories"
   tag = "tags"
 
+# 자동발행 시황(daily/weekly)은 thin content → noindex (AdSense 품질 + 크롤 예산).
+# 메인피드(mainSections)·사이트맵·robots meta에서 제외. SEO 가치 낮은 양산글 정리.
+[[cascade]]
+  [cascade.params]
+    robotsNoIndex = true
+  [cascade._target]
+    path = "{/daily/**,/weekly/**}"
+
 [markup.goldmark.renderer]
   unsafe = true
 
