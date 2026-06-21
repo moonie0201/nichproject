@@ -130,3 +130,15 @@
     display: none !important;
   }
 }
+
+/* Footer legal links row (AdSense/accessibility) */
+.iq-footer-legal {
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.75;
+  margin: 8px 0;
+  line-height: 1.8;
+}
+.iq-footer-legal a { color: var(--secondary); text-decoration: none; }
+.iq-footer-legal a:hover { color: var(--primary); text-decoration: underline; }
+.iq-footer-legal__sep { margin: 0 8px; opacity: 0.5; }

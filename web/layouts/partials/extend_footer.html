@@ -1,3 +1,18 @@
+{{- /* 법적 페이지 링크 행 — AdSense/이용자 접근성 (PaperMod 기본 footer는 menu.footer 미렌더) */ -}}
+{{- $lang := site.Language.Lang }}
+{{- $legal := dict
+  "ko" (slice (dict "n" "소개" "u" "/ko/about/") (dict "n" "개인정보처리방침" "u" "/ko/privacy/") (dict "n" "이용약관" "u" "/ko/terms/") (dict "n" "편집정책" "u" "/ko/about/editorial-policy/") (dict "n" "문의하기" "u" "/ko/contact/"))
+  "en" (slice (dict "n" "About" "u" "/en/about/") (dict "n" "Privacy Policy" "u" "/en/privacy/") (dict "n" "Terms" "u" "/en/terms/") (dict "n" "Contact" "u" "/en/contact/"))
+  "ja" (slice (dict "n" "概要" "u" "/ja/about/") (dict "n" "プライバシーポリシー" "u" "/ja/privacy/") (dict "n" "利用規約" "u" "/ja/terms/") (dict "n" "お問い合わせ" "u" "/ja/contact/"))
+  "vi" (slice (dict "n" "Giới thiệu" "u" "/vi/about/") (dict "n" "Chính sách Bảo mật" "u" "/vi/privacy/") (dict "n" "Điều khoản" "u" "/vi/terms/") (dict "n" "Liên hệ" "u" "/vi/contact/"))
+  "id" (slice (dict "n" "Tentang" "u" "/id/about/") (dict "n" "Kebijakan Privasi" "u" "/id/privacy/") (dict "n" "Ketentuan" "u" "/id/terms/") (dict "n" "Kontak" "u" "/id/contact/"))
+}}
+{{- with index $legal $lang }}
+<nav class="iq-footer-legal" aria-label="legal">
+  {{- range $i, $e := . }}{{ if $i }}<span class="iq-footer-legal__sep">·</span>{{ end }}<a href="{{ $e.u }}">{{ $e.n }}</a>{{ end }}
+</nav>
+{{- end }}
+
 <script>
 (function () {
   var LABELS = {
