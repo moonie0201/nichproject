@@ -48,6 +48,8 @@ categories:
   - "Investing"
   - "Personal Finance"
 tickers: [SCHD, VOO]
+# 외부 1차 출처가 없어 검증 가능성이 낮아 색인에서 제외한다. 출처 보강 시 해제.
+robotsNoIndex: true
 ---
 <div class="summary-box"><ul><li><strong>2020-2026 S&P 500 (<a href="/en/study/data-driven-analysis-of-tax-gain-harvesting-utilizing-the-0-ltcg-bracket-for-us-/">VOO</a>) cumulative return:</strong> Approximately 78-105% range (based on USD entry timing)</li><li><strong>Dividend <a href="/en/study/the-hidden-traps-of-20-year-drip-simulations-risk-and-volatility-anal/">ETF</a> (<a href="/en/study/schd-in-tax-free-accounts-why-20-year-compounding-beats-2m-krw-in-annual-savings/">SCHD</a>) vs growth ETF (VOO):</strong> Risk-return tradeoff exists across volatility and yield dimensions</li><li><strong>76-month investment at $1,000/month basis:</strong> Final asset variance reaches ±$25,000-$30,000 depending on allocation choice</li><li><strong>Fee impact:</strong> 0.03% vs 0.60% expense ratio produces 3.2% cumulative total return difference over 20 years</li><li><strong>Core risk:</strong> Historical performance does not guarantee future returns; actual results vary significantly based on entry timing and currency exposure</li></ul></div>
 

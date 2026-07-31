@@ -45,6 +45,8 @@ categories:
   - "Investing"
   - "Personal Finance"
 tickers: [VOO]
+# 외부 1차 출처가 없어 검증 가능성이 낮아 색인에서 제외한다. 출처 보강 시 해제.
+robotsNoIndex: true
 ---
 <div class="summary-box"><ul><li>2020–2026 performance: 60/40 blended portfolio delivered approximately 12% compound annual growth rate (CAGR), with <a href="/en/study/all-weather-portfolio-backtest-5-year-data-compounding-analysis/">rebalancing</a> included</li><li>Monthly $1,000 investment over 10 years simulated: $120,000 invested → approximately $240,000–$260,000 accumulated</li><li>Bond <a href="/en/study/the-hidden-traps-of-20-year-drip-simulations-risk-and-volatility-anal/">ETF</a> expense ratio impact: 0.03% versus 0.80% creates a 15–20% wealth divergence over 20 years</li><li>2022 rate shock: Quarterly rebalancing cushioned equity losses by 25–30% compared to unbalanced allocations</li><li>Current bond yields (3–4%) appear elevated relative to historical median (~2%), raising questions about duration risk ahead</li></ul></div>
 

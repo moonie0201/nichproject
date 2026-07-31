@@ -1,12 +1,15 @@
-{{- /* AdSense In-Article 광고 슬롯 */ -}}
-{{- if site.Params.googleAdSense -}}
-<div class="adsense-slot" style="margin: 32px 0; text-align: center;">
+{{- /* AdSense In-Article slot. Reserve space before the script fills it to keep CLS low. */ -}}
+{{- $slot := .slot | default "auto" -}}
+{{- $client := site.Params.googleAdSense -}}
+{{- $enabled := and $client (ne $client "disabled") -}}
+<div class="adsense-slot" data-ad-slot="{{ $slot }}" aria-label="advertisement">
+{{- if $enabled -}}
   <ins class="adsbygoogle"
        style="display:block; text-align:center;"
        data-ad-layout="in-article"
        data-ad-format="fluid"
-       data-ad-client="{{ site.Params.googleAdSense }}"
-       data-ad-slot="{{ .slot | default "auto" }}"></ins>
+       data-ad-client="{{ $client }}"
+       data-ad-slot="{{ $slot }}"></ins>
   <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
 {{- end -}}
+</div>

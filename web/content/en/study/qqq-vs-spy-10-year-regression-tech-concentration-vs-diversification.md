@@ -32,6 +32,8 @@ categories:
 aliases:
   - /en/blog/qqq-vs-spy-10-year-regression-tech-concentration-vs-diversification/
 tickers: [SPY]
+# 실제 인용 출처가 없어(스키마 마크업 URL 제외) 색인에서 제외한다. 출처 보강 시 해제.
+robotsNoIndex: true
 ---
 <div class="summary-box"><ul><li>QQQ sits at $651.42 with a 1-year return of +44.0%, while SPY sits at $708.45 with a 1-year return of +33.8%.</li><li>The 3-year cumulative gap is 30.2 percentage points: QQQ at +108.0% versus SPY at +77.8%.</li><li>The 5-year cumulative gap is 15.4 percentage points: QQQ at +98.1% versus SPY at +82.7%.</li><li>SPY still pays more income, with a 1.04% dividend yield versus QQQ at 0.43%, or 2.4 times as much cash yield.</li><li>On an implied 5-year CAGR basis, QQQ is roughly 14.6% and SPY roughly 12.8%, which means the spread exists, but it is not huge enough to ignore regime risk.</li></ul></div>
 

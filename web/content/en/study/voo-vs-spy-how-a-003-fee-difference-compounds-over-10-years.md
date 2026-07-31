@@ -47,6 +47,8 @@ categories:
   - "자동생성"
   - "재테크"
 tickers: [VOO, SPY]
+# 외부 1차 출처가 없어 검증 가능성이 낮아 색인에서 제외한다. 출처 보강 시 해제.
+robotsNoIndex: true
 ---
 <section class="intro-section"><div class="summary-box"><ul><li><strong>VOO's 0.03% <a href="/en/study/expense-ratio-compounding-003-vs-05-over-30-years/">expense ratio</a> vs SPY's 0.09%:</strong> 0.06% annual difference compounds to $1,500–$2,800 on a $100,000 position over 10 years</li><li><strong>5-year track record:</strong> <a href="/en/study/data-driven-analysis-of-tax-gain-harvesting-utilizing-the-0-ltcg-bracket-for-us-/">VOO</a> returned +92.2%, <a href="/en/daily/june-10-2026-us-market-close-s-p-500-737-05-0-29-nasdaq-1-15/">SPY</a> returned +91.7%—a 0.5% gap partly explained by fee drag</li><li><strong>Dividend yield split:</strong> VOO 1.03% vs SPY 0.98% (0.05% edge) further narrows the take-home difference</li><li><strong>Scale matters:</strong> VOO's $1.7T AUM vs SPY's $783.8B means tighter bid-ask spreads and more stable tracking</li><li><strong>Contrarian risk:</strong> Fee savings can evaporate if VOO experiences tracking error, net fund outflows, or structural changes to Vanguard's model</li></ul></div></section><section class="body-section"><h2>The Fee Debate That Actually Moves Money</h2>
 <figure class="chart-figure"><img src="/images/voo-vs-spy-how-a-003-fee-difference-compounds-over-10-years/compound-growth.png" alt="Monthly $30K investment 20-year compound growth simulation" loading="lazy" style="max-width:100%;border-radius:8px;"><figcaption>Monthly $30K investment 20-year compound growth simulation</figcaption></figure>

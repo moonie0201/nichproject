@@ -29,6 +29,8 @@ categories:
   - "Investing"
   - "Personal Finance"
 tickers: [SCHD, VOO]
+# 실제 인용 출처가 없어(스키마 마크업 URL 제외) 색인에서 제외한다. 출처 보강 시 해제.
+robotsNoIndex: true
 ---
 
 <div class="summary-box"><ul><li>The statutory filing window for Korean comprehensive income tax runs from May 1 through May 31 of the following year, with weekends and public holidays rolling to the next business day. In 2026, May 31 falls on a Sunday, so filing and payment continue through June 1.</li><li>Retirement account tax credits apply up to KRW 9 million, or about $6,500, at 15% for total compensation below KRW 55 million and 12% above that line. An IRP contribution of KRW 8.4 million, or about $6,100, can therefore generate a tax credit of KRW 1.26 million or KRW 1.008 million.</li><li>When annual interest plus dividends exceed KRW 20 million, or about $14,500, the comprehensive taxation switch turns on. For US-listed ETFs such as VOO, SCHD, and DGRO, the account wrapper matters more than the ticker label.</li><li>Failure-to-file penalties are 20%, underreporting penalties are 10%, and late-payment interest runs at 0.022% per day. Delay carries a measurable cost.</li><li>Rolling ISA maturity proceeds into a retirement account can add 10% of the converted amount, up to KRW 3 million, or about $2,200, to retirement-account contribution creditable amounts.</li></ul></div>

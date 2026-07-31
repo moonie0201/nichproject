@@ -1,17 +1,78 @@
-{{- if site.Params.googleAdSense }}
+<style>
+.legal-disclaimer {
+  background: #fff8e1;
+  border-left: 4px solid #f5a623;
+  border-radius: 4px;
+  color: #5d4037;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 1rem 0 1.5rem;
+  padding: 0.75rem 1rem;
+}
+.legal-disclaimer__icon {
+  margin-right: 0.4em;
+}
+/* 광고 슬롯: 채워지기 전에는 자리를 차지하지 않는다.
+   (`<ins>` 자식이 있으므로 :empty 는 절대 적용되지 않는다. 고정 min-height 를 두면
+    광고가 게재되지 않는 동안 빈 회색 상자만 남아 사용자 경험과 심사 인상을 해친다.
+    AdSense가 지면을 채우면 data-ad-status="filled" 로 바뀌므로 그때만 크기를 준다.) */
+.adsense-slot {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  overflow: hidden;
+  text-align: center;
+}
+.adsense-slot .adsbygoogle { width: 100%; }
+.adsense-slot .adsbygoogle[data-ad-status="unfilled"] { display: none !important; }
+.adsense-slot:has(.adsbygoogle[data-ad-status="filled"]) {
+  background: #f6f7f8;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  color: #6b7280;
+  margin: 32px 0;
+  min-height: 180px;
+}
+.adsense-slot .adsbygoogle[data-ad-status="filled"] { min-height: 180px; }
+</style>
+
+{{- $adsenseClient := site.Params.googleAdSense -}}
+{{- if and $adsenseClient (ne $adsenseClient "disabled") }}
 <script async
-  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ site.Params.googleAdSense }}"
+  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $adsenseClient }}"
   crossorigin="anonymous"></script>
 {{- end }}
 {{- partial "schema.html" . }}
 
+{{- /* robots meta는 테마 head.html이 .Params.robotsNoIndex 기준으로 이미 출력한다.
+       여기서 다시 내보내면 같은 페이지에 noindex,nofollow 와 noindex,follow 가 동시에 나와
+       크롤러 지시가 모순된다. 중복 출력 제거. */ -}}
+
+{{- /* hreflang: 색인 대상 언어(ko·en)만 대체 URL로 제시한다. noindex 언어를 가리키면 신호가 모순된다.
+       x-default 도 사이트 홈이 아니라 이 페이지의 기본 언어(ko) 대응 URL을 가리킨다. */ -}}
+{{- /* hreflang alternate 자체는 head.html(오버라이드)에서 한 번만 출력한다.
+       여기서는 x-default 만 보완한다 — 사이트 홈이 아니라 이 페이지의 기본 언어 대응 URL. */ -}}
+{{- $defaultLang := "ko" }}
+{{- $xdefault := "" }}
 {{- range .AllTranslations }}
-<link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}" />
+{{- if and (ne .Params.robotsNoIndex true) (eq .Language.Lang $defaultLang) }}{{ $xdefault = .Permalink }}{{ end }}
 {{- end }}
-{{- range .AllTranslations }}{{ if eq .Language.Lang "en" }}<link rel="alternate" hreflang="x-default" href="{{ .Permalink }}" />{{ end }}{{- end }}
+{{- if and (ne .Params.robotsNoIndex true) (eq .Language.Lang $defaultLang) }}{{ $xdefault = .Permalink }}{{ end }}
+{{- with $xdefault }}
+<link rel="alternate" hreflang="x-default" href="{{ . }}" />
+{{- end }}
+
+{{- /* 성능: critical font preload */ -}}
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
 {{- if .Params.ai_generated }}
 <meta name="ai-generated" content="true" />
-<meta name="ai-model" content="{{ .Params.ai_models | default "Claude/Gemini" }}" />
+{{- $aiModelText := site.Params.defaultAiModels | default "AI-assisted editorial workflow" -}}
+{{- with .Params.ai_models }}
+  {{- $aiModelText = delimit . ", " -}}
+{{- end }}
+<meta name="ai-model" content="{{ $aiModelText }}" />
 <meta name="human-reviewed" content="automated-only" />
-<meta name="ai-content-policy" content="{{ site.Params.ai_content_policy | default "/ko/about/editorial-process/" }}" />
+<meta name="ai-content-policy" content="{{ site.Params.ai_content_policy | default "/ko/about/editorial-policy/" }}" />
 {{- end }}

@@ -45,6 +45,8 @@ tags:
 categories:
   - "자동생성"
   - "재테크"
+# 외부 1차 출처가 없어 검증 가능성이 낮아 색인에서 제외한다. 출처 보강 시 해제.
+robotsNoIndex: true
 ---
 <div class="intro-section"><p>Sports franchises occupy an unusual niche in alternative investments. When Villarreal and Atlético Madrid began exploring Real Estate Investment Trust (REIT) structures in European markets, the move signaled a shift: sports assets are no longer just entertainment equity plays—they're potential income generators. The claim? A 5% yield on stadium and hospitality real estate tied to these clubs. The reality is messier.</p></div><div class="summary-box"><ul><li>Sports REITs averaged 4.8–5.2% dividend yields in 2024, roughly 2–3x traditional equity dividend stocks</li><li>European sports franchise valuations (Villarreal ~€350M, Atlético Madrid ~€600M enterprise value) comprise 40–60% stadium/real estate, 40–60% media/player rights</li><li>Correlation with S&P 500 sits between 0.45–0.65, suggesting modest diversification benefit vs. traditional REITs (correlation 0.35–0.55)</li><li>In a 60/40 stock-bond portfolio, a 5–10% sports REIT allocation reduces volatility by 0.8–1.2 percentage points annually</li><li>Funding risk: 70% of European sports REITs depend on seasonal revenue (ticket sales, broadcast rights renewal), creating cash-flow fragility</li></ul></div>
 

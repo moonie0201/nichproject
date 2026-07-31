@@ -1,10 +1,10 @@
 {{- /* Determine if this is a tools/calculator page */ -}}
 {{- $isTools := or (eq .Type "tools") (eq .Params.schema "WebApplication") -}}
+{{- $publisherName := site.Params.schema.publisherName | default "InvestIQs" -}}
+{{- $publisherLogo := site.Params.schema.publisherLogo | default "/images/logo-512.png" | absURL -}}
 
 {{- /* WebApplication schema for tools pages */ -}}
-{{- if and .IsPage $isTools -}}
-{{- $publisherName := site.Params.schema.publisherName | default "InvestIQs" -}}
-{{- $publisherLogo := site.Params.schema.publisherLogo | default (printf "%simages/logo-512.png" .Site.BaseURL) -}}
+{{- if and (or .IsPage .IsSection) $isTools -}}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -52,25 +52,32 @@
   "description": {{ (.Description | default .Summary | plainify) | jsonify | safeJS }},
   "image": [
     {{- with .Params.cover.image -}}
-      {{ (printf "%s%s" $.Site.BaseURL .) | jsonify | safeJS }}
+      {{ . | absURL | jsonify | safeJS }}
     {{- else -}}
-      {{ (printf "%simages/og-default.png" $.Site.BaseURL) | jsonify | safeJS }}
+      {{ "/images/og-default.png" | absURL | jsonify | safeJS }}
     {{- end -}}
   ],
   "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify | safeJS }},
   "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify | safeJS }},
+  {{- /* 저자 = 조직(편집팀). 콘텐츠가 AI 보조 워크플로로 작성되므로 개인(Person)·직함을 위장하지 않는다.
+         저자 소개 URL은 현재 언어의 편집정책/제작과정 페이지로 연결하고, 없으면 기본 언어로 폴백한다. */ -}}
+  {{- /* GetPage 경로는 현재 언어의 contentDir 기준(언어 프리픽스 없음) */ -}}
+  {{- $authorPage := site.GetPage "/about/authors" -}}
+  {{- if not $authorPage -}}{{- $authorPage = site.GetPage "/about/editorial-policy" -}}{{- end -}}
+  {{- $authorURL := "" -}}
+  {{- with $authorPage }}{{- $authorURL = .Permalink -}}{{- end -}}
+  {{- if not $authorURL -}}{{- $authorURL = "/ko/about/authors/" | absURL -}}{{- end -}}
   "author": {
-    "@type": "Person",
-    "name": {{ .Params.author | default "InvestIQs Research" | jsonify | safeJS }},
-    "url": {{ (printf "%sko/about/authors/" .Site.BaseURL) | jsonify | safeJS }},
-    "jobTitle": "Investment Research Analyst"
+    "@type": "Organization",
+    "name": {{ .Params.author | default $publisherName | jsonify | safeJS }},
+    "url": {{ $authorURL | jsonify | safeJS }}
   },
   "publisher": {
-    "@type": "Organization",
-    "name": "InvestIQs",
+    "@type": {{ (site.Params.schema.publisherType | default "Organization") | jsonify | safeJS }},
+    "name": {{ $publisherName | jsonify | safeJS }},
     "logo": {
       "@type": "ImageObject",
-      "url": {{ (printf "%simages/logo-512.png" .Site.BaseURL) | jsonify | safeJS }}
+      "url": {{ $publisherLogo | jsonify | safeJS }}
     }
   },
   "mainEntityOfPage": {

@@ -49,7 +49,7 @@
     <span class="iq-research-banner__badge">📑</span>
     <span>
       <strong>{{ $r.Title }}</strong>
-      <span class="iq-research-banner__desc">{{ $r.Description | default $r.Summary }}</span>
+      <span class="iq-research-banner__desc">{{ $r.Description | default $r.Summary | plainify }}</span>
     </span>
   </a>
 </section>
@@ -64,7 +64,7 @@
     {{- range . }}
     <a class="iq-post-card" href="{{ .RelPermalink }}">
       <span class="iq-post-card__title">{{ .Title }}</span>
-      <span class="iq-post-card__desc">{{ .Description | default .Summary | truncate 110 }}</span>
+      <span class="iq-post-card__desc">{{ .Description | default .Summary | plainify | truncate 110 }}</span>
     </a>
     {{- end }}
   </div>

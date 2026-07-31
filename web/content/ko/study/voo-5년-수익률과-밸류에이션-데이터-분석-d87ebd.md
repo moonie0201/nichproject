@@ -1,8 +1,8 @@
 ---
 title: "VOO 5년 수익률과 밸류에이션 데이터 분석"
 date: 2026-04-24
-lastmod: 2026-04-24
-draft: false
+lastmod: 2026-06-18
+draft: true
 reviewed: false
 reviewedBy: "편집자 미검토 — AI 자동 발행"
 analysis_confidence: "medium"
@@ -18,6 +18,7 @@ keywords:
 primary_keyword: "VOO"
 schema: "Article"
 toc: true
+robotsNoIndex: true
 ai_generated: true
 ai_models: ["claude-sonnet-4.6"]
 data_source: "yfinance"
@@ -41,6 +42,8 @@ aliases:
   - /ko/blog/voo-5년-수익률과-밸류에이션-데이터-분석-d87ebd/
 tickers: [VOO, SPY]
 ---
+> 통합 안내: 이 문서는 `VOO 5년 수익률, 밸류에이션, 낙폭 데이터 분석`으로 통합되었습니다. 발행 대상에서는 제외하고 canonical 문서만 유지합니다.
+
 <div class="reg-banner" style="background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:0.8em 1em;margin:0 0 1.5em 0;font-size:0.9em;color:#664d03;"><strong>⚠️ 정보 제공용 <a href="/ko/blog/2026년-4월-22일-시장-심층-분석-변동성-속-기회-포착-전략/">데이터 분석</a></strong><br>본 글은 yfinance 공개 데이터와 AI 멀티에이전트 분석을 정리한 정보 콘텐츠입니다. 특정 종목의 매수·매도를 권유하지 않으며 투자 자문이 아닙니다. 모든 투자 결정과 손익은 본인 책임입니다.</div>
 
 본 글은 데이터 분석 정보이며 투자 자문/권유가 아닙니다. VOO는 현재가 $651.26, 1년 수익률 +33.9%, 3년 수익률 +78.2%, 5년 수익률 +83.2%, 배당수익률 1.09%, P/E 28.1이라는 숫자로 요약된다. 숫자만 놓고 보면 장기 성과는 강하지만, 배당수익률 1.09%와 P/E 28.1은 이 ETF가 현금흐름형 자산이라기보다 가격 상승 중심의 지수 추종 자산이라는 점을 다시 보여준다.

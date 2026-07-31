@@ -156,12 +156,23 @@
                     {{- end }}
                 </a>
                 {{- if $is_tools }}
-                <ul class="iq-submenu" aria-label="Tool categories">
-                    <li><a href="/{{ $lang }}/tools/dividend-calculator/schd/">{{ index $labels "dividend" }}</a></li>
-                    <li><a href="/{{ $lang }}/tools/dca-calculator/">{{ index $labels "dca" }}</a></li>
-                    <li><a href="/{{ $lang }}/tools/compare/schd-vs-vym/">{{ index $labels "compare" }}</a></li>
-                    <li><a href="/{{ $lang }}/tools/portfolio-rebalance/">{{ index $labels "portfolio" }}</a></li>
-                    <li><a href="/{{ $lang }}/tools/watchlist/">{{ index $labels "watchlist" }}</a></li>
+                {{- /* 하위 도구 링크는 실제 페이지가 있을 때만 렌더 — slug 변경/언어별 누락 시 깨진 링크 방지 */ -}}
+                {{- /* GetPage 경로는 현재 언어의 contentDir 기준(언어 프리픽스 없음).
+                       프리픽스를 넣으면 조회가 항상 실패해 하위 링크가 전부 사라진다. */ -}}
+                {{- $subs := slice
+                    (dict "k" "dividend"  "p" "/tools/dividend-calculator/schd")
+                    (dict "k" "dca"       "p" "/tools/dca-calculator")
+                    (dict "k" "compare"   "p" "/tools/compare/schd-vs-vym")
+                    (dict "k" "portfolio" "p" "/tools/portfolio-rebalance")
+                    (dict "k" "watchlist" "p" "/tools/watchlist")
+                -}}
+                <ul class="iq-submenu" aria-label="{{ index $labels "all" }}">
+                    {{- range $subs }}
+                    {{- $label := index $labels .k }}
+                    {{- with site.GetPage .p }}
+                    <li><a href="{{ .RelPermalink }}">{{ $label }}</a></li>
+                    {{- end }}
+                    {{- end }}
                     <li class="iq-submenu__all"><a href="/{{ $lang }}/tools/">{{ index $labels "all" }}</a></li>
                 </ul>
                 {{- end }}

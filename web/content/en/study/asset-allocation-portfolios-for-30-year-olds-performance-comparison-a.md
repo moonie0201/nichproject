@@ -45,6 +45,8 @@ categories:
   - "Investing"
   - "Personal Finance"
 tickers: [SCHD, VOO, SPY]
+# 외부 1차 출처가 없어 검증 가능성이 낮아 색인에서 제외한다. 출처 보강 시 해제.
+robotsNoIndex: true
 ---
 <div class="summary-box" style="background-color: #f0f8ff; border-left: 4px solid #0066cc; padding: 20px; margin: 20px 0;">
   <h3>Executive Summary</h3>

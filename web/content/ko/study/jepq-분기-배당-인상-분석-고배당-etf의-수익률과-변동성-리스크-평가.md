@@ -2,12 +2,14 @@
 title: "JEPQ 분기 배당 인상 분석: 고배당 ETF의 수익률과 변동성 리스크 평가"
 date: 2026-05-13
 lastmod: 2026-05-13
-draft: false
+draft: true
 reviewed: true
 description: "JEPQ의 최근 분기 배당 인상 ($0.5910)을 기반으로 고배당 ETF의 실제 수익률과 내재된 변동성 리스크를 심층 분석합니다."
 keywords: "JEPQ, JEPQ 배당금, JEPQ 리스크, JEPQ JEPI 비교, 커버드콜 ETF 투자, 고배당 ETF 변동성"
 primary_keyword: "JEPQ"
 schema: "HowTo"
+robotsNoIndex: true
+canonicalURL: "https://investiqs.net/ko/study/jepq-분기-배당-05910-발표-작년-대비-26-인상-분석-및-jepi-비교/"
 toc: true
 comments: true
 ai_generated: true

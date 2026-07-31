@@ -46,6 +46,9 @@
   {{- partial (printf "tools/%s.html" .) $ }}
   {{- end }}
 
+  {{- /* 방법론·가정·데이터 출처·한계 — 도구를 검증 가능한 문서로 만든다 */ -}}
+  {{- partial "tools/methodology.html" . }}
+
   {{- /* ads only AFTER the calculator/results */ -}}
   {{- partial "article_ads.html" (dict "slot" "8171345112") }}
   {{- partial "related-articles.html" . }}

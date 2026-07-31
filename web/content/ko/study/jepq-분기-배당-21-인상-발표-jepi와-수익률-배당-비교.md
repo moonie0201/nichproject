@@ -2,13 +2,15 @@
 title: "JEPQ 분기 배당 21% 인상 발표 — JEPI와 수익률, 배당 비교"
 date: 2026-06-13
 lastmod: 2026-06-13
-draft: false
+draft: true
 description: "JEPQ 분기 배당 $0.5640 발표(작년 대비 +21%). JEPI와의 1년 수익률, 배당수익률, P/E 비교 분석."
 keywords: "JEPQ 배당, JEPQ 배당금, JEPQ vs JEPI, 배당 ETF 비교, 고배당 ETF, JEPQ 수익률"
 primary_keyword: "JEPQ 배당"
 author: "InvestIQs Research"
 authorURL: "/ko/about/authors/"
 schema: "Article"
+robotsNoIndex: true
+canonicalURL: "https://investiqs.net/ko/study/jepq-분기-배당-05910-발표-작년-대비-26-인상-분석-및-jepi-비교/"
 toc: true
 comments: true
 ai_generated: true

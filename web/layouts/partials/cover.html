@@ -1,0 +1,26 @@
+{{- with .cxt}} {{/* Apply proper context from dict */}}
+{{- if (and .Params.cover.image (not $.isHidden)) }}
+<figure class="entry-cover">
+    {{- $loading := cond $.IsSingle "eager" "lazy" }}
+    {{- $fetchpriority := cond $.IsSingle "high" "auto" }}
+    {{- $alt := (.Params.cover.alt | default .Params.cover.caption | plainify) }}
+    
+    {{- $imgdl := (.Params.cover.image) | absURL }}
+    
+    <img loading="{{ $loading }}" 
+         fetchpriority="{{ $fetchpriority }}"
+         src="{{ $imgdl }}" 
+         alt="{{ $alt }}"
+         width="1200" height="630"
+         decoding="async">
+
+    {{- /*  Display Caption  */}}
+    {{- if $.IsSingle }}
+        {{ with .Params.cover.caption -}}
+            <figcaption>{{ . | markdownify }}</figcaption>
+        {{- end }}
+    {{- end }}
+</figure>
+{{- end }}{{/* End image */}}
+{{- end -}}{{/* End context */ -}}
+

@@ -31,6 +31,8 @@ categories:
 aliases:
   - /en/blog/voo-dca-after-12-months-real-returns-mistakes-and-schd-contrast/
 tickers: [SCHD, VOO]
+# 실제 인용 출처가 없어(스키마 마크업 URL 제외) 색인에서 제외한다. 출처 보강 시 해제.
+robotsNoIndex: true
 ---
 <div class="summary-box"><ul><li>VOO sits at $651.54 with a 1-year return of +36.3%, a 3-year cumulative return of +79.0%, a 5-year cumulative return of +85.0%, and a dividend yield of 1.09%.</li><li>SCHD sits at $31.03 with a 1-year return of +26.8%, a 3-year cumulative return of +41.5%, a 5-year cumulative return of +49.8%, and a dividend yield of 3.4%.</li><li>Across the provided windows, VOO beat SCHD by 9.5 percentage points over 1 year, 37.5 points over 3 years, and 35.2 points over 5 years on cumulative return.</li><li>The chart below tests monthly KRW 300,000 DCA over 20 years at 4%, 7%, and 10%; the gap between those paths shows how sensitive long-horizon outcomes are to small return differences.</li><li>The biggest mistake in a first-year DCA window is treating a strong 12-month run as a permanent feature of the market instead of a regime that can change fast.</li></ul></div>
 

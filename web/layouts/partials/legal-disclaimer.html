@@ -1,0 +1,30 @@
+{{- $lang := .Site.Language.Lang -}}
+{{- $modelText := "" -}}
+{{- with .Params.ai_models -}}
+  {{- $modelText = delimit . ", " -}}
+{{- end -}}
+{{- if not $modelText -}}
+  {{- $modelText = site.Params.defaultAiModels | default "AI-assisted editorial workflow" -}}
+{{- end -}}
+{{- $hasAffiliateLinks := .Params.has_affiliate_links | default false -}}
+{{- $msg := "" -}}
+{{- if eq $lang "ko" -}}
+  {{- $msg = printf "본 콘텐츠는 AI 보조 워크플로(%s)를 거쳐 작성된 정보이며, 투자 권유나 세무 자문이 아닙니다. 실제 세금과 투자 판단은 계좌 유형, 상품 구조, 최신 법령, 개인 상황에 따라 달라질 수 있습니다." $modelText -}}
+  {{- if $hasAffiliateLinks }}{{- $msg = printf "%s 일부 링크는 제휴 링크일 수 있으며 수수료가 발생할 수 있습니다. #광고 #제휴" $msg -}}{{- end -}}
+{{- else if eq $lang "ja" -}}
+  {{- $msg = printf "本コンテンツはAI支援ワークフロー（%s）を経て作成された情報であり、投資勧誘または税務助言ではありません。実際の税務・投資判断は口座種別、商品構造、最新法令、個別事情により異なります。" $modelText -}}
+  {{- if $hasAffiliateLinks }}{{- $msg = printf "%s 一部のリンクはアフィリエイトリンクです。 #PR #アフィリエイト" $msg -}}{{- end -}}
+{{- else if eq $lang "vi" -}}
+  {{- $msg = printf "Nội dung này được soạn với quy trình hỗ trợ AI (%s), chỉ nhằm mục đích thông tin và không phải lời khuyên đầu tư hay thuế. Kết quả thực tế phụ thuộc vào loại tài khoản, cấu trúc sản phẩm, quy định mới nhất và hoàn cảnh cá nhân." $modelText -}}
+  {{- if $hasAffiliateLinks }}{{- $msg = printf "%s Một số liên kết có thể là liên kết tiếp thị. #quangcao" $msg -}}{{- end -}}
+{{- else if eq $lang "id" -}}
+  {{- $msg = printf "Konten ini disusun melalui alur kerja berbantuan AI (%s) untuk tujuan informasi saja, bukan nasihat investasi atau pajak. Hasil aktual bergantung pada jenis akun, struktur produk, aturan terbaru, dan situasi pribadi." $modelText -}}
+  {{- if $hasAffiliateLinks }}{{- $msg = printf "%s Beberapa tautan dapat berupa tautan afiliasi. #iklan #afiliasi" $msg -}}{{- end -}}
+{{- else -}}
+  {{- $msg = printf "This content was prepared with an AI-assisted workflow (%s) for information only, not investment or tax advice. Actual tax and investment outcomes depend on account type, product structure, current rules, and personal circumstances." $modelText -}}
+  {{- if $hasAffiliateLinks }}{{- $msg = printf "%s Some links may be affiliate links and may generate commission. #ad #affiliate" $msg -}}{{- end -}}
+{{- end -}}
+<div class="legal-disclaimer">
+  <span class="legal-disclaimer__icon">⚠️</span>
+  {{ $msg }}
+</div>

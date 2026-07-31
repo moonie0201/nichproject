@@ -15,9 +15,13 @@
     {{- if ge .Sitemap.Priority 0.0 }}
     <priority>{{ .Sitemap.Priority }}</priority>
     {{- end }}
+    {{- /* hreflang은 색인 대상 번역본만 가리킨다.
+           noindex 처리한 언어(ja/vi/id)를 대체 URL로 제시하면 국제화 신호가 모순된다. */ -}}
     {{- if .IsTranslated }}
     {{- range .AllTranslations }}
+    {{- if ne .Params.robotsNoIndex true }}
     <xhtml:link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}" />
+    {{- end }}
     {{- end }}
     {{- end }}
   </url>

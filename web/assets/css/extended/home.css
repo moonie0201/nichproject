@@ -124,12 +124,32 @@
   font-weight: 600;
 }
 
-/* Mobile: hide submenu on small screens to avoid breaking header layout */
-@media (max-width: 768px) {
+/* Mobile/touch: 드롭다운을 숨기지 않고 인라인 목록으로 펼쳐 하위 도구 탐색을 보장한다.
+   (hover가 없는 환경에서도 모든 카테고리에 도달 가능해야 함) */
+@media (hover: none), (max-width: 768px) {
+  .iq-has-submenu { width: 100%; }
   .iq-submenu {
-    display: none !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    position: static;
+    transform: none;
+    min-width: 0;
+    margin: 4px 0 2px;
+    padding: 4px 0 0;
+    border: 0;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
   }
+  .iq-submenu a { padding: 4px 0; font-size: 0.82rem; }
+  .iq-submenu a:hover { background: transparent; text-decoration: underline; }
+  .iq-submenu__all { border-top: 0; margin-top: 0; }
 }
+
+/* 키보드 접근: 링크 포커스 시 드롭다운 유지 */
+.iq-submenu a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 /* Footer legal links row (AdSense/accessibility) */
 .iq-footer-legal {
@@ -142,3 +162,13 @@
 .iq-footer-legal a { color: var(--secondary); text-decoration: none; }
 .iq-footer-legal a:hover { color: var(--primary); text-decoration: underline; }
 .iq-footer-legal__sep { margin: 0 8px; opacity: 0.5; }
+
+/* 계산기 방법론 블록 */
+.iq-method { margin: 28px 0; padding-top: 8px; border-top: 1px solid var(--border); }
+.iq-method h2 { font-size: 1.2rem; margin-bottom: 10px; }
+.iq-method h3 { font-size: 0.98rem; margin: 16px 0 6px; opacity: 0.9; }
+.iq-method ul { margin: 0 0 4px 1.1rem; font-size: 0.9rem; line-height: 1.7; }
+.iq-method__formula {
+  overflow-x: auto; padding: 10px 12px; border-radius: 8px;
+  background: var(--code-bg, #f3f4f6); font-size: 0.82rem; line-height: 1.6; margin: 0;
+}

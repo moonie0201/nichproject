@@ -282,6 +282,15 @@ summaryLength = 20
   [cascade._target]
     path = "{/daily/**,/weekly/**}"
 
+# 언어 집중(ko·en): 편집·검증 역량이 미치는 언어에만 색인을 허용한다.
+# ja/vi/id는 기계번역 비중이 높아 사이트 전체 품질 신호를 희석하므로 색인·사이트맵에서 제외한다.
+# (페이지 자체는 접근 가능하게 유지. 각 언어 품질이 확보되면 이 규칙을 제거한다.)
+[[cascade]]
+  [cascade.params]
+    robotsNoIndex = true
+  [cascade._target]
+    lang = "{ja,vi,id}"
+
 [markup.goldmark.renderer]
   unsafe = true
 
