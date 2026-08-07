@@ -7,6 +7,7 @@
 
 import json
 import os
+import shutil
 import subprocess
 import time
 import logging
@@ -15,6 +16,7 @@ from pathlib import Path
 
 from auto_publisher.config import CONTENT_NICHE, FORBIDDEN_PHRASES
 from auto_publisher.compliance import apply_compliance
+from auto_publisher.affiliate_compliance import build_broker_prompt_block
 
 PERSONA_DIR = Path(__file__).parent / "data" / "personas"
 CASE_DIR = Path(__file__).parent / "data" / "cases"
@@ -191,10 +193,21 @@ KOREAN_ETF_CODES = {
 
 
 def _fetch_korean_etf_data(krx_name: str) -> dict:
-    """yfinance .KS suffix로 한국 상장 ETF 데이터 수집 — 국내 ETF 폴백"""
+    """KR ETF 데이터 수집 — FDR primary, yfinance .KS suffix 폴백."""
     code = KOREAN_ETF_CODES.get(krx_name)
     if not code:
         return {}
+
+    # FDR 우선 시도 (FinanceDataReader가 KR 시장 더 정확)
+    try:
+        from auto_publisher.kr_market import fetch_kr_etf_data as _fdr_fetch
+        fdr_result = _fdr_fetch(code, name=krx_name)
+        if fdr_result and fdr_result.get("current_price_krw"):
+            return fdr_result
+    except Exception as e:
+        logger.warning(f"FDR fetch fail for {krx_name}, falling back to yfinance: {e}")
+
+    # yfinance .KS 폴백
     try:
         import yfinance as yf
 
@@ -280,11 +293,15 @@ def _extract_tickers_from_keywords(keywords: list[str], topic: str = "") -> list
 
 
 def _market_data_block(
-    tickers: list[str], topic: str = "", keywords: list[str] = None
+    tickers: list[str], topic: str = "", keywords: list[str] = None, lang: str = "ko"
 ) -> str:
-    """티커 리스트의 yfinance 데이터 + 국내 ETF pykrx 데이터를 프롬프트용 텍스트로 변환"""
+    """티커 리스트의 yfinance 데이터 + 국내 ETF pykrx 데이터를 프롬프트용 텍스트로 변환.
+
+    KR 시장 데이터(KOSPI/KOSDAQ/KR ETF)는 lang='ko' 일 때만 주입 — 다국어 누수 방지.
+    """
     keywords = keywords or []
     text = topic + " " + " ".join(keywords)
+    is_ko = (lang or "ko").lower().startswith("ko")
     lines = [
         "[다음 실시간 데이터를 본문에 그대로 사용하세요. 절대 다른 숫자 만들지 마세요.]"
     ]
@@ -309,20 +326,69 @@ def _market_data_block(
             lines.append(f"  배당수익률: {d['dividend_yield_pct']}%")
         if d.get("expense_ratio_pct") is not None:
             lines.append(f"  운용보수: {d['expense_ratio_pct']}%")
+        if d.get("beta") is not None:
+            lines.append(f"  베타: {d['beta']}")
+        if d.get("pe_ratio") is not None:
+            lines.append(f"  P/E: {d['pe_ratio']}")
+        if d.get("eps") is not None:
+            lines.append(f"  EPS: ${d['eps']}")
+        if d.get("fifty_two_week_high") is not None and d.get("fifty_two_week_low") is not None:
+            lines.append(
+                f"  52주 범위: ${d['fifty_two_week_low']} ~ ${d['fifty_two_week_high']}"
+            )
+        if d.get("pos_in_52w_pct") is not None:
+            lines.append(f"  52주 범위 내 위치: {d['pos_in_52w_pct']}% (0=저점, 100=고점)")
+        if d.get("avg_volume") is not None:
+            lines.append(f"  평균 거래량: {d['avg_volume']:,}주")
+        if d.get("total_assets") is not None:
+            aum = d['total_assets']
+            aum_str = f"${aum/1e9:.1f}B" if aum >= 1e9 else f"${aum/1e6:.0f}M"
+            lines.append(f"  AUM: {aum_str}")
+        if d.get("nav_price") is not None:
+            lines.append(f"  NAV: ${d['nav_price']}")
 
-    # 국내 ETF (pykrx 폴백)
-    for krx_name in KOREAN_ETF_CODES:
-        if krx_name in text:
-            d = _fetch_korean_etf_data(krx_name)
-            if not d:
-                continue
-            lines.append(f"\n■ {krx_name} (국내 ETF, 종목코드 {d.get('krx_code')})")
-            if d.get("current_price_krw") is not None:
-                lines.append(f"  현재가: {d['current_price_krw']:,}원")
-            if d.get("1y_return_pct") is not None:
-                lines.append(f"  1년 수익률: {d['1y_return_pct']:+.1f}%")
-            if d.get("3y_return_pct") is not None:
-                lines.append(f"  3년 누적: {d['3y_return_pct']:+.1f}%")
+    # 국내 ETF (FinanceDataReader primary + yfinance .KS 폴백) — KR 포스트만
+    kr_etf_mentioned = False
+    if is_ko:
+        for krx_name in KOREAN_ETF_CODES:
+            if krx_name in text:
+                d = _fetch_korean_etf_data(krx_name)
+                if not d:
+                    continue
+                kr_etf_mentioned = True
+                src = d.get("source", "yfinance.KS")
+                lines.append(f"\n■ {krx_name} (국내 ETF, 종목코드 {d.get('krx_code')}, src={src})")
+                if d.get("current_price_krw") is not None:
+                    lines.append(f"  현재가: {d['current_price_krw']:,.0f}원")
+                if d.get("1y_return_pct") is not None:
+                    lines.append(f"  1년 수익률: {d['1y_return_pct']:+.1f}%")
+                if d.get("3y_return_pct") is not None:
+                    lines.append(f"  3년 누적: {d['3y_return_pct']:+.1f}%")
+                if d.get("ytd_return_pct") is not None:
+                    lines.append(f"  YTD: {d['ytd_return_pct']:+.1f}%")
+                if d.get("avg_volume") is not None:
+                    lines.append(f"  60일 평균 거래량: {d['avg_volume']:,}주")
+
+    # KR 시장 지수 스냅샷 — KR 포스트만 (lang='ko'), 영문 ticker "KOSPI" 단순 등장만으로는 안 주입
+    kr_keywords = ("KOSPI", "코스피", "KOSDAQ", "코스닥", "한국", "국내", "삼성전자")
+    if is_ko and (kr_etf_mentioned or any(k in text for k in kr_keywords)):
+        try:
+            from auto_publisher.kr_market import fetch_kr_index_snapshot
+            snap = fetch_kr_index_snapshot()
+            if snap:
+                lines.append("\n■ KR 시장 지수 (FinanceDataReader)")
+                for label, code in [("kospi", "KOSPI"), ("kosdaq", "KOSDAQ")]:
+                    s = snap.get(label) or {}
+                    if not s:
+                        continue
+                    parts = [f"  {code}: {s.get('close', 'N/A'):,}"]
+                    if s.get("change_1d_pct") is not None:
+                        parts.append(f"전일대비 {s['change_1d_pct']:+.2f}%")
+                    if s.get("ytd_pct") is not None:
+                        parts.append(f"YTD {s['ytd_pct']:+.1f}%")
+                    lines.append(" / ".join(parts))
+        except Exception as e:
+            logger.warning(f"KR index snapshot fail: {e}")
 
     # 거시경제 지표 (FRED) — 선택적
     try:
@@ -412,6 +478,11 @@ def _validate_post(post: dict, lang: str) -> tuple[bool, list[str]]:
     for f in FORBIDDEN_PHRASES.get(lang, []):
         if f in html or f in title:
             issues.append(f"금지어: {f}")
+
+    # 자본시장법/금융소비자보호법/유사수신법 위반 표현
+    from auto_publisher.content_verifier import check_financial_compliance
+    fin_violations = check_financial_compliance(html + " " + title, lang)
+    issues.extend(fin_violations)
 
     if pkw and pkw.lower() not in title.lower() and pkw not in title:
         issues.append(f"제목에 primary_keyword '{pkw}' 누락")
@@ -620,7 +691,41 @@ CODEX_MODEL = os.getenv("CODEX_MODEL", "gpt-5.4-mini")
 GEMINI_CLI_MODEL = os.getenv("GEMINI_CLI_MODEL", "gemini-2.5-pro")
 CLAUDE_CLI_MODEL = os.getenv("CLAUDE_CLI_MODEL", "claude-sonnet-4-6")
 LLM_PRIMARY_BACKEND = os.getenv("LLM_PRIMARY_BACKEND", "gemini").strip().lower()
-LLM_BACKENDS = ("gemini", "claude", "codex", "ollama")
+# 폴백 순서: codex 제외 (토큰 만료 401), gemini → claude → ollama 순
+# 추가하려면 env LLM_BACKENDS_OVERRIDE (콤마 구분) 설정
+_default_backends = ("gemini", "claude", "ollama")
+LLM_BACKENDS = tuple(
+    b.strip() for b in os.getenv("LLM_BACKENDS_OVERRIDE", ",".join(_default_backends)).split(",") if b.strip()
+)
+
+
+# systemd/n8n/cron 환경은 PATH가 좁아 ~/.local/bin, ~/.npm-global/bin 이 빠진다.
+# subprocess가 "claude" 를 못 찾는 FileNotFoundError를 막기 위해 절대경로로 해석한다.
+_CLI_EXTRA_DIRS = (
+    os.path.expanduser("~/.local/bin"),
+    os.path.expanduser("~/.npm-global/bin"),
+    "/usr/local/bin",
+)
+_cli_path_cache: dict[str, str] = {}
+
+
+def _resolve_cli(name: str) -> str:
+    """CLI 실행파일 절대경로. PATH에 없으면 알려진 설치 경로를 뒤진다."""
+    cached = _cli_path_cache.get(name)
+    if cached:
+        return cached
+    found = shutil.which(name)
+    if not found:
+        for d in _CLI_EXTRA_DIRS:
+            candidate = os.path.join(d, name)
+            if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+                found = candidate
+                logger.info("%s CLI를 PATH 밖에서 찾음: %s", name, found)
+                break
+    if not found:
+        raise RuntimeError(f"{name} CLI를 찾을 수 없음 (PATH={os.environ.get('PATH', '')})")
+    _cli_path_cache[name] = found
+    return found
 
 
 def _call_codex(prompt: str, max_retries: int = 3) -> str:
@@ -628,7 +733,7 @@ def _call_codex(prompt: str, max_retries: int = 3) -> str:
     for attempt in range(max_retries):
         try:
             result = subprocess.run(
-                ["codex", "exec", "-c", f'model="{CODEX_MODEL}"', "-"],
+                [_resolve_cli("codex"), "exec", "-c", f'model="{CODEX_MODEL}"', "-"],
                 input=prompt,
                 capture_output=True,
                 text=True,
@@ -653,12 +758,13 @@ def _call_codex(prompt: str, max_retries: int = 3) -> str:
                 raise RuntimeError(f"codex exec {max_retries}회 실패: {e}")
 
 
-def _call_claude_cli(prompt: str, max_retries: int = 2) -> str:
-    """claude CLI 호출 (gemini 실패 시 폴백, sonnet 기본)"""
+def _call_claude_cli(prompt: str, max_retries: int = 2, model: str | None = None) -> str:
+    """claude CLI 호출. model 인자로 모델 override 가능 (검증=sonnet, 본문=haiku)."""
+    model = model or CLAUDE_CLI_MODEL
     for attempt in range(max_retries):
         try:
             result = subprocess.run(
-                ["claude", "-p", prompt, "--model", CLAUDE_CLI_MODEL],
+                [_resolve_cli("claude"), "-p", prompt, "--model", model],
                 capture_output=True,
                 text=True,
                 timeout=300,
@@ -680,12 +786,13 @@ def _call_claude_cli(prompt: str, max_retries: int = 2) -> str:
                 raise RuntimeError(f"claude CLI {max_retries}회 실패: {e}")
 
 
-def _call_gemini_cli(prompt: str, max_retries: int = 2) -> str:
-    """gemini CLI 호출 (codex 실패 시 폴백)"""
+def _call_gemini_cli(prompt: str, max_retries: int = 2, model: str | None = None) -> str:
+    """gemini CLI 호출. model 인자로 override (검증=pro-preview, 번역=flash 등)."""
+    model = model or GEMINI_CLI_MODEL
     for attempt in range(max_retries):
         try:
             result = subprocess.run(
-                ["gemini", "-m", GEMINI_CLI_MODEL, "-p", prompt],
+                [_resolve_cli("gemini"), "-m", model, "-p", prompt],
                 capture_output=True,
                 text=True,
                 timeout=300,
@@ -711,19 +818,66 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3.6:35b-a3b")
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 OLLAMA_TIMEOUT_SEC = int(os.getenv("OLLAMA_TIMEOUT_SEC", "300"))
 OLLAMA_THINK_MODE = os.getenv("OLLAMA_THINK_MODE", "script").strip().lower()
+OLLAMA_FALLBACK_MODELS = (
+    "qwen3.6:35b-a3b",
+    "gemma4:26b-a4b-it-q8_0",
+    "gemma4:e4b-it-bf16",
+    "devstral-small-2:24b",
+    "qwen3-coder:30b-a3b-q4_K_M",
+    "gemma4:26b",
+)
+
+
+def _select_ollama_model(configured: str, available: list[str]) -> str:
+    """Pick an installed Ollama model, avoiding repeated 404s for stale config."""
+    if configured in available:
+        return configured
+    for candidate in OLLAMA_FALLBACK_MODELS:
+        if candidate in available:
+            logger.warning(
+                "OLLAMA_MODEL=%s not installed; using local fallback %s",
+                configured,
+                candidate,
+            )
+            return candidate
+    return available[0] if available else configured
+
+
+def _ollama_available_models() -> list[str]:
+    import json as _json
+    import urllib.request
+
+    req = urllib.request.Request(f"{OLLAMA_HOST}/api/tags")
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        data = _json.loads(resp.read())
+    return [m.get("name", "") for m in data.get("models", []) if m.get("name")]
+
+
+def _resolve_ollama_model() -> str:
+    try:
+        return _select_ollama_model(OLLAMA_MODEL, _ollama_available_models())
+    except Exception as e:
+        logger.warning("ollama model discovery failed, using configured model %s: %s", OLLAMA_MODEL, e)
+        return OLLAMA_MODEL
 
 
 def _call_ollama(prompt: str, max_retries: int = 2, think: bool = False) -> str:
     """Ollama HTTP API 호출 (gemini CLI 실패 시 최종 폴백)"""
     import urllib.request, json as _json
+    model = _resolve_ollama_model()
     for attempt in range(max_retries):
         try:
-            content = _prepare_ollama_prompt(prompt, think=think)
-            body = _json.dumps({
-                "model": OLLAMA_MODEL,
+            content = _prepare_ollama_prompt(prompt, think=think, model=model)
+            payload = {
+                "model": model,
                 "messages": [{"role": "user", "content": content}],
                 "stream": False,
-            }).encode()
+            }
+            # qwen3.6 등 thinking 모델은 프롬프트의 /no_think 를 무시하고 계속 추론을 뱉는다.
+            # (그래서 300초 타임아웃이 터졌다.) API 최상위 think 필드로 확실히 끈다.
+            if _model_supports_think_flag(model):
+                payload["think"] = bool(think)
+            body = _json.dumps(payload).encode()
             req = urllib.request.Request(
                 f"{OLLAMA_HOST}/api/chat",
                 data=body,
@@ -740,9 +894,18 @@ def _call_ollama(prompt: str, max_retries: int = 2, think: bool = False) -> str:
                 raise RuntimeError(f"ollama {max_retries}회 실패: {e}")
 
 
-def _prepare_ollama_prompt(prompt: str, think: bool = False) -> str:
+_THINK_FLAG_PREFIXES = ("qwen3", "deepseek-r1", "gpt-oss")
+
+
+def _model_supports_think_flag(model: str) -> bool:
+    """Ollama /api/chat 의 top-level think 필드를 받는 thinking 모델인지."""
+    m = (model or "").lower()
+    return any(m.startswith(p) for p in _THINK_FLAG_PREFIXES)
+
+
+def _prepare_ollama_prompt(prompt: str, think: bool = False, model: str | None = None) -> str:
     """Qwen thinking 모델은 JSON 파이프라인에서 reasoning 출력을 막는다."""
-    model = OLLAMA_MODEL.lower()
+    model = (model or OLLAMA_MODEL).lower()
     stripped = prompt.lstrip()
     if not model.startswith("qwen"):
         return prompt
@@ -857,6 +1020,31 @@ LANG_PROMPTS = {
 }
 
 
+def _build_sources_block(keywords: list[str], tickers: list[str] | None) -> str:
+    """출처 블록 — 프롬프트에 검색 가능한 공개 출처 3개 이상 요청."""
+    kw_hint = ", ".join((tickers or []) + keywords[:3])
+    return f"""
+[출처 및 근거 요구사항]
+- 본문 내 최소 3개 공개 출처를 인라인 각주 형태로 삽입하세요.
+- 형식: <sup><a href="URL" target="_blank" rel="noopener">[출처명]</a></sup>
+- 권장 출처: ETF.com, Morningstar, FRED, SEC EDGAR, Yahoo Finance, Bloomberg, Reuters
+- 키워드 힌트: {kw_hint}
+- 실제 존재하는 URL만 사용. URL을 모르면 "[출처: ETF.com]" 텍스트 각주로 대체.
+"""
+
+
+def _build_angle_block(angle: str) -> str:
+    """콘텐츠 다양성 각도 블록 — 같은 주제의 반복을 방지."""
+    if not angle:
+        return ""
+    return f"""
+[콘텐츠 차별화 각도 — 반드시 이 관점을 글의 중심축으로 삼으세요]
+각도: {angle}
+- 이 각도가 제목·도입·결론·표 구성에 명확히 반영되어야 합니다.
+- 단순 소개글이 아니라 이 관점에서 데이터를 재해석하세요.
+"""
+
+
 def _build_blog_prompt(
     topic: str,
     keywords: list[str],
@@ -867,6 +1055,9 @@ def _build_blog_prompt(
     category: str = "",
     retry_issues: list[str] = None,
     case_brief: str = "",
+    angle: str = "",
+    tickers: list[str] = None,
+    external_context: str = "",
 ) -> str:
     """블로그 포스트 프롬프트 빌더 (페르소나 + 실데이터 + 차트 힌트 통합)"""
     lp = LANG_PROMPTS.get(lang, LANG_PROMPTS["ko"])
@@ -887,6 +1078,14 @@ def _build_blog_prompt(
     persona_block = f"\n{persona_brief}\n" if persona_brief else ""
     market_inject = f"\n{market_block}\n" if market_block else ""
     case_inject = f"\n{case_brief}\n" if case_brief else ""
+    # 외부 URL 소스 (YouTube transcript / 기사 본문 등) 주입
+    context_inject = ""
+    if external_context:
+        snippet = external_context[:3000]
+        context_inject = (
+            "\n[외부 소스 원문 (URL 콘텐츠) — 이 내용을 분석·해설하는 글을 쓰세요. 절대 복사하지 말고 분석/요약/관점 추가]\n"
+            f"{snippet}\n"
+        )
 
     retry_block = ""
     if retry_issues:
@@ -915,14 +1114,15 @@ def _build_blog_prompt(
 - 절대 1인칭("내가/제가") 금지 — 박스도 3인칭 서술("K씨가...")
 """
 
+    broker_block = build_broker_prompt_block(lang)
+
     return f"""You are {lp["persona"]}.
 {persona_block}
 Write a blog post on the topic below. Output language: {lp["output_lang"]}.
 
 Topic: {topic}
 Keywords: {kw_str}
-{market_inject}{case_inject}{chart_block}{retry_block}{scenario_block}
-
+{market_inject}{context_inject}{case_inject}{chart_block}{retry_block}{scenario_block}{broker_block}
 [Writing Style — MOST IMPORTANT — follow strictly]
 {style_extra}
 - NEVER use these phrases: {lp["forbidden"]}
@@ -959,8 +1159,17 @@ Keywords: {kw_str}
 10. AdSense-compliant — no investment advice phrasing
 
 [Output format - pure JSON only]
-{{"title": "...", "content_html": "...", "meta_description": "...", "tags": ["..."], "primary_keyword": "{primary_kw}", "keywords_long_tail": ["...", "..."], "schema_faq": [{{"question": "...?", "answer": "..."}}], "content_type": "guide"}}
-"""
+{{"title": "...", "content_html": "...", "meta_description": "...", "tags": ["..."], "primary_keyword": "{primary_kw}", "keywords_long_tail": ["...", "..."], "schema_faq": [{{"question": "...?", "answer": "..."}}], "content_type": "guide", "howto_steps": [{{"name": "단계 제목", "text": "실행 설명 (80자 이상)"}}]}}
+
+[howto_steps 규칙]
+- content_type이 "guide" 또는 "howto" 이고 절차/단계가 있는 경우에만 3-7개 step 채움 (각 step text 80자 이상)
+- 절차성이 없는 콘텐츠(비교/분석/리스트형)이면 howto_steps: [] (빈 배열)
+
+[콘텐츠 길이 제약 — JSON 잘림 방지]
+- content_html 전체: 5000자 이내
+- 각 섹션(div/section 단위): 1200자 이내
+- 이 제약을 지키지 않으면 JSON이 중간에 잘려 파싱 실패 발생
+{_build_sources_block(keywords, tickers)}{_build_angle_block(angle)}"""
 
 
 def generate_blog_post(
@@ -969,6 +1178,8 @@ def generate_blog_post(
     niche: str = None,
     lang: str = "ko",
     category: str = "",
+    angle: str = "",
+    external_context: str = "",
 ) -> dict:
     """
     블로그 포스트 생성 (페르소나·yfinance·차트힌트·품질게이트·재시도·면책 통합)
@@ -986,7 +1197,7 @@ def generate_blog_post(
     case_brief = _case_brief(case)
 
     tickers = _extract_tickers_from_keywords(keywords, topic)
-    market_block = _market_data_block(tickers, topic=topic, keywords=keywords)
+    market_block = _market_data_block(tickers, topic=topic, keywords=keywords, lang=lang)
     chart_summaries = _chart_summaries_for_blog(category, keywords) if category else []
 
     # 2) 1차 생성
@@ -999,6 +1210,9 @@ def generate_blog_post(
         chart_summaries,
         category,
         case_brief=case_brief,
+        angle=angle,
+        tickers=tickers,
+        external_context=external_context,
     )
     raw = _call_llm(prompt)
     result = _parse_json_response(raw, "blog_post")
@@ -1040,6 +1254,9 @@ def generate_blog_post(
                 category,
                 retry_issues=issues_for_prompt or [retry_reason],
                 case_brief=case_brief,
+                angle=angle,
+                tickers=tickers,
+                external_context=external_context,
             )
             raw_r = _call_llm(prompt_r)
             result_r = _parse_json_response(raw_r, f"blog_post_retry_{attempt + 1}")
@@ -1086,6 +1303,13 @@ def generate_blog_post(
     result.setdefault("content_type", "guide")
     result.setdefault("keywords_long_tail", keywords)
     result.setdefault("schema_faq", [])
+    # howto_steps: list[{name,text}] — guide/howto에서만 채워짐, 그 외엔 빈 배열
+    raw_steps = result.get("howto_steps") or []
+    cleaned_steps = []
+    for s in raw_steps if isinstance(raw_steps, list) else []:
+        if isinstance(s, dict) and s.get("name") and s.get("text"):
+            cleaned_steps.append({"name": str(s["name"]).strip(), "text": str(s["text"]).strip()})
+    result["howto_steps"] = cleaned_steps
 
     return result
 
@@ -1347,6 +1571,31 @@ def _fetch_market_data_live(ticker: str) -> dict:
 
         market_cap = info.get("marketCap")
 
+        # 추가 펀더멘털 (Tier 2 #5 — yfinance.info 활용도 확대)
+        beta = info.get("beta")
+        beta_v = round(float(beta), 2) if beta is not None else None
+        if beta_v is not None:
+            sources["beta"] = "yfinance.info"
+
+        eps = info.get("trailingEps") or info.get("forwardEps")
+        eps_v = round(float(eps), 2) if eps is not None else None
+        if eps_v is not None:
+            sources["eps"] = "yfinance.info"
+
+        week52_high = info.get("fiftyTwoWeekHigh")
+        week52_low = info.get("fiftyTwoWeekLow")
+        avg_vol = info.get("averageVolume") or info.get("averageDailyVolume3Month")
+
+        # ETF 전용: AUM (총 운용자산), NAV
+        total_assets = info.get("totalAssets") or info.get("netAssets")
+        nav = info.get("navPrice")
+
+        # 가격 위치: 현재가가 52주 범위 어디쯤인지 (0=저점, 100=고점)
+        pos_in_52w = None
+        if week52_high and week52_low and now and week52_high > week52_low:
+            pos_in_52w = round((now - week52_low) / (week52_high - week52_low) * 100, 1)
+            sources["pos_in_52w_pct"] = "computed"
+
         logger.info(f"[{ticker}] 데이터 소스: {sources}")
 
         return {
@@ -1359,6 +1608,14 @@ def _fetch_market_data_live(ticker: str) -> dict:
             "expense_ratio_pct": expense_v,
             "market_cap": market_cap,
             "pe_ratio": round(pe_v, 1) if pe_v else None,
+            "beta": beta_v,
+            "eps": eps_v,
+            "fifty_two_week_high": round(float(week52_high), 2) if week52_high else None,
+            "fifty_two_week_low": round(float(week52_low), 2) if week52_low else None,
+            "pos_in_52w_pct": pos_in_52w,
+            "avg_volume": int(avg_vol) if avg_vol else None,
+            "total_assets": total_assets,
+            "nav_price": round(float(nav), 2) if nav else None,
             "_sources": sources,
         }
     except Exception as e:
@@ -1859,13 +2116,12 @@ def fix_html_block_spacing(text: str) -> str:
 # ═══════════════════════════════════════════════════════════════════════════
 
 _EEAT_BASE_URL = "https://investiqs.net"
-_EEAT_DEFAULT_AUTHOR = "InvestIQs 편집팀"
-_EEAT_DEFAULT_REVIEWER = "편집자 미검토 — AI 자동 발행"
-_EEAT_DEFAULT_VERIFIED_BY = "자동화 규칙 검증 시스템 v2.1"
+_EEAT_DEFAULT_AUTHOR = "InvestIQs Research"
+_EEAT_DEFAULT_VERIFIED_BY = "rule_based_validation"
 _CONFIDENCE_LEVELS = {"low", "medium", "high", "very_high"}
 _EEAT_DEFAULT_DISCLAIMER = (
-    "본 글은 정보 제공 목적이며, 투자 결정은 본인 책임입니다. "
-    "과거 수익률이 미래 수익을 보장하지 않습니다."
+    "본 콘텐츠는 정보 제공 및 교육 목적이며, 투자 결정은 투자자 본인의 판단과 책임입니다. "
+    "과거의 수익률이 미래의 결과를 보장하지 않습니다."
 )
 
 # 한글 → 로마자 간이 변환 (외부 의존성 없는 초성+중성+종성 테이블)
@@ -2041,10 +2297,11 @@ def build_eeat_frontmatter(
         "lastmod": lastmod or now_iso,
         "draft": False,
         "author": author or _EEAT_DEFAULT_AUTHOR,
+        "authorURL": f"/{lang}/about/authors/",
         "authorBio": author_bio
         or "투자/재테크 전문 에디터 팀. 공시 자료와 실데이터를 기반으로 분석합니다.",
-        "reviewedBy": reviewed_by or _EEAT_DEFAULT_REVIEWER,
         "verifiedBy": verified_by or _EEAT_DEFAULT_VERIFIED_BY,
+        "human_reviewed": False,
         "description": meta_description or f"{title} — 실데이터 기반 투자 정보",
         "canonicalURL": canonical,
         "tags": tags or [],
