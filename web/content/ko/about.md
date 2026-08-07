@@ -53,7 +53,7 @@ InvestIQs는 **미국 ETF · 한국 ETF · 배당 자산 · 장기 자산배분*
 | 항목 | 출처 |
 |------|------|
 | 가격·수익률·배당 | yfinance (Yahoo Finance API) |
-| 국내 ETF | yfinance `.KS` suffix (KODEX/TIGER/KBSTAR/ACE 등) |
+| 미국 ETF·개별주 | yfinance (NYSE/NASDAQ 상장 종목) |
 | AI 투자자 관점 | ai-hedge-fund 멀티에이전트 (Gemini 2.0 Flash) |
 | 본문 생성·검증 | Codex (작성) + Gemini (검증) |
 
