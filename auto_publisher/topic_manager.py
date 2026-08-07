@@ -4,6 +4,7 @@
 
 import json
 import logging
+import re
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -14,6 +15,37 @@ from auto_publisher.config import (
     DATA_DIR,
     SUPPORTED_LANGUAGES,
 )
+
+# auto_generate_topics 프롬프트에 넣을 언어명. 없으면 코드를 그대로 쓴다.
+TOPIC_LANG_NAMES = {
+    "ko": "한국어",
+    "en": "영어(English)",
+    "ja": "일본어(日本語)",
+    "vi": "베트남어(Tiếng Việt)",
+    "id": "인도네시아어(Bahasa Indonesia)",
+}
+
+
+def _parse_topic_json(text: str):
+    """LLM 출력에서 JSON array 추출.
+
+    백엔드마다 코드펜스/머리말을 붙이는 양상이 달라서 관대하게 파싱한다.
+    """
+    text = (text or "").strip()
+    if not text:
+        raise RuntimeError("LLM이 빈 응답을 반환")
+    fenced = re.search(r"```(?:json)?\s*(.*?)```", text, re.DOTALL)
+    if fenced:
+        text = fenced.group(1).strip()
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    # 앞뒤 잡소리 제거 — 가장 바깥 [ ... ] 만 취한다
+    start, end = text.find("["), text.rfind("]")
+    if start != -1 and end > start:
+        return json.loads(text[start : end + 1])
+    raise RuntimeError(f"JSON array 파싱 실패: {text[:200]}")
 
 
 class EventCalendar:
@@ -596,6 +628,24 @@ class TopicManager:
                 return r_title
         return None
 
+    _CONTENT_ANGLES = [
+        "세금 절세 전략 관점",
+        "장기 복리 효과 분석",
+        "리스크 및 변동성 분석",
+        "경쟁 상품 비교 분석",
+        "초보 투자자 입문 가이드",
+        "배당 수익률 극대화 전략",
+        "포트폴리오 분산 관점",
+    ]
+
+    @staticmethod
+    def _assign_angle(topic: dict) -> dict:
+        import hashlib
+        topic = dict(topic)
+        idx = int(hashlib.md5(topic["id"].encode()).hexdigest(), 16) % len(TopicManager._CONTENT_ANGLES)
+        topic["angle"] = TopicManager._CONTENT_ANGLES[idx]
+        return topic
+
     def get_next_topic(self, topic_type: str = "blog") -> dict | None:
         """
         다음 발행할 토픽 반환 — 실패 재시도 우선, 그 다음 정상 큐
@@ -644,11 +694,14 @@ class TopicManager:
                 logger.info(
                     f"실패 재시도: [{candidate['category']}] {candidate['topic']}"
                 )
-                return candidate
+                return self._assign_angle(candidate)
 
         # 2) 정상 큐
+        permanently_failed_ids = {f["topic_id"] for f in failed if f["attempts"] >= 3}
         for topic in topics:
             if topic["id"] in published_ids:
+                continue
+            if topic["id"] in permanently_failed_ids:
                 continue
             # type 필드 없는 레거시 토픽은 blog로 취급
             if topic.get("type", "blog") != topic_type:
@@ -662,7 +715,7 @@ class TopicManager:
                 logger.debug(f"Skipping topic (global primary_keyword duplicate): {topic['topic']} (matches: {global_matched})")
                 continue
             logger.info(f"다음 토픽: [{topic['category']}] {topic['topic']}")
-            return topic
+            return self._assign_angle(topic)
 
         if self.auto_refill:
             logger.info("토픽 큐 고갈 — Gemini로 새 토픽 자동 생성 시작")
@@ -685,8 +738,11 @@ class TopicManager:
                 self._save_topics(existing_topics)
                 logger.info(f"자동 생성 토픽 {len(new_topics_raw)}개 추가 완료")
                 # 추가된 토픽에서 다시 선택
+                # (permanently_failed 필터를 빠뜨리면 3회 실패한 토픽이 되살아난다)
                 for topic in self._load_topics():
                     if topic["id"] in published_ids:
+                        continue
+                    if topic["id"] in permanently_failed_ids:
                         continue
                     if topic.get("type", "blog") != topic_type:
                         continue
@@ -735,14 +791,28 @@ class TopicManager:
         return topic_id
 
     def auto_generate_topics(self, count: int = 20) -> list[dict]:
-        """토픽 큐가 고갈됐을 때 Gemini Flash로 새 토픽 자동 생성."""
-        import subprocess
-        import os
+        """토픽 큐가 고갈됐을 때 LLM으로 새 토픽 자동 생성.
+
+        Google Trends KR 신호로 시드 키워드를 동적 보강하고, 생성된 토픽을
+        trend_score 내림차순 정렬해서 상위부터 발행되도록 함.
+
+        백엔드는 content_generator._call_llm 의 폴백 체인(claude → ollama)을 그대로 탄다.
+        (이전에는 gemini CLI를 하드코딩해서, gemini 인증 만료 시 auto_refill이 통째로 죽었다.)
+        """
+        from auto_publisher.content_generator import _call_llm
 
         seed_keywords = [
             "VOO", "QQQ", "SCHD", "TLT", "GLD", "TIGER", "KODEX", "SPY",
             "삼성전자", "S&P500", "나스닥", "ETF", "배당주", "리츠", "채권"
         ]
+
+        # Google Trends KR 트렌딩 키워드 (실패 시 빈 리스트)
+        from auto_publisher.trends_kr import fetch_trending_finance_keywords_kr, score_topic_by_trends
+        trending = fetch_trending_finance_keywords_kr()
+        if trending:
+            top3 = [kw for kw, _ in trending[:3]]
+            seed_keywords = seed_keywords + top3
+            logger.info(f"trends_kr seed 주입: {top3}")
 
         history = self._load_history()
         topics = self._load_topics()
@@ -753,31 +823,35 @@ class TopicManager:
             if h["topic_id"] in topics_by_id
         ]
 
+        lang_name = TOPIC_LANG_NAMES.get(self.lang, self.lang)
         prompt = (
-            f"투자 블로그 한국어 글 토픽 {count}개를 JSON으로 생성하세요.\n"
+            f"투자 블로그 토픽 {count}개를 JSON으로 생성하세요.\n"
+            f"**작성 언어: {lang_name}** — title과 keywords를 반드시 {lang_name}로 쓰세요.\n"
             f"다음 키워드 중 일부 활용: {', '.join(seed_keywords)}\n"
             f"이미 발행된 토픽: {recent_titles}\n\n"
             "각 토픽은:\n"
-            "- title (한국어, 60자 이내, 구체적 수치 포함)\n"
-            "- primary_keyword (영문 ticker 또는 한글)\n"
+            f"- title ({lang_name}, 60자 이내, 구체적 수치 포함)\n"
+            "- primary_keyword (영문 ticker 또는 해당 언어)\n"
             "- secondary_keywords (3-5개)\n"
             '- estimated_difficulty ("easy" | "medium" | "hard")\n\n'
-            "출력: JSON array만"
+            "출력: JSON array만. 설명·머리말 금지."
         )
 
-        result = subprocess.run(
-            ["gemini", "-m", os.getenv("GEMINI_CLI_MODEL", "gemini-2.5-flash"), "-p", prompt],
-            capture_output=True, text=True, timeout=90
-        )
-        if result.returncode != 0:
-            raise RuntimeError(f"gemini failed: {result.stderr}")
+        text = _call_llm(prompt)
+        new_topics = _parse_topic_json(text)
+        if not isinstance(new_topics, list):
+            raise RuntimeError(f"토픽 생성 결과가 list가 아님: {type(new_topics).__name__}")
+        new_topics = [t for t in new_topics if isinstance(t, dict) and t.get("title")]
+        if not new_topics:
+            raise RuntimeError("토픽 생성 결과가 비어 있음")
 
-        text = result.stdout.strip()
-        if text.startswith("```"):
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-        new_topics = json.loads(text.strip())
+        # 트렌드 점수로 정렬 (트렌딩 없으면 원순서 유지)
+        if trending and isinstance(new_topics, list):
+            for t in new_topics:
+                if isinstance(t, dict):
+                    t["trend_score"] = score_topic_by_trends(t.get("title", ""), trending)
+            new_topics.sort(key=lambda t: t.get("trend_score", 0.0) if isinstance(t, dict) else 0.0, reverse=True)
+
         return new_topics
 
     def get_status(self) -> dict:
