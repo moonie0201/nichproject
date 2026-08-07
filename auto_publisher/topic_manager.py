@@ -15,6 +15,7 @@ from auto_publisher.config import (
     DATA_DIR,
     SUPPORTED_LANGUAGES,
 )
+from auto_publisher.compliance import contains_domestic_equity
 
 # auto_generate_topics 프롬프트에 넣을 언어명. 없으면 코드를 그대로 쓴다.
 TOPIC_LANG_NAMES = {
@@ -802,17 +803,25 @@ class TopicManager:
         from auto_publisher.content_generator import _call_llm
 
         seed_keywords = [
-            "VOO", "QQQ", "SCHD", "TLT", "GLD", "TIGER", "KODEX", "SPY",
-            "삼성전자", "S&P500", "나스닥", "ETF", "배당주", "리츠", "채권"
+            # 미국 상장 종목만 — 국내 종목/ETF 제외 (2026-08-08)
+            "VOO", "QQQ", "SCHD", "TLT", "GLD", "SPY", "VTI", "JEPI",
+            "S&P500", "나스닥", "ETF", "배당주", "리츠", "채권"
         ]
 
         # Google Trends KR 트렌딩 키워드 (실패 시 빈 리스트)
         from auto_publisher.trends_kr import fetch_trending_finance_keywords_kr, score_topic_by_trends
         trending = fetch_trending_finance_keywords_kr()
         if trending:
+            # 국내 종목이 트렌딩으로 유입되는 경로 차단 (LG이노텍 등)
+            clean_trending = [(kw, s) for kw, s in trending if not contains_domestic_equity(kw)]
+            dropped = len(trending) - len(clean_trending)
+            if dropped:
+                logger.info(f"trends_kr 국내 종목 {dropped}개 제외")
+            trending = clean_trending
             top3 = [kw for kw, _ in trending[:3]]
-            seed_keywords = seed_keywords + top3
-            logger.info(f"trends_kr seed 주입: {top3}")
+            if top3:
+                seed_keywords = seed_keywords + top3
+                logger.info(f"trends_kr seed 주입: {top3}")
 
         history = self._load_history()
         topics = self._load_topics()
@@ -834,6 +843,8 @@ class TopicManager:
             "- primary_keyword (영문 ticker 또는 해당 언어)\n"
             "- secondary_keywords (3-5개)\n"
             '- estimated_difficulty ("easy" | "medium" | "hard")\n\n'
+            "**미국 상장 종목만 다루세요.** 한국 종목·지수·ETF(삼성전자, KOSPI, "
+            "KODEX, TIGER 등)는 절대 포함하지 마세요.\n"
             "출력: JSON array만. 설명·머리말 금지."
         )
 
@@ -842,6 +853,17 @@ class TopicManager:
         if not isinstance(new_topics, list):
             raise RuntimeError(f"토픽 생성 결과가 list가 아님: {type(new_topics).__name__}")
         new_topics = [t for t in new_topics if isinstance(t, dict) and t.get("title")]
+        # 프롬프트를 무시하고 국내 종목이 나오는 경우가 있어 생성 후에도 거른다
+        before = len(new_topics)
+        new_topics = [
+            t for t in new_topics
+            if not contains_domestic_equity(
+                f"{t.get('title', '')} {t.get('primary_keyword', '')} "
+                f"{' '.join(t.get('secondary_keywords') or [])}"
+            )
+        ]
+        if before != len(new_topics):
+            logger.info(f"생성 토픽 중 국내 종목 {before - len(new_topics)}개 제외")
         if not new_topics:
             raise RuntimeError("토픽 생성 결과가 비어 있음")
 

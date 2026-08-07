@@ -103,7 +103,7 @@ MACRO_TICKERS = [
 ASIA_TICKERS = [
     ("^N225", "Nikkei 225 (일본)"),
     ("^HSI", "Hang Seng (홍콩)"),
-    ("^KS11", "KOSPI Composite (한국)"),
+    # KOSPI(^KS11) 제외 — 미국 주식 전용 전환 (2026-08-08)
     ("000001.SS", "Shanghai Composite (중국)"),
 ]
 
