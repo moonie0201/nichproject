@@ -4,6 +4,7 @@ Hugo Publisher — content/blog/ 에 마크다운 파일 저장 후 빌드
 
 import logging
 import re
+import shutil
 import subprocess
 from datetime import date
 from html.parser import HTMLParser
@@ -13,7 +14,26 @@ logger = logging.getLogger(__name__)
 
 import os
 
-HUGO_BIN = "/tmp/hugo"
+
+def _resolve_hugo_bin() -> str:
+    """hugo 실행파일 경로.
+
+    이전엔 "/tmp/hugo" 하드코딩이라, /tmp가 비워지거나 다른 곳에 설치되면
+    빌드가 조용히 실패했다. env → PATH → 알려진 설치 경로 순으로 찾는다.
+    """
+    override = os.getenv("HUGO_BIN")
+    if override:
+        return override
+    found = shutil.which("hugo")
+    if found:
+        return found
+    for candidate in ("/home/mh/bin/hugo", "/tmp/hugo", "/usr/local/bin/hugo"):
+        if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+            return candidate
+    return "hugo"  # 마지막 수단 — 실패 시 에러 메시지에 드러난다
+
+
+HUGO_BIN = _resolve_hugo_bin()
 HUGO_SITE_DIR = Path("/home/mh/ocstorage/workspace/nichproject/web")
 
 
