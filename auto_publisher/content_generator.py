@@ -1227,7 +1227,7 @@ def generate_blog_post(
         if d:
             verif_source[t] = d
 
-    result.setdefault("primary_keyword", primary_kw)
+    result["primary_keyword"] = _resolve_primary_keyword(result, keywords, primary_kw)
     best = result
     best_verif = verify_two_stage(
         best, verif_source, lang, min_len=MIN_LEN.get(lang, 3000)
@@ -1260,7 +1260,7 @@ def generate_blog_post(
             )
             raw_r = _call_llm(prompt_r)
             result_r = _parse_json_response(raw_r, f"blog_post_retry_{attempt + 1}")
-            result_r.setdefault("primary_keyword", primary_kw)
+            result_r["primary_keyword"] = _resolve_primary_keyword(result_r, keywords, primary_kw)
             verif_r = verify_two_stage(
                 result_r, verif_source, lang, min_len=MIN_LEN.get(lang, 3000)
             )
@@ -1933,6 +1933,43 @@ CRITICAL — NO KOREAN OUTPUT: The output language is {target_lp["output_lang"]}
 
 def _normalize_keyword_for_match(text: str) -> str:
     return re.sub(r"[^a-z0-9가-힣一-龥ぁ-んァ-ン]", "", text.lower())
+
+
+def _resolve_primary_keyword(result: dict, keywords: list, fallback: str) -> str:
+    """발행할 primary_keyword를 고른다.
+
+    LLM은 프롬프트의 예시를 무시하고 'QQQ vs LG이노텍' 같은 자유 구문을 넣는다.
+    그런 구문은 제목에 그대로 등장하지 않아(어순이 다르거나 길어서) SEO 검사가
+    연쇄 실패한다 — 제목 미포함, 키워드 밀도 미달, 첫/마지막 단락 미포함.
+    content_verifier도 같은 검사를 하므로 불필요한 LLM 재시도까지 유발한다.
+
+    우선순위:
+      1) LLM 값이 제목에 실제로 등장하면 그대로 존중
+      2) 토픽 keywords 중 제목에 등장하는 첫 번째
+      3) fallback (keywords[0])
+
+    판정은 seo_validator와 동일한 _normalize_keyword_for_match를 쓴다.
+    """
+    title_norm = _normalize_keyword_for_match(result.get("title", "") or "")
+
+    llm_kw = (result.get("primary_keyword") or "").strip()
+    if llm_kw and title_norm:
+        kw_norm = _normalize_keyword_for_match(llm_kw)
+        if kw_norm and kw_norm in title_norm:
+            return llm_kw
+
+    if title_norm:
+        for kw in keywords or []:
+            kw = (kw or "").strip()
+            if not kw:
+                continue
+            kw_norm = _normalize_keyword_for_match(kw)
+            if kw_norm and kw_norm in title_norm:
+                return kw
+
+    # 아무것도 제목에 없으면 짧은 정규 키워드를 쓴다. 어차피 제목 검사는
+    # 실패하지만, 긴 구문보다 키워드 밀도 검사에 유리하다.
+    return fallback or llm_kw
 
 
 def _ensure_primary_keyword_in_title(title: str, primary_keyword: str) -> str:
