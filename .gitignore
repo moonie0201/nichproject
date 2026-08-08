@@ -25,3 +25,6 @@ web/content/en/daily/
 *.log
 auto_publisher/*.log
 n8n/bridge.log
+
+# OAuth 자격증명 — 절대 커밋 금지 (2026-08-08)
+.youtube_secrets/
