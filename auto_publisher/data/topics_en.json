@@ -1,27 +1,845 @@
 [
-  {"id":"blog-etf-01","topic":"VOO vs SCHD 20-year backtest: dividend yield assumption decomposition","keywords":["VOO","SCHD","20-year backtest","dividend yield"],"category":"ETF Data Analysis","type":"blog"},
-  {"id":"blog-etf-02","topic":"QQQ vs SPY 10-year regression: tech concentration vs market diversification data","keywords":["QQQ","SPY","tech concentration","regression analysis"],"category":"ETF Data Analysis","type":"blog"},
-  {"id":"blog-etf-03","topic":"ETF expense ratio compounding model: 0.03% vs 0.5% over 30 years","keywords":["expense ratio","ETF cost","compounding","30-year simulation"],"category":"Cost Analysis","type":"blog"},
-  {"id":"blog-etf-04","topic":"JEPI vs SCHD 5-year data: covered call premium cost decomposition","keywords":["JEPI","SCHD","covered call","premium cost"],"category":"Dividend ETF Research","type":"blog"},
-  {"id":"blog-etf-05","topic":"VTI vs VXUS 15-year data: US vs international diversification benchmark","keywords":["VTI","VXUS","international ETF","diversification"],"category":"ETF Data Analysis","type":"blog"},
-  {"id":"blog-div-01","topic":"SCHD quarterly dividend growth 10-year trend: CAGR vs yield decomposition","keywords":["SCHD","dividend growth","CAGR","10-year data"],"category":"Dividend ETF Research","type":"blog"},
-  {"id":"blog-div-02","topic":"High-yield ETF data analysis: 8%+ dividend ETFs 5-year total return patterns","keywords":["QYLD","high yield","dividend trap","total return"],"category":"Dividend ETF Research","type":"blog"},
-  {"id":"blog-div-03","topic":"DRIP compounding data: 20-year reinvestment simulation vs consensus assumptions","keywords":["DRIP","dividend reinvestment","compounding","20-year simulation"],"category":"Dividend ETF Research","type":"blog"},
-  {"id":"blog-tax-01","topic":"Roth IRA vs Traditional IRA: 5-scenario capital gains tax decomposition","keywords":["Roth IRA","Traditional IRA","capital gains tax","tax scenario"],"category":"Tax Strategy","type":"blog"},
-  {"id":"blog-tax-02","topic":"401k contribution limit 2024: tax bracket impact simulation by income band","keywords":["401k","tax bracket","contribution limit","retirement"],"category":"Tax Strategy","type":"blog"},
-  {"id":"blog-port-01","topic":"60/40 portfolio 10-year data: bond ETF allocation and diversification effect analysis","keywords":["60/40 portfolio","BND","asset allocation","rebalancing"],"category":"Portfolio Backtest","type":"blog"},
-  {"id":"blog-port-02","topic":"All-weather portfolio backtest: Ray Dalio strategy 5-year data decomposition","keywords":["all-weather","Ray Dalio","rebalancing","backtest"],"category":"Portfolio Backtest","type":"blog"},
-  {"id":"blog-port-03","topic":"2022 drawdown data: VOO, BND, TLT, GLD recovery speed by asset class","keywords":["drawdown","2022","recovery speed","asset class"],"category":"ETF Data Analysis","type":"blog"},
-  {"id":"blog-cost-01","topic":"Brokerage ETF transaction cost benchmark: commission, spread, and FX conversion model","keywords":["brokerage","ETF cost","commission","FX spread"],"category":"Cost Analysis","type":"blog"},
-  {"id":"blog-strategy-01","topic":"Factor ETF data: value vs momentum vs quality — 10-year performance decomposition","keywords":["factor ETF","value","momentum","quality"],"category":"Strategy Research","type":"blog"},
-  {"id":"analysis-etf-01","topic":"VOO vs SCHD 20-year dividend reinvestment backtest: cumulative asset gap decomposition","keywords":["VOO","SCHD","20-year backtest","dividend reinvestment"],"category":"ETF Data Analysis","type":"analysis_topic"},
-  {"id":"analysis-etf-02","topic":"QQQ vs SPY 10-year regression: tech concentration vs diversification statistical gap","keywords":["QQQ","SPY","Nasdaq vs S&P500","regression"],"category":"ETF Data Analysis","type":"analysis_topic"},
-  {"id":"analysis-etf-03","topic":"SCHD dividend growth 10-year regression: CAGR and yield separation model","keywords":["SCHD","dividend growth","CAGR","regression"],"category":"Dividend ETF Research","type":"analysis_topic"},
-  {"id":"analysis-etf-04","topic":"ETF expense ratio 30-year compounding model: 0.03% vs 0.5% cumulative gap simulation","keywords":["expense ratio","compounding","30-year","cost model"],"category":"Cost Analysis","type":"analysis_topic"},
-  {"id":"analysis-etf-05","topic":"JEPI vs SCHD 5-year data: covered call ETF distribution vs total return decomposition","keywords":["JEPI","SCHD","covered call","total return"],"category":"Dividend ETF Research","type":"analysis_topic"},
-  {"id":"analysis-etf-06","topic":"VT vs VOO 10-year data: global diversification vs US concentration risk-return decomposition","keywords":["VT","VOO","global ETF","risk-return"],"category":"ETF Data Analysis","type":"analysis_topic"},
-  {"id":"analysis-etf-07","topic":"BND vs TLT interest rate cycle backtest: bond ETF duration effect regression","keywords":["BND","TLT","bond ETF","duration"],"category":"ETF Data Analysis","type":"analysis_topic"},
-  {"id":"analysis-etf-08","topic":"GLD price model regression: inflation, real rates, and dollar index correlation","keywords":["GLD","gold ETF","inflation","real interest rate"],"category":"ETF Data Analysis","type":"analysis_topic"},
-  {"id":"analysis-strategy-01","topic":"S&P500 monthly $500 DCA 10-year simulation: IRR distribution by entry cohort","keywords":["DCA","S&P500","IRR","simulation"],"category":"Strategy Research","type":"analysis_topic"},
-  {"id":"analysis-tax-01","topic":"Roth IRA vs 401k 30-year tax model: bracket arbitrage and after-tax wealth decomposition","keywords":["Roth IRA","401k","tax model","after-tax wealth"],"category":"Tax Strategy","type":"analysis_topic"}
+  {
+    "id": "blog-etf-01",
+    "topic": "VOO vs SCHD 20-year backtest: dividend yield assumption decomposition",
+    "keywords": [
+      "VOO",
+      "SCHD",
+      "20-year backtest",
+      "dividend yield"
+    ],
+    "category": "ETF Data Analysis",
+    "type": "blog"
+  },
+  {
+    "id": "blog-etf-02",
+    "topic": "QQQ vs SPY 10-year regression: tech concentration vs market diversification data",
+    "keywords": [
+      "QQQ",
+      "SPY",
+      "tech concentration",
+      "regression analysis"
+    ],
+    "category": "ETF Data Analysis",
+    "type": "blog"
+  },
+  {
+    "id": "blog-etf-03",
+    "topic": "ETF expense ratio compounding model: 0.03% vs 0.5% over 30 years",
+    "keywords": [
+      "expense ratio",
+      "ETF cost",
+      "compounding",
+      "30-year simulation"
+    ],
+    "category": "Cost Analysis",
+    "type": "blog"
+  },
+  {
+    "id": "blog-etf-04",
+    "topic": "JEPI vs SCHD 5-year data: covered call premium cost decomposition",
+    "keywords": [
+      "JEPI",
+      "SCHD",
+      "covered call",
+      "premium cost"
+    ],
+    "category": "Dividend ETF Research",
+    "type": "blog"
+  },
+  {
+    "id": "blog-etf-05",
+    "topic": "VTI vs VXUS 15-year data: US vs international diversification benchmark",
+    "keywords": [
+      "VTI",
+      "VXUS",
+      "international ETF",
+      "diversification"
+    ],
+    "category": "ETF Data Analysis",
+    "type": "blog"
+  },
+  {
+    "id": "blog-div-01",
+    "topic": "SCHD quarterly dividend growth 10-year trend: CAGR vs yield decomposition",
+    "keywords": [
+      "SCHD",
+      "dividend growth",
+      "CAGR",
+      "10-year data"
+    ],
+    "category": "Dividend ETF Research",
+    "type": "blog"
+  },
+  {
+    "id": "blog-div-02",
+    "topic": "High-yield ETF data analysis: 8%+ dividend ETFs 5-year total return patterns",
+    "keywords": [
+      "QYLD",
+      "high yield",
+      "dividend trap",
+      "total return"
+    ],
+    "category": "Dividend ETF Research",
+    "type": "blog"
+  },
+  {
+    "id": "blog-div-03",
+    "topic": "DRIP compounding data: 20-year reinvestment simulation vs consensus assumptions",
+    "keywords": [
+      "DRIP",
+      "dividend reinvestment",
+      "compounding",
+      "20-year simulation"
+    ],
+    "category": "Dividend ETF Research",
+    "type": "blog"
+  },
+  {
+    "id": "blog-tax-01",
+    "topic": "Roth IRA vs Traditional IRA: 5-scenario capital gains tax decomposition",
+    "keywords": [
+      "Roth IRA",
+      "Traditional IRA",
+      "capital gains tax",
+      "tax scenario"
+    ],
+    "category": "Tax Strategy",
+    "type": "blog"
+  },
+  {
+    "id": "blog-tax-02",
+    "topic": "401k contribution limit 2024: tax bracket impact simulation by income band",
+    "keywords": [
+      "401k",
+      "tax bracket",
+      "contribution limit",
+      "retirement"
+    ],
+    "category": "Tax Strategy",
+    "type": "blog"
+  },
+  {
+    "id": "blog-port-01",
+    "topic": "60/40 portfolio 10-year data: bond ETF allocation and diversification effect analysis",
+    "keywords": [
+      "60/40 portfolio",
+      "BND",
+      "asset allocation",
+      "rebalancing"
+    ],
+    "category": "Portfolio Backtest",
+    "type": "blog"
+  },
+  {
+    "id": "blog-port-02",
+    "topic": "All-weather portfolio backtest: Ray Dalio strategy 5-year data decomposition",
+    "keywords": [
+      "all-weather",
+      "Ray Dalio",
+      "rebalancing",
+      "backtest"
+    ],
+    "category": "Portfolio Backtest",
+    "type": "blog"
+  },
+  {
+    "id": "blog-port-03",
+    "topic": "2022 drawdown data: VOO, BND, TLT, GLD recovery speed by asset class",
+    "keywords": [
+      "drawdown",
+      "2022",
+      "recovery speed",
+      "asset class"
+    ],
+    "category": "ETF Data Analysis",
+    "type": "blog"
+  },
+  {
+    "id": "blog-cost-01",
+    "topic": "Brokerage ETF transaction cost benchmark: commission, spread, and FX conversion model",
+    "keywords": [
+      "brokerage",
+      "ETF cost",
+      "commission",
+      "FX spread"
+    ],
+    "category": "Cost Analysis",
+    "type": "blog"
+  },
+  {
+    "id": "blog-strategy-01",
+    "topic": "Factor ETF data: value vs momentum vs quality — 10-year performance decomposition",
+    "keywords": [
+      "factor ETF",
+      "value",
+      "momentum",
+      "quality"
+    ],
+    "category": "Strategy Research",
+    "type": "blog"
+  },
+  {
+    "id": "analysis-etf-01",
+    "topic": "VOO vs SCHD 20-year dividend reinvestment backtest: cumulative asset gap decomposition",
+    "keywords": [
+      "VOO",
+      "SCHD",
+      "20-year backtest",
+      "dividend reinvestment"
+    ],
+    "category": "ETF Data Analysis",
+    "type": "analysis_topic"
+  },
+  {
+    "id": "analysis-etf-02",
+    "topic": "QQQ vs SPY 10-year regression: tech concentration vs diversification statistical gap",
+    "keywords": [
+      "QQQ",
+      "SPY",
+      "Nasdaq vs S&P500",
+      "regression"
+    ],
+    "category": "ETF Data Analysis",
+    "type": "analysis_topic"
+  },
+  {
+    "id": "analysis-etf-03",
+    "topic": "SCHD dividend growth 10-year regression: CAGR and yield separation model",
+    "keywords": [
+      "SCHD",
+      "dividend growth",
+      "CAGR",
+      "regression"
+    ],
+    "category": "Dividend ETF Research",
+    "type": "analysis_topic"
+  },
+  {
+    "id": "analysis-etf-04",
+    "topic": "ETF expense ratio 30-year compounding model: 0.03% vs 0.5% cumulative gap simulation",
+    "keywords": [
+      "expense ratio",
+      "compounding",
+      "30-year",
+      "cost model"
+    ],
+    "category": "Cost Analysis",
+    "type": "analysis_topic"
+  },
+  {
+    "id": "analysis-etf-05",
+    "topic": "JEPI vs SCHD 5-year data: covered call ETF distribution vs total return decomposition",
+    "keywords": [
+      "JEPI",
+      "SCHD",
+      "covered call",
+      "total return"
+    ],
+    "category": "Dividend ETF Research",
+    "type": "analysis_topic"
+  },
+  {
+    "id": "analysis-etf-06",
+    "topic": "VT vs VOO 10-year data: global diversification vs US concentration risk-return decomposition",
+    "keywords": [
+      "VT",
+      "VOO",
+      "global ETF",
+      "risk-return"
+    ],
+    "category": "ETF Data Analysis",
+    "type": "analysis_topic"
+  },
+  {
+    "id": "analysis-etf-07",
+    "topic": "BND vs TLT interest rate cycle backtest: bond ETF duration effect regression",
+    "keywords": [
+      "BND",
+      "TLT",
+      "bond ETF",
+      "duration"
+    ],
+    "category": "ETF Data Analysis",
+    "type": "analysis_topic"
+  },
+  {
+    "id": "analysis-etf-08",
+    "topic": "GLD price model regression: inflation, real rates, and dollar index correlation",
+    "keywords": [
+      "GLD",
+      "gold ETF",
+      "inflation",
+      "real interest rate"
+    ],
+    "category": "ETF Data Analysis",
+    "type": "analysis_topic"
+  },
+  {
+    "id": "analysis-strategy-01",
+    "topic": "S&P500 monthly $500 DCA 10-year simulation: IRR distribution by entry cohort",
+    "keywords": [
+      "DCA",
+      "S&P500",
+      "IRR",
+      "simulation"
+    ],
+    "category": "Strategy Research",
+    "type": "analysis_topic"
+  },
+  {
+    "id": "analysis-tax-01",
+    "topic": "Roth IRA vs 401k 30-year tax model: bracket arbitrage and after-tax wealth decomposition",
+    "keywords": [
+      "Roth IRA",
+      "401k",
+      "tax model",
+      "after-tax wealth"
+    ],
+    "category": "Tax Strategy",
+    "type": "analysis_topic"
+  },
+  {
+    "id": "auto-c68622c7",
+    "topic": "미운 우리 새끼 시청자층의 50대 노후 대비 SCHD 월 100만원 투자법",
+    "keywords": [
+      "SCHD",
+      "미운 우리 새끼",
+      "노후대비",
+      "배당주",
+      "월배당",
+      "은퇴설계"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "easy",
+    "type": "blog"
+  },
+  {
+    "id": "auto-4eb891b4",
+    "topic": "조세 혜택 ISA 계좌로 SCHD 연 2000만원 투자 시 비과세 200만원 효과",
+    "keywords": [
+      "조세",
+      "SCHD",
+      "ISA",
+      "배당주",
+      "비과세",
+      "절세전략"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-35ebe7eb",
+    "topic": "villarreal vs atlético madrid 구단 가치와 스포츠 리츠 5% 수익률",
+    "keywords": [
+      "리츠",
+      "villarreal vs atlético madrid",
+      "스포츠",
+      "배당금",
+      "수익률",
+      "대체투자"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-6275b1d0",
+    "topic": "TIGER 미국테크TOP10 vs QQQ: 5년간 M7 비중 40% 집중 투자 성과",
+    "keywords": [
+      "TIGER",
+      "QQQ",
+      "나스닥",
+      "ETF",
+      "기술주",
+      "수익률비교"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-e6d48179",
+    "topic": "KODEX 200 vs TIGER 200: 보수율 0.01% 차이의 5년 누적 효과",
+    "keywords": [
+      "KODEX",
+      "TIGER",
+      "ETF",
+      "보수율",
+      "누적수익",
+      "코스피"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-e34ddf42",
+    "topic": "고금리 시대 TLT와 미국 리츠 7% 배당 수익 포트폴리오 6:4 비율",
+    "keywords": [
+      "TLT",
+      "리츠",
+      "채권",
+      "배당주",
+      "포트폴리오",
+      "자산배분"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-901584da",
+    "topic": "VOO vs SPY 수수료 0.03% 차이가 10년 후 계좌에 미치는 영향",
+    "keywords": [
+      "VOO",
+      "SPY",
+      "ETF",
+      "수수료",
+      "S&P500",
+      "장기투자"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "easy",
+    "type": "blog"
+  },
+  {
+    "id": "auto-1c125eff",
+    "topic": "채권 ETF TLT 주가 -40% 하락 분석과 향후 2년 금리 인하 수익 15% 전망",
+    "keywords": [
+      "채권",
+      "TLT",
+      "ETF",
+      "금리인하",
+      "하락장",
+      "주가전망"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-c1c5a7a7",
+    "topic": "30대 직장인 매월 50만원 SPY 투자 20년 후 5억 만들기 시뮬레이션",
+    "keywords": [
+      "SPY",
+      "S&P500",
+      "장기투자",
+      "복리",
+      "ETF",
+      "직장인재테크"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "easy",
+    "type": "blog"
+  },
+  {
+    "id": "auto-f1b528ff",
+    "topic": "QQQ vs 나스닥 레버리지 3배 TQQQ: 하락장 -30% 방어력 비교",
+    "keywords": [
+      "QQQ",
+      "나스닥",
+      "ETF",
+      "하락장",
+      "레버리지",
+      "TQQQ"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-2430b9cf",
+    "topic": "금융투자소득세 도입 시 KODEX 국내 ETF와 VOO 15% 세금 비교",
+    "keywords": [
+      "조세",
+      "KODEX",
+      "VOO",
+      "ETF",
+      "금융투자소득세",
+      "세금"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-433ec7d6",
+    "topic": "나스닥 100 ETF 환노출(UH)과 환헤지(H) 10년 수익률 8% 차이 분석",
+    "keywords": [
+      "나스닥",
+      "ETF",
+      "환율",
+      "환노출",
+      "환헤지",
+      "투자전략"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-d04e7970",
+    "topic": "SCHD와 KODEX 미국배당다우존스 3년 배당성장률 12% 비교 분석",
+    "keywords": [
+      "SCHD",
+      "KODEX",
+      "배당주",
+      "ETF",
+      "배당성장률",
+      "한국ETF"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-46f0f0a9",
+    "topic": "TLT 채권 ETF 20년 백테스트: 금리 1% 인하 시 수익률 15% 상승?",
+    "keywords": [
+      "TLT",
+      "채권",
+      "ETF",
+      "금리인하",
+      "수익률",
+      "자산배분"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-db0f06da",
+    "topic": "삼성전자 10년 장기투자와 S&P500 VOO 연평균 10% 수익률 비교",
+    "keywords": [
+      "삼성전자",
+      "VOO",
+      "S&P500",
+      "장기투자",
+      "수익률",
+      "기회비용"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "easy",
+    "type": "blog"
+  },
+  {
+    "id": "auto-ff29a7e3",
+    "topic": "금리 인하기 GLD 15% 편입과 나스닥 QQQ 85% 전략의 3년 백테스트",
+    "keywords": [
+      "GLD",
+      "QQQ",
+      "나스닥",
+      "금리인하",
+      "포트폴리오",
+      "자산배분"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-a91cbf41",
+    "topic": "배당주 은퇴 설계: 월 300만원 현금흐름을 위한 리츠 및 SCHD 5:5 배분",
+    "keywords": [
+      "배당주",
+      "리츠",
+      "SCHD",
+      "은퇴설계",
+      "현금흐름",
+      "월배당"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-8c767428",
+    "topic": "삼성전자 배당금 5년 재투자 시나리오: 연평균 수익률 8% 달성 조건",
+    "keywords": [
+      "삼성전자",
+      "배당주",
+      "재투자",
+      "수익률",
+      "복리효과"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-d8e863f6",
+    "topic": "TIGER 미국S&P500 5년 장기투자 시 양도소득세 22% 절세 방법",
+    "keywords": [
+      "TIGER",
+      "S&P500",
+      "ETF",
+      "조세",
+      "절세",
+      "해외주식"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-561fce1b",
+    "topic": "GLD 금 ETF 포트폴리오 10% 편입 시 2008년 위기 -20% 방어력",
+    "keywords": [
+      "GLD",
+      "포트폴리오",
+      "ETF",
+      "안전자산",
+      "위기방어",
+      "금투자"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-cb66d49b",
+    "topic": "TQQQ leverage decay: 3-year backtest during 20%+ drawdown periods",
+    "keywords": [
+      "QQQ",
+      "TQQQ",
+      "leverage ETF",
+      "volatility",
+      "drawdown"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-ee4211ae",
+    "topic": "SCHD monthly dividend calendar: ex-dividend vs pay-date tax planning",
+    "keywords": [
+      "SCHD",
+      "dividend calendar",
+      "tax planning",
+      "income timing"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "easy",
+    "type": "blog"
+  },
+  {
+    "id": "auto-cc2cfb20",
+    "topic": "TLT bond ladder simulation: 5-10 year maturity vs ETF volatility hedge",
+    "keywords": [
+      "TLT",
+      "bonds",
+      "ladder strategy",
+      "fixed income"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-9058a3cb",
+    "topic": "LG Innotek vs QQQ tech exposure: semiconductor cycle 5-year correlation",
+    "keywords": [
+      "QQQ",
+      "LG Innotek",
+      "semiconductor",
+      "tech sector",
+      "Korea"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-067d84f0",
+    "topic": "TLT GLD 40/60 portfolio: 2008 crisis resilience vs 2024 inflation hedge",
+    "keywords": [
+      "TLT",
+      "GLD",
+      "bonds",
+      "gold",
+      "safe haven",
+      "portfolio"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-c4341f4a",
+    "topic": "TLT duration risk: bond ladder vs ETF in 2% rate hike scenario",
+    "keywords": [
+      "TLT",
+      "bond ETF",
+      "duration",
+      "interest rate"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-d670458b",
+    "topic": "GLD vs physical gold: 5-year cost of ownership and storage fees",
+    "keywords": [
+      "GLD",
+      "gold",
+      "precious metals",
+      "hedge",
+      "inflation"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-60957cce",
+    "topic": "QQQ vs Nasdaq-100: expense ratio 0.20% impact on 20-year growth",
+    "keywords": [
+      "QQQ",
+      "Nasdaq-100",
+      "tech ETF",
+      "expense ratio"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "easy",
+    "type": "blog"
+  },
+  {
+    "id": "auto-cc923348",
+    "topic": "Russia sanctions impact: emerging market ETF divergence post-2022",
+    "keywords": [
+      "VOO",
+      "Russia",
+      "geopolitical risk",
+      "emerging markets"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-d27b1015",
+    "topic": "SCHD dividend stability: 3-year streak without cuts vs JEPI payout",
+    "keywords": [
+      "SCHD",
+      "dividend ETF",
+      "income",
+      "yield"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-d06b3dee",
+    "topic": "SPY dividend capture strategy: 60-day wash-sale optimization model",
+    "keywords": [
+      "SPY",
+      "dividend",
+      "tax loss harvesting",
+      "wash sale"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-2de569ea",
+    "topic": "SCHD vs DGRO dividend growth: 5-year CAGR and payout sustainability",
+    "keywords": [
+      "SCHD",
+      "dividend growth",
+      "DGRO",
+      "income stability"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-e1a6f55c",
+    "topic": "Samsung Electronics vs VOO: 15-year total return including dividends",
+    "keywords": [
+      "VOO",
+      "Samsung",
+      "Korea",
+      "S&P500",
+      "international"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-bba23360",
+    "topic": "GLD gold ETF correlation with stocks: stress-test 2008 vs 2020 crises",
+    "keywords": [
+      "GLD",
+      "correlation",
+      "portfolio hedge",
+      "diversification"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  },
+  {
+    "id": "auto-e5a111b4",
+    "topic": "SPY vs QQQ: sector rotation timing 3-year momentum backtest 2022-2025",
+    "keywords": [
+      "SPY",
+      "QQQ",
+      "sector rotation",
+      "momentum",
+      "tactical"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-72dfdce1",
+    "topic": "VOO vs VTI: 10-year total return comparison with dividend reinvestment",
+    "keywords": [
+      "VOO",
+      "VTI",
+      "S&P500",
+      "ETF",
+      "dividend"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "easy",
+    "type": "blog"
+  },
+  {
+    "id": "auto-57309bf9",
+    "topic": "SPY options strategy: 30-delta call 3-month rolling backtest 2022-2025",
+    "keywords": [
+      "SPY",
+      "options",
+      "covered call",
+      "S&P500",
+      "income"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "hard",
+    "type": "blog"
+  },
+  {
+    "id": "auto-cdc3a571",
+    "topic": "REITs dividend vs S&P500: interest rate sensitivity 15-year study",
+    "keywords": [
+      "VOO",
+      "REITs",
+      "real estate",
+      "interest rate",
+      "dividend"
+    ],
+    "category": "자동생성",
+    "estimated_difficulty": "medium",
+    "type": "blog"
+  }
 ]
