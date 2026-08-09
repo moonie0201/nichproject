@@ -26,6 +26,6 @@ disclaimer: true
 - [배당 계산기 — SCHD](/ko/tools/dividend-calculator/schd/)
 - [ETF 수수료 비교 계산기](/ko/tools/etf-fee-calculator/)
 - [FIRE 목표 계산기](/ko/tools/fire-calculator/)
-- 투자 기초 학습: [투자의 학び](/ko/study/)
+- 투자 기초 학습: [투자 공부](/ko/study/)
 
 매주 금요일, 미국 시장과 ETF 데이터를 담은 뉴스레터를 발송합니다.

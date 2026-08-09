@@ -36,14 +36,16 @@
 
   {{- partial "legal-disclaimer.html" . }}
 
-  {{- /* editorial intro (markdown body before the tool) */ -}}
-  {{- if .Content }}
-  <div class="post-content md-content">{{ .Content }}</div>
-  {{- end }}
-
-  {{- /* interactive calculator */ -}}
+  {{- /* interactive calculator — 도구를 쓰러 온 사람에게 도구를 먼저 보여준다.
+         이전에는 설명·관련링크·뉴스레터 안내가 먼저 나와 입력창까지 두 화면을
+         스크롤해야 했다. */ -}}
   {{- with $tool }}
   {{- partial (printf "tools/%s.html" .) $ }}
+  {{- end }}
+
+  {{- /* editorial context (markdown body) — 계산 결과를 본 뒤 읽는 설명 */ -}}
+  {{- if .Content }}
+  <div class="post-content md-content">{{ .Content }}</div>
   {{- end }}
 
   {{- /* 방법론·가정·데이터 출처·한계 — 도구를 검증 가능한 문서로 만든다 */ -}}

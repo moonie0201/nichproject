@@ -26,6 +26,6 @@ ETF의 운용보수(TER)는 매년 펀드 자산에서 자동으로 차감됩니
 - [DCA 적립식 계산기](/ko/tools/dca-calculator/)
 - [FIRE 목표 계산기](/ko/tools/fire-calculator/)
 - [배당 계산기 — VYM](/ko/tools/dividend-calculator/vym/)
-- 투자 기초 학습: [투자의 학び](/ko/study/)
+- 투자 기초 학습: [투자 공부](/ko/study/)
 
 매주 금요일, 미국 시장과 ETF 분석을 담은 뉴스레터를 발송합니다.

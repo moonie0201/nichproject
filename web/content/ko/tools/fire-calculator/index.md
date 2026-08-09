@@ -26,6 +26,6 @@ FIRE(Financial Independence, Retire Early)는 투자 자산의 수동적 수익�
 - [DCA 적립식 계산기](/ko/tools/dca-calculator/)
 - [ETF 수수료 비교 계산기](/ko/tools/etf-fee-calculator/)
 - [배당 계산기 — SCHD](/ko/tools/dividend-calculator/schd/)
-- 투자 기초 학습: [투자의 학び](/ko/study/)
+- 투자 기초 학습: [투자 공부](/ko/study/)
 
 매주 금요일, 미국 시장과 ETF 업데이트를 담은 뉴스레터를 발송합니다.
