@@ -381,5 +381,34 @@
     window.setTimeout(function () { el.classList.remove("iq-toast--show"); }, 1800);
   };
 
+  /* ---- GA4 사용 계측 ----
+     페이지뷰만으로는 "방문했다"와 "실제로 써봤다"를 구분할 수 없다.
+     모든 계산기가 #iq-calc / #iq-share / #iq-reset 를 공통으로 쓰므로
+     document 위임 리스너 하나로 9종 전부 계측한다.
+     페이지 로드 시의 초기 render()는 클릭이 아니므로 집계되지 않는다 — 의도한 동작. */
+  IQ.track = function (name, params) {
+    try {
+      if (typeof window.gtag !== "function") return;
+      window.gtag("event", name, params || {});
+    } catch (e) { /* 계측 실패가 계산기 동작을 막아서는 안 된다 */ }
+  };
+
+  IQ.toolId = function () {
+    var m = String(window.location.pathname || "").match(/\/tools\/([^/]+)/);
+    return m ? m[1] : "unknown";
+  };
+
+  if (typeof document !== "undefined" && document.addEventListener) {
+    document.addEventListener("click", function (ev) {
+      var t = ev.target;
+      if (!t || typeof t.closest !== "function") return;
+      var btn = t.closest("#iq-calc, #iq-share, #iq-reset");
+      if (!btn) return;
+      var map = { "iq-calc": "calc_run", "iq-share": "calc_share", "iq-reset": "calc_reset" };
+      var name = map[btn.id];
+      if (name) IQ.track(name, { tool: IQ.toolId() });
+    }, true);
+  }
+
   window.IQ = IQ;
 })();
