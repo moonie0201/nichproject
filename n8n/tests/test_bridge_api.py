@@ -259,6 +259,65 @@ def test_monthly_dividend_timeout_handling(bridge_server):
         assert isinstance(body, dict)
 
 
+@pytest.mark.parametrize("url", [
+    "https://ex",
+    "https://example.com",
+    "ftp://investiqs.net/article",
+    "https://localhost/article",
+    "https://127.0.0.1/article",
+])
+def test_url_to_content_validator_rejects_placeholder_urls(url):
+    """Placeholder and local URLs are not actionable editorial source URLs."""
+    import n8n.bridge_api as api_module
+
+    ok, reason = api_module._validate_url_to_content_url(url)
+
+    assert ok is False
+    assert reason
+
+
+def test_url_to_content_rejects_placeholder_without_starting_worker(bridge_server, monkeypatch):
+    """POST /url-to-content rejects placeholders and leaves a terminal status."""
+    import n8n.bridge_api as api_module
+
+    class FailThread:
+        def __init__(self, *args, **kwargs):
+            raise AssertionError("url-to-content worker should not start")
+
+    job_id = "placeholder-url-job"
+    api_module._URL_JOBS.pop(job_id, None)
+    monkeypatch.setattr(api_module.threading, "Thread", FailThread)
+
+    resp = requests.post(
+        f"{BASE_URL}/url-to-content",
+        json={
+            "job_id": job_id,
+            "url": "https://ex",
+            "publish_blog": False,
+            "publish_shorts": False,
+        },
+        timeout=5,
+    )
+
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["job_id"] == job_id
+    assert body["status"] == "cancelled"
+    assert body["error"] == "invalid_url"
+    assert "placeholder" in body["reason"] or "fully qualified" in body["reason"]
+
+    status_resp = requests.get(
+        f"{BASE_URL}/url-to-content-status",
+        params={"job_id": job_id},
+        timeout=5,
+    )
+    assert status_resp.status_code == 200
+    status_body = status_resp.json()
+    assert status_body["status"] == "cancelled"
+    assert status_body["error"] == "invalid_url"
+    assert status_body["reason"] == body["reason"]
+
+
 # ---------------------------------------------------------------------------
 # 10. GET /health — openrouter, disk, auto_publisher 최소 3개 서비스 체크
 # ---------------------------------------------------------------------------

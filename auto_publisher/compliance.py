@@ -4,23 +4,51 @@
 
 import os
 import re
+from functools import lru_cache
 from auto_publisher.config import FORBIDDEN_PHRASES
 
-# 미국 주식 전용 전환 (2026-08-08) — 국내 종목/지수/ETF 브랜드 차단.
-# 국내 종목 콘텐츠를 발행하지 않는 것이 목적이며, 판정 로직의 단일 출처다.
+# 국내 개별 종목 차단 (2026-08-08 도입, 2026-08-21 범위 축소).
+# 판정 로직의 단일 출처다.
+#
+# 자본시장법이 규제하는 것은 '특정 종목'의 매매 권유다. 따라서 차단 대상은
+# 국내 개별 종목뿐이며, 아래 둘은 차단하지 않는다:
+#   - 지수(코스피/코스닥/KOSPI/KOSDAQ/^KS11): 특정 종목이 아니라 시장 서술이다.
+#     이걸 막으면 "미국장 마감 후 아시아 증시가 열린다" 같은 일반 서술조차 못 한다.
+#   - 국내 상장 ETF(KODEX/TIGER 등): 분산 상품이라 개별 종목 권유에 해당하지 않는다.
+#
 # 한글 종목명 — 대소문자 개념이 없다.
 _DOMESTIC_KO = re.compile(
-    r"삼성전자|LG이노텍|SK하이닉스|현대차|기아차|네이버|카카오|셀트리온|포스코"
-    r"|코스피|코스닥"
+    # 시총 상위 종목은 시황 글에 자연스럽게 섞여 들어오므로 빠짐없이 열거한다.
+    r"삼성전자|삼성SDI|삼성바이오로직스|삼성물산"
+    r"|LG이노텍|LG전자|LG화학|LG에너지솔루션"
+    r"|SK하이닉스|SK이노베이션|현대차|현대모비스|기아차"
+    r"|셀트리온|포스코|한화에어로스페이스|HD현대"
+    r"|네이버\s*주가|카카오\s*주가"
 )
-# 라틴 표기는 대소문자를 구분한다. 국내 ETF 브랜드는 항상 대문자라
-# 'Tiger Global'(미국 헤지펀드), 'tiger woods' 같은 오탐을 피할 수 있다.
-# ACE/SOL은 영어 약어·솔라나와 충돌해 제외한다.
+# 라틴 표기는 대소문자를 구분한다.
 _DOMESTIC_LATIN = re.compile(
-    r"\bKOSPI\b|\bKOSDAQ\b|\bPOSCO\b"
-    r"|\bKODEX\b|\bTIGER\b|\bKBSTAR\b|\bARIRANG\b|\bKINDEX\b"
-    r"|\^KS11|\^KQ11|\b\d{6}\.K[SQ]\b"
+    r"\bPOSCO\b|\bNAVER\b|\b(?P<code>\d{6})\.K[SQ]\b"
 )
+
+
+@lru_cache(maxsize=1)
+def _kr_etf_codes() -> frozenset[str]:
+    """국내 ETF 종목코드 허용 목록.
+
+    ETF 와 개별 종목은 같은 6자리 체계를 써서 정규식만으로는 구분이 안 된다.
+    "ETF 는 허용" 이라고 문서에 써놓고 069500.KS(KODEX 200) 를 차단하고 있었다 —
+    데이터 수집 경로(_fetch_korean_etf_data)가 실제로 .KS 티커를 만들어
+    본문에 넣으므로, 정상 ETF 글이 발행 단계에서 ValueError 로 죽었다
+    (Codex 리뷰 2차 지적).
+
+    목록은 content_generator.KOREAN_ETF_CODES 단일 출처를 그대로 쓴다.
+    순환 import 를 피하려고 호출 시점에 가져온다.
+    """
+    try:
+        from auto_publisher.content_generator import KOREAN_ETF_CODES
+        return frozenset(KOREAN_ETF_CODES.values())
+    except Exception:
+        return frozenset()
 
 # 자본시장법상 유사투자자문 리스크 — 개별 종목 매수·매도 권유로 읽히는 표현.
 # 국내/해외 종목을 가리지 않고 적용된다.
@@ -35,12 +63,17 @@ SOLICITATION_PATTERNS = [
 
 
 def contains_domestic_equity(text: str) -> str | None:
-    """국내 종목/지수 언급이 있으면 매칭 문자열을, 없으면 None을 반환."""
+    """국내 개별 종목 언급이 있으면 매칭 문자열을, 없으면 None을 반환.
+
+    지수와 국내 상장 ETF 는 대상이 아니다. 위 정규식 주석 참조.
+    """
     text = text or ""
-    for pattern in (_DOMESTIC_KO, _DOMESTIC_LATIN):
-        m = pattern.search(text)
-        if m:
-            return m.group(0)
+    if m := _DOMESTIC_KO.search(text):
+        return m.group(0)
+    for m in _DOMESTIC_LATIN.finditer(text):
+        if m.group("code") and m.group("code") in _kr_etf_codes():
+            continue  # 허용 목록에 있는 국내 ETF
+        return m.group(0)
     return None
 
 
@@ -62,11 +95,40 @@ DISCLAIMER = {
 }
 
 
-def filter_forbidden_phrases(text: str, lang: str) -> str:
-    """금칙어 필터링"""
-    for phrase in FORBIDDEN_PHRASES.get(lang, []):
-        text = text.replace(phrase, "")
-    return text
+def find_forbidden_phrases(text: str, lang: str) -> list[str]:
+    """금칙어가 있으면 목록을 돌려준다. 지우지 않는다.
+
+    예전에는 `text.replace(phrase, "")` 로 통째로 삭제했는데, 한국어는 조사가
+    남아 문장이 무너졌다:
+        "연말정산 완벽 가이드를 다음과 같이 정리했습니다."
+        → "연말정산 를  정리했습니다."
+    역설적으로 이 처리가 글을 더 "AI 티 나게" 만들어 애드센스가 잡는 신호를
+    스스로 키웠다. 게다가 content_verifier 가 이미 같은 금칙어를 검사해
+    재생성을 트리거하므로, 삭제는 이득 없이 손상만 남기는 단계였다.
+
+    탐지 결과는 검증 계층이 재생성 프롬프트로 넘긴다.
+    """
+    text = text or ""
+    return [p for p in FORBIDDEN_PHRASES.get(lang, [])
+            if _phrase_pattern(p).search(text)]
+
+
+@lru_cache(maxsize=256)
+def _phrase_pattern(phrase: str) -> "re.Pattern":
+    """금칙어를 단어 경계에 붙여 컴파일한다.
+
+    부분문자열로 검사하면 정상 한국어가 걸린다 — "문제가"/"경제가" 안에 "제가",
+    "국내가" 안에 "내가" 가 들어 있다. 이대로 검증에 연결하면 멀쩡한 글이
+    재생성 루프를 돈다.
+
+    한국어는 \b 가 안 통한다(공백으로 단어를 안 끊음). 충돌은 전부 앞쪽에서
+    난다 — "경제가"의 뒤 두 글자가 "제가"다. 그래서 앞만 막는다.
+    뒤는 열어둬야 한다: 금칙어에 조사·어미가 붙는 게 정상이라
+    ("완벽 가이드입니다", "총정리하면") 뒤까지 막으면 이번엔 놓친다.
+    """
+    if re.search(r"[가-힣]", phrase):
+        return re.compile(rf"(?<![가-힣]){re.escape(phrase)}")
+    return re.compile(rf"\b{re.escape(phrase)}\b", re.I)
 
 
 def inject_disclaimer(html: str, lang: str) -> str:
@@ -98,7 +160,8 @@ def apply_compliance(html: str, lang: str) -> str:
     재시도 루프가 있어, 차단 시 다른 토픽/재생성으로 넘어간다.
     끄려면 COMPLIANCE_HARD_BLOCK=0.
     """
-    html = filter_forbidden_phrases(html, lang)
+    # 금칙어는 여기서 지우지 않는다. content_verifier 가 검사해 재생성을 트리거한다.
+    # (삭제하면 조사가 남아 문장이 무너진다 — find_forbidden_phrases 주석 참조)
     html = inject_disclaimer(html, lang)
 
     hard_block = os.getenv("COMPLIANCE_HARD_BLOCK", "1") == "1"

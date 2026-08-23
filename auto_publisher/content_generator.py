@@ -972,8 +972,11 @@ CATEGORIES_BY_LANG = {
 LANG_PROMPTS = {
     "ko": {
         "persona": (
-            "직장 다니면서 ETF·배당주 투자를 5년째 하고 있는 30대 한국인 투자자 블로거. "
-            "실제 투자 금액(월 30~100만원)과 실적 수치를 공개하고, 수익뿐 아니라 손실·실수·멘탈 관리도 솔직하게 씀. "
+            # AI 보조 워크플로임을 사이트에 명시(article-provenance)하는 이상, 없는 개인
+            # 투자 경험을 지어내게 하면 안 된다. 예전 페르소나("5년째 투자 중인 30대",
+            # "실제 투자 금액 공개")는 line 96 의 1인칭 금지 규칙과 정면 충돌했다.
+            "한국 개인투자자를 위해 공개 데이터를 정리하는 리서치 노트 작성자. "
+            "출처가 있는 수치만 쓰고, 불리한 사실(수수료, 세금, 하락 구간, 추적오차)도 같이 적음. "
             "VOO, SCHD, KODEX, TIGER 같은 구체적 상품명과 수수료%, 배당률%을 항상 언급함."
         ),
         "forbidden": (
@@ -983,14 +986,16 @@ LANG_PROMPTS = {
         "style": (
             "친구한테 솔직하게 설명하는 말투. 구체적 수치 필수. "
             "마크다운 비교표(상품명 | 수수료 | 배당률 | 수익률) 최소 1개 포함. "
-            "결론은 반드시 '나는 이래서 이걸 선택한다' 형식. "
-            "실수했거나 예상과 달랐던 점 1개 이상 포함. 최소 4000자."
+            "결론은 '어떤 조건의 투자자에게 무엇이 맞는지' 형식(1인칭 금지). "
+            "데이터가 통념과 어긋나는 지점 1개 이상 포함. 최소 4000자."
         ),
         "faq_label": "자주 묻는 질문",
         "output_lang": "한국어",
     },
     "en": {
-        "persona": "a personal finance blogger who has actually invested and made mistakes — writing for real people, not textbooks",
+        # ko 와 같은 이유로 "실제로 투자해 본" 설정을 뺀다 — 사이트가 AI 보조 워크플로임을
+        # 명시하는 이상 없는 경험을 지어내면 안 된다.
+        "persona": "a research writer who turns public market data into plain-English notes for individual investors — writing for real people, not textbooks",
         "forbidden": '"In conclusion", "In summary", "It is worth noting", "It is important to", "As mentioned above"',
         "style": "Conversational, like explaining to a friend. Mix short punchy sentences with detailed explanations. Include real numbers. Don't be a cheerleader — mention downsides too.",
         "faq_label": "Frequently Asked Questions",
@@ -1143,7 +1148,7 @@ Keywords: {kw_str}
 - 불확실성 인정: 데이터가 부족하거나 확신하기 어려운 지점은 숨기지 않고 드러냄.
 - 구조 비대칭: 모든 글이 동일 템플릿이면 안 됨 — 주제별로 FAQ 생략, 표 생략, Q&A 단독 등 변주 허용.
 - 문장 리듬: 짧은 문장(6~15자)과 긴 문장(50자+) 혼합. 동일 길이 문장 연속 금지.
-- 교과서 문체 금지: "다음과 같이", "앞서 살펴본 바와 같이", "결론적으로", "마치며", "이상으로", "이렇게", "이런 식으로"
+- 교과서 문체 금지: "다음과 같이", "앞서 살펴본 바와 같이", "결론적으로", "마치며", "이상으로"
 - 역사 비유 허용: 1999 닷컴, 2008 금융위기, 2020 코로나락 등 구체적 시점 참조 가능.
 
 [Content Structure]

@@ -18,8 +18,12 @@ summaryLength = 20
   quality = 82
   anchor = "smart"
 
+# robots.txt 는 layouts/robots.txt 로 생성한다. 활성 언어만 사이트맵에 나열하기 위해서다.
+# (이전에는 static/robots.txt 고정 파일이라 언어를 꺼도 404 사이트맵을 계속 가리켰다.)
+enableRobotsTXT = true
+
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS", "JSON", "robots"]
   # 택소노미(tags/categories) RSS .xml 생성 차단 — 크롤 예산 낭비 + thin content 방지
   taxonomy = ["HTML"]
   term = ["HTML"]
@@ -33,7 +37,6 @@ summaryLength = 20
   ShowCodeCopyButtons = false
   googleAdSense = "ca-pub-3459019439429067"
   ai_content_policy = "https://investiqs.net/ko/about/editorial-policy/"
-  enableRobotsTXT = true
   canonifyURLs = true
   mainSections = ["study", "blog"]
 
@@ -61,26 +64,22 @@ summaryLength = 20
     weight = 1
     [languages.ko.params]
       description = "ETF, 배당주, 절세 전략 — 데이터 기반 투자 정보를 전달합니다."
+    # 계산기가 메인, 제도형 해설이 허리, 시황은 갱신되는 대시보드 한 항목으로 내린다.
+    [[languages.ko.menu.main]]
+      name = "계산기"
+      identifier = "ko-tools"
+      url = "/ko/tools/"
+      weight = 1
     [[languages.ko.menu.main]]
       name = "투자공부"
       identifier = "ko-study"
       url = "/ko/study/"
-      weight = 1
-    [[languages.ko.menu.main]]
-      name = "일일시황"
-      identifier = "ko-daily"
-      url = "/ko/daily/"
       weight = 2
     [[languages.ko.menu.main]]
-      name = "주간시황"
-      identifier = "ko-weekly"
-      url = "/ko/weekly/"
+      name = "시황"
+      identifier = "ko-market"
+      url = "/ko/market/"
       weight = 3
-    [[languages.ko.menu.main]]
-      name = "도구"
-      identifier = "ko-tools"
-      url = "/ko/tools/"
-      weight = 4
     [[languages.ko.menu.footer]]
       name = "개인정보처리방침"
       identifier = "ko-privacy"
@@ -100,31 +99,27 @@ summaryLength = 20
     weight = 2
     [languages.en.params]
       description = "ETF, dividend investing, tax strategies — practical guides for smart investors."
+    # Calculators lead, guides carry search intent, market recaps collapse into one dashboard.
+    [[languages.en.menu.main]]
+      name = "Calculators"
+      identifier = "en-tools"
+      url = "/en/tools/"
+      weight = 1
     [[languages.en.menu.main]]
       name = "Study"
       identifier = "en-study"
       url = "/en/study/"
-      weight = 1
-    [[languages.en.menu.main]]
-      name = "Daily Market"
-      identifier = "en-daily"
-      url = "/en/daily/"
       weight = 2
     [[languages.en.menu.main]]
-      name = "Weekly Market"
-      identifier = "en-weekly"
-      url = "/en/weekly/"
+      name = "Market"
+      identifier = "en-market"
+      url = "/en/market/"
       weight = 3
-    [[languages.en.menu.main]]
-      name = "Tools"
-      identifier = "en-tools"
-      url = "/en/tools/"
-      weight = 4
     [[languages.en.menu.main]]
       name = "Research"
       identifier = "en-research"
       url = "/en/research/"
-      weight = 5
+      weight = 4
     [[languages.en.menu.footer]]
       name = "Privacy Policy"
       identifier = "en-privacy"
@@ -137,6 +132,11 @@ summaryLength = 20
       weight = 2
 
   [languages.ja]
+    # 은퇴 언어 — auto_publisher.config.RETIRED_LANGUAGES 와 일치시킨다.
+    # 파이썬 쪽은 발행을 막지만 hugo 는 여전히 빌드해서, 심사 overlay 없이
+    # 빌드하면 은퇴 언어 수천 페이지가 그대로 되살아났다.
+    # TOML 스코프 주의: disabled 는 [languages.X.params] 같은 하위 테이블보다 위에 둔다.
+    disabled = true
     languageCode = 'ja'
     languageName = '日本語'
     title = 'InvestIQs — 投資ブログ'
@@ -176,6 +176,11 @@ summaryLength = 20
       weight = 2
 
   [languages.vi]
+    # 은퇴 언어 — auto_publisher.config.RETIRED_LANGUAGES 와 일치시킨다.
+    # 파이썬 쪽은 발행을 막지만 hugo 는 여전히 빌드해서, 심사 overlay 없이
+    # 빌드하면 은퇴 언어 수천 페이지가 그대로 되살아났다.
+    # TOML 스코프 주의: disabled 는 [languages.X.params] 같은 하위 테이블보다 위에 둔다.
+    disabled = true
     languageCode = 'vi'
     languageName = 'Tiếng Việt'
     title = 'InvestIQs — Blog Đầu Tư'
@@ -215,6 +220,11 @@ summaryLength = 20
       weight = 2
 
   [languages.id]
+    # 은퇴 언어 — auto_publisher.config.RETIRED_LANGUAGES 와 일치시킨다.
+    # 파이썬 쪽은 발행을 막지만 hugo 는 여전히 빌드해서, 심사 overlay 없이
+    # 빌드하면 은퇴 언어 수천 페이지가 그대로 되살아났다.
+    # TOML 스코프 주의: disabled 는 [languages.X.params] 같은 하위 테이블보다 위에 둔다.
+    disabled = true
     languageCode = 'id'
     languageName = 'Bahasa Indonesia'
     title = 'InvestIQs — Blog Investasi'

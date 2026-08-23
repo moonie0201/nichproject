@@ -1,13 +1,14 @@
 """
 콘텐츠 2단계 검증기
 - 1차: 규칙 기반 (무료, 즉시) — 글자수/표/금지어/숫자 주입 검증
-- 2차: Gemini 의미 검증 (OpenRouter, $0.02/call) — 할루시네이션/모순/문맥 규제
+- 2차: Gemini CLI 의미 검증 — 할루시네이션/모순/문맥 규제 (OpenRouter 제거)
 """
 
 import json
 import logging
 import os
 import re
+import subprocess
 from typing import Any
 
 import requests
@@ -24,11 +25,19 @@ def _get_key():
 
 VERIFIER_MODEL = os.getenv("VERIFIER_MODEL", "google/gemini-2.0-flash-exp:free")
 
+from auto_publisher.config import BANNED_KO_FINANCIAL, BANNED_EN_FINANCIAL
+
 FORBIDDEN_IN_BODY = {
     "ko": ["매수하세요", "사야 한다", "팔아야 한다", "추천합니다", "투자 권유",
            "BUY 신호", "SELL 신호", "완벽 가이드", "총정리",
            "결론적으로", "앞서 살펴본 바와 같이",
-           "이재훈", "34세 직장인", "나는 ", "제가 ", "내가 "],
+           "이재훈", "34세 직장인", "나는 ", "제가 ", "내가 ", "저는 ",
+           # 예전에는 compliance 가 이 표현들을 본문에서 통째로 삭제했다. 조사가
+           # 남아 문장이 무너졌고(“연말정산 를  정리했습니다”), 그 자체가 AI 티로
+           # 읽혔다. 삭제 대신 여기서 잡아 재생성시킨다.
+           "살펴보겠습니다", "알아보겠습니다", "정리해 드리겠습니다",
+           "해드리겠습니다", "도움이 되셨으면", "마치며", "이상으로",
+           "다음과 같이"],
     "en": [
         "Buy now", "Sell now", "You should buy", "Recommended to buy",
         "I recommend", "Strong buy", "must buy", "don't miss",
@@ -58,6 +67,27 @@ FORBIDDEN_IN_BODY = {
         "Kesempatan emas", "Jangan lewatkan",
     ],
 }
+
+
+def check_financial_compliance(text: str, lang: str = "ko") -> list[str]:
+    """자본시장법 §445 / 금융소비자보호법 §46 / 유사수신법 §2 위반 표현 검출.
+
+    Returns list of violation strings found (empty = clean).
+    """
+    violations: list[str] = []
+    text_lower = text.lower()
+
+    # 한국어 금지어 — 모든 언어 공통 적용 (한국어 콘텐츠 포함 가능성)
+    for phrase in BANNED_KO_FINANCIAL:
+        if phrase in text:
+            violations.append(f"[KO-금융법] '{phrase}'")
+
+    # 영문 금지어 — 대소문자 무시
+    for phrase in BANNED_EN_FINANCIAL:
+        if phrase in text_lower:
+            violations.append(f"[EN-금융법] '{phrase}'")
+
+    return violations
 
 
 def _verify_scenario_box(html: str) -> list[str]:
@@ -113,9 +143,19 @@ def verify_rule_based(
         issues.append(f"제목에 primary_keyword '{pkw}' 누락")
 
     # 금지어 (본문 + 제목)
-    for f in FORBIDDEN_IN_BODY.get(lang, []):
-        if f in html or f in title:
-            issues.append(f"금지어: '{f}'")
+    # 목록이 두 벌이다: 여기 FORBIDDEN_IN_BODY 와 config.FORBIDDEN_PHRASES.
+    # 후자는 검증 경로에 연결돼 있지 않아 죽은 규칙이었다(Codex 리뷰 지적) —
+    # 1인칭 금지가 후자에만 있다. 둘을 합치되 중복은 한 번만 보고한다.
+    from auto_publisher.compliance import find_forbidden_phrases
+    hits = dict.fromkeys(
+        [f for f in FORBIDDEN_IN_BODY.get(lang, []) if f in html or f in title]
+        + find_forbidden_phrases(html + " " + title, lang)
+    )
+    issues.extend(f"금지어: '{f}'" for f in hits)
+
+    # 자본시장법/금융소비자보호법/유사수신법 위반 표현
+    fin_violations = check_financial_compliance(html + " " + title, lang)
+    issues.extend(fin_violations)
 
     # 주입된 실데이터 숫자 반영 검증 (할루시네이션 1차 방어)
     if source_data:
@@ -137,6 +177,20 @@ def verify_rule_based(
         if missing:
             issues.append(f"원본 데이터 미반영: {', '.join(missing[:5])}")
 
+        # Tier 3 #9 — 프로그램적 numeric fact-check (할루시네이션 2차 방어)
+        # 본문 숫자 클레임 vs source_data tolerance band 검증
+        try:
+            from auto_publisher.numeric_fact_checker import check_numeric_claims
+            mismatches = check_numeric_claims(html, source_data)
+            if mismatches:
+                # 처음 3건만 issue로 (critical), 나머지는 warning
+                for m in mismatches[:3]:
+                    issues.append(f"숫자 불일치: {m}")
+                for m in mismatches[3:5]:
+                    warnings.append(f"숫자 불일치(warning): {m}")
+        except Exception as e:
+            logger.warning(f"numeric_fact_check 실행 실패: {e}")
+
     # 시나리오 박스 형식 검증
     issues.extend(_verify_scenario_box(html))
 
@@ -157,18 +211,15 @@ def verify_rule_based(
 def verify_semantic_gemini(
     post: dict, source_data: dict | None = None, lang: str = "ko",
 ) -> tuple[bool, dict]:
-    """2차: Gemini로 의미 검증. 반환: (ok, report)
+    """2차: Gemini CLI로 의미 검증. 반환: (ok, report)
     report = {"hallucination": [...], "contradiction": [...], "bad_phrasing": [...]}
     """
-    api_key = _get_key()
-    if not api_key:
-        logger.warning("OPENROUTER_API_KEY 없음 → 2차 검증 스킵")
-        return True, {"skipped": "no_api_key"}
+    gemini_model = os.getenv("GEMINI_CLI_MODEL", "gemini-2.5-flash")
 
     source_block = json.dumps(source_data, ensure_ascii=False, indent=2) if source_data else "(없음)"
     # 본문 텍스트만 (HTML 태그 제거)
     body_text = re.sub(r"<[^>]+>", " ", post.get("content_html", ""))
-    body_text = re.sub(r"\s+", " ", body_text)[:6000]
+    body_text = re.sub(r"\s+", " ", body_text)[:4000]
 
     prompt = f"""당신은 금융 블로그 팩트체커입니다. 아래 [원본 실데이터]와 [블로그 본문]을 대조해 검증하세요.
 
@@ -196,44 +247,36 @@ def verify_semantic_gemini(
     import time
     last_err = None
     raw = None
+    # 검증은 정확도 중요 — Gemini 3.1 Pro Preview primary (할루시네이션 catch 우수).
+    # 실패 시 Claude haiku → Ollama 폴백.
+    from auto_publisher.content_generator import _call_gemini_cli, _call_claude_cli, _call_ollama
+    verify_model = os.getenv("GEMINI_VERIFY_MODEL", "gemini-3.1-pro-preview")
     for attempt in range(3):
         try:
-            resp = requests.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json",
-                },
-                json={
-                    "model": VERIFIER_MODEL,
-                    "messages": [{"role": "user", "content": prompt}],
-                    "temperature": 0.1,
-                    "max_tokens": 2000,
-                },
-                timeout=90,
-            )
-            resp.raise_for_status()
-            _resp_data = resp.json()
-            if "choices" not in _resp_data:
-                _err = _resp_data.get("error", {})
-                raise RuntimeError(f"OpenRouter error: {_err.get('message', str(_resp_data))[:200]}")
-            raw = _resp_data["choices"][0]["message"]["content"].strip()
-            break
+            raw = (_call_gemini_cli(prompt, model=verify_model) or "").strip()
+            if raw:
+                break
+            raise RuntimeError("Gemini Pro Preview 빈 응답")
         except Exception as e:
             last_err = e
             logger.warning(f"Gemini 검증 시도 {attempt+1}/3 실패: {e}")
             if attempt < 2:
                 time.sleep(3 * (attempt + 1))
-
-    if raw is None:
-        # ollama 폴백
+    if not raw:
+        # Gemini 실패 시 Claude haiku → Ollama 순 폴백
         try:
-            from auto_publisher.content_generator import _call_ollama
-            logger.info("Gemini 검증 실패, ollama 폴백 시도")
-            raw = _call_ollama(prompt)
-        except Exception as e:
-            logger.warning(f"ollama 검증 폴백 실패: {e}")
-            return False, {"error": "모든 검증 백엔드 실패", "critical_count": 99}
+            raw = (_call_claude_cli(prompt) or "").strip()
+            logger.info("Gemini 실패, Claude 검증 폴백 성공")
+        except Exception:
+            try:
+                raw = (_call_ollama(prompt) or "").strip()
+                logger.info("Claude 실패, Ollama 검증 폴백 성공")
+            except Exception as e:
+                logger.warning(f"모든 폴백 실패: {e}")
+
+    if raw is None or not raw:
+        logger.warning("모든 검증 백엔드 (ollama + claude/gemini) 실패")
+        return False, {"error": "모든 검증 백엔드 실패", "critical_count": 99}
 
     try:
         # ``` 코드블록 제거
