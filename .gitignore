@@ -42,3 +42,16 @@ n8n/bridge.log
 
 # 데이터 파일 백업 — 자동 생성 (2026-08-23)
 *.bak.*
+
+# 운영 산출물 — 매 실행마다 생성, 재현 가능 (2026-08-23)
+reports/
+.omc/bgm_cache/
+.serena/
+blog/
+shorts/
+# 임시 작업 파일
+script_*.md
+sns_distribution_plan_*.md
+# n8n 백업 — database.sqlite 에 워크플로 자격증명이 들어간다 (2026-08-23)
+n8n/backups/
+n8n/.bridge_api.lock

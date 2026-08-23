@@ -1,0 +1,6 @@
+# InvestIQs weekly newsletter draft/archive generation.
+# Install with: crontab newsletter/stibee_weekly.cron
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+
+0 7 * * 5 cd /home/mh/ocstorage/workspace/nichproject && python3 newsletter/content_curator.py --root . --days 7 --limit 8 --publish-hugo >> newsletter/out/cron.log 2>&1

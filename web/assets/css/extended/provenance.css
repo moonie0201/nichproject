@@ -1,0 +1,41 @@
+/* 글 하단 출처·갱신일·제작 주체 블록 */
+.iq-provenance {
+  margin: 2.5rem 0 1.5rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--entry);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.iq-provenance h2 {
+  margin: 0 0 .75rem;
+  font-size: 1rem;
+  border: 0;
+  padding: 0;
+}
+.iq-provenance__row { margin: .4rem 0; }
+.iq-provenance__row strong {
+  display: inline-block;
+  min-width: 6.5em;
+  color: var(--secondary);
+  font-weight: 600;
+}
+.iq-provenance ul {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.iq-provenance li { display: inline; }
+.iq-provenance li:not(:last-child)::after { content: " · "; color: var(--secondary); }
+
+/* 본문 내 계산기 유도 — 글을 읽다 다음 행동으로 넘어가는 지점 */
+.iq-tool-cta {
+  margin: 1.5em 0;
+  padding: .9em 1.1em;
+  border-left: 3px solid var(--primary);
+  background: var(--entry);
+  border-radius: 0 6px 6px 0;
+}
+.iq-tool-cta a { text-decoration: underline; }
