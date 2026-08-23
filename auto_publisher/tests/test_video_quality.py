@@ -171,6 +171,8 @@ S&P500은 1.2% 올랐지만 나스닥은 0.4%에 그쳤습니다.
     )
 
     responses = iter([
+        # _extract_claims_pass (2-pass body generation, called once before first generation)
+        """[{"claim": "S&P500 1.2% 반등", "exact_number": "1.2%", "evidence": "S&P500은 1.2% 올랐다", "chapter_hint": "evidence"}]""",
         """{
           "title": "초안 제목",
           "description": "설명",
@@ -240,7 +242,14 @@ S&P500은 1.2% 올랐지만 나스닥은 0.4%에 그쳤습니다.
         }""",
     ])
 
-    monkeypatch.setattr("auto_publisher.video_script._call_llm", lambda *args, **kwargs: next(responses))
+    import json as _json
+    monkeypatch.setattr(
+        "auto_publisher.video_script._video_llm_json",
+        lambda prompt, context: _json.loads(next(responses)),
+    )
+    monkeypatch.setattr("auto_publisher.video_script._VIDEO_SCRIPT_MAX_ITER", 3)
+    monkeypatch.setenv("VIDEO_TWO_PASS_BODY", "1")
+    monkeypatch.setenv("FORCE_REGEN_SCRIPT", "1")
 
     result = generate_long_video_script(blog, blog_url="https://investiqs.net/ko/daily/sample/")
     assert result["quality_report"]["regenerated"] is True
@@ -284,12 +293,16 @@ def test_build_fallback_cards_assigns_card_types():
     assert any(card["card_type"] == "cta" for card in cards)
 
 
-def test_call_llm_prefers_gemini_then_ollama_then_codex(monkeypatch):
+def test_call_llm_prefers_gemini_then_claude_then_ollama_without_codex(monkeypatch):
     calls = []
 
     def fail_gemini(prompt):
         calls.append("gemini")
         raise RuntimeError("gemini failed")
+
+    def fail_claude(prompt):
+        calls.append("claude")
+        raise RuntimeError("claude failed")
 
     def ok_ollama(prompt, **kwargs):
         calls.append("ollama")
@@ -300,12 +313,14 @@ def test_call_llm_prefers_gemini_then_ollama_then_codex(monkeypatch):
         raise RuntimeError("codex should not be called")
 
     monkeypatch.setattr(content_generator, "LLM_PRIMARY_BACKEND", "gemini")
+    monkeypatch.setattr(content_generator, "LLM_BACKENDS", ("gemini", "claude", "ollama"))
     monkeypatch.setattr(content_generator, "_call_gemini_cli", fail_gemini)
+    monkeypatch.setattr(content_generator, "_call_claude_cli", fail_claude)
     monkeypatch.setattr(content_generator, "_call_ollama", ok_ollama)
     monkeypatch.setattr(content_generator, "_call_codex", fail_codex)
 
     assert content_generator._call_llm("prompt") == '{"ok": true}'
-    assert calls == ["gemini", "ollama"]
+    assert calls == ["gemini", "claude", "ollama"]
 
 
 def test_prepare_ollama_prompt_disables_qwen_thinking(monkeypatch):
@@ -324,6 +339,17 @@ def test_prepare_ollama_prompt_keeps_gemma_plain(monkeypatch):
     monkeypatch.setattr(content_generator, "OLLAMA_MODEL", "gemma4:26b-a4b-it-q8_0")
     prepared = content_generator._prepare_ollama_prompt("Return JSON only")
     assert prepared == "Return JSON only"
+
+
+def test_select_ollama_model_keeps_installed_configured_model():
+    available = ["qwen3.6:35b-a3b", "gemma4:26b"]
+    assert content_generator._select_ollama_model("gemma4:26b", available) == "gemma4:26b"
+
+
+def test_select_ollama_model_falls_back_when_configured_model_missing():
+    available = ["gemma4:e4b-it-bf16", "devstral-small-2:24b"]
+    selected = content_generator._select_ollama_model("missing-model:latest", available)
+    assert selected == "gemma4:e4b-it-bf16"
 
 
 def test_parse_json_response_strips_thinking_output():

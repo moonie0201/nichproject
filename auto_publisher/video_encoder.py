@@ -106,7 +106,9 @@ def _profile_short_form() -> dict:
         "extra": base_extra,
         "audio_codec": "aac",
         "audio_bitrate": "192k",
-        "audio_filter": "loudnorm=I=-16:TP=-1.5:LRA=11",
+        "audio_filter": "aformat=channel_layouts=stereo,loudnorm=I=-16:TP=-1.5:LRA=11",
+        "audio_sample_rate": "48000",
+        "audio_channels": "2",
     }
 
 

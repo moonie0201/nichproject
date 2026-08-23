@@ -28,13 +28,57 @@ def test_pick_latest_returns_most_recent(tmp_content):
     from auto_publisher.shorts_auto import find_latest_publishable_slug
 
     _touch(tmp_content / "study" / "old-guide.md", mtime_offset=-3600)
+    _touch(tmp_content / "blog" / "newer-post.md", mtime_offset=-60)
+
+    result = find_latest_publishable_slug(content_root=tmp_content.parent.parent / "content", lang="ko")
+    assert result is not None
+    assert result["slug"] == "newer-post"
+    assert result["section"] == "blog"
+
+
+def test_market_sections_excluded_by_default(tmp_content):
+    """시황(daily/weekly)은 더 최신이어도 쇼츠 소재로 뽑히지 않는다.
+
+    시황은 매일 생성돼 mtime 최신순에서 항상 이겼고, 그 결과 쇼츠가 사실상 전부
+    후크 없는 시황 요약으로 만들어졌다. evergreen 해설만 소재가 되어야 한다.
+    """
+    from auto_publisher.shorts_auto import find_latest_publishable_slug
+
+    _touch(tmp_content / "study" / "old-guide.md", mtime_offset=-3600)
     _touch(tmp_content / "daily" / "newer-wrap.md", mtime_offset=-60)
     _touch(tmp_content / "weekly" / "newest-weekly.md", mtime_offset=-10)
 
     result = find_latest_publishable_slug(content_root=tmp_content.parent.parent / "content", lang="ko")
     assert result is not None
-    assert result["slug"] == "newest-weekly"
-    assert result["section"] == "weekly"
+    assert result["section"] == "study"
+    assert result["slug"] == "old-guide"
+
+
+def test_section_index_is_not_a_candidate(tmp_content):
+    """_index.md 는 Hugo 섹션 목록 페이지라 더 최신이어도 소재로 뽑히지 않는다."""
+    from auto_publisher.shorts_auto import find_latest_publishable_slug
+
+    _touch(tmp_content / "study" / "real-post.md", mtime_offset=-3600)
+    _touch(tmp_content / "study" / "_index.md", mtime_offset=-10)
+
+    result = find_latest_publishable_slug(content_root=tmp_content.parent.parent / "content", lang="ko")
+    assert result is not None
+    assert result["slug"] == "real-post"
+
+
+def test_market_sections_still_available_when_asked(tmp_content):
+    """기본값에서만 제외된다. sections 를 명시하면 시황도 뽑을 수 있다."""
+    from auto_publisher.shorts_auto import find_latest_publishable_slug
+
+    _touch(tmp_content / "daily" / "wrap.md", mtime_offset=-60)
+
+    result = find_latest_publishable_slug(
+        content_root=tmp_content.parent.parent / "content",
+        lang="ko",
+        sections=("blog", "study", "daily", "weekly"),
+    )
+    assert result is not None
+    assert result["section"] == "daily"
 
 
 def test_pick_latest_skips_section(tmp_content):

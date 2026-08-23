@@ -803,7 +803,7 @@ class TopicManager:
         from auto_publisher.content_generator import _call_llm
 
         seed_keywords = [
-            # 미국 상장 종목만 — 국내 종목/ETF 제외 (2026-08-08)
+            # 국내 개별 종목만 제외한다. 지수·국내 상장 ETF 는 허용 (2026-08-21).
             "VOO", "QQQ", "SCHD", "TLT", "GLD", "SPY", "VTI", "JEPI",
             "S&P500", "나스닥", "ETF", "배당주", "리츠", "채권"
         ]
@@ -843,8 +843,9 @@ class TopicManager:
             "- primary_keyword (영문 ticker 또는 해당 언어)\n"
             "- secondary_keywords (3-5개)\n"
             '- estimated_difficulty ("easy" | "medium" | "hard")\n\n'
-            "**미국 상장 종목만 다루세요.** 한국 종목·지수·ETF(삼성전자, KOSPI, "
-            "KODEX, TIGER 등)는 절대 포함하지 마세요.\n"
+            "**한국 개별 종목은 절대 포함하지 마세요.**(삼성전자, SK하이닉스, "
+            "LG이노텍 등 — 자본시장법상 개별 종목 권유 리스크)\n"
+            "지수(KOSPI·코스닥)와 국내 상장 ETF(KODEX·TIGER 등)는 다뤄도 됩니다.\n"
             "출력: JSON array만. 설명·머리말 금지."
         )
 

@@ -59,9 +59,14 @@ def _strip_codefence(text: str) -> str:
 
 
 def _call_claude_cli(prompt: str, timeout: int = 60) -> Optional[str]:
+    # "claude" 를 그대로 넘기면 n8n/cron 처럼 PATH 가 얕은 환경에서 FileNotFoundError 가 난다.
+    # 그 결과 슬라이드가 조용히 플레이스홀더("포인트 1 / 상세 데이터")로 폴백돼
+    # 쇼츠 러닝타임의 대부분이 빈 화면이 됐다. content_generator 의 리졸버를 재사용한다.
+    from auto_publisher.content_generator import _resolve_cli
+
     try:
         result = subprocess.run(
-            ["claude", "-p", prompt],
+            [_resolve_cli("claude"), "-p", prompt],
             capture_output=True, text=True, timeout=timeout,
         )
     except (subprocess.TimeoutExpired, FileNotFoundError) as e:
@@ -74,13 +79,28 @@ def _call_claude_cli(prompt: str, timeout: int = 60) -> Optional[str]:
 
 
 def _fallback_slides(title: str, summary: str, num_slides: int) -> list[dict]:
-    """정적 fallback — Sonnet 실패 시 단순 슬라이드 N개 생성."""
-    slides = [{"title": title[:30], "bullets": [summary[:50]],
-               "accent_color": _DEFAULT_ACCENTS[0]}]
+    """정적 fallback — Sonnet 실패 시 요약문을 문장 단위로 잘라 슬라이드를 만든다.
+
+    이전에는 "포인트 1 / 상세 데이터 / 차트 참고" 같은 빈 껍데기를 찍어서,
+    폴백이 걸린 영상은 러닝타임 대부분이 정보 없는 화면이었다. 내용을 만들어낼
+    수 없더라도 최소한 이미 가진 요약문은 화면에 띄운다.
+    """
+    logger.warning("슬라이드 정적 fallback 사용 — 화면에 요약문만 표시된다 (LLM 실패)")
+
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?。])\s+", summary or "") if s.strip()]
+    slides = [{
+        "title": title[:30],
+        "bullets": [sentences[0][:60]] if sentences else [],
+        "accent_color": _DEFAULT_ACCENTS[0],
+    }]
+    rest = sentences[1:]
     for i in range(1, num_slides):
+        if not rest:
+            break
+        chunk, rest = rest[:2], rest[2:]
         slides.append({
-            "title": f"포인트 {i}",
-            "bullets": ["상세 데이터", "차트 참고"],
+            "title": title[:24],
+            "bullets": [c[:60] for c in chunk],
             "accent_color": _DEFAULT_ACCENTS[i % len(_DEFAULT_ACCENTS)],
         })
     return slides

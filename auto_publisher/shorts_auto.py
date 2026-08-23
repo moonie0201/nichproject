@@ -13,7 +13,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-DEFAULT_SECTIONS = ("blog", "study", "daily", "weekly")
+# 시황(daily/weekly)은 쇼츠 소재에서 제외한다. 매일 생성돼 mtime 최신순에서 항상 이기는 바람에
+# 쇼츠가 사실상 전부 시황으로 만들어졌는데, 시황 요약은 후크가 성립하지 않는 커모디티 정보라
+# 첫 3초 이탈로 직결된다. 쇼츠는 evergreen 해설(blog/study)에서만 만든다.
+DEFAULT_SECTIONS = ("blog", "study")
 
 
 def find_latest_publishable_slug(
@@ -41,6 +44,9 @@ def find_latest_publishable_slug(
             continue
         for md in section_dir.glob("*.md"):
             slug = md.stem
+            # _index.md 는 Hugo 섹션 목록 페이지지 기사가 아니다. 영상 소재가 될 수 없다.
+            if slug.startswith("_"):
+                continue
             if slug in already_done:
                 continue
             try:
