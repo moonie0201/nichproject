@@ -28,3 +28,6 @@ n8n/bridge.log
 
 # OAuth 자격증명 — 절대 커밋 금지 (2026-08-08)
 .youtube_secrets/
+# .tiktok_secrets/ 가 빠져 있었다. CLAUDE.md 보안 체크리스트는 등록돼 있다고
+# 적혀 있었지만 실제로는 없어서, git add -A 한 번이면 토큰이 커밋됐다. (2026-08-23)
+.tiktok_secrets/
