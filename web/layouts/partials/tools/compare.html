@@ -22,41 +22,68 @@
      data-currency="{{ $defCur }}"
      data-copied-msg="{{ i18n "calc_share_copied" }}">
 
+  {{- /* 쌍마다 페이지를 따로 두면 본문이 51~62% 겹쳐 중복 콘텐츠가 된다.
+         pairs_all 이 있으면 한 페이지에서 두 티커를 고르게 한다. */ -}}
+  {{- $choices := .Params.tickers_all -}}
+  {{- if $choices }}
+  {{- $m := dict -}}
+  {{- range $choices }}{{ $m = merge $m (dict . (index $data.tickers .)) }}{{ end -}}
+  <script type="application/json" id="iq-cmp-data">{{ $m | jsonify | safeJS }}</script>
+  <div class="iq-tool__grid">
+    <div class="iq-field">
+      <label for="iq-cmp-a">A</label>
+      <select id="iq-cmp-a">
+        {{- range $choices }}
+        <option value="{{ . }}"{{ if eq . $tickerA }} selected{{ end }}>{{ . }}</option>
+        {{- end }}
+      </select>
+    </div>
+    <div class="iq-field">
+      <label for="iq-cmp-b">B</label>
+      <select id="iq-cmp-b">
+        {{- range $choices }}
+        <option value="{{ . }}"{{ if eq . $tickerB }} selected{{ end }}>{{ . }}</option>
+        {{- end }}
+      </select>
+    </div>
+  </div>
+  {{- end }}
+
   {{- /* Static comparison table */ -}}
   <div class="iq-compare-table-wrap">
     <table class="iq-table iq-compare-table">
       <thead>
         <tr>
           <th>{{ i18n "tbl_metric" }}</th>
-          <th>{{ $tickerA }}</th>
-          <th>{{ $tickerB }}</th>
+          <th id="iq-cmp-th-a">{{ $tickerA }}</th>
+          <th id="iq-cmp-th-b">{{ $tickerB }}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="iq-cmp-tbody">
         <tr>
           <td>{{ i18n "metric_yield" }}</td>
-          <td>{{ with $tA }}{{ .yield_pct }}%{{ else }}–{{ end }}</td>
-          <td>{{ with $tB }}{{ .yield_pct }}%{{ else }}–{{ end }}</td>
+          <td data-m="yield_pct" data-side="a">{{ with $tA }}{{ .yield_pct }}%{{ else }}–{{ end }}</td>
+          <td data-m="yield_pct" data-side="b">{{ with $tB }}{{ .yield_pct }}%{{ else }}–{{ end }}</td>
         </tr>
         <tr>
           <td>{{ i18n "metric_expense" }}</td>
-          <td>{{ with $tA }}{{ .expense_ratio_pct }}%{{ else }}–{{ end }}</td>
-          <td>{{ with $tB }}{{ .expense_ratio_pct }}%{{ else }}–{{ end }}</td>
+          <td data-m="expense_ratio_pct" data-side="a">{{ with $tA }}{{ .expense_ratio_pct }}%{{ else }}–{{ end }}</td>
+          <td data-m="expense_ratio_pct" data-side="b">{{ with $tB }}{{ .expense_ratio_pct }}%{{ else }}–{{ end }}</td>
         </tr>
         <tr>
           <td>{{ i18n "metric_1y" }}</td>
-          <td>{{ with $tA }}{{ if .return_1y_pct }}{{ .return_1y_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
-          <td>{{ with $tB }}{{ if .return_1y_pct }}{{ .return_1y_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
+          <td data-m="return_1y_pct" data-side="a">{{ with $tA }}{{ if .return_1y_pct }}{{ .return_1y_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
+          <td data-m="return_1y_pct" data-side="b">{{ with $tB }}{{ if .return_1y_pct }}{{ .return_1y_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
         </tr>
         <tr>
           <td>{{ i18n "metric_5y" }}</td>
-          <td>{{ with $tA }}{{ if .return_5y_total_pct }}{{ .return_5y_total_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
-          <td>{{ with $tB }}{{ if .return_5y_total_pct }}{{ .return_5y_total_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
+          <td data-m="return_5y_total_pct" data-side="a">{{ with $tA }}{{ if .return_5y_total_pct }}{{ .return_5y_total_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
+          <td data-m="return_5y_total_pct" data-side="b">{{ with $tB }}{{ if .return_5y_total_pct }}{{ .return_5y_total_pct }}%{{ else }}–{{ end }}{{ else }}–{{ end }}</td>
         </tr>
         <tr>
           <td>{{ i18n "metric_risk" }}</td>
-          <td>{{ with $tA }}{{ .risk_note }}{{ else }}–{{ end }}</td>
-          <td>{{ with $tB }}{{ .risk_note }}{{ else }}–{{ end }}</td>
+          <td data-m="risk_note" data-side="a">{{ with $tA }}{{ .risk_note }}{{ else }}–{{ end }}</td>
+          <td data-m="risk_note" data-side="b">{{ with $tB }}{{ .risk_note }}{{ else }}–{{ end }}</td>
         </tr>
       </tbody>
       <tfoot>

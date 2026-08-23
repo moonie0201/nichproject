@@ -18,14 +18,33 @@
      data-currency="{{ $defCur }}"
      data-copied-msg="{{ i18n "calc_share_copied" }}">
 
-  {{- with $t }}
-  <div class="iq-meta">
+  {{- /* 티커별 페이지를 따로 두면 본문이 74~80% 겹쳐 중복 콘텐츠가 된다.
+         tickers_all 이 있으면 한 페이지에서 고르게 한다. */ -}}
+  {{- $choices := .Params.tickers_all -}}
+  {{- if $choices }}
+  {{- $m := dict -}}
+  {{- range $choices }}{{ $m = merge $m (dict . (index $data.tickers .)) }}{{ end -}}
+  <script type="application/json" id="iq-ticker-data">{{ $m | jsonify | safeJS }}</script>
+  <div class="iq-field">
+    <label for="iq-ticker">{{ i18n "calc_ticker" | default "티커" }}</label>
+    <select id="iq-ticker">
+      {{- range $choices }}
+      <option value="{{ . }}"{{ if eq . $ticker }} selected{{ end }}>{{ . }} — {{ (index $data.tickers .).name }}</option>
+      {{- end }}
+    </select>
+  </div>
+  {{- end }}
+
+  <div class="iq-meta" id="iq-ticker-meta"
+       data-yield-label="{{ i18n "calc_yield" }}"
+       data-expense-label="{{ i18n "calc_expense" }}">
+    {{- with $t }}
     <strong>{{ $ticker }}</strong> · {{ .name }}
     · {{ i18n "calc_yield" }}: {{ .yield_pct }}%
     · {{ i18n "calc_expense" }}: {{ .expense_ratio_pct }}%
-    · {{ i18n "calc_data_as_of" }}: {{ $data.data_as_of }}
+    {{- end }}
   </div>
-  {{- end }}
+  <div class="iq-meta iq-meta--asof">{{ i18n "calc_data_as_of" }}: {{ $data.data_as_of }}</div>
 
   <div class="iq-tool__grid">
     <div class="iq-field">

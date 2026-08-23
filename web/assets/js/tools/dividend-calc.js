@@ -7,9 +7,36 @@
 
   var ticker = root.getAttribute("data-ticker") || "";
   var baseYield = IQ.num(root.getAttribute("data-yield"), 0);
+
+  /* 티커별로 페이지를 따로 두면 본문 74~80% 가 겹쳐 중복 콘텐츠가 된다.
+     한 페이지에서 티커를 고르게 하고, 선택에 따라 배당률만 갈아끼운다. */
+  var elTicker = document.getElementById("iq-ticker");
+  var tickerMap = {};
+  var mapEl = document.getElementById("iq-ticker-data");
+  if (mapEl) { try { tickerMap = JSON.parse(mapEl.textContent) || {}; } catch (e) {} }
+
+  function applyTicker(sym) {
+    var t = tickerMap[sym];
+    if (!t) return;
+    ticker = sym;
+    baseYield = IQ.num(t.yield_pct, 0);
+    var meta = document.getElementById("iq-ticker-meta");
+    if (meta) {
+      meta.innerHTML = "<strong>" + sym + "</strong> · " + (t.name || "") +
+        " · " + (meta.getAttribute("data-yield-label") || "Yield") + ": " + t.yield_pct + "%" +
+        " · " + (meta.getAttribute("data-expense-label") || "Expense") + ": " + t.expense_ratio_pct + "%";
+    }
+    var note = document.getElementById("iq-ticker-note");
+    if (note) {
+      // 티커별 해설은 서버가 미리 다 그려두고 선택된 것만 보여준다.
+      Array.prototype.forEach.call(note.children, function (c) {
+        c.hidden = c.getAttribute("data-ticker") !== sym;
+      });
+    }
+  }
   var defaultCurrency = root.getAttribute("data-currency") || "USD";
   var copiedMsg = root.getAttribute("data-copied-msg") || "Copied";
-  var storeKey = "iq-dividend:" + ticker;
+  var storeKey = "iq-dividend:" + ticker;   // 티커를 바꾸면 갱신된다
 
   var fxRates = { USD: 1 };
   var fxEl = document.getElementById("iq-fx");
@@ -98,6 +125,14 @@
   elCurrency.addEventListener("change", function () {
     if (!elResult.hidden) render();
   });
+  if (elTicker) {
+    applyTicker(elTicker.value || ticker);
+    elTicker.addEventListener("change", function () {
+      applyTicker(elTicker.value);
+      storeKey = "iq-dividend:" + ticker;
+      render();
+    });
+  }
 
   render();
 })();
