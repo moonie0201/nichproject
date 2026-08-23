@@ -23,8 +23,8 @@ Masukkan nilai saat ini dan bobot target (%) untuk setiap kepemilikan. Nilai pos
 
 ## Alat terkait
 
-- [Kalkulator dividen SCHD](/id/tools/dividend-calculator/schd/)
-- [Perbandingan SCHD vs JEPI](/id/tools/compare/schd-vs-jepi/)
+- [Kalkulator dividen SCHD](/id/tools/dividend-calculator/)
+- [Perbandingan SCHD vs JEPI](/id/tools/compare/)
 - [Kalkulator pendapatan portofolio](/id/tools/portfolio-income/)
 - [Semua alat investasi](/id/tools/)
 

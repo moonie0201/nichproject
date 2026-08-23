@@ -25,7 +25,7 @@ The difference column shows how much more you would have with ETF A compared to 
 
 - [DCA investment calculator](/en/tools/dca-calculator/)
 - [FIRE calculator](/en/tools/fire-calculator/)
-- [Dividend calculator — VYM](/en/tools/dividend-calculator/vym/)
+- [Dividend calculator — VYM](/en/tools/dividend-calculator/)
 - Learn more: [Investment study](/en/study/)
 
 Sign up for our weekly newsletter covering U.S. market data and ETF analysis.

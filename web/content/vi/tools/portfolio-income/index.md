@@ -24,8 +24,8 @@ Chọn mã cổ phiếu từ danh sách thả xuống và nhập số tiền đ�
 ## Công cụ liên quan
 
 - [Máy tính cân bằng danh mục](/vi/tools/portfolio-rebalance/)
-- [So sánh JEPI vs JEPQ](/vi/tools/compare/jepi-vs-jepq/)
-- [So sánh SCHD vs VYM](/vi/tools/compare/schd-vs-vym/)
+- [So sánh JEPI vs JEPQ](/vi/tools/compare/)
+- [So sánh SCHD vs VYM](/vi/tools/compare/)
 - [Tất cả công cụ đầu tư](/vi/tools/)
 
 Đăng ký nhận bản tin InvestIQs để nhận thông tin cập nhật dữ liệu ETF mỗi tuần.

@@ -25,7 +25,7 @@ Cột chênh lệch cho thấy bạn sẽ có thêm bao nhiêu với ETF A so v�
 
 - [Máy tính DCA](/vi/tools/dca-calculator/)
 - [Máy tính FIRE](/vi/tools/fire-calculator/)
-- [Máy tính cổ tức — VYM](/vi/tools/dividend-calculator/vym/)
+- [Máy tính cổ tức — VYM](/vi/tools/dividend-calculator/)
 - Học đầu tư cơ bản: [Góc học tập](/vi/study/)
 
 Đăng ký bản tin hàng tuần về thị trường Mỹ và phân tích ETF.

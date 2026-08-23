@@ -21,7 +21,6 @@ categories:
   - "Thị trường hằng ngày"
 author: "InvestIQs Editorial"
 reviewedBy: "InvestIQs Review Team"
-lang: "vi"
 ---
 
 

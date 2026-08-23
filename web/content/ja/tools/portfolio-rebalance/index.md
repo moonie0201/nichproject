@@ -23,8 +23,8 @@ disclaimer: true
 
 ## 関連ツール
 
-- [SCHD配当計算機](/ja/tools/dividend-calculator/schd/)
-- [SCHD vs JEPI比較](/ja/tools/compare/schd-vs-jepi/)
+- [SCHD配当計算機](/ja/tools/dividend-calculator/)
+- [SCHD vs JEPI比較](/ja/tools/compare/)
 - [ポートフォリオ収益計算機](/ja/tools/portfolio-income/)
 - [投資ツール一覧](/ja/tools/)
 

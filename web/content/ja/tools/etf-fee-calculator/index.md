@@ -25,7 +25,7 @@ ETFの経費率は毎年ファンド資産から自動的に差し引かれ、�
 
 - [DCA積立投資計算機](/ja/tools/dca-calculator/)
 - [FIREシミュレーター](/ja/tools/fire-calculator/)
-- [配当計算機 — VYM](/ja/tools/dividend-calculator/vym/)
+- [配当計算機 — VYM](/ja/tools/dividend-calculator/)
 - 投資の基礎を学ぶ: [投資の学び](/ja/study/)
 
 毎週金曜日、米国市場とETF分析をまとめたニュースレターをお届けします。

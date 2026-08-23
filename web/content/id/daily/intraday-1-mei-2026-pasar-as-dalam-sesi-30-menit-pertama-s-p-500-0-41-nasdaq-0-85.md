@@ -21,7 +21,6 @@ categories:
   - "Pasar Harian"
 author: "InvestIQs Editorial"
 reviewedBy: "InvestIQs Review Team"
-lang: "id"
 ---
 
 

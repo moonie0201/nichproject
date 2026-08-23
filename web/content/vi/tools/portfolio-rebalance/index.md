@@ -23,8 +23,8 @@ Nhập giá trị hiện tại và tỷ trọng mục tiêu cho từng vị th�
 
 ## Công cụ liên quan
 
-- [Máy tính cổ tức SCHD](/vi/tools/dividend-calculator/schd/)
-- [So sánh SCHD vs JEPI](/vi/tools/compare/schd-vs-jepi/)
+- [Máy tính cổ tức SCHD](/vi/tools/dividend-calculator/)
+- [So sánh SCHD vs JEPI](/vi/tools/compare/)
 - [Máy tính thu nhập danh mục](/vi/tools/portfolio-income/)
 - [Tất cả công cụ đầu tư](/vi/tools/)
 

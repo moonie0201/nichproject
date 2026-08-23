@@ -93,7 +93,7 @@ Kenaikan dividen JEPI (+10.3%) bersifat positif namun sekaligus menjadi peringat
 
 <div class="faq-item"><h3>T4: Apakah posisi 52-minggu terendah adalah sinyal beli sekarang?</h3><p>Harga dekat titik terendah ($56.55) mungkin menarik secara teknikal, namun mengabaikan kelemahan struktural JEPI: pertumbuhan capital yang lemah, P/E overvalued, dan risiko premium opsi di fase rate cut. Bahkan setelah membeli di harga rendah, ada kemungkinan lebih lanjut decline, ditambah risiko pemotongan dividen.</p></div>
 
-<div class="faq-item"><h3>T5: Bagaimana nasib JEPI jika suku bunga terus diturunkan?</h3><p>Dengan suku bunga lebih rendah, kemungkinan besar premium penjualan opsi akan meluruh—income strategy akan terkepung. Risiko pemotongan dividen di fase ini sangat tinggi. Sebaliknya, <a href="/id/study/dividen-kuartalan-<a href=">jepi</a>-naik-103-namun-stagnasi-pertumbuhan-menunjuk/">ETF dividen</a> growth seperti SCHD akan mendapat revaluasi positif saat rates turun, karena valuasi multiple akan meluas untuk growth dividend stocks.</p></div>
+<div class="faq-item"><h3>T5: Bagaimana nasib JEPI jika suku bunga terus diturunkan?</h3><p>Dengan suku bunga lebih rendah, kemungkinan besar premium penjualan opsi akan meluruh—income strategy akan terkepung. Risiko pemotongan dividen di fase ini sangat tinggi. Sebaliknya, ETF dividen growth seperti SCHD akan mendapat revaluasi positif saat rates turun, karena valuasi multiple akan meluas untuk growth dividend stocks.</p></div>
 
 </div>
 

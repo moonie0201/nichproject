@@ -37,6 +37,11 @@ faq:
     a: "세액공제와 과세 이연 장점이 있지만 중도 인출, 연금 수령 시점, 위험자산 한도, 금융사별 상품 제한이 있습니다. 자금 사용 시점이 짧으면 절세보다 유동성이 더 중요할 수 있습니다."
 # 외부 1차 출처가 없어 검증 가능성이 낮아 색인에서 제외한다. 출처 보강 시 해제.
 robotsNoIndex: true
+sources:
+  - name: "국세청"
+    url: "https://www.nts.go.kr"
+  - name: "국가법령정보센터"
+    url: "https://www.law.go.kr"
 ---
 
 국내상장 해외 ETF를 고를 때 질문은 보통 `어떤 ETF가 좋을까`에서 시작합니다. 하지만 실제로 세후 수익을 흔드는 지점은 상품명보다 먼저 나옵니다. `국내 거래소에 상장된 상품인지`, `일반계좌인지 ISA인지`, `연금저축이나 IRP처럼 오래 묶을 수 있는 돈인지`입니다.
@@ -146,6 +151,8 @@ IRP는 연금저축보다 운용 제약이 더 강하게 느껴질 수 있습니
     <p><a href="/ko/tools/watchlist/" data-analytics-cta="click" data-analytics-campaign="taxpkg_etf_aftertax_newsletter_v1" data-analytics-content-slug="kr-listed-global-etf-tax-account-selection" data-analytics-slot="end_cap" data-analytics-variant="end_b_compare">ETF 관심 종목 도구 열기</a></p>
   </div>
 </aside>
+
+<p class="iq-tool-cta">운용보수 차이가 장기에 미치는 영향은 <a href="/ko/tools/etf-fee-calculator/"><strong>ETF 수수료 비교 계산기</strong></a>를 이용하세요.</p>
 
 ## 안전 문구
 

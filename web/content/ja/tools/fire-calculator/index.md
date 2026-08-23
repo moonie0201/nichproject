@@ -25,7 +25,7 @@ FIRE（Financial Independence, Retire Early）とは、投資資産の受動的�
 
 - [DCA積立投資計算機](/ja/tools/dca-calculator/)
 - [ETF手数料比較計算機](/ja/tools/etf-fee-calculator/)
-- [配当計算機 — SCHD](/ja/tools/dividend-calculator/schd/)
+- [配当計算機 — SCHD](/ja/tools/dividend-calculator/)
 - 投資の基礎を学ぶ: [投資の学び](/ja/study/)
 
 毎週金曜日、米国市場とETFの最新情報をまとめたニュースレターをお届けします。

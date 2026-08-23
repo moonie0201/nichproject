@@ -14,7 +14,7 @@ Daftar Anda disimpan **hanya di local storage browser Anda**. Tidak diperlukan a
 
 Untuk analisis lebih mendalam, gunakan alat berikut bersama watchlist Anda:
 
-- [Kalkulator ETF Dividen (SCHD, JEPI, VYM, JEPQ, QYLD)](/id/tools/dividend-calculator/schd/)
+- [Kalkulator ETF Dividen (SCHD, JEPI, VYM, JEPQ, QYLD)](/id/tools/dividend-calculator/)
 - [Perbandingan pendapatan ticker](/id/tools/compare/)
 - [Semua alat investasi](/id/tools/)
 

@@ -24,8 +24,8 @@ SCHD・JEPI・VYMのように利回りが異なる複数のETFを保有する場
 ## 関連ツール
 
 - [ポートフォリオリバランス計算機](/ja/tools/portfolio-rebalance/)
-- [JEPI vs JEPQ比較](/ja/tools/compare/jepi-vs-jepq/)
-- [SCHD vs VYM比較](/ja/tools/compare/schd-vs-vym/)
+- [JEPI vs JEPQ比較](/ja/tools/compare/)
+- [SCHD vs VYM比較](/ja/tools/compare/)
 - [投資ツール一覧](/ja/tools/)
 
 InvestIQsニュースレターに登録して、毎週米国ETFデータの更新情報を受け取りましょう。

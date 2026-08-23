@@ -14,7 +14,7 @@ disclaimer: true
 
 자세한 분석이 필요하다면 아래 도구도 함께 활용해보세요.
 
-- [배당 ETF 계산기 (SCHD·JEPI·VYM·JEPQ·QYLD)](/ko/tools/dividend-calculator/schd/)
+- [배당 ETF 계산기 (SCHD·JEPI·VYM·JEPQ·QYLD)](/ko/tools/dividend-calculator/)
 - [티커 수익 비교 (SCHD vs JEPI 등)](/ko/tools/compare/)
 - [모든 투자 도구 보기](/ko/tools/)
 

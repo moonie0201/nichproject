@@ -14,7 +14,7 @@ disclaimer: true
 
 より詳しい試算には、以下のツールも合わせてご活用ください。
 
-- [配当ETF計算機 (SCHD・JEPI・VYM・JEPQ・QYLD)](/ja/tools/dividend-calculator/schd/)
+- [配当ETF計算機 (SCHD・JEPI・VYM・JEPQ・QYLD)](/ja/tools/dividend-calculator/)
 - [銘柄収益比較ツール](/ja/tools/compare/)
 - [すべての投資ツール](/ja/tools/)
 

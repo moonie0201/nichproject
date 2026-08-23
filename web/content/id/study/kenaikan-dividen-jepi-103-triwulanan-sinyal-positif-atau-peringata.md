@@ -47,7 +47,7 @@ categories:
   - "Investasi"
   - "Keuangan Pribadi"
 ---
-<div class="summary-box"><ul><li>Dividen <a href="/id/study/jepi-<a href=">dividen</a>-kuartalan-naik-103-namun-stagnasi-pertumbuhan-adalah-sinyal-peringa/">JEPI</a> triwulanan: $0.3870 (naik 10.3% dibanding tahun lalu)</li><li>Yield dividen saat ini: 8.08% (tinggi) vs total return 1 tahun: +7.4% (rendah)</li><li>Akumulasi 5 tahun: +42.5% vs <a href="/id/study/dividen-jepi-naik-103-tetapi-pertumbuhan-stagnasi-menunjukkan-sinya/">SCHD</a> +54.9% (lag 2.4%p per tahun)</li><li>P/E 26.8 (SCHD 19.0 berarti 40% overvalued), berada di 30.2% dari range 52 minggu (sinyal bottom hunting)</li><li>Tekanan aliran kas: dividen tinggi berarti pengurangan cadangan modal → daya tahan harga menurun</li></ul></div>
+<div class="summary-box"><ul><li>Dividen JEPI triwulanan: $0.3870 (naik 10.3% dibanding tahun lalu)</li><li>Yield dividen saat ini: 8.08% (tinggi) vs total return 1 tahun: +7.4% (rendah)</li><li>Akumulasi 5 tahun: +42.5% vs <a href="/id/study/dividen-jepi-naik-103-tetapi-pertumbuhan-stagnasi-menunjukkan-sinya/">SCHD</a> +54.9% (lag 2.4%p per tahun)</li><li>P/E 26.8 (SCHD 19.0 berarti 40% overvalued), berada di 30.2% dari range 52 minggu (sinyal bottom hunting)</li><li>Tekanan aliran kas: dividen tinggi berarti pengurangan cadangan modal → daya tahan harga menurun</li></ul></div>
 
 ## Kenaikan Dividen Menyembunyikan Dilema Struktural
 

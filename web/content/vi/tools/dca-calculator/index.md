@@ -23,7 +23,7 @@ Các con số dự kiến giả định mức lợi suất hàng năm không đ�
 
 ## Công cụ và bài viết liên quan
 
-- [Máy tính cổ tức — SCHD](/vi/tools/dividend-calculator/schd/)
+- [Máy tính cổ tức — SCHD](/vi/tools/dividend-calculator/)
 - [So sánh phí ETF](/vi/tools/etf-fee-calculator/)
 - [Máy tính FIRE](/vi/tools/fire-calculator/)
 - Học đầu tư cơ bản: [Góc học tập](/vi/study/)

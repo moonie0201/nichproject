@@ -23,7 +23,7 @@ Angka proyeksi mengasumsikan return tahunan tetap konstan setiap bulan. Pasar ny
 
 ## Alat dan artikel terkait
 
-- [Kalkulator dividen — SCHD](/id/tools/dividend-calculator/schd/)
+- [Kalkulator dividen — SCHD](/id/tools/dividend-calculator/)
 - [Perbandingan biaya ETF](/id/tools/etf-fee-calculator/)
 - [Kalkulator FIRE](/id/tools/fire-calculator/)
 - Pelajari dasar investasi: [Belajar investasi](/id/study/)

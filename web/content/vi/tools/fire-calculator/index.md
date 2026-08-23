@@ -25,7 +25,7 @@ Giả định lợi suất hàng năm cố định là sự đơn giản hóa. R
 
 - [Máy tính DCA](/vi/tools/dca-calculator/)
 - [So sánh phí ETF](/vi/tools/etf-fee-calculator/)
-- [Máy tính cổ tức — SCHD](/vi/tools/dividend-calculator/schd/)
+- [Máy tính cổ tức — SCHD](/vi/tools/dividend-calculator/)
 - Học đầu tư cơ bản: [Góc học tập](/vi/study/)
 
 Đăng ký bản tin hàng tuần về thị trường Mỹ và ETF.

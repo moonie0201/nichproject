@@ -23,8 +23,8 @@ disclaimer: true
 
 ## 관련 도구
 
-- [SCHD 배당 계산기](/ko/tools/dividend-calculator/schd/)
-- [SCHD vs JEPI 비교](/ko/tools/compare/schd-vs-jepi/)
+- [SCHD 배당 계산기](/ko/tools/dividend-calculator/)
+- [SCHD vs JEPI 비교](/ko/tools/compare/)
 - [포트폴리오 인컴 계산기](/ko/tools/portfolio-income/)
 - [모든 투자 도구](/ko/tools/)
 

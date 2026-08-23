@@ -14,7 +14,7 @@ Danh sách được lưu **chỉ trong local storage của trình duyệt**. Kh�
 
 Để phân tích sâu hơn, hãy dùng các công cụ sau cùng với danh sách theo dõi:
 
-- [Máy tính ETF cổ tức (SCHD, JEPI, VYM, JEPQ, QYLD)](/vi/tools/dividend-calculator/schd/)
+- [Máy tính ETF cổ tức (SCHD, JEPI, VYM, JEPQ, QYLD)](/vi/tools/dividend-calculator/)
 - [So sánh thu nhập theo mã cổ phiếu](/vi/tools/compare/)
 - [Tất cả công cụ đầu tư](/vi/tools/)
 

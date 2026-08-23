@@ -25,7 +25,7 @@ Asumsi return tahunan tetap adalah penyederhanaan. Risiko urutan return, inflasi
 
 - [Kalkulator DCA](/id/tools/dca-calculator/)
 - [Perbandingan biaya ETF](/id/tools/etf-fee-calculator/)
-- [Kalkulator dividen — SCHD](/id/tools/dividend-calculator/schd/)
+- [Kalkulator dividen — SCHD](/id/tools/dividend-calculator/)
 - Pelajari dasar investasi: [Belajar investasi](/id/study/)
 
 Daftar newsletter mingguan kami untuk pembaruan pasar AS dan ETF.

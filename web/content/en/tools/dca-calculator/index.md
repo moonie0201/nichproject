@@ -23,7 +23,7 @@ The projected figures assume a constant annual return applied each month. Real m
 
 ## Related tools and articles
 
-- [Dividend calculator — SCHD](/en/tools/dividend-calculator/schd/)
+- [Dividend calculator — SCHD](/en/tools/dividend-calculator/)
 - [ETF fee comparison calculator](/en/tools/etf-fee-calculator/)
 - [FIRE calculator](/en/tools/fire-calculator/)
 - Learn the basics: [Investment study](/en/study/)

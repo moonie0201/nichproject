@@ -16,6 +16,14 @@ ml_env/
 .omc/sessions/
 .claude/scheduled_tasks.lock
 web/public/.omc/
+# web/ 안에서 hugo 를 돌리면 여기에도 상태가 쌓인다 (2026-08-23)
+web/.omc/
+# 영상 캐시 — 편당 수십 MB, 재생성 가능
+.omc/video_cache/
+.omc/script_cache/
+# 잘못된 경로로 만들어진 산출물
+web/web/
+web/public_adsense/
 
 # 빌드 산출물
 web/public/

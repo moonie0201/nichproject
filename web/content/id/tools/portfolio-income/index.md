@@ -24,8 +24,8 @@ Pilih ticker dari dropdown dan masukkan jumlah investasi. Klik "Tambah baris" un
 ## Alat terkait
 
 - [Kalkulator rebalancing portofolio](/id/tools/portfolio-rebalance/)
-- [Perbandingan JEPI vs JEPQ](/id/tools/compare/jepi-vs-jepq/)
-- [Perbandingan SCHD vs VYM](/id/tools/compare/schd-vs-vym/)
+- [Perbandingan JEPI vs JEPQ](/id/tools/compare/)
+- [Perbandingan SCHD vs VYM](/id/tools/compare/)
 - [Semua alat investasi](/id/tools/)
 
 Berlangganan newsletter InvestIQs untuk menerima pembaruan data ETF setiap minggu.

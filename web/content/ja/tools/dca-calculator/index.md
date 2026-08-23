@@ -23,7 +23,7 @@ disclaimer: true
 
 ## 関連ツール・記事
 
-- [配当計算機 — SCHD](/ja/tools/dividend-calculator/schd/)
+- [配当計算機 — SCHD](/ja/tools/dividend-calculator/)
 - [ETF手数料比較計算機](/ja/tools/etf-fee-calculator/)
 - [FIREシミュレーター](/ja/tools/fire-calculator/)
 - 投資の基礎を学ぶ: [投資の学び](/ja/study/)

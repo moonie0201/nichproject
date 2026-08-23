@@ -14,7 +14,7 @@ Your list is stored **only in your browser's local storage**. There is no accoun
 
 For deeper number-crunching, try these tools alongside your watchlist:
 
-- [Dividend ETF Calculator (SCHD, JEPI, VYM, JEPQ, QYLD)](/en/tools/dividend-calculator/schd/)
+- [Dividend ETF Calculator (SCHD, JEPI, VYM, JEPQ, QYLD)](/en/tools/dividend-calculator/)
 - [Side-by-side ticker income comparison](/en/tools/compare/)
 - [All investment tools](/en/tools/)
 

@@ -25,7 +25,7 @@ Kolom selisih menunjukkan berapa lebih banyak yang akan Anda miliki dengan ETF A
 
 - [Kalkulator DCA](/id/tools/dca-calculator/)
 - [Kalkulator FIRE](/id/tools/fire-calculator/)
-- [Kalkulator dividen — VYM](/id/tools/dividend-calculator/vym/)
+- [Kalkulator dividen — VYM](/id/tools/dividend-calculator/)
 - Pelajari dasar investasi: [Belajar investasi](/id/study/)
 
 Daftar newsletter mingguan kami tentang pasar AS dan analisis ETF.

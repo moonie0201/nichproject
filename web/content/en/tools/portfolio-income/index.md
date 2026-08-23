@@ -24,8 +24,8 @@ Choose a ticker from the dropdown, enter the amount invested, and add as many po
 ## Related tools
 
 - [Portfolio rebalance calculator](/en/tools/portfolio-rebalance/)
-- [SCHD vs JEPI comparison](/en/tools/compare/schd-vs-jepi/)
-- [JEPI vs JEPQ comparison](/en/tools/compare/jepi-vs-jepq/)
+- [SCHD vs JEPI comparison](/en/tools/compare/)
+- [JEPI vs JEPQ comparison](/en/tools/compare/)
 - [All investment tools](/en/tools/)
 
 Subscribe to the InvestIQs weekly newsletter for ETF data updates and market analysis.
