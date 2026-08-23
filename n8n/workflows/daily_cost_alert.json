@@ -1,0 +1,58 @@
+{
+  "id": "DailyCostAlert2300",
+  "name": "Daily Cost Alert (매일 23:00 KST, 비용 한도 체크)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 23 * * *"
+            }
+          ]
+        }
+      },
+      "id": "trig-cost-alert",
+      "name": "매일 23:00 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/paperclip/cost-alert-check",
+        "options": {"timeout": 60000},
+        "method": "POST"
+      },
+      "id": "http-cost-check",
+      "name": "비용 한도 체크",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = $json;\nconst skipped = result.skipped ? `⏭️ Skipped: ${result.skipped}` : '';\nconst alertSent = result.alert_sent === true ? `✅ Alert sent: ${result.message}` : '';\nconst noAlert = result.alert_sent === false && !result.skipped ? `✓ 비용 정상: $${result.today_usd?.toFixed(2) || '0.00'} / $${result.threshold_usd?.toFixed(2) || '5.00'}` : '';\nconst error = result.error ? `❌ Error: ${result.error}` : '';\nconst webhookError = result.webhook_error ? `⚠️ Webhook error: ${result.webhook_error}` : '';\n\nconst text = [skipped, alertSent, noAlert, error, webhookError].filter(s => s).join('\\n') || '처리됨';\n\nreturn [{ json: { text, success: true, alert_sent: result.alert_sent, today_usd: result.today_usd, threshold_usd: result.threshold_usd } }];"
+      },
+      "id": "msg-cost-alert",
+      "name": "결과 메시지",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, 300]
+    }
+  ],
+  "connections": {
+    "매일 23:00 (KST)": {
+      "main": [[{"node": "비용 한도 체크", "type": "main", "index": 0}]]
+    },
+    "비용 한도 체크": {
+      "main": [[{"node": "결과 메시지", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Seoul",
+    "executionOrder": "v1"
+  }
+}

@@ -1,4 +1,5 @@
 ko:
+  - { title: "연금저축·IRP 세액공제 계산기", url: "/ko/tools/pension-tax-credit/", icon: "🧾", desc: "연말정산에서 얼마 돌려받는지 (최대 148.5만원)" }
   - { title: "적립식(DCA) 복리 계산기", url: "/ko/tools/dca-calculator/", icon: "📈", desc: "매달 얼마씩 N년 투자하면 얼마가 되는지" }
   - { title: "FIRE·목표금액 계산기", url: "/ko/tools/fire-calculator/", icon: "🔥", desc: "경제적 자립까지 몇 년 걸리는지" }
   - { title: "배당 ETF 계산기", url: "/ko/tools/dividend-calculator/schd/", icon: "💵", desc: "SCHD·JEPI·VYM 배당 재투자 시뮬레이션" }

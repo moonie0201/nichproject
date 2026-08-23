@@ -39,3 +39,6 @@ n8n/bridge.log
 # .tiktok_secrets/ 가 빠져 있었다. CLAUDE.md 보안 체크리스트는 등록돼 있다고
 # 적혀 있었지만 실제로는 없어서, git add -A 한 번이면 토큰이 커밋됐다. (2026-08-23)
 .tiktok_secrets/
+
+# 데이터 파일 백업 — 자동 생성 (2026-08-23)
+*.bak.*

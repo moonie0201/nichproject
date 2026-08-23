@@ -22,5 +22,401 @@
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/종합소득세-신고と절세戦略の実務-2026年版期限控除加算税を数字で整理.md",
     "published_at": "2026-04-27T07:06:13.000860"
+  },
+  {
+    "topic_id": "backfill-ja-about",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/about.md",
+    "published_at": "2026-05-01T08:59:58.243969",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "ja"
+  },
+  {
+    "topic_id": "backfill-ja-contact",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/contact.md",
+    "published_at": "2026-05-01T21:25:05.779319",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "ja"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-4-27-30-s-p-500-0-13-0-02",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-4-27-30-s-p-500-0-13-0-02.md",
+    "published_at": "2026-05-01T22:54:08.591091",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-2026-4-29-s-p-500-711-69-0-49-1-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/2026-4-29-s-p-500-711-69-0-49-1-01.md",
+    "published_at": "2026-05-01T22:54:08.591166",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-2026-5-1-s-p-500-718-66-0-99-0-93",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/2026-5-1-s-p-500-718-66-0-99-0-93.md",
+    "published_at": "2026-05-01T22:54:08.591319",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-2026-4-30-s-p-500-711-58-0-02-0-61",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/2026-4-30-s-p-500-711-58-0-02-0-61.md",
+    "published_at": "2026-05-01T22:54:08.591438",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-2026-4-28-s-p-500-715-17-0-00-0-00",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/2026-4-28-s-p-500-715-17-0-00-0-00.md",
+    "published_at": "2026-05-01T22:54:08.591536",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-4-28-30-s-p-500-0-03-0-17",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-4-28-30-s-p-500-0-03-0-17.md",
+    "published_at": "2026-05-01T22:54:08.591641",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-4-29-30-s-p-500-0-03-0-05",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-4-29-30-s-p-500-0-03-0-05.md",
+    "published_at": "2026-05-01T22:54:08.591744",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-4-30-30-s-p-500-0-47-0-86",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-4-30-30-s-p-500-0-47-0-86.md",
+    "published_at": "2026-05-01T22:54:08.591852",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-確定申告の実務配当課税とideco新nisaの節税戦略",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/確定申告の実務配当課税とideco新nisaの節税戦略.md",
+    "published_at": "2026-05-01T22:54:08.591949",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-study-emaxis-slim-全世界株式-vs-emaxis-slim-sp50020年で見える地域分散の差",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/emaxis-slim-全世界株式-vs-emaxis-slim-sp50020年で見える地域分散の差.md",
+    "published_at": "2026-05-01T22:54:08.592072",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-study-信託報酬005と05の30年複利モデル1000万円で見える累積コスト差",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/信託報酬005と05の30年複利モデル1000万円で見える累積コスト差.md",
+    "published_at": "2026-05-01T22:54:08.592166",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-study-レバレッジetf-tqqqの5年ドローダウンと変動性分解-3倍が2倍を下回る局面",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/レバレッジetf-tqqqの5年ドローダウンと変動性分解-3倍が2倍を下回る局面.md",
+    "published_at": "2026-05-01T22:54:08.592333",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-study-tqqqの5年ドローダウンと変動性分解-3倍が2倍に劣る局面",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/tqqqの5年ドローダウンと変動性分解-3倍が2倍に劣る局面.md",
+    "published_at": "2026-05-01T22:54:08.592465",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-study-nisa積立実績公開emaxis-slim-全世界株式を月20万円で1年積んだ本当のリターン",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/nisa積立実績公開emaxis-slim-全世界株式を月20万円で1年積んだ本当のリターン.md",
+    "published_at": "2026-05-01T22:54:08.592595",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-5-1-30-s-p-500-0-41-0-87",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-5-1-30-s-p-500-0-41-0-87.md",
+    "published_at": "2026-05-01T23:00:05.431633",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-2026-5-2-s-p-500-720-65-0-28-0-96",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/2026-5-2-s-p-500-720-65-0-28-0-96.md",
+    "published_at": "2026-05-02T19:36:19.408543",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-ja-privacy",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/privacy.md",
+    "published_at": "2026-05-02T22:31:35.370000",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "ja"
+  },
+  {
+    "topic_id": "backfill-ja-terms",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/terms.md",
+    "published_at": "2026-05-02T22:33:40.051969",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "ja"
+  },
+  {
+    "topic_id": "backfill-daily-2026-5-13-s-p-500-738-18-0-15-0-85",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/2026-5-13-s-p-500-738-18-0-15-0-85.md",
+    "published_at": "2026-05-13T07:46:16.874267",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-jepq四半期配当増額分析高配当etfの収益率と変動性リスク評価",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/jepq四半期配当増額分析高配当etfの収益率と変動性リスク評価.md",
+    "published_at": "2026-05-13T07:49:12.360338",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-5-13-30-s-p-500-0-22-0-39",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-5-13-30-s-p-500-0-22-0-39.md",
+    "published_at": "2026-05-13T23:00:01.120722",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-5-14-30-s-p-500-0-10-0-22",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-5-14-30-s-p-500-0-10-0-22.md",
+    "published_at": "2026-05-14T23:00:01.023594",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-5-15-30-s-p-500-0-36-0-44",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-5-15-30-s-p-500-0-36-0-44.md",
+    "published_at": "2026-05-15T23:00:01.073559",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-weekly-weekly-2026nyeon-5wol-3jucha-5wol-11il-15il-s-p-500-0-37-0-20",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/weekly/weekly-2026nyeon-5wol-3jucha-5wol-11il-15il-s-p-500-0-37-0-20.md",
+    "published_at": "2026-05-16T09:45:00.990943",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "weekly"
+  },
+  {
+    "topic_id": "backfill-daily-2026-5-18-s-p-500-739-17-1-20-1-51",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/2026-5-18-s-p-500-739-17-1-20-1-51.md",
+    "published_at": "2026-05-18T07:45:01.265023",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-毎月分配型etfのリスクおよびボラティリティ分析jepq対jepiの分配金利回りとトータルリターンの逆説-jepq-jepi-比較",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/毎月分配型etfのリスクおよびボラティリティ分析jepq対jepiの分配金利回りとトータルリターンの逆説-jepq-jepi-比較.md",
+    "published_at": "2026-05-18T07:48:07.995131",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-5-18-30-s-p-500-0-10-0-31",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-5-18-30-s-p-500-0-10-0-31.md",
+    "published_at": "2026-05-18T23:00:01.047831",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-2026-5-19-s-p-500-738-65-0-07-0-43",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/2026-5-19-s-p-500-738-65-0-07-0-43.md",
+    "published_at": "2026-05-19T07:45:01.304969",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-配当再投資drip20年シミュレーションの罠ドローダウンとボラティリティの定量的検証-配当再投資-シミュレーション",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/配当再投資drip20年シミュレーションの罠ドローダウンとボラティリティの定量的検証-配当再投資-シミュレーション.md",
+    "published_at": "2026-05-19T07:49:41.464190",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-5-19-30-s-p-500-0-07-0-07",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-5-19-30-s-p-500-0-07-0-07.md",
+    "published_at": "2026-05-19T23:00:01.240347",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-2026-5-20-s-p-500-733-73-0-67-0-62",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/2026-5-20-s-p-500-733-73-0-67-0-62.md",
+    "published_at": "2026-05-20T07:45:01.374036",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-高配当etfの罠とデータ分析利回り8超etfにおける5年トータルリターンとボラティリティリスク-高配当etf-リスク",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/高配当etfの罠とデータ分析利回り8超etfにおける5年トータルリターンとボラティリティリスク-高配当etf-リスク.md",
+    "published_at": "2026-05-20T07:47:27.647922",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-5-20-30-s-p-500-0-06-0-10",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-5-20-30-s-p-500-0-06-0-10.md",
+    "published_at": "2026-05-20T23:00:01.341693",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-2026-5-21-s-p-500-741-25-1-02-1-66",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/2026-5-21-s-p-500-741-25-1-02-1-66.md",
+    "published_at": "2026-05-21T07:45:01.328981",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-新nisa口座におけるetf投資の節税効果5年間シミュレーションに基づく課税口座との比較-新nisa-節税",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/新nisa口座におけるetf投資の節税効果5年間シミュレーションに基づく課税口座との比較-新nisa-節税.md",
+    "published_at": "2026-05-21T07:49:09.798793",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-2026-5-21-30-s-p-500-0-15-0-25",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/daily/intraday-2026-5-21-30-s-p-500-0-15-0-25.md",
+    "published_at": "2026-05-21T23:00:01.040795",
+    "source": "backfill",
+    "lang": "ja",
+    "section": "daily"
+  },
+  {
+    "topic_id": "blog-etf-04",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/新nisaでvooを買うべきか為替配当税のトレードオフ分析.md",
+    "published_at": "2026-06-30T07:05:30.175647"
+  },
+  {
+    "topic_id": "blog-etf-05",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/jepi-vs-vymカバードコール型の配当8の罠と5年総リターン76の差.md",
+    "published_at": "2026-07-01T07:06:00.826994"
+  },
+  {
+    "topic_id": "blog-div-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/schd配当成長戦略高利回りの落とし穴と10年リターン分離.md",
+    "published_at": "2026-07-02T07:04:28.139144"
+  },
+  {
+    "topic_id": "blog-div-02",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/高配当etfデータ分析分配利回り8超の5年総リターン実態と税効率の視点.md",
+    "published_at": "2026-07-03T07:06:15.652901"
+  },
+  {
+    "topic_id": "blog-div-03",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/配当再投資20年シミュレーション前提と市場現実の乖離.md",
+    "published_at": "2026-07-18T07:08:14.834956"
+  },
+  {
+    "topic_id": "blog-tax-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/新nisa成長投資枠vs積立投資枠5シナリオ税効率シミュレーション.md",
+    "published_at": "2026-07-19T07:04:31.106547"
+  },
+  {
+    "topic_id": "blog-tax-02",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/ideco出口戦略の税金モデル一括受取vs年金受取のリスク分解.md",
+    "published_at": "2026-07-20T07:05:36.829884"
+  },
+  {
+    "topic_id": "blog-cost-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/sbi証券vs楽天証券vsマネックス米国etf取引コスト実測ベンチマーク.md",
+    "published_at": "2026-07-23T07:04:23.576540"
+  },
+  {
+    "topic_id": "blog-strategy-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/ja/study/ファクターetf10年実績検証-バリュー選好は報われたかモメンタムの落差を見る.md",
+    "published_at": "2026-07-24T07:05:38.985088"
   }
 ]

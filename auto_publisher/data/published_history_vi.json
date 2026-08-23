@@ -16,5 +16,374 @@
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/종합소득세-신고-2026-lịch-nộp-thuế-6-45-và-mẹo-절세.md",
     "published_at": "2026-04-27T07:09:38.100891"
+  },
+  {
+    "topic_id": "backfill-vi-about",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/about.md",
+    "published_at": "2026-05-01T09:00:01.411026",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "vi"
+  },
+  {
+    "topic_id": "backfill-vi-contact",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/contact.md",
+    "published_at": "2026-05-01T21:25:05.779546",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "vi"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-29-04-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-02-nasdaq-0-03",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-29-04-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-02-nasdaq-0-03.md",
+    "published_at": "2026-05-01T22:54:08.588156",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-27-04-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-10-nasdaq-0-07",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-27-04-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-10-nasdaq-0-07.md",
+    "published_at": "2026-05-01T22:54:08.588273",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-01-05-2026-ng-c-a-th-tr-ng-m-s-p-500-718-66-0-99-nasdaq-0-93",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/01-05-2026-ng-c-a-th-tr-ng-m-s-p-500-718-66-0-99-nasdaq-0-93.md",
+    "published_at": "2026-05-01T22:54:08.588382",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-29-04-2026-ng-c-a-th-tr-ng-m-s-p-500-711-69-0-49-nasdaq-1-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/29-04-2026-ng-c-a-th-tr-ng-m-s-p-500-711-69-0-49-nasdaq-1-01.md",
+    "published_at": "2026-05-01T22:54:08.588544",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-30-04-2026-ng-c-a-th-tr-ng-m-s-p-500-711-58-0-02-nasdaq-0-61",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/30-04-2026-ng-c-a-th-tr-ng-m-s-p-500-711-58-0-02-nasdaq-0-61.md",
+    "published_at": "2026-05-01T22:54:08.588649",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-30-04-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-42-nasdaq-0-84",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-30-04-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-42-nasdaq-0-84.md",
+    "published_at": "2026-05-01T22:54:08.588750",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-28-04-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-02-nasdaq-0-17",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-28-04-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-02-nasdaq-0-17.md",
+    "published_at": "2026-05-01T22:54:08.588843",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-28-04-2026-ng-c-a-th-tr-ng-m-s-p-500-715-17-0-00-nasdaq-0-00",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/28-04-2026-ng-c-a-th-tr-ng-m-s-p-500-715-17-0-00-nasdaq-0-00.md",
+    "published_at": "2026-05-01T22:54:08.588946",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-quyết-toán-thuế-thu-nhập-cá-nhân-cổ-tức-quỹ-hưu-trí-tự-nguyện-và-cấu-trúc-tài-kh",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/quyết-toán-thuế-thu-nhập-cá-nhân-cổ-tức-quỹ-hưu-trí-tự-nguyện-và-cấu-trúc-tài-kh.md",
+    "published_at": "2026-05-01T22:54:08.589050",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-study-tqqq-5-năm-khi-etf-đòn-bẩy-3x-thua-2x-trong-một-chu-kỳ-biến-động",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/tqqq-5-năm-khi-etf-đòn-bẩy-3x-thua-2x-trong-một-chu-kỳ-biến-động.md",
+    "published_at": "2026-05-01T22:54:08.589173",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-study-fuevfvnd-vs-vfmvn30-backtest-5-năm-phí-quản-lý-và-sai-số-theo-dõi",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/fuevfvnd-vs-vfmvn30-backtest-5-năm-phí-quản-lý-và-sai-số-theo-dõi.md",
+    "published_at": "2026-05-01T22:54:08.589383",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-study-phân-tích-tqqq-5-năm-drawdown-và-biến-động-cho-thấy-vì-sao-3x-không-luôn-thắng-2",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/phân-tích-tqqq-5-năm-drawdown-và-biến-động-cho-thấy-vì-sao-3x-không-luôn-thắng-2.md",
+    "published_at": "2026-05-01T22:54:08.589518",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-study-fuevfvnd-vs-fuessv50-dữ-liệu-10-năm-về-tổng-lợi-nhuận-và-biến-động",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/fuevfvnd-vs-fuessv50-dữ-liệu-10-năm-về-tổng-lợi-nhuận-và-biến-động.md",
+    "published_at": "2026-05-01T22:54:08.589651",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-01-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-44-nasdaq-0-92",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-01-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-44-nasdaq-0-92.md",
+    "published_at": "2026-05-01T23:15:05.073189",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-02-05-2026-ng-c-a-th-tr-ng-m-s-p-500-720-65-0-28-nasdaq-0-96",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/02-05-2026-ng-c-a-th-tr-ng-m-s-p-500-720-65-0-28-nasdaq-0-96.md",
+    "published_at": "2026-05-02T19:36:35.741771",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-vi-privacy",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/privacy.md",
+    "published_at": "2026-05-02T22:31:49.663702",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "vi"
+  },
+  {
+    "topic_id": "backfill-vi-terms",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/terms.md",
+    "published_at": "2026-05-02T22:34:16.609658",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "vi"
+  },
+  {
+    "topic_id": "backfill-study-phân-tích-tăng-cổ-tức-hàng-quý-của-jepq-đánh-giá-lợi-suất-và-rủi-ro-biến-động-củ",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/phân-tích-tăng-cổ-tức-hàng-quý-của-jepq-đánh-giá-lợi-suất-và-rủi-ro-biến-động-củ.md",
+    "published_at": "2026-05-13T07:51:36.260345",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-13-05-2026-ng-c-a-th-tr-ng-m-s-p-500-738-18-0-15-nasdaq-0-85",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/13-05-2026-ng-c-a-th-tr-ng-m-s-p-500-738-18-0-15-nasdaq-0-85.md",
+    "published_at": "2026-05-13T08:04:14.829327",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-13-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-12-nasdaq-0-37",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-13-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-12-nasdaq-0-37.md",
+    "published_at": "2026-05-13T23:15:01.128364",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-14-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-25-nasdaq-0-38",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-14-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-25-nasdaq-0-38.md",
+    "published_at": "2026-05-14T23:15:01.242053",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-15-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-09-nasdaq-0-08",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-15-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-09-nasdaq-0-08.md",
+    "published_at": "2026-05-15T23:15:01.054891",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-16-05-2026-ng-c-a-th-tr-ng-m-s-p-500-739-17-1-20-nasdaq-1-51",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/16-05-2026-ng-c-a-th-tr-ng-m-s-p-500-739-17-1-20-nasdaq-1-51.md",
+    "published_at": "2026-05-16T08:02:52.315693",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-weekly-weekly-2026nyeon-5wol-3jucha-5wol-11il-15il-t-ng-k-t-tu-n-th-tr-ng-m-s-p-500-0-37-nasdaq-0-20",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/weekly/weekly-2026nyeon-5wol-3jucha-5wol-11il-15il-t-ng-k-t-tu-n-th-tr-ng-m-s-p-500-0-37-nasdaq-0-20.md",
+    "published_at": "2026-05-16T10:00:00.895777",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "weekly"
+  },
+  {
+    "topic_id": "backfill-daily-17-05-2026-ng-c-a-th-tr-ng-m-s-p-500-739-17-1-20-nasdaq-1-51",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/17-05-2026-ng-c-a-th-tr-ng-m-s-p-500-739-17-1-20-nasdaq-1-51.md",
+    "published_at": "2026-05-17T08:00:01.277558",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-phân-tích-rủi-ro-và-biến-động-của-etf-chia-cổ-tức-hàng-tháng-nghịch-lý-giữa-tỷ-s",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/phân-tích-rủi-ro-và-biến-động-của-etf-chia-cổ-tức-hàng-tháng-nghịch-lý-giữa-tỷ-s.md",
+    "published_at": "2026-05-18T07:50:01.627613",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-18-05-2026-ng-c-a-th-tr-ng-m-s-p-500-739-17-1-20-nasdaq-1-51",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/18-05-2026-ng-c-a-th-tr-ng-m-s-p-500-739-17-1-20-nasdaq-1-51.md",
+    "published_at": "2026-05-18T08:00:01.334508",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-18-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-01-nasdaq-0-24",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-18-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-01-nasdaq-0-24.md",
+    "published_at": "2026-05-18T23:15:01.212634",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-cạm-bẫy-của-mô-phỏng-tái-đầu-tư-cổ-tức-drip-20-năm-phân-tích-rủi-ro-và-biến-động",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/cạm-bẫy-của-mô-phỏng-tái-đầu-tư-cổ-tức-drip-20-năm-phân-tích-rủi-ro-và-biến-động.md",
+    "published_at": "2026-05-19T07:51:17.458519",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-19-05-2026-ng-c-a-th-tr-ng-m-s-p-500-738-65-0-07-nasdaq-0-43",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/19-05-2026-ng-c-a-th-tr-ng-m-s-p-500-738-65-0-07-nasdaq-0-43.md",
+    "published_at": "2026-05-19T08:00:01.434772",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-19-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-24-nasdaq-0-60",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-19-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-24-nasdaq-0-60.md",
+    "published_at": "2026-05-19T23:15:01.482870",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-phân-tích-dữ-liệu-cạm-bẫy-etf-siêu-cổ-tức-tổng-lợi-nhuận-5-năm-và-rủi-ro-biến-độ",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/phân-tích-dữ-liệu-cạm-bẫy-etf-siêu-cổ-tức-tổng-lợi-nhuận-5-năm-và-rủi-ro-biến-độ.md",
+    "published_at": "2026-05-20T07:48:44.334504",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-20-05-2026-ng-c-a-th-tr-ng-m-s-p-500-733-73-0-67-nasdaq-0-62",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/20-05-2026-ng-c-a-th-tr-ng-m-s-p-500-733-73-0-67-nasdaq-0-62.md",
+    "published_at": "2026-05-20T08:00:01.437765",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-20-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-06-nasdaq-0-03",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-20-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-06-nasdaq-0-03.md",
+    "published_at": "2026-05-20T23:15:01.052685",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-study-hiệu-ứng-tối-ưu-thuế-khi-đầu-tư-etf-đánh-giá-tỷ-suất-thực-tế-qua-dữ-l",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/hiệu-ứng-tối-ưu-thuế-khi-đầu-tư-etf-đánh-giá-tỷ-suất-thực-tế-qua-dữ-l.md",
+    "published_at": "2026-05-21T07:51:03.048394",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "study"
+  },
+  {
+    "topic_id": "backfill-daily-21-05-2026-ng-c-a-th-tr-ng-m-s-p-500-741-25-1-02-nasdaq-1-66",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/21-05-2026-ng-c-a-th-tr-ng-m-s-p-500-741-25-1-02-nasdaq-1-66.md",
+    "published_at": "2026-05-21T08:00:01.354168",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "backfill-daily-intraday-21-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-11-nasdaq-0-16",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/daily/intraday-21-05-2026-th-tr-ng-m-trong-phi-n-30-ph-t-u-s-p-500-0-11-nasdaq-0-16.md",
+    "published_at": "2026-05-21T23:15:01.564943",
+    "source": "backfill",
+    "lang": "vi",
+    "section": "daily"
+  },
+  {
+    "topic_id": "blog-etf-03",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/phí-quản-lý-05-vs-15năm-20-năm-lãi-kép-trên-500-triệu-mất-bao-nhiêu.md",
+    "published_at": "2026-07-25T07:07:35.778051"
+  },
+  {
+    "topic_id": "blog-etf-04",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/vn-index-etf-vs-quỹ-mở-chủ-động-7-năm-dữ-liệu-chi-phí-và-lợi-nhuận-thực-tế.md",
+    "published_at": "2026-07-26T07:05:50.768086"
+  },
+  {
+    "topic_id": "blog-etf-05",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/vi/study/fuevfvnd-vs-tiết-kiệm-ngân-hàng-dữ-liệu-10-năm-lợi-suất-thực-sau-thuế.md",
+    "published_at": "2026-07-27T07:07:27.425670"
   }
 ]

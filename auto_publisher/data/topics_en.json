@@ -1,5 +1,93 @@
 [
   {
+    "id": "policy-en-00",
+    "topic": "Traditional vs Roth IRA: where the tax math actually flips",
+    "keywords": [
+      "traditional vs roth ira",
+      "ira tax deduction",
+      "retirement accounts"
+    ],
+    "category": "Retirement & Tax",
+    "type": "blog"
+  },
+  {
+    "id": "policy-en-01",
+    "topic": "401(k) employer match: the return you give up by not contributing",
+    "keywords": [
+      "401k match",
+      "employer match",
+      "retirement contribution"
+    ],
+    "category": "Retirement & Tax",
+    "type": "blog"
+  },
+  {
+    "id": "policy-en-02",
+    "topic": "Contribution limits that decide your tax bill this year",
+    "keywords": [
+      "401k contribution limit",
+      "ira contribution limit",
+      "tax deduction"
+    ],
+    "category": "Retirement & Tax",
+    "type": "blog"
+  },
+  {
+    "id": "policy-en-03",
+    "topic": "Early withdrawal penalty: what a 10% hit really costs over 20 years",
+    "keywords": [
+      "early withdrawal penalty",
+      "401k withdrawal",
+      "retirement penalty"
+    ],
+    "category": "Retirement & Tax",
+    "type": "blog"
+  },
+  {
+    "id": "policy-en-04",
+    "topic": "Tax-loss harvesting and the wash-sale rule",
+    "keywords": [
+      "tax loss harvesting",
+      "wash sale rule",
+      "capital gains"
+    ],
+    "category": "Retirement & Tax",
+    "type": "blog"
+  },
+  {
+    "id": "policy-en-05",
+    "topic": "Qualified vs ordinary dividends: the rate difference on ETF income",
+    "keywords": [
+      "qualified dividends",
+      "dividend tax rate",
+      "etf taxes"
+    ],
+    "category": "Retirement & Tax",
+    "type": "blog"
+  },
+  {
+    "id": "policy-en-06",
+    "topic": "Asset location: which accounts should hold bonds vs stocks",
+    "keywords": [
+      "asset location",
+      "tax efficient investing",
+      "taxable account"
+    ],
+    "category": "Retirement & Tax",
+    "type": "blog"
+  },
+  {
+    "id": "policy-en-07",
+    "topic": "Required minimum distributions and how they reshape withdrawals",
+    "keywords": [
+      "required minimum distribution",
+      "rmd",
+      "retirement withdrawal"
+    ],
+    "category": "Retirement & Tax",
+    "type": "blog"
+  },
+  {
     "id": "blog-etf-01",
     "topic": "VOO vs SCHD 20-year backtest: dividend yield assumption decomposition",
     "keywords": [
