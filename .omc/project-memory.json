@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1777519372202,
+  "lastScanned": 1787444841508,
   "projectRoot": "/home/mh/ocstorage/workspace/nichproject",
   "techStack": {
     "languages": [
@@ -33,16 +33,28 @@
   "structure": {
     "isMonorepo": false,
     "workspaces": [],
-    "mainDirectories": [],
+    "mainDirectories": [
+      "scripts"
+    ],
     "gitBranches": null
   },
   "customNotes": [],
   "directoryMap": {
+    "__pycache__": {
+      "path": "__pycache__",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1787444841500,
+      "keyFiles": [
+        "hermes_report.cpython-312.pyc",
+        "test_valid.cpython-312.pyc"
+      ]
+    },
     "ai_hedge_fund": {
       "path": "ai_hedge_fund",
       "purpose": null,
       "fileCount": 6,
-      "lastAccessed": 1777519372198,
+      "lastAccessed": 1787444841500,
       "keyFiles": [
         "README.md",
         "poetry.lock",
@@ -52,34 +64,43 @@
     "auto_publisher": {
       "path": "auto_publisher",
       "purpose": null,
-      "fileCount": 29,
-      "lastAccessed": 1777519372200,
+      "fileCount": 56,
+      "lastAccessed": 1787444841502,
       "keyFiles": [
         "__init__.py",
+        "affiliate_compliance.py",
         "auto_publisher.log",
-        "chart_generator.py",
-        "compliance.py",
-        "config.py"
+        "bgm_manager.py",
+        "branding.py"
       ]
     },
     "blog": {
       "path": "blog",
       "purpose": null,
-      "fileCount": 7,
-      "lastAccessed": 1777519372200,
+      "fileCount": 9,
+      "lastAccessed": 1787444841502,
       "keyFiles": [
+        "2026년_06월_05일_시장_데이터_부재_환경_속_ETF_투자_전략_분석.json",
+        "2026년_5월_26일_시장_분석_거시경제_지표와_ETF_투자_전략의_상관관계.json",
         "2026년_부동산_투자_전망_분석.md",
         "ETF_투자_입문_완벽_가이드.md",
-        "ISA_계좌_절세_전략_가이드.md",
-        "covered-call-risk.md",
-        "dividend-growth-vs-covered-call.md"
+        "ISA_계좌_절세_전략_가이드.md"
+      ]
+    },
+    "content_planning": {
+      "path": "content_planning",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1787444841502,
+      "keyFiles": [
+        "week3_etf_content_plan.md"
       ]
     },
     "money_printer_v2": {
       "path": "money_printer_v2",
       "purpose": null,
       "fileCount": 11,
-      "lastAccessed": 1777519372200,
+      "lastAccessed": 1787444841503,
       "keyFiles": [
         "AGENTS.md",
         "CLAUDE.md",
@@ -91,34 +112,44 @@
     "n8n": {
       "path": "n8n",
       "purpose": null,
-      "fileCount": 6,
-      "lastAccessed": 1777519372200,
+      "fileCount": 9,
+      "lastAccessed": 1787444841503,
       "keyFiles": [
+        "ACTIVATION_GUIDE.md",
+        "backup_workflows.sh",
         "bridge.log",
         "bridge_api.py",
-        "bridge_api.service",
-        "docker-compose.yml",
-        "verify_workflow_sync.py"
+        "bridge_api.service"
       ]
     },
     "newsletter": {
       "path": "newsletter",
       "purpose": null,
-      "fileCount": 5,
-      "lastAccessed": 1777519372200,
+      "fileCount": 7,
+      "lastAccessed": 1787444841503,
       "keyFiles": [
+        "README.md",
         "content_curator.py",
         "lead_magnet.md",
         "newsletter_strategy.md",
-        "weekly_issue_01.md",
-        "weekly_issue_02.md"
+        "stibee_weekly.cron"
+      ]
+    },
+    "plans": {
+      "path": "plans",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1787444841504,
+      "keyFiles": [
+        "community-experiment-20260812.md",
+        "investiqs-seo-adsense-monetization-plan.md"
       ]
     },
     "record": {
       "path": "record",
       "purpose": null,
-      "fileCount": 12,
-      "lastAccessed": 1777519372201,
+      "fileCount": 13,
+      "lastAccessed": 1787444841504,
       "keyFiles": [
         "00_executive_summary.md",
         "01_korean_investment_blogs.md",
@@ -130,20 +161,33 @@
     "reports": {
       "path": "reports",
       "purpose": null,
-      "fileCount": 4,
-      "lastAccessed": 1777519372201,
+      "fileCount": 140,
+      "lastAccessed": 1787444841504,
       "keyFiles": [
         "2026-04-08-10.md",
         "2026-04-25-10.md",
         "2026-04-28-03.md",
-        "2026-04-28-18-v2.md"
+        "2026-04-28-18-v2.md",
+        "2026-05-01-19.md"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 4,
+      "lastAccessed": 1787444841505,
+      "keyFiles": [
+        "backfill_paperclip.py",
+        "healthcheck.sh",
+        "rotate_logs.sh",
+        "start_bots.sh"
       ]
     },
     "shorts": {
       "path": "shorts",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1777519372201,
+      "lastAccessed": 1787444841505,
       "keyFiles": [
         "instagram_reels_scripts.md",
         "tiktok_scripts.md",
@@ -154,7 +198,7 @@
       "path": "sns",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1777519372201,
+      "lastAccessed": 1787444841505,
       "keyFiles": [
         "content_calendar.md",
         "instagram_posts.md",
@@ -162,18 +206,31 @@
         "x_twitter_threads.md"
       ]
     },
+    "survey": {
+      "path": "survey",
+      "purpose": null,
+      "fileCount": 7,
+      "lastAccessed": 1787444841505,
+      "keyFiles": [
+        "00-summary.md",
+        "01-seo-finance-sites.md",
+        "02-youtube-shorts.md",
+        "03-korea-market.md",
+        "04-adsense-approval.md"
+      ]
+    },
     "templates": {
       "path": "templates",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1777519372201,
+      "lastAccessed": 1787444841505,
       "keyFiles": []
     },
     "venv": {
       "path": "venv",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1777519372201,
+      "lastAccessed": 1787444841505,
       "keyFiles": [
         "pyvenv.cfg"
       ]
@@ -181,17 +238,30 @@
     "web": {
       "path": "web",
       "purpose": null,
-      "fileCount": 2,
-      "lastAccessed": 1777519372201,
+      "fileCount": 5,
+      "lastAccessed": 1787444841505,
       "keyFiles": [
-        "hugo.toml"
+        "_headers",
+        "hugo.adsense.toml",
+        "hugo.toml",
+        "inject_tickers.py"
+      ]
+    },
+    "wiki": {
+      "path": "wiki",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1787444841506,
+      "keyFiles": [
+        "SCHEMA.md",
+        "index.md"
       ]
     },
     "youtube": {
       "path": "youtube",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1777519372201,
+      "lastAccessed": 1787444841506,
       "keyFiles": [
         "ETF_투자_완벽가이드_스크립트.md",
         "channel_strategy.md",
@@ -204,376 +274,208 @@
       "path": "ai_hedge_fund/app",
       "purpose": "Application code",
       "fileCount": 3,
-      "lastAccessed": 1777519372201,
+      "lastAccessed": 1787444841506,
       "keyFiles": [
         "README.md",
         "run.bat",
         "run.sh"
       ]
     },
-    "auto_publisher/data": {
-      "path": "auto_publisher/data",
-      "purpose": "Data files",
-      "fileCount": 21,
-      "lastAccessed": 1777519372202,
+    "newsletter/out": {
+      "path": "newsletter/out",
+      "purpose": "Build output",
+      "fileCount": 4,
+      "lastAccessed": 1787444841507,
       "keyFiles": [
-        "failed_topics_en.json",
-        "failed_topics_id.json",
-        "failed_topics_ja.json"
-      ]
-    },
-    "n8n/tests": {
-      "path": "n8n/tests",
-      "purpose": "Test files",
-      "fileCount": 1,
-      "lastAccessed": 1777519372202,
-      "keyFiles": [
-        "test_bridge_api.py"
+        "weekly-2026-06-10.csv",
+        "weekly-2026-06-10.html",
+        "weekly-2026-06-10.json"
       ]
     },
     "venv/bin": {
       "path": "venv/bin",
       "purpose": "Executable scripts",
-      "fileCount": 33,
-      "lastAccessed": 1777519372202,
+      "fileCount": 63,
+      "lastAccessed": 1787444841507,
       "keyFiles": [
         "Activate.ps1",
-        "activate",
-        "activate.csh"
+        "accelerate",
+        "accelerate-config"
       ]
     },
     "venv/lib": {
       "path": "venv/lib",
       "purpose": "Library code",
       "fileCount": 0,
-      "lastAccessed": 1777519372202,
+      "lastAccessed": 1787444841508,
       "keyFiles": []
     },
     "web/assets": {
       "path": "web/assets",
       "purpose": "Static assets",
       "fileCount": 0,
-      "lastAccessed": 1777519372202,
+      "lastAccessed": 1787444841508,
       "keyFiles": []
     },
     "web/data": {
       "path": "web/data",
       "purpose": "Data files",
-      "fileCount": 0,
-      "lastAccessed": 1777519372202,
-      "keyFiles": []
-    },
-    "web/public": {
-      "path": "web/public",
-      "purpose": "Public files",
-      "fileCount": 7,
-      "lastAccessed": 1777519372202,
+      "fileCount": 1,
+      "lastAccessed": 1787444841508,
       "keyFiles": [
-        "404.html",
-        "ads.txt",
-        "index.html"
+        "home_tools.yaml"
       ]
     }
   },
   "hotPaths": [
     {
-      "path": "auto_publisher/content_generator.py",
-      "accessCount": 188,
-      "lastAccessed": 1777635901273,
+      "path": "n8n/bridge_api.py",
+      "accessCount": 18,
+      "lastAccessed": 1787447187541,
       "type": "file"
     },
     {
-      "path": "n8n/bridge_api.py",
-      "accessCount": 104,
-      "lastAccessed": 1777717727602,
+      "path": "auto_publisher/shorts_description.py",
+      "accessCount": 12,
+      "lastAccessed": 1787417946198,
+      "type": "file"
+    },
+    {
+      "path": "auto_publisher/video_script.py",
+      "accessCount": 9,
+      "lastAccessed": 1787418019278,
+      "type": "file"
+    },
+    {
+      "path": "auto_publisher/compliance.py",
+      "accessCount": 9,
+      "lastAccessed": 1787418082233,
+      "type": "file"
+    },
+    {
+      "path": "n8n/tests/test_review_mode.py",
+      "accessCount": 9,
+      "lastAccessed": 1787446773303,
+      "type": "file"
+    },
+    {
+      "path": "auto_publisher/content_generator.py",
+      "accessCount": 4,
+      "lastAccessed": 1787417056712,
+      "type": "file"
+    },
+    {
+      "path": "web/assets/js/tools/dividend-calc.js",
+      "accessCount": 4,
+      "lastAccessed": 1787479401726,
+      "type": "file"
+    },
+    {
+      "path": "auto_publisher/tests/test_short_script_budget.py",
+      "accessCount": 3,
+      "lastAccessed": 1787384044386,
+      "type": "file"
+    },
+    {
+      "path": "auto_publisher/tests/test_forbidden_phrase_policy.py",
+      "accessCount": 2,
+      "lastAccessed": 1787382723833,
       "type": "file"
     },
     {
       "path": "web/hugo.toml",
-      "accessCount": 77,
-      "lastAccessed": 1777718048917,
+      "accessCount": 2,
+      "lastAccessed": 1787399909226,
       "type": "file"
     },
     {
       "path": "auto_publisher/main.py",
-      "accessCount": 74,
-      "lastAccessed": 1777635297409,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/publishers/hugo.py",
-      "accessCount": 74,
-      "lastAccessed": 1777718318745,
-      "type": "file"
-    },
-    {
-      "path": "n8n/workflows/daily_publisher.json",
-      "accessCount": 35,
-      "lastAccessed": 1776982688383,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/chart_generator.py",
-      "accessCount": 26,
-      "lastAccessed": 1777635246620,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/config.py",
-      "accessCount": 18,
-      "lastAccessed": 1777595609509,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/market_analyzer.py",
-      "accessCount": 17,
-      "lastAccessed": 1777595707844,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/topic_manager.py",
-      "accessCount": 16,
-      "lastAccessed": 1777304138100,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/scheduler.py",
-      "accessCount": 14,
-      "lastAccessed": 1777545503772,
-      "type": "file"
-    },
-    {
-      "path": ".env",
-      "accessCount": 14,
-      "lastAccessed": 1777716614012,
-      "type": "file"
-    },
-    {
-      "path": "",
-      "accessCount": 8,
-      "lastAccessed": 1776871821766,
-      "type": "directory"
-    },
-    {
-      "path": "web/static/robots.txt",
-      "accessCount": 7,
-      "lastAccessed": 1777303719102,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/data/topics_en.json",
-      "accessCount": 6,
-      "lastAccessed": 1776812637776,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/data/topics_ko.json",
-      "accessCount": 5,
-      "lastAccessed": 1776812613383,
-      "type": "file"
-    },
-    {
-      "path": "n8n/docker-compose.yml",
-      "accessCount": 5,
-      "lastAccessed": 1777717730021,
-      "type": "file"
-    },
-    {
-      "path": "ai_hedge_fund/src/tools/api.py",
-      "accessCount": 4,
-      "lastAccessed": 1776618023501,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher",
-      "accessCount": 4,
-      "lastAccessed": 1776786543658,
-      "type": "directory"
-    },
-    {
-      "path": "auto_publisher_scheduler.service",
-      "accessCount": 4,
-      "lastAccessed": 1777537290116,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/notifier.py",
-      "accessCount": 3,
-      "lastAccessed": 1776700359903,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/data/personas/taber_ko.json",
-      "accessCount": 3,
-      "lastAccessed": 1776786553643,
-      "type": "file"
-    },
-    {
-      "path": "auto_publisher/data/topics.json",
-      "accessCount": 3,
-      "lastAccessed": 1777221291660,
-      "type": "file"
-    },
-    {
-      "path": "ai_hedge_fund/src/utils/visualize.py",
       "accessCount": 2,
-      "lastAccessed": 1776618314905,
+      "lastAccessed": 1787409279771,
       "type": "file"
     },
     {
-      "path": "web/content/en/blog/etf-investing-beginners-guide.md",
+      "path": "auto_publisher/content_verifier.py",
       "accessCount": 2,
-      "lastAccessed": 1776643946674,
+      "lastAccessed": 1787417783985,
       "type": "file"
     },
     {
-      "path": "auto_publisher/data/personas/taber_en.json",
+      "path": "web/hugo.adsense.toml",
       "accessCount": 2,
-      "lastAccessed": 1776691836210,
+      "lastAccessed": 1787446034388,
       "type": "file"
     },
     {
-      "path": "n8n/bridge_api.service",
-      "accessCount": 1,
-      "lastAccessed": 1776562737771,
+      "path": "web/layouts/partials/tools/dividend-calculator.html",
+      "accessCount": 2,
+      "lastAccessed": 1787479422232,
       "type": "file"
     },
     {
-      "path": "web/content/blog/etf-투자-왕초보도-쉽게-똑똑하게-시작하는-etf-투자-가이드-2024-최신.md",
-      "accessCount": 1,
-      "lastAccessed": 1776584503975,
+      "path": "web/assets/js/tools/compare-calc.js",
+      "accessCount": 2,
+      "lastAccessed": 1787479552518,
       "type": "file"
     },
     {
-      "path": "web/content/blog/ISA_계좌_절세_전략_가이드.md",
+      "path": "auto_publisher/video_composer.py",
       "accessCount": 1,
-      "lastAccessed": 1776584504725,
+      "lastAccessed": 1787382697768,
       "type": "file"
     },
     {
-      "path": "web/content/blog/초보자를_위한_배당주_투자_가이드.md",
+      "path": "auto_publisher/tests/test_compliance.py",
       "accessCount": 1,
-      "lastAccessed": 1776584504765,
+      "lastAccessed": 1787382702755,
       "type": "file"
     },
     {
-      "path": "web/static/images/test-korean/compound-growth.png",
+      "path": "web/layouts/robots.txt",
       "accessCount": 1,
-      "lastAccessed": 1776599600668,
+      "lastAccessed": 1787399873784,
       "type": "file"
     },
     {
-      "path": "auto_publisher/data/topics_en_default.json",
+      "path": "auto_publisher/tests/test_shorts_description.py",
       "accessCount": 1,
-      "lastAccessed": 1776614185478,
+      "lastAccessed": 1787409332638,
       "type": "file"
     },
     {
-      "path": "auto_publisher/data/topics_ja_default.json",
+      "path": "auto_publisher/tests/test_hugo_language_config.py",
       "accessCount": 1,
-      "lastAccessed": 1776614215093,
+      "lastAccessed": 1787446108901,
       "type": "file"
     },
     {
-      "path": "auto_publisher/data/topics_vi_default.json",
+      "path": "web/content/ko/tools/dividend-calculator/_index.md",
       "accessCount": 1,
-      "lastAccessed": 1776614251308,
+      "lastAccessed": 1787479470439,
       "type": "file"
     },
     {
-      "path": "auto_publisher/data/topics_id_default.json",
+      "path": "web/layouts/partials/tools/compare.html",
       "accessCount": 1,
-      "lastAccessed": 1776614282436,
+      "lastAccessed": 1787479506940,
       "type": "file"
     },
     {
-      "path": "hermes_report.py",
+      "path": "web/content/ko/tools/compare/_index.md",
       "accessCount": 1,
-      "lastAccessed": 1776615179517,
+      "lastAccessed": 1787479589691,
       "type": "file"
     },
     {
-      "path": "content_plan.json",
+      "path": "web/content/en/tools/dividend-calculator/_index.md",
       "accessCount": 1,
-      "lastAccessed": 1776615182418,
+      "lastAccessed": 1787479655031,
       "type": "file"
     },
     {
-      "path": "agents.json",
+      "path": "web/content/en/tools/compare/_index.md",
       "accessCount": 1,
-      "lastAccessed": 1776615182683,
-      "type": "file"
-    },
-    {
-      "path": "n8n",
-      "accessCount": 1,
-      "lastAccessed": 1776617548863,
-      "type": "directory"
-    },
-    {
-      "path": "n8n/workflows",
-      "accessCount": 1,
-      "lastAccessed": 1776617567966,
-      "type": "directory"
-    },
-    {
-      "path": "ai_hedge_fund/src/main.py",
-      "accessCount": 1,
-      "lastAccessed": 1776617895091,
-      "type": "file"
-    },
-    {
-      "path": "ai_hedge_fund/src/utils/analysts.py",
-      "accessCount": 1,
-      "lastAccessed": 1776617899974,
-      "type": "file"
-    },
-    {
-      "path": "ai_hedge_fund/src/data/models.py",
-      "accessCount": 1,
-      "lastAccessed": 1776617920102,
-      "type": "file"
-    },
-    {
-      "path": "ai_hedge_fund/src/llm/models.py",
-      "accessCount": 1,
-      "lastAccessed": 1776617932104,
-      "type": "file"
-    },
-    {
-      "path": "ai_hedge_fund/src/agents/warren_buffett.py",
-      "accessCount": 1,
-      "lastAccessed": 1776617966228,
-      "type": "file"
-    },
-    {
-      "path": "ai_hedge_fund/src/agents/technicals.py",
-      "accessCount": 1,
-      "lastAccessed": 1776617966489,
-      "type": "file"
-    },
-    {
-      "path": "web/content/ko/blog/ETF_투자_입문_완벽_가이드.md",
-      "accessCount": 1,
-      "lastAccessed": 1776643943884,
-      "type": "file"
-    },
-    {
-      "path": "web/content/ko/blog/초보자를_위한_배당주_투자_가이드.md",
-      "accessCount": 1,
-      "lastAccessed": 1776643947216,
-      "type": "file"
-    },
-    {
-      "path": "web/content/ko/blog/ISA_계좌_절세_전략_가이드.md",
-      "accessCount": 1,
-      "lastAccessed": 1776643965051,
-      "type": "file"
-    },
-    {
-      "path": "web/content/ko/blog/etf-투자-왕초보도-쉽게-똑똑하게-시작하는-etf-투자-가이드-2024-최신.md",
-      "accessCount": 1,
-      "lastAccessed": 1776644002802,
+      "lastAccessed": 1787479677173,
       "type": "file"
     }
   ],

@@ -55,3 +55,16 @@ sns_distribution_plan_*.md
 # n8n 백업 — database.sqlite 에 워크플로 자격증명이 들어간다 (2026-08-23)
 n8n/backups/
 n8n/.bridge_api.lock
+# 루트에 흩어진 임시 산출물 (2026-08-23)
+blog_post*.json
+output_blog_post.json
+doctor_*.json
+*_agents.json
+*_issues.json
+in_progress.json
+blocked.json
+issues.json
+data.json
+.paperclip-agent-backups/
+.omx/
+.adsense_review
