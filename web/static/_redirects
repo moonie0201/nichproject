@@ -62,6 +62,8 @@
 # 2026-08-23 템플릿 중복 통합 (애드센스 "가치가 별로 없는 콘텐츠" 대응)
 # 티커별/쌍별로 나뉘어 있던 계산기 페이지가 서로 74~80%, 51~62% 동일해
 # 구글이 말하는 쿠키커터 패턴이었다. 한 페이지로 합치고 여기서 넘긴다.
+# ja/vi/id 규칙은 제거했다. 그 언어는 은퇴해 목적지도 404 라 301→404 체인이 됐고,
+# 다른 언어 페이지로 보내는 건 무관한 페이지로의 억지 301 이다. 404 가 맞다. (2026-08-24)
 /ko/tools/dividend-calculator/schd/ /ko/tools/dividend-calculator/ 301
 /ko/tools/dividend-calculator/jepi/ /ko/tools/dividend-calculator/ 301
 /ko/tools/dividend-calculator/vym/ /ko/tools/dividend-calculator/ 301
@@ -84,36 +86,3 @@
 /en/tools/compare/schd-vs-voo/ /en/tools/compare/ 301
 /en/tools/compare/schd-vs-vym/ /en/tools/compare/ 301
 /en/tools/compare/voo-vs-spy/ /en/tools/compare/ 301
-/ja/tools/dividend-calculator/schd/ /ja/tools/dividend-calculator/ 301
-/ja/tools/dividend-calculator/jepi/ /ja/tools/dividend-calculator/ 301
-/ja/tools/dividend-calculator/vym/ /ja/tools/dividend-calculator/ 301
-/ja/tools/dividend-calculator/jepq/ /ja/tools/dividend-calculator/ 301
-/ja/tools/dividend-calculator/qyld/ /ja/tools/dividend-calculator/ 301
-/ja/tools/compare/jepi-vs-jepq/ /ja/tools/compare/ 301
-/ja/tools/compare/qyld-vs-jepq/ /ja/tools/compare/ 301
-/ja/tools/compare/schd-vs-jepi/ /ja/tools/compare/ 301
-/ja/tools/compare/schd-vs-voo/ /ja/tools/compare/ 301
-/ja/tools/compare/schd-vs-vym/ /ja/tools/compare/ 301
-/ja/tools/compare/voo-vs-spy/ /ja/tools/compare/ 301
-/vi/tools/dividend-calculator/schd/ /vi/tools/dividend-calculator/ 301
-/vi/tools/dividend-calculator/jepi/ /vi/tools/dividend-calculator/ 301
-/vi/tools/dividend-calculator/vym/ /vi/tools/dividend-calculator/ 301
-/vi/tools/dividend-calculator/jepq/ /vi/tools/dividend-calculator/ 301
-/vi/tools/dividend-calculator/qyld/ /vi/tools/dividend-calculator/ 301
-/vi/tools/compare/jepi-vs-jepq/ /vi/tools/compare/ 301
-/vi/tools/compare/qyld-vs-jepq/ /vi/tools/compare/ 301
-/vi/tools/compare/schd-vs-jepi/ /vi/tools/compare/ 301
-/vi/tools/compare/schd-vs-voo/ /vi/tools/compare/ 301
-/vi/tools/compare/schd-vs-vym/ /vi/tools/compare/ 301
-/vi/tools/compare/voo-vs-spy/ /vi/tools/compare/ 301
-/id/tools/dividend-calculator/schd/ /id/tools/dividend-calculator/ 301
-/id/tools/dividend-calculator/jepi/ /id/tools/dividend-calculator/ 301
-/id/tools/dividend-calculator/vym/ /id/tools/dividend-calculator/ 301
-/id/tools/dividend-calculator/jepq/ /id/tools/dividend-calculator/ 301
-/id/tools/dividend-calculator/qyld/ /id/tools/dividend-calculator/ 301
-/id/tools/compare/jepi-vs-jepq/ /id/tools/compare/ 301
-/id/tools/compare/qyld-vs-jepq/ /id/tools/compare/ 301
-/id/tools/compare/schd-vs-jepi/ /id/tools/compare/ 301
-/id/tools/compare/schd-vs-voo/ /id/tools/compare/ 301
-/id/tools/compare/schd-vs-vym/ /id/tools/compare/ 301
-/id/tools/compare/voo-vs-spy/ /id/tools/compare/ 301
