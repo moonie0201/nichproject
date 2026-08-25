@@ -78,5 +78,5 @@
   </div>
 </div>
 
-<script type="application/json" id="iq-tickers">{{ $tickers | jsonify }}</script>
-<script type="application/json" id="iq-fx">{{ $fx | jsonify }}</script>
+<script type="application/json" id="iq-tickers">{{ $tickers | jsonify | safeJS }}</script>
+<script type="application/json" id="iq-fx">{{ $fx | jsonify | safeJS }}</script>

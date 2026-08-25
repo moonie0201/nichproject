@@ -2,7 +2,7 @@
 {{- $data := site.Data.tools.tickers -}}
 
 <div id="iq-watchlist" class="iq-tool">
-  <script type="application/json" id="iq-tickers">{{ $data | jsonify }}</script>
+  <script type="application/json" id="iq-tickers">{{ $data | jsonify | safeJS }}</script>
 
   {{- /* Add ticker buttons */ -}}
   <div class="iq-watchlist-add">

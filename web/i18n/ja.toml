@@ -73,6 +73,8 @@ other = "ETF B 最終額"
 other = "差額"
 
 # FIRE計算機
+[fire_final_70y]
+other = "70年後の予想資産"
 [fire_current]
 other = "現在の資産"
 [fire_target]

@@ -140,4 +140,4 @@
   </div>
 </div>
 
-<script type="application/json" id="iq-fx">{{ $fx | jsonify }}</script>
+<script type="application/json" id="iq-fx">{{ $fx | jsonify | safeJS }}</script>

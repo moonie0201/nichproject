@@ -73,6 +73,8 @@ other = "ETF B cuối kỳ"
 other = "Chênh lệch"
 
 # Máy tính FIRE
+[fire_final_70y]
+other = "Tài sản dự kiến sau 70 năm"
 [fire_current]
 other = "Tiết kiệm hiện tại"
 [fire_target]
