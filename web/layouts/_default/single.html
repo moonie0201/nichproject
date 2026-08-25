@@ -43,6 +43,8 @@
     {{- else }}{{ .Content }}{{ end }}
   </div>
   {{- end }}
+  {{- /* 출처·갱신일·제작 주체 — YMYL 신뢰 신호. 광고보다 먼저 나와야 한다. */ -}}
+  {{- partial "article-provenance.html" . }}
   {{- partial "article_ads.html" (dict "slot" "8171345112") }}
   {{- partial "related-tools.html" . }}
   {{- partial "related.html" . }}

@@ -72,6 +72,7 @@ def upload_youtube(
     md_path: Path | None = None,  # 썸네일 자동 생성용 .md 경로
     blog_url: str = "",
     shorts_category: str = "default",
+    contains_synthetic_media: bool = True,
 ) -> dict:
     """mp4 업로드 → {video_id, url, status} 반환. 실패 시 RuntimeError"""
     from googleapiclient.discovery import build
@@ -97,6 +98,14 @@ def upload_youtube(
         "status": {
             "privacyStatus": privacy,
             "selfDeclaredMadeForKids": False,
+            # AI 합성 나레이션/BGM 사용 → 변경되거나 합성된 콘텐츠 공시.
+            # 미공시 적발 시 수익화 영구 박탈 위험이 있고, 공시해도 추천 페널티는 없다.
+            #
+            # 이 필드는 쓰기 전용이다. videos.list 는 part=status 로도 절대 돌려주지
+            # 않으므로 API 로는 적용 여부를 확인할 수 없다 (2026-08 실측: insert 로 넣든
+            # update 로 넣든 조회하면 항상 없음. update 응답만 echo 해준다).
+            # 확인이 필요하면 YouTube Studio 의 '변경된 콘텐츠' 항목을 눈으로 봐야 한다.
+            "containsSyntheticMedia": contains_synthetic_media,
         },
     }
 
@@ -104,15 +113,20 @@ def upload_youtube(
     request = youtube.videos().insert(part="snippet,status", body=body, media_body=media)
 
     response = None
-    max_retries = 10
-    for _attempt in range(max_retries):
-        status, response = request.next_chunk()
-        if status:
-            logger.info(f"업로드 진행: {int(status.progress() * 100)}%")
-        if response is not None:
-            break
-    else:
-        raise RuntimeError("YouTube 업로드 실패: 청크 전송 최대 재시도 초과")
+    max_error_retries = 5
+    retry_errors = 0
+    while response is None:
+        try:
+            status, response = request.next_chunk()
+            if status:
+                logger.info(f"업로드 진행: {int(status.progress() * 100)}%")
+            retry_errors = 0
+        except Exception as e:
+            retry_errors += 1
+            if retry_errors >= max_error_retries:
+                raise RuntimeError(f"YouTube 업로드 실패: {e}")
+            import time as _time
+            _time.sleep(2 ** retry_errors)
 
     video_id = response.get("id")
     url = f"https://youtube.com/{'shorts/' if is_short else 'watch?v='}{video_id}"
@@ -165,7 +179,9 @@ def _load_tiktok_credentials() -> dict:
         if not client_key or not client_secret:
             raise RuntimeError("TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET 환경변수가 설정되지 않았습니다.")
 
-        payload = json.dumps({
+        # TikTok OAuth refresh는 form-urlencoded만 허용
+        import urllib.parse
+        payload = urllib.parse.urlencode({
             "client_key": client_key,
             "client_secret": client_secret,
             "grant_type": "refresh_token",
@@ -174,7 +190,7 @@ def _load_tiktok_credentials() -> dict:
         req = urllib.request.Request(
             "https://open.tiktokapis.com/v2/oauth/token/",
             data=payload,
-            headers={"Content-Type": "application/json"},
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
             method="POST",
         )
         with urllib.request.urlopen(req, timeout=30) as resp:
@@ -438,8 +454,16 @@ def upload_tiktok(
             logger.info(f"TikTok 업로드 완료: {url}")
             return {"publish_id": publish_id, "status": "published", "url": url}
         elif status == "FAILED":
-            fail_reason = poll_data.get("data", {}).get("fail_reason", "unknown")
-            raise RuntimeError(f"TikTok 업로드 실패: {fail_reason}")
+            data_blob = poll_data.get("data", {})
+            fail_reason = data_blob.get("fail_reason", "unknown")
+            error_blob = poll_data.get("error", {})
+            logger.error(f"TikTok poll 전체 응답: {poll_data}")
+            raise RuntimeError(
+                f"TikTok 업로드 실패: fail_reason={fail_reason} "
+                f"error_code={error_blob.get('code')} "
+                f"error_msg={error_blob.get('message')} "
+                f"publish_id={publish_id}"
+            )
 
     raise RuntimeError(f"TikTok 업로드 타임아웃: publish_id={publish_id} (300초 초과)")
 

@@ -1,0 +1,44 @@
+{{- /* 연금저축·IRP 세액공제 계산기 UI. 한국 세법 전용이라 한국어 라벨을 직접 쓴다. */ -}}
+<div id="iq-pension" class="iq-tool" data-copied-msg="{{ i18n "calc_share_copied" }}">
+
+  <div class="iq-tool__grid">
+    <div class="iq-field">
+      <label for="iq-salary">총급여 (만원)</label>
+      <input type="number" id="iq-salary" min="0" step="100" value="5000">
+    </div>
+    <div class="iq-field">
+      <label for="iq-pension-amt">연금저축 연 납입액 (만원)</label>
+      <input type="number" id="iq-pension-amt" min="0" step="10" value="600">
+    </div>
+    <div class="iq-field">
+      <label for="iq-irp-amt">IRP 연 납입액 (만원)</label>
+      <input type="number" id="iq-irp-amt" min="0" step="10" value="300">
+    </div>
+  </div>
+
+  <div class="iq-tool__actions">
+    <button type="button" id="iq-calc" class="iq-btn">{{ i18n "calc_button" }}</button>
+    <button type="button" id="iq-reset" class="iq-btn iq-btn--ghost">{{ i18n "calc_reset" }}</button>
+    <button type="button" id="iq-share" class="iq-btn iq-btn--ghost">{{ i18n "calc_share" }}</button>
+  </div>
+
+  <div id="iq-result" class="iq-result" aria-live="polite" hidden>
+    <div class="iq-result__title">{{ i18n "calc_result_title" }}</div>
+    <div class="iq-result__cards">
+      <div class="iq-card"><div class="iq-card__label">예상 환급액</div><div class="iq-card__value" id="iq-res-refund">–</div></div>
+      <div class="iq-card"><div class="iq-card__label">적용 공제율</div><div class="iq-card__value" id="iq-res-rate">–</div></div>
+      <div class="iq-card"><div class="iq-card__label">공제 대상 납입액</div><div class="iq-card__value" id="iq-res-eligible">–</div></div>
+    </div>
+    <p id="iq-note" class="iq-note" hidden></p>
+    <table class="iq-table">
+      <thead><tr><th>항목</th><th>금액</th></tr></thead>
+      <tbody>
+        <tr><td>연금저축 공제 인정액</td><td id="iq-row-pension">–</td></tr>
+        <tr><td>IRP 공제 인정액</td><td id="iq-row-irp">–</td></tr>
+        <tr><td>한도 초과로 공제 못 받는 금액</td><td id="iq-row-wasted">–</td></tr>
+        <tr><td>남은 공제 한도</td><td id="iq-row-room">–</td></tr>
+      </tbody>
+    </table>
+    <div class="iq-disclaimer">{{ i18n "calc_disclaimer" }}</div>
+  </div>
+</div>

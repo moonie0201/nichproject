@@ -126,11 +126,11 @@ def test_existing_faq_not_overwritten(base_input):
 # ── 테스트 7: author 기본값 ──────────────────────────────────
 
 def test_author_default_value(base_input):
-    """author 파라미터 미지정 시 'InvestIQs 편집팀'이 기본값이다."""
+    """author 파라미터 미지정 시 'InvestIQs Research'이 기본값이다."""
     raw = build_eeat_frontmatter(**base_input)
     inner = raw.strip().lstrip("-").rstrip("-").strip()
     parsed = yaml.safe_load(inner)
-    assert parsed["author"] == "InvestIQs 편집팀", (
+    assert parsed["author"] == "InvestIQs Research", (
         f"author 기본값 불일치: {parsed['author']}"
     )
 

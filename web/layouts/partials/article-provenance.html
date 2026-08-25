@@ -1,0 +1,65 @@
+{{- /* 글 하단 출처·갱신일·제작 주체 블록.
+
+  리서치(survey/05-blog-structure-template.md)에서 상위 노출 재테크 글이 예외 없이
+  갖추고 있던 요소다. YMYL 금융은 "clear sourcing, evidence of the expertise involved"
+  를 구글이 명시적으로 요구한다.
+
+  저자는 지어내지 않는다. 이 사이트는 AI 생성임을 about/authors 에서 공개하고
+  human_reviewed 를 글마다 표기하므로, 그 사실을 그대로 노출하는 것이 정직한
+  Who 신호다. 가짜 실명·가짜 경력을 붙이면 그 페이지와 모순된다.
+*/ -}}
+
+{{- $lang := site.Language.Lang -}}
+{{- $L := dict
+  "ko" (dict "head" "이 글에 대하여" "src" "참고 자료" "upd" "최종 수정"
+             "by" "제작" "ai" "AI 보조 워크플로로 작성" "rev" "사람 검수 완료"
+             "how" "제작·검증 절차 보기")
+  "en" (dict "head" "About this article" "src" "References" "upd" "Last updated"
+             "by" "Produced by" "ai" "Written with an AI-assisted workflow" "rev" "Human reviewed"
+             "how" "How we create and verify content")
+-}}
+{{- $t := index $L $lang | default (index $L "en") -}}
+
+{{- /* 본문에 실린 외부 1차 출처 링크를 수집한다 (자사 도메인 제외) */ -}}
+{{- $srcs := slice -}}
+{{- range $m := findRE `<a[^>]+href="https?://[^"]+"` .Content -}}
+  {{- $href := replaceRE `.*href="([^"]+)".*` "$1" $m -}}
+  {{- if not (strings.Contains $href "investiqs.net") -}}
+    {{- $host := replaceRE `^https?://(?:www\.)?([^/]+).*` "$1" $href -}}
+    {{- $srcs = $srcs | append (dict "href" $href "host" $host) -}}
+  {{- end -}}
+{{- end -}}
+{{- /* frontmatter 로 명시한 1차 출처를 앞에 놓는다. 본문에 인라인 링크가 없는
+       제도형 글에 국세청·법령센터 같은 근거를 붙이기 위한 통로다. */ -}}
+{{- range .Params.sources -}}
+  {{- $srcs = (slice (dict "href" .url "host" .name)) | append $srcs -}}
+{{- end -}}
+{{- $srcs = uniq $srcs -}}
+
+<section class="iq-provenance">
+  <h2>{{ $t.head }}</h2>
+
+  {{- with $srcs }}
+  <div class="iq-provenance__row">
+    <strong>{{ $t.src }}</strong>
+    <ul>
+      {{- range first 6 . }}
+      <li><a href="{{ .href }}" rel="nofollow noopener" target="_blank">{{ .host }}</a></li>
+      {{- end }}
+    </ul>
+  </div>
+  {{- end }}
+
+  <div class="iq-provenance__row">
+    <strong>{{ $t.upd }}</strong>
+    <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2006년 1월 2일" }}</time>
+  </div>
+
+  <div class="iq-provenance__row">
+    <strong>{{ $t.by }}</strong>
+    <span>
+      {{- if .Params.human_reviewed }}{{ $t.rev }}{{ else }}{{ $t.ai }}{{ end }} ·
+      <a href="{{ "about/authors/" | relLangURL }}">{{ $t.how }}</a>
+    </span>
+  </div>
+</section>

@@ -21,6 +21,14 @@
     return amountUsd * rate;
   };
 
+  /* 환율 데이터가 없는데 KRW 기호를 붙이면 달러 금액이 원화인 척 표시된다 —
+     safeJS 누락으로 실제 일어났던 사고다. 데이터가 없으면 통화를 USD 로
+     강등해서, 틀린 금액 대신 정확한 금액을 다른 통화로 보여준다. */
+  IQ.safeCurrency = function (currency, rates) {
+    if (currency === "USD") return "USD";
+    return (rates && isFinite(rates[currency]) && rates[currency] > 0) ? currency : "USD";
+  };
+
   IQ.formatMoney = function (amount, currency) {
     if (!isFinite(amount)) amount = 0;
     var noDecimals = { JPY: 1, KRW: 1, VND: 1, IDR: 1 };

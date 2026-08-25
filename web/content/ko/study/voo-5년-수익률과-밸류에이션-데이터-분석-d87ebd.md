@@ -122,6 +122,8 @@ warren_buffett_agent는 데이터 부족으로 중립을 유지했고, risk_mana
 
 본 분석은 AI가 생성한 정보로 투자 권고가 아닙니다.
 
+<p class="iq-tool-cta">매달 적립했을 때 결과를 보려면 <a href="/ko/tools/dca-calculator/"><strong>적립식 투자 계산기</strong></a>를 이용하세요.</p>
+
 ## 자주 묻는 질문
 
 **Q1. VOO의 1년 수익률 +33.9%는 높은 편인가?**

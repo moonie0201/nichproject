@@ -1,9 +1,30 @@
 [
   {
-    "topic_id": "blog-etf-04",
-    "attempts": 1,
-    "first_failed_at": "2026-04-24T06:30:20.463479",
-    "last_failed_at": "2026-04-24T06:30:20.463486",
-    "last_reason": "codex exec 3회 실패: codex 오류: 2026-04-23T21:30:16.783756Z ERROR codex_login::auth::manager: Failed to refresh token: 401 Unauthorized: {\n  \"error\": {\n    \"message\": \"Your refresh token has already been "
+    "topic_id": "blog-div-02",
+    "attempts": 3,
+    "first_failed_at": "2026-05-17T06:38:15.570877",
+    "last_failed_at": "2026-05-17T06:52:32.859324",
+    "last_reason": "codex 응답을 JSON으로 파싱할 수 없습니다 (blog_post)"
+  },
+  {
+    "topic_id": "blog-beginner-03",
+    "attempts": 3,
+    "first_failed_at": "2026-06-21T06:46:16.151237",
+    "last_failed_at": "2026-06-21T07:13:48.703601",
+    "last_reason": "모든 LLM 백엔드 실패: claude model=claude-haiku-4-5-20251001 reason=claude CLI 2회 실패: claude 오류:  | gemini model=gemini-2.5-pro reason=gemini CLI 2회 실패: gemini 오류: Error authenticating: IneligibleTierError: "
+  },
+  {
+    "topic_id": "dyn-jepi-div-2026-08-03",
+    "attempts": 3,
+    "first_failed_at": "2026-08-06T06:40:38.796047",
+    "last_failed_at": "2026-08-06T07:01:30.623205",
+    "last_reason": "모든 LLM 백엔드 실패: claude model=claude-haiku-4-5-20251001 reason=claude CLI 2회 실패: [Errno 2] No such file or directory: 'claude' | gemini model=gemini-2.5-pro reason=gemini CLI 2회 실패: gemini 오류: Loaded ca"
+  },
+  {
+    "topic_id": "auto-73e401a8",
+    "attempts": 3,
+    "first_failed_at": "2026-08-08T06:32:37.776984",
+    "last_failed_at": "2026-08-08T06:36:37.092294",
+    "last_reason": "codex 응답을 JSON으로 파싱할 수 없습니다 (blog_post)"
   }
 ]

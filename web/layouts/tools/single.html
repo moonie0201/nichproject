@@ -10,6 +10,7 @@
   "portfolio-rebalance" "js/tools/portfolio-rebalance.js"
   "portfolio-income" "js/tools/portfolio-income.js"
   "watchlist" "js/tools/watchlist.js"
+  "pension-tax-credit" "js/tools/pension-tax-credit.js"
 -}}
 {{- $tool := .Params.tool -}}
 
@@ -34,14 +35,17 @@
     {{- end }}
   </header>
 
-  {{- partial "legal-disclaimer.html" . }}
-
   {{- /* interactive calculator — 도구를 쓰러 온 사람에게 도구를 먼저 보여준다.
          이전에는 설명·관련링크·뉴스레터 안내가 먼저 나와 입력창까지 두 화면을
          스크롤해야 했다. */ -}}
   {{- with $tool }}
   {{- partial (printf "tools/%s.html" .) $ }}
   {{- end }}
+
+  {{- /* AI 고지는 계산기 아래에 둔다. 위에 두면 유튜브에서 온 방문자가 처음
+         보는 게 노란 경고 박스다. 고지 의무는 결과 아래에서도 지켜진다 —
+         계산 결과를 해석하기 전에 읽게 되는 위치라 오히려 맥락에 맞다. */ -}}
+  {{- partial "legal-disclaimer.html" . }}
 
   {{- /* editorial context (markdown body) — 계산 결과를 본 뒤 읽는 설명 */ -}}
   {{- if .Content }}

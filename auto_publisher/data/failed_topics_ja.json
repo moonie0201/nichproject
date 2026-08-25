@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "topic_id": "blog-port-01",
+    "attempts": 3,
+    "first_failed_at": "2026-07-21T07:10:43.962781",
+    "last_failed_at": "2026-07-21T07:31:36.065723",
+    "last_reason": "모든 LLM 백엔드 실패: claude model=claude-haiku-4-5-20251001 reason=claude CLI 2회 실패: claude 오류:  | gemini model=gemini-2.5-pro reason=gemini CLI 2회 실패: gemini 오류: Error authenticating: IneligibleTierError: "
+  },
+  {
+    "topic_id": "blog-port-02",
+    "attempts": 3,
+    "first_failed_at": "2026-07-21T07:42:02.214190",
+    "last_failed_at": "2026-07-22T07:10:42.039932",
+    "last_reason": "모든 LLM 백엔드 실패: claude model=claude-haiku-4-5-20251001 reason=claude CLI 2회 실패: claude 오류:  | gemini model=gemini-2.5-pro reason=gemini CLI 2회 실패: gemini 오류: Error authenticating: _GaxiosError: Resourc"
+  },
+  {
+    "topic_id": "blog-port-03",
+    "attempts": 3,
+    "first_failed_at": "2026-07-22T07:21:05.345238",
+    "last_failed_at": "2026-07-22T07:41:56.495766",
+    "last_reason": "모든 LLM 백엔드 실패: claude model=claude-haiku-4-5-20251001 reason=claude CLI 2회 실패: claude 오류:  | gemini model=gemini-2.5-pro reason=gemini CLI 2회 실패: gemini 오류: Error authenticating: IneligibleTierError: "
+  }
+]

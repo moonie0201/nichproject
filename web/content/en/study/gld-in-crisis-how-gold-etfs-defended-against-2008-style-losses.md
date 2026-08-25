@@ -46,7 +46,7 @@ categories:
 # 외부 1차 출처가 없어 검증 가능성이 낮아 색인에서 제외한다. 출처 보강 시 해제.
 robotsNoIndex: true
 ---
-<div class="summary-box"><ul><li>GLD returned +123.8% over 5 years (2020–2026), outpacing <a href="/en/study/voo-vs-samsung-10-year-return-reality-the-<a href=">dividend-yield</a>-gap/">S&P 500</a> during drawdowns</li><li>Gold historically gained 6–8% during 2008 peak decline, while equity portfolios fell 50%+</li><li>10% GLD allocation reduces portfolio volatility by ~1.5–2.0% annually, flattening bear-market swings</li><li>GLD trades at $373.63 with $150.4B AUM; competitive vs. IAU on fees ($0.24 vs $0.25)</li><li>Zero dividend yield requires tactical rebalancing; unsuitable for income-focused strategies</li></ul></div>
+<div class="summary-box"><ul><li>GLD returned +123.8% over 5 years (2020–2026), outpacing S&P 500 during drawdowns</li><li>Gold historically gained 6–8% during 2008 peak decline, while equity portfolios fell 50%+</li><li>10% GLD allocation reduces portfolio volatility by ~1.5–2.0% annually, flattening bear-market swings</li><li>GLD trades at $373.63 with $150.4B AUM; competitive vs. IAU on fees ($0.24 vs $0.25)</li><li>Zero dividend yield requires tactical rebalancing; unsuitable for income-focused strategies</li></ul></div>
 
 ## The 2008 Question: Gold's Actual Hedge Strength
 

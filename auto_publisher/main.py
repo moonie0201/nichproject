@@ -83,6 +83,7 @@ def do_generate(topic_info: dict | None = None, lang: str = "ko") -> dict | None
             keywords=topic_info["keywords"],
             lang=lang,
             category=topic_info.get("category", ""),
+            angle=topic_info.get("angle", ""),
         )
     except Exception as e:
         logger.error(f"[{lang}] 생성 실패, 실패큐에 등록: {e}")
@@ -121,16 +122,33 @@ def do_publish(topic_info: dict | None = None, lang: str = "ko") -> dict | None:
                 keywords_long_tail=post.get("keywords_long_tail", []),
                 schema_faq=post.get("schema_faq", []),
                 content_type=post.get("content_type", "guide"),
+                howto_steps=post.get("howto_steps", []),
             )
             tm.mark_published(topic_info["id"], "hugo", hugo_result["filepath"])
             publish_results["hugo"] = hugo_result
             logger.info(f"Hugo 발행 완료: {hugo_result['filepath']}")
         except Exception as e:
+            # SEO hard fail은 manual review 큐에 기록 + 재시도 한도 도달 시 영구 격리
+            from auto_publisher.seo_validator import SEOValidationError, record_seo_failure
+            if isinstance(e, SEOValidationError):
+                failed_entries = tm._load_failed()
+                attempts = next(
+                    (f["attempts"] for f in failed_entries if f["topic_id"] == topic_info["id"]),
+                    0,
+                )
+                record_seo_failure(
+                    topic_id=topic_info["id"],
+                    slug=post.get("title", ""),
+                    lang=lang,
+                    report=e.report,
+                    retry_count=attempts + 1,
+                )
+                tm.mark_failed(topic_info["id"], f"SEO hard fail: {e.report.hard_violations[:3]}")
             logger.error(f"Hugo 발행 실패: {e}", exc_info=True)
             publish_results["hugo"] = {"error": str(e)}
 
     # Tistory 발행 (Playwright 브라우저 자동화)
-    if TISTORY_ENABLED:
+    if TISTORY_ENABLED and TISTORY_KAKAO_ID and TISTORY_KAKAO_PW and TISTORY_BLOG_NAME:
         try:
             from auto_publisher.publishers.tistory import TistoryPublisher
             publisher = TistoryPublisher(
@@ -422,6 +440,13 @@ def do_make_video(slug: str, lang: str = "ko",
         except Exception as e:
             logger.warning(f"shorts_hook 생성 실패: {e}")
 
+    _short_max_sec = int(os.getenv("SHORT_DURATION_SEC", "60"))
+
+    # 훅은 대본 예산이 적용된 뒤에 덧붙으므로 여기서 한 번 더 확인한다.
+    # 넘치면 가운데를 덜어내고 훅과 CTA 를 보존한다 — 오디오를 통째로 자르면 CTA 가 날아간다.
+    from auto_publisher.video_script import trim_narration_text
+    short_text = trim_narration_text(short_text, _short_max_sec, lang)
+
     short_mp3 = cache_dir / "short.mp3"
     short_srt = cache_dir / "short.srt"
     _t0 = time.time()
@@ -429,9 +454,59 @@ def do_make_video(slug: str, lang: str = "ko",
     tts_info_s = synthesize_tts_with_srt(short_text, lang, short_mp3, short_srt)
     logger.info(f"[STEP_END] short_tts took {time.time()-_t0:.1f}s")
 
-    # 쇼츠 차트: 블로그의 실제 차트 중 대표 1~2개
+    _orig_dur = tts_info_s.get("duration_sec", 0)
+    if _orig_dur > _short_max_sec:
+        import subprocess as _sp
+        _trimmed = short_mp3.with_suffix(".trim.mp3")
+        _trimmed.unlink(missing_ok=True)
+        _sp.run(
+            ["ffmpeg", "-y", "-i", str(short_mp3),
+             "-t", str(_short_max_sec),
+             "-c:a", "libmp3lame", "-q:a", "2",
+             str(_trimmed)],
+            check=False, capture_output=True,
+        )
+        if _trimmed.exists() and _trimmed.stat().st_size > 1024:
+            _trimmed.replace(short_mp3)
+            tts_info_s["duration_sec"] = _short_max_sec
+            # 여기까지 왔다는 건 텍스트 단계 예산 통제가 새고 있다는 뜻이다.
+            # 이 절단은 문장 중간을 끊으므로 정상 경로가 아니다.
+            logger.warning(
+                "쇼츠 오디오 강제 절단: %.1fs → %ds — 문장 중간이 끊긴다. "
+                "발화 속도 추정치(_TTS_CHARS_PER_SEC[%s])가 실제와 어긋났을 수 있다.",
+                _orig_dur, _short_max_sec, lang,
+            )
+        else:
+            _trimmed.unlink(missing_ok=True)
+            logger.warning(f"쇼츠 오디오 트림 실패 — 원본 사용 ({_orig_dur:.1f}s)")
+
+    # 쇼츠 비주얼: 블로그 차트 1~2개 + PPT 슬라이드.
+    # 슬라이드 생성은 롱폼 분기 안에만 있어서 SKIP_LONG_VIDEO=true 면 쇼츠가
+    # 차트 1~2장으로 60초를 버텼다 — 한 장이 30초씩 머무는 정지 화면이었다.
+    # 쇼츠도 자체 슬라이드를 확보한다.
     short_charts = authoritative_charts[:2] if authoritative_charts else []
-    logger.info(f"쇼츠 차트 {len(short_charts)}개: {short_charts}")
+
+    _slides_dir = cache_dir / "slides"
+    _slide_pngs = sorted(_slides_dir.glob("*.png")) if _slides_dir.is_dir() else []
+    if not _slide_pngs:
+        try:
+            from auto_publisher.sonnet_slides import generate_slides
+            from auto_publisher.slide_renderer import render_slides
+            _summary = (video_data_pack.get("summary")
+                        or video_data_pack.get("description")
+                        or script_to_plain_text(short_script))
+            _slides_data = generate_slides(
+                title=video_data_pack.get("title", slug),
+                summary=_summary[:500],
+                num_slides=int(os.getenv("SHORTS_SLIDES_COUNT", "6")),
+            )
+            if _slides_data:
+                _slide_pngs = render_slides(_slides_data, _slides_dir)
+        except Exception as e:
+            logger.warning(f"쇼츠 슬라이드 생성 실패 (차트만 사용): {e}")
+
+    short_charts = short_charts + [str(p) for p in _slide_pngs]
+    logger.info(f"쇼츠 비주얼 {len(short_charts)}개 (차트 {len(authoritative_charts[:2])} + 슬라이드 {len(_slide_pngs)})")
     short_mp4 = cache_dir / "short.mp4"
     _t0 = time.time()
     logger.info(f"[STEP_START] short_video_compose slug={slug}")
@@ -458,10 +533,13 @@ def do_make_video(slug: str, lang: str = "ko",
                 _t0 = time.time()
                 logger.info(f"[STEP_START] short_youtube_upload slug={slug}")
                 from auto_publisher.stock_broll import slug_to_category
+                # 롱폼 링크는 붙이지 않는다. 실측(2026-08) 상 롱폼 120편의 총 조회수가
+                # 약 300회(편당 0~2회)로, 쇼츠 143편의 8.3만 회 대비 0.4% 다.
+                # 죽은 목적지로 보내면서 구독 CTA 를 아래로 밀어내던 구조였다.
                 up = upload_youtube(
                     video_path=short_mp4,
                     title=short_script["title"],
-                    description=short_script.get("description", "") + f"\n\n전체 영상: {long_url}",
+                    description=short_script.get("description", ""),
                     tags=short_script.get("tags", []),
                     is_short=True, privacy=privacy,
                     blog_url=blog_url,
@@ -583,7 +661,12 @@ def cmd_run(args):
     with_video = getattr(args, "with_video", True)
 
     for lang in langs:
-        result = do_publish(lang=lang)
+        result = None
+        for _attempt in range(5):
+            result = do_publish(lang=lang)
+            if result:
+                break
+            logger.warning(f"[{lang}] 토픽 생성 실패, 다음 토픽으로 재시도 ({_attempt + 1}/5)")
         if result:
             print(f"\n[{lang}] 발행 완료!")
             print(f"  제목: {result['post']['title']}")

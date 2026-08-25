@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"git add web/public/ && git status --short | grep -v \\\"^ M \\\\|^ m \\\" | grep -v \\\"^??\\\" | head -20\",\"description\":\"Stage Hugo output and check staged files\"}",
-  "error": "Exit code 128\nwarning: could not open directory 'web/web/public/': No such file or directory\nfatal: pathspec 'web/public/' did not match any files",
-  "timestamp": "2026-05-01T12:45:59.993Z",
-  "retry_count": 1
-}

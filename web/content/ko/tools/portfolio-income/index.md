@@ -24,8 +24,8 @@ SCHD, JEPI, VYM처럼 배당수익률이 서로 다른 ETF를 함께 보유할 �
 ## 관련 도구
 
 - [포트폴리오 리밸런싱 계산기](/ko/tools/portfolio-rebalance/)
-- [JEPI vs JEPQ 비교](/ko/tools/compare/jepi-vs-jepq/)
-- [SCHD vs VYM 비교](/ko/tools/compare/schd-vs-vym/)
+- [JEPI vs JEPQ 비교](/ko/tools/compare/)
+- [SCHD vs VYM 비교](/ko/tools/compare/)
 - [모든 투자 도구](/ko/tools/)
 
 InvestIQs 뉴스레터를 구독하고 매주 미국 ETF 데이터 업데이트를 받아보세요.

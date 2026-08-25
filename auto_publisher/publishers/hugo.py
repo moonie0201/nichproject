@@ -310,7 +310,7 @@ class HugoPublisher:
         except Exception as e:
             logger.error(f"Hugo 빌드 실패: {e}")
 
-        if CLOUDFLARE_API_TOKEN:
+        if CLOUDFLARE_API_TOKEN and os.getenv("HUGO_AUTODEPLOY_DISABLED") != "1":
             try:
                 env = {**os.environ, "CLOUDFLARE_API_TOKEN": CLOUDFLARE_API_TOKEN}
                 deploy = subprocess.run(
@@ -339,6 +339,36 @@ class HugoPublisher:
             except Exception as e:
                 logger.error(f"Cloudflare 배포 실패: {e}")
 
+        # published_history_{lang}.json 자동 기록 (market_wrap/intraday/weekly 등 모든 raw 발행 추적)
+        try:
+            import json as _json_hist
+            from datetime import datetime as _dt_hist
+            DATA_DIR = Path("/home/mh/ocstorage/workspace/nichproject/auto_publisher/data")
+            history_path = DATA_DIR / f"published_history_{self.lang}.json"
+            entries: list = []
+            if history_path.exists():
+                try:
+                    loaded = _json_hist.loads(history_path.read_text(encoding="utf-8"))
+                    if isinstance(loaded, list):
+                        entries = loaded
+                except Exception:
+                    entries = []
+            entries.append({
+                "topic_id": f"raw-{section}-{slug}",
+                "platform": "hugo",
+                "url": str(filepath),
+                "published_at": _dt_hist.now().isoformat(),
+                "source": "raw_markdown",
+                "lang": self.lang,
+                "section": section,
+            })
+            DATA_DIR.mkdir(parents=True, exist_ok=True)
+            history_path.write_text(
+                _json_hist.dumps(entries, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+        except Exception as _e:
+            logger.warning(f"published_history_{self.lang}.json 기록 실패: {_e}")
+
         return {
             "url": f"/{self.lang}/{section}/{slug}/",
             "filepath": str(filepath),
@@ -358,6 +388,7 @@ class HugoPublisher:
         content_type: str = "guide",
         ticker: str = "",
         mkt_data: dict = None,
+        howto_steps: list[dict] = None,
     ) -> dict:
         slug = _slugify(title)
         filename = f"{slug}.md"
@@ -418,6 +449,10 @@ class HugoPublisher:
         }
         # [수정] JSON-LD 주입을 여기서 제거 (Article/FAQ JSON-LD는 Hugo 템플릿에서 처리)
         schema_type = schema_map.get(content_type, "Article")
+        # howto_steps 없는 guide/howto는 Article로 다운그레이드 (빈 HowTo JSON-LD 방지)
+        howto_steps = howto_steps or []
+        if schema_type == "HowTo" and not howto_steps:
+            schema_type = "Article"
 
         # 차트 생성 및 주입
         category = categories[0] if categories else ("재테크 기초" if self.lang == "ko" else "ETF")
@@ -442,6 +477,24 @@ class HugoPublisher:
                 og_image_path = charts[0].get("path", "")
         except Exception as e:
             logger.warning(f"차트 생성 건너뜀: {e}")
+
+        # AI cover image 폴백 — 차트 없을 때 image_gen으로 생성 (Tier 3 #7)
+        if not og_image_path:
+            try:
+                from auto_publisher.image_gen import generate_cover_image
+                ai_path = generate_cover_image(
+                    slug=slug,
+                    title=title,
+                    primary_keyword=primary_keyword,
+                    lang=self.lang,
+                )
+                if ai_path:
+                    # /home/mh/.../web/static/images/<slug>/cover-ai.png → /images/<slug>/cover-ai.png
+                    rel = ai_path.split("/web/static", 1)[-1] if "/web/static" in ai_path else ai_path
+                    og_image_path = rel
+                    logger.info(f"AI cover image 사용: {rel}")
+            except Exception as e:
+                logger.warning(f"AI cover 생성 건너뜀: {e}")
 
         # 내부 링크 주입 (다국어 + 섹션 + 티커 크로스링크)
         from auto_publisher.link_builder import (
@@ -487,9 +540,31 @@ class HugoPublisher:
             published_links,
             current_section=self.section,
             current_tickers=current_tickers,
+            current_keywords=tags + keywords_long_tail,
+            current_primary_keyword=primary_keyword,
         )
 
         content_md = html_to_markdown(content_html)
+
+        # SEO 게이트 — hard 위반은 raise (env SEO_VALIDATOR_ENABLED=0이면 soft로 다운그레이드)
+        from auto_publisher.seo_validator import SEOValidationError, validate_seo
+        seo_report = validate_seo(
+            title=title,
+            body_md=content_md,
+            primary_keyword=primary_keyword,
+            meta_description=meta_description,
+        )
+        if seo_report.hard_violations:
+            logger.error(
+                f"SEO hard fail (score={seo_report.score:.1f}) "
+                f"violations={seo_report.hard_violations}"
+            )
+            raise SEOValidationError(seo_report)
+        if seo_report.soft_violations:
+            logger.warning(
+                f"SEO soft warnings (score={seo_report.score:.1f}): "
+                f"{seo_report.soft_violations[:5]}"
+            )
 
         # JSON-LD 주입 제거 완료. FAQ는 Hugo에서 별도 처리.
         faq_block = ""
@@ -506,31 +581,52 @@ class HugoPublisher:
         from datetime import datetime, timezone
         _fetched_at = datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
 
+        # howto_steps YAML 블록 (schema가 HowTo로 유지된 경우만 출력)
+        howto_block = ""
+        if schema_type == "HowTo" and howto_steps:
+            import json as _json_hs
+            lines = ["howto_steps:"]
+            for s in howto_steps:
+                lines.append(f"  - name: {_json_hs.dumps(s.get('name', ''), ensure_ascii=False)}")
+                lines.append(f"    text: {_json_hs.dumps(s.get('text', ''), ensure_ascii=False)}")
+            howto_block = "\n".join(lines) + "\n"
+
+        # SEO audit YAML 블록 (투명성 + 디버깅)
+        seo_audit_block = seo_report.to_yaml_block()
+
+        # E-E-A-T 정보 설정
+        from auto_publisher.content_generator import _load_persona
+        persona = _load_persona(self.lang)
+        author_name = persona.get("name", "InvestIQs Research")
+        author_url = f"/{self.lang}/about/authors/"
+        reviewer_name = "자동화 규칙 검증 시스템"
+
         frontmatter = f"""---
 title: "{title}"
 date: {today}
 lastmod: {today}
 draft: false
-reviewed: true
 description: "{meta_description}"
 keywords: "{kw_str}"
 primary_keyword: "{primary_keyword}"
+author: "{author_name}"
+authorURL: "{author_url}"
 schema: "{schema_type}"
 toc: true
 comments: true
 ai_generated: true
+human_reviewed: false
 ai_models: ["claude-sonnet-4.6", "google/gemini-2.0-flash-exp:free"]
 data_fetched_at: "{_fetched_at}"
 data_source: "yfinance"
 analysis_confidence: "medium"
 verifiedBy: "rule_based + architect_review"
-reviewedBy: "편집자 미검토 — AI 자동 발행"
-{cover_block}tags:
+reviewedBy: "{reviewer_name}"
+{seo_audit_block}{howto_block}{cover_block}tags:
 {tags_yaml}
 categories:
 {cats_yaml}
 ---
-
 """
         from auto_publisher.content_generator import fix_html_block_spacing
 
@@ -555,7 +651,7 @@ categories:
             logger.error(f"Hugo 빌드 실패: {e}")
 
         # Cloudflare Pages 자동 배포
-        if CLOUDFLARE_API_TOKEN:
+        if CLOUDFLARE_API_TOKEN and os.getenv("HUGO_AUTODEPLOY_DISABLED") != "1":
             try:
                 env = {**os.environ, "CLOUDFLARE_API_TOKEN": CLOUDFLARE_API_TOKEN}
                 deploy = subprocess.run(

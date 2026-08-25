@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "topic_id": "blog-div-01",
+    "attempts": 3,
+    "first_failed_at": "2026-08-06T07:11:38.854623",
+    "last_failed_at": "2026-08-06T07:32:30.190172",
+    "last_reason": "모든 LLM 백엔드 실패: claude model=claude-haiku-4-5-20251001 reason=claude CLI 2회 실패: [Errno 2] No such file or directory: 'claude' | gemini model=gemini-2.5-pro reason=gemini CLI 2회 실패: gemini 오류: Loaded ca"
+  },
+  {
+    "topic_id": "blog-div-02",
+    "attempts": 2,
+    "first_failed_at": "2026-08-06T07:42:58.505610",
+    "last_failed_at": "2026-08-06T07:53:25.320996",
+    "last_reason": "모든 LLM 백엔드 실패: claude model=claude-haiku-4-5-20251001 reason=claude CLI 2회 실패: [Errno 2] No such file or directory: 'claude' | gemini model=gemini-2.5-pro reason=gemini CLI 2회 실패: gemini 오류: Loaded ca"
+  }
+]

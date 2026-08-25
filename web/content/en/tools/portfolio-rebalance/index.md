@@ -23,8 +23,8 @@ Enter each holding with its current market value and your desired target percent
 
 ## Related tools
 
-- [Dividend income calculator — SCHD, JEPI, VYM](/en/tools/dividend-calculator/schd/)
-- [ETF income comparison tool](/en/tools/compare/schd-vs-jepi/)
+- [Dividend income calculator — SCHD, JEPI, VYM](/en/tools/dividend-calculator/)
+- [ETF income comparison tool](/en/tools/compare/)
 - [Portfolio income estimator](/en/tools/portfolio-income/)
 - [All investment tools](/en/tools/)
 

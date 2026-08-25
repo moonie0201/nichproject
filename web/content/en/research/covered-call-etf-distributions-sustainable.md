@@ -56,13 +56,13 @@ Two structural facts are well-documented for QYLD:
 - **Covered-call drag.** Its fact sheet shows a 5-year NAV total return of **8.05% annualized** (as of 30 April 2026) versus its own underlying Hybrid Index at **8.92% annualized** — a ~0.87 percentage-point annual shortfall. Part of that gap is the expense ratio; part reflects the covered-call strategy capping upside. ([QYLD Fact Sheet](https://assets.globalxetfs.com/funds/documents/qyld/Fact-Sheet_QYLD.pdf))
 - **Cost.** QYLD's total expense ratio is **0.60%**, roughly **ten times** the **0.06%** of SCHD and **~0.04%** of VYM. Over long holding periods, that cost difference compounds. ([Global X QYLD page](https://www.globalxetfs.com/funds/qyld); SCHD/VYM ratios corroborated by multiple independent data providers.)
 
-You can model how an expense-ratio gap of this size compounds over time with our [ETF fee comparison calculator](/en/tools/etf-fee-calculator/), and how a given amount's distributions accumulate with the [dividend calculator](/en/tools/dividend-calculator/qyld/).
+You can model how an expense-ratio gap of this size compounds over time with our [ETF fee comparison calculator](/en/tools/etf-fee-calculator/), and how a given amount's distributions accumulate with the [dividend calculator](/en/tools/dividend-calculator/).
 
 ## What we could NOT verify (and why we're telling you)
 
 We attempted to verify head-to-head **total-return** comparisons among QYLD, JEPI, JEPQ, SCHD, and VYM over 3–5 years. **Every one of those comparison claims failed our verification step.** The figures conflicted across aggregator sites (totalrealreturns.com, stockanalysis.com, etf.com), were highly sensitive to the exact snapshot date, and could not be unanimously confirmed against primary sources — some even claimed covered-call funds *outperformed* on a reinvested basis, contradicting others.
 
-So this report makes **no** total-return ranking claim. If you see a confident "Fund A beat Fund B by X% over 5 years" headline, check the exact dates and whether distributions were reinvested — small changes flip the result. (You can build your own side-by-side starting points with our [ticker comparison pages](/en/tools/compare/qyld-vs-jepq/).)
+So this report makes **no** total-return ranking claim. If you see a confident "Fund A beat Fund B by X% over 5 years" headline, check the exact dates and whether distributions were reinvested — small changes flip the result. (You can build your own side-by-side starting points with our [ticker comparison pages](/en/tools/compare/).)
 
 ## Scope limits
 

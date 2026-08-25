@@ -49,7 +49,7 @@ categories:
 ---
 <div class="summary-box">
   <ul>
-    <li><a href="/en/study/voo-vs-spy-how-a-003-fee-difference-compounds-over-10-years/">VOO</a> delivered +26.8% return YTD with 1.03% yield; <a href="/en/study/schd-in-tax-free-accounts-why-20-year-<a href=">compounding</a>-beats-2m-krw-in-annual-savings/">SCHD</a> posted +24.2% with 3.25% yield</li>
+    <li><a href="/en/study/voo-vs-spy-how-a-003-fee-difference-compounds-over-10-years/">VOO</a> delivered +26.8% return YTD with 1.03% yield; SCHD posted +24.2% with 3.25% yield</li>
     <li>5-year divergence: VOO +89.0% vs SCHD +48.4%—a 40-percentage-point spread driven by growth dominance</li>
     <li>Annual tax drag on SCHD distributions runs roughly 3× higher than VOO in standard brokerage accounts at 15% rates</li>
     <li>Over 20 years, SCHD's tax friction could reduce ending value by 8–12% relative to pre-tax projections</li>

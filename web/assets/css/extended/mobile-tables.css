@@ -1,0 +1,10 @@
+/* 본문 마크다운 표의 모바일 가로 넘침 방지.
+   PaperMod 는 셀마다 min-width: 80px 만 주고 overflow 처리가 없어서,
+   5칸짜리 비교표(기사에 흔함)가 390px 화면에서 페이지를 옆으로 민다.
+   쇼츠 유입은 전부 모바일이라 실사용 버그다.
+   테마 파일은 업데이트 때 덮이므로 여기(extended)에서 오버라이드한다. */
+.md-content table:not(.highlighttable):not(.highlight table) {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

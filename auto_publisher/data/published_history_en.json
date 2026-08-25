@@ -22,5 +22,203 @@
     "platform": "hugo",
     "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/종합소득세-신고-etf-income-401k-and-tax-drag-that-matters.md",
     "published_at": "2026-04-27T07:02:59.023811"
+  },
+  {
+    "topic_id": "blog-etf-04",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/jepi-vs-schd-deconstructing-covered-call-premium-costs-in-a-5-year-data-review.md",
+    "published_at": "2026-05-13T07:03:25.841408"
+  },
+  {
+    "topic_id": "blog-etf-05",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/vti-vs-vxus-15-year-return-data-and-the-tax-placement-gap-most-portfolios-ignore.md",
+    "published_at": "2026-05-14T07:26:59.055985"
+  },
+  {
+    "topic_id": "blog-div-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/schd-dividend-growth-cagr-yield-decomposition-across-10-years.md",
+    "published_at": "2026-05-15T07:32:46.496817"
+  },
+  {
+    "topic_id": "blog-div-02",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/qyld-and-the-8-dividend-trap-what-five-years-of-total-return-data-actually-shows.md",
+    "published_at": "2026-05-16T07:26:48.456716"
+  },
+  {
+    "topic_id": "blog-div-03",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/20-year-drip-reinvestment-simulation-risk-data-vs-consensus-assumptions.md",
+    "published_at": "2026-05-17T07:36:17.721112"
+  },
+  {
+    "topic_id": "blog-tax-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/roth-ira-vs-traditional-ira-5-scenario-capital-gains-tax-decomposition.md",
+    "published_at": "2026-05-18T07:03:49.308871"
+  },
+  {
+    "topic_id": "blog-tax-02",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/2024-401k-contribution-limits-tax-bracket-impact-simulation-volatility-risks.md",
+    "published_at": "2026-05-19T07:03:31.699046"
+  },
+  {
+    "topic_id": "blog-port-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/rethinking-the-6040-portfolio-a-10-year-bnd-vs-tlt-allocation-analysis.md",
+    "published_at": "2026-05-20T07:03:24.326924"
+  },
+  {
+    "topic_id": "blog-port-02",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/all-weather-portfolio-backtest-5-year-data-compounding-analysis.md",
+    "published_at": "2026-05-21T07:03:43.664962"
+  },
+  {
+    "topic_id": "blog-port-03",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/maximizing-yield-through-2022-drawdown-recovery-speed-analysis-voo-bnd-tlt-gld.md",
+    "published_at": "2026-05-22T07:03:16.778665"
+  },
+  {
+    "topic_id": "blog-cost-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/brokerage-etf-transaction-cost-benchmark-commission-spread-and-fx-dynamics-for-d.md",
+    "published_at": "2026-05-23T07:02:48.309294"
+  },
+  {
+    "topic_id": "blog-strategy-01",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/factor-etf-10-year-decomposition-value-momentum-and-quality-compounding.md",
+    "published_at": "2026-05-24T07:03:22.161498"
+  },
+  {
+    "topic_id": "auto-c68622c7",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/structuring-a-late-stage-retirement-portfolio-analyzing-schds-dividend-efficacy-.md",
+    "published_at": "2026-05-25T07:03:34.974467"
+  },
+  {
+    "topic_id": "auto-4eb891b4",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/schd-in-tax-free-accounts-why-20-year-compounding-beats-2m-krw-in-annual-savings.md",
+    "published_at": "2026-06-11T07:05:44.206047"
+  },
+  {
+    "topic_id": "auto-35ebe7eb",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/sports-reits-beyond-stock-splits-can-5-yields-diversify-a-portfolio.md",
+    "published_at": "2026-06-12T07:03:11.013555"
+  },
+  {
+    "topic_id": "auto-6275b1d0",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/tiger-qqq-5-year-tech-concentration-returns-under-the-microscope.md",
+    "published_at": "2026-06-13T07:04:57.650004"
+  },
+  {
+    "topic_id": "auto-e6d48179",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/kodex-200-vs-tiger-200-how-001-fee-gap-compounds-over-five-years.md",
+    "published_at": "2026-06-14T07:04:48.852696"
+  },
+  {
+    "topic_id": "auto-e34ddf42",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/tlt-reits-64-portfolio-income-and-diversification-in-a-high-rate-environment.md",
+    "published_at": "2026-06-15T07:06:07.466338"
+  },
+  {
+    "topic_id": "auto-901584da",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/voo-vs-spy-how-a-003-fee-difference-compounds-over-10-years.md",
+    "published_at": "2026-06-16T07:04:07.241886"
+  },
+  {
+    "topic_id": "auto-1c125eff",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/tlt-volatility-decoded-why-284-loss-masks-a-15-rebound-case.md",
+    "published_at": "2026-06-17T07:05:18.344613"
+  },
+  {
+    "topic_id": "auto-c1c5a7a7",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/tax-optimized-spy-growth-building-500k-over-20-years.md",
+    "published_at": "2026-06-18T07:05:07.194900"
+  },
+  {
+    "topic_id": "auto-f1b528ff",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/the-hidden-cost-of-3x-leverage-qqq-vs-tqqq-in-a-30-crash.md",
+    "published_at": "2026-06-19T07:06:42.144453"
+  },
+  {
+    "topic_id": "auto-2430b9cf",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/voo-vs-schd-which-etf-wins-under-a-15-capital-gains-tax-regime.md",
+    "published_at": "2026-06-20T07:07:06.186403"
+  },
+  {
+    "topic_id": "auto-d04e7970",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/schd-vs-high-growth-dividend-etfs-tax-efficiency-strategy-for-3-yields.md",
+    "published_at": "2026-06-22T07:05:31.966897"
+  },
+  {
+    "topic_id": "auto-46f0f0a9",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/tlts-volatility-trap-why-rate-cuts-dont-automatically-fix-bond-losses.md",
+    "published_at": "2026-06-23T07:08:18.649181"
+  },
+  {
+    "topic_id": "auto-db0f06da",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/voo-vs-samsung-10-year-return-reality-the-dividend-yield-gap.md",
+    "published_at": "2026-06-24T07:06:37.434102"
+  },
+  {
+    "topic_id": "auto-ff29a7e3",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/tax-efficient-gold-hedge-qqq-85-gld-15-over-3-years.md",
+    "published_at": "2026-06-25T07:06:18.943408"
+  },
+  {
+    "topic_id": "auto-a91cbf41",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/dividend-retirement-blueprint-reits-schd-allocation-for-monthly-cash-flow.md",
+    "published_at": "2026-06-26T07:06:50.342105"
+  },
+  {
+    "topic_id": "auto-8c767428",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/samsung-dividend-reinvestment-path-to-8-annual-returns-over-5-years.md",
+    "published_at": "2026-06-27T07:05:40.731434"
+  },
+  {
+    "topic_id": "auto-d8e863f6",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/tiger-sp500-etf-vs-us-alternatives-tax-diversification-dynamics.md",
+    "published_at": "2026-06-28T07:05:22.970954"
+  },
+  {
+    "topic_id": "auto-561fce1b",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/gld-in-crisis-how-gold-etfs-defended-against-2008-style-losses.md",
+    "published_at": "2026-06-29T07:04:23.540293"
+  },
+  {
+    "topic_id": "auto-cb66d49b",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/tqqq-leverage-decay-why-3x-etfs-underperform-during-drawdowns.md",
+    "published_at": "2026-08-08T07:06:43.027461"
+  },
+  {
+    "topic_id": "auto-ee4211ae",
+    "platform": "hugo",
+    "url": "/home/mh/ocstorage/workspace/nichproject/web/content/en/study/schd-dividend-calendar-ex-dividend-vs-pay-date-tax-timing.md",
+    "published_at": "2026-08-09T07:05:21.895530"
   }
 ]

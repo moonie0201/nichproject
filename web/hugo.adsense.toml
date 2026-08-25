@@ -1,0 +1,51 @@
+# 애드센스 심사용 축소 오버레이 — 되돌릴 수 있는 토글
+#
+# 사용법:
+#   심사 모드 빌드 : hugo --config hugo.toml,hugo.adsense.toml
+#   평상시 빌드    : hugo            (이 파일을 쓰지 않으면 원상태)
+#
+# 근거(survey/04-adsense-approval.md, survey/05-blog-structure-template.md):
+#   - 심사는 언어별이 아니라 사이트 전체 단위 → 기계번역 언어가 한국어 판정을 끌어내린다
+#   - "Automatically generated content without manual review or curation" 가 직접 위반 조항
+#   - noindex 는 페이지가 여전히 접근 가능해 효과 불확실. 제외/삭제가 확실한 방법
+#   - 상위 노출 글은 구체 수치 15~20회. 수치가 한 자릿수인 글은 장식으로 못 메운다
+#
+# 승인 후 이 파일 없이 빌드하면 전부 복원된다. 콘텐츠 파일은 하나도 지우지 않는다.
+#
+# 주의 — TOML 스코프: ignoreFiles 는 반드시 [languages] 테이블보다 위에 둔다.
+#        아래에 두면 languages.ignoreFiles 로 파싱돼 조용히 무시된다.
+# 주의 — 정규식은 파일 경로에 매칭된다. 앞뒤 슬래시가 없으면 매칭되지 않는다.
+
+# 제외 대상:
+#   - 시황 템플릿 (daily/weekly/market)
+#   - 배당 이벤트 중복 시리즈 (JEPI/SCHD/JEPQ 티커당 대표 1편만 유지)
+#   - 날짜 박힌 시황성 글
+#   - 구체 수치가 한 자릿수인 얇은 글 3편 (승인 후 내용을 채워 복원할 것)
+ignoreFiles = [
+  '/daily/',
+  '/weekly/',
+  '/market/',
+  '/jepq\-분기\-배당\-인상\-분석\-고배당\-etf의\-수익률과\-변동성\-리스크\-평가\.md$',
+  '/schd\-분기\-배당\-27\-삭감\-후\-배당수익률\-325\-유지\-전략\.md$',
+  '/2026년\-4월\-22일\-시장\-심층\-분석\-변동성\-속\-기회\-포착\-전략\.md$',
+  '/2026년\-4월\-22일\-암호화폐\-시장\-숨\-고르기\-다음\-움직임은\.md$',
+  '/voo\-vs\-schd\-5년\-누적수익률\-분석\-배당률\-가설이\-깨지는\-지점\.md$',
+  '/jepi\-배당\-03890\-인상\-분산\-포트폴리오의\-재평가\.md$',
+  '/schd\-배당성장률\-10년\-추이\-배당\-etf\-신화와\-데이터의\-거리\.md$',
+  '/jepq\-분기\-배당\-21\-인상\-발표\-jepi와\-수익률\-배당\-비교\.md$',
+  '/jepq\-분기\-배당\-05910\-발표\-작년\-대비\-26\-인상\-분석\-및\-jepi\-비교\.md$',
+  '/jepi\-분기\-배당\-103\-인상\-그러나\-성장\-정체는\-신호\.md$',
+  '/월배당\-etf\-리스크\-및\-변동성\-분석\-jepq\-vs\-jepi\-배당률과\-총수익률의\-역설\.md$',
+  '/prediction\-tracker\.md$',
+  '/retirement\-pension\-irp\-tax\-investing\.md$',
+  '/isa\-만기\-60일\-놓쳤을\-때\-연금계좌\-이전\-체크리스트\.md$',
+  '/personal\-finance\-fundamentals\.md$',
+]
+
+# ja/vi/id 는 여기가 아니라 hugo.toml 에서 영구 비활성한다 —
+# 은퇴는 심사와 무관한 결정이고(config.RETIRED_LANGUAGES), 이 overlay 에만
+# 두면 overlay 없이 빌드하는 순간 되살아난다.
+# 여기 남는 건 심사 기간에만 되돌릴 것: en 비활성 + 위 ignoreFiles 축소.
+[languages]
+  [languages.en]
+    disabled = true

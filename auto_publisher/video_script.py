@@ -5,6 +5,7 @@ YouTube 영상 대사 생성 — 블로그 → 롱폼 + 쇼츠 대사 변환
 """
 
 import hashlib
+import html
 import json
 import logging
 import os
@@ -14,13 +15,14 @@ from pathlib import Path
 
 from auto_publisher.content_generator import _call_llm, _parse_json_response
 from auto_publisher.research_pack import build_research_pack
+from auto_publisher.affiliate_compliance import build_broker_prompt_block
 
 logger = logging.getLogger(__name__)
 _NUMBER_PATTERN = re.compile(r"(?:\$?\d[\d,]*\.?\d*%?|[0-9]+년|[0-9]+개월|[0-9]+배)")
 _QUALITY_TARGET_SCORE = 90
 _RULE_TARGET_SCORE = 95
 _VIDEO_THINK_MODE = os.getenv("OLLAMA_THINK_MODE", "script").strip().lower()
-_VIDEO_SCRIPT_MAX_ITER = int(os.getenv("VIDEO_SCRIPT_MAX_ITER", "1"))
+_VIDEO_SCRIPT_MAX_ITER = int(os.getenv("VIDEO_SCRIPT_MAX_ITER", "3"))
 
 # --- 스크립트 캐시 설정 ---
 CACHE_DIR = Path(os.getenv("WORKSPACE", "/home/mh/ocstorage/workspace/nichproject")) / ".omc" / "script_cache"
@@ -91,11 +93,31 @@ def _call_openrouter(prompt: str) -> str:
     raise RuntimeError(f"OpenRouter 모든 모델 실패: {last_exc}") from last_exc
 
 
-def _strip_html(html: str) -> str:
-    """HTML 태그 제거 — 본문 텍스트만 추출"""
-    text = re.sub(r"<script.*?</script>", "", html, flags=re.DOTALL)
+def _strip_blog_markup(text: str) -> str:
+    """마크다운 + HTML 태그 제거 — 본문 텍스트만 추출"""
+    # 1. Fenced code blocks and inline code
+    text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+    text = re.sub(r"`[^`]+`", "", text)
+    # 2. Table lines
+    text = re.sub(r"^\|.*\|.*$", "", text, flags=re.MULTILINE)
+    # 3. Headings
+    text = re.sub(r"^#{1,6}\s+", "", text, flags=re.MULTILINE)
+    # 4. Emphasis: **bold**, __bold__, ~~strike~~
+    text = re.sub(r"\*{1,2}([^*]+)\*{1,2}", r"\1", text)
+    text = re.sub(r"__([^_]+)__", r"\1", text)
+    text = re.sub(r"~~([^~]+)~~", r"\1", text)
+    # 5. Blockquotes
+    text = re.sub(r"^>\s+", "", text, flags=re.MULTILINE)
+    # 6. Links and images
+    text = re.sub(r"!\[([^\]]*)\]\([^)]+\)", "", text)
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+    # 7. HTML entities
+    text = html.unescape(text)
+    # 8. HTML tags
+    text = re.sub(r"<script.*?</script>", "", text, flags=re.DOTALL)
     text = re.sub(r"<style.*?</style>", "", text, flags=re.DOTALL)
     text = re.sub(r"<[^>]+>", " ", text)
+    # 9. Whitespace collapse
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
@@ -112,7 +134,7 @@ def _extract_blog_text(blog_md_path: Path) -> tuple[str, str, list[str]]:
     title = title_match.group(1) if title_match else blog_md_path.stem
 
     chart_paths = re.findall(r'(/images/[^\s")]+\.png)', body)
-    body_text = _strip_html(body)
+    body_text = _strip_blog_markup(body)
 
     return title, body_text, chart_paths
 
@@ -448,17 +470,24 @@ def _postprocess_long_script(
         "저는": "이 분석은",
         "나는": "이 관점은",
         "내가": "이 분석이",
-        "결론적으로": "핵심은",
-        "다음과 같이": "이 흐름을 보면",
-        "앞서 살펴본 바와 같이": "이미 확인한 흐름처럼",
+        "결론적으로": "그러니까 핵심은",
+        "다음과 같이": "이렇게 보면 됩니다",
+        "앞서 살펴본 바와 같이": "방금 본 흐름처럼",
+        "살펴보겠습니다": "같이 보죠",
+        "본 분석은": "이 분석은",
+        "확인됩니다": "보입니다",
+        "관찰됩니다": "나옵니다",
+        "명시됩니다": "나와 있습니다",
     }
 
     defaults = [
         (0, "Hook"),
-        (45, "핵심 프레임"),
-        (150, "데이터 근거"),
-        (300, "반론과 리스크"),
-        (540, "정리와 CTA"),
+        (30, "왜 문제인가"),
+        (90, "데이터 근거"),
+        (240, "반전 포인트"),
+        (360, "실전 적용"),
+        (480, "리스크"),
+        (600, "정리와 CTA"),
     ]
     result["chapters"] = _normalize_chapters(result.get("chapters", []), defaults)
     for chapter in result["chapters"]:
@@ -507,9 +536,11 @@ def _postprocess_short_script(
         "내가": "이 분석이",
         "결론적으로": "핵심은",
     }
+    # 챕터 제목은 화면 자막이 아니라 내부 구획 라벨이지만, 부족한 챕터를 채울 때
+    # 그대로 들어간다. non-ko 대본에 한국어가 섞이지 않게 언어를 따른다.
     defaults = [
         (0, "Hook"),
-        (3, "핵심"),
+        (3, "핵심" if lang == "ko" else "Body"),
         (50, "CTA"),
     ]
     result["chapters"] = _normalize_chapters(result.get("chapters", []), defaults)
@@ -523,6 +554,13 @@ def _postprocess_short_script(
             result["chapters"].append({"start_sec": start_sec, "title": title, "text": "", "chart": None})
 
     hook, body, cta = result["chapters"][0], result["chapters"][1], result["chapters"][2]
+
+    # 아래 보정 문구는 전부 한국어 하드코딩이다. lang 인자를 받아놓고 쓰지 않아서
+    # 영어 대본에도 "끝까지 보면, ..." 이 그대로 붙었다(Codex 리뷰 지적).
+    # 다른 언어는 LLM 출력을 그대로 둔다 — 섞인 대본보다 낫다.
+    if lang != "ko":
+        return _finalize_short_script(result, long_title, blog_url, source_data_points, quality_report)
+
     primary_point = source_data_points[0] if source_data_points else {}
     secondary_point = source_data_points[min(1, len(source_data_points) - 1)] if source_data_points else {}
     risk_point = source_data_points[-1] if source_data_points else {}
@@ -559,8 +597,22 @@ def _postprocess_short_script(
         ).strip()
     if "전체 분석" not in cta["text"]:
         cta_seed = risk_point.get("spoken_value") or risk_point.get("display_value") or risk_point.get("value") or risk_point.get("label") or "변동성 구간"
-        cta["text"] = f"{cta_seed}까지 포함한 전체 분석은 본 영상과 블로그 링크에서 바로 이어집니다.".strip()
+        # "본 영상"(롱폼)은 실측 조회수 0~2회짜리 죽은 목적지다. 설명문 링크와
+        # 목적지를 맞춘다 — 구독이 유일하게 복리로 쌓이는 전환이다.
+        cta["text"] = f"{cta_seed}까지 정리한 전체 분석은 설명란 링크에, 매일 받아보려면 구독을 눌러주세요.".strip()
 
+    return _finalize_short_script(result, long_title, blog_url, source_data_points, quality_report)
+
+
+def _finalize_short_script(
+    result: dict,
+    long_title: str,
+    blog_url: str,
+    source_data_points: list[dict] | None,
+    quality_report: dict | None,
+) -> dict:
+    """언어와 무관한 마무리 — 제목, 비주얼 플랜, 메타데이터."""
+    hook, cta = result["chapters"][0], result["chapters"][2]
     title = result.get("title", long_title[:50]).strip()
     if "#shorts" not in title.lower():
         title = f"{title} #shorts"
@@ -589,7 +641,33 @@ def _format_source_points(source_data_points: list[dict]) -> str:
     )
 
 
-def _build_long_script_prompt(data_pack: dict, lang: str) -> str:
+def _extract_claims_pass(body_text: str, source_data_points: list, lang: str) -> list:
+    """Pass 1: extract 5 verifiable claims from blog body. Each must cite an exact number."""
+    prompt = f"""아래 블로그 본문과 원본 데이터에서 방송 스크립트에 쓸 수 있는 핵심 클레임 5개를 추출하세요.
+반드시 원본 데이터에 있는 숫자만 인용하세요.
+
+[원본 데이터 포인트]
+{json.dumps(source_data_points, ensure_ascii=False)}
+
+[블로그 본문]
+{body_text[:3000]}
+
+[출력: 순수 JSON만]
+[
+  {{"claim": "클레임 요약", "exact_number": "원본에서 가져온 숫자+단위", "evidence": "근거 문장", "chapter_hint": "hook|frame|evidence|contrarian|risk|action|cta"}},
+  ...
+]"""
+    try:
+        raw = _video_llm_json(prompt, "claims_pass")
+        if isinstance(raw, list):
+            return raw[:5]
+        return []
+    except Exception as e:
+        logger.warning("[claims_pass] 실패, 단일 패스 폴백: %s", e)
+        return []
+
+
+def _build_long_script_prompt(data_pack: dict, lang: str, locked_claims: list | None = None) -> str:
     title = data_pack["title"]
     body_excerpt = data_pack["body_excerpt"]
     chart_list = "\n".join(f"  · {c}" for c in data_pack["chart_paths"][:7]) or "  · (차트 없음)"
@@ -601,8 +679,20 @@ def _build_long_script_prompt(data_pack: dict, lang: str) -> str:
     if lang != "ko":
         forbidden = '"Buy now", "Should you buy", "Recommend", "Invest now"'
 
-    return f"""You are a Korean financial YouTube creator producing a premium 10~15 min analysis video.
-Convert the blog post below into a long-form video narration script.
+    locked_block = ""
+    if locked_claims:
+        locked_block = "\n[Locked Claims — 이 숫자만 사용하세요. 목록에 없는 숫자 발명 금지]\n" + "\n".join(
+            f"  - {c.get('claim','')} | 숫자: {c.get('exact_number','')} | 챕터: {c.get('chapter_hint','')}"
+            for c in locked_claims
+        ) + "\n"
+
+    broker_block = build_broker_prompt_block(lang)
+
+    return f"""당신은 한국 재테크 유튜브 톱티어 크리에이터입니다.
+모델 톤: 테이버 / 김단테 / 전인구 — 친구가 옆에서 차분하게 설명해주는 voice.
+한 문장에 한 가지 메시지만. 절대 academic / 보고서 톤 금지.
+{broker_block}
+아래 블로그 포스트를 10~15분 롱폼 대사 스크립트로 변환하세요.
 
 [Blog Title]
 {title}
@@ -624,19 +714,32 @@ Convert the blog post below into a long-form video narration script.
 
 [Available Charts]
 {chart_list}
+{locked_block}
+[Narrative Arc — 7 chapters fixed]
+1. Hook (0-30s): 첫 문장 안에 구체 숫자 1개. "끝까지 보면 [구체 베네핏]" 약속 포함.
+2. 문제 제기 (30-90s): 이 숫자가 왜 보통 사람한테 문제가 되는가.
+3. 데이터 근거 (90-240s): Locked Claims 숫자 3개를 차례로 풀이.
+4. 반전 포인트 (240-360s): 시장 통념과 다른 한 가지 — "그런데 진짜 문제는…"
+5. 실전 적용 (360-480s): "내 계좌에서 어떻게 적용?" — 구체 시나리오 1개.
+6. 리스크 (480-600s): "이 관점이 틀릴 수 있는 경우"를 솔직하게.
+7. 정리와 CTA (600-720s): 핵심 1줄 요약 + 블로그 링크 안내.
+
+[Voice Rules]
+- "~입니다" / "~인데요" / "~죠" 자연스럽게 섞기.
+- 한 문장 60자 이하. 두 문장 연속 길면 짧은 문장 끼우기.
+- "여러분" 호칭 OK, 1인칭("제가/저는") 금지.
+- 숫자 강조 시: "이게 진짜 핵심인데", "여기서 한 번 멈춰서 보면" 같은 구어 마커.
+- 챕터마다 "근데/그런데/사실은" 같은 전환 단어로 시작 가능.
+
+[Forbidden phrases]
+"다음과 같이", "결론적으로", "앞서 살펴본 바와 같이", "~를 살펴보겠습니다", "본 분석은", "확인됩니다", "관찰됩니다"
 
 [CRITICAL RULES]
 - Output language: {"한국어" if lang == "ko" else "English"}
-- Hook → 핵심 주장 → 데이터 근거 → 반론/리스크 → 실행 포인트 → CTA 구조
-- 3인칭 전문 애널리스트 톤 (InvestIQs Research). 1인칭 금지.
-- Hook 첫 30초에는 "끝까지 보면" 류의 시청 유인 문구 포함
-- 시장 통념과 다른 contrarian angle 1개 필수
-- 이 관점이 틀릴 수 있는 경우 1개 필수
-- 숫자 근거는 위 Video Data Pack을 우선 활용
+- 숫자 근거는 위 Video Data Pack과 Locked Claims를 우선 활용
 - Research Pack의 claims/counterpoints/visual_scenes를 각 챕터에 반영
 - 각 챕터는 말뿐인 설명이 아니라 화면에 표시할 데이터/리스크/타임라인 단서를 포함
 - 절대 금지 표현: {forbidden}
-- 교과서 문체 금지: "다음과 같이", "결론적으로", "앞서 살펴본 바와 같이"
 - 마지막 1분: 핵심 요약 + 실행 포인트 + 블로그 링크 CTA
 
 [Output: pure JSON only, no markdown]
@@ -645,12 +748,13 @@ Convert the blog post below into a long-form video narration script.
   "description": "1500자 이내 설명란",
   "tags": ["태그1", "태그2"],
   "chapters": [
-    {{"start_sec": 0, "title": "Hook", "text": "30초 분량 대사", "chart": null}},
-    {{"start_sec": 45, "title": "핵심 프레임", "text": "...", "chart": null}},
-    {{"start_sec": 150, "title": "데이터 근거", "text": "...", "chart": "/images/.../chart.png"}},
-    {{"start_sec": 300, "title": "반론과 리스크", "text": "...", "chart": null}},
-    {{"start_sec": 420, "title": "실행 포인트", "text": "...", "chart": null}},
-    {{"start_sec": 540, "title": "정리와 CTA", "text": "...", "chart": null}}
+    {{"start_sec": 0, "title": "Hook", "text": "...", "chart": null}},
+    {{"start_sec": 30, "title": "왜 문제인가", "text": "...", "chart": null}},
+    {{"start_sec": 90, "title": "데이터 근거", "text": "...", "chart": "/images/.../chart.png"}},
+    {{"start_sec": 240, "title": "반전 포인트", "text": "...", "chart": null}},
+    {{"start_sec": 360, "title": "실전 적용", "text": "...", "chart": null}},
+    {{"start_sec": 480, "title": "리스크", "text": "...", "chart": null}},
+    {{"start_sec": 600, "title": "정리와 CTA", "text": "...", "chart": null}}
   ],
   "mid_roll_marks_sec": [240, 480, 720],
   "total_duration_sec": 720,
@@ -658,15 +762,32 @@ Convert the blog post below into a long-form video narration script.
 }}"""
 
 
-def _build_short_script_prompt(long_script: dict, blog_url: str, lang: str = "ko") -> str:
+def _build_short_script_prompt(long_script: dict, blog_url: str, lang: str = "ko", locked_claims: list | None = None) -> str:
     long_title = long_script.get("title", "")
     source_points = _format_source_points(long_script.get("source_data_points", []))
     forbidden = '"매수하세요", "사야 한다", "추천", "투자 권유", "Buy", "Sell"'
+    # 아래 지시문은 영어지만 결과물은 lang 언어여야 한다. 한국어 고정 문구를
+    # 요구하면 영어 대본에 한국어가 섞이고, 검증기가 그 문구를 다시 요구해
+    # 정상 영어 대본이 재작성 루프를 돈다(Codex 리뷰 2차 지적).
+    _cta_phrase = 'CTA 문장에 "전체 분석" 이라는 표현을 포함하세요.'
     if lang != "ko":
         forbidden = '"Buy now", "Recommend"'
+        _cta_phrase = f"Write every chapter's text in {lang}."
 
-    return f"""You are creating a 60-second Korean YouTube SHORTS script from exact data points.
+    locked_block = ""
+    if locked_claims:
+        locked_block = "\n[Locked Claims — 이 숫자만 사용하세요. 목록에 없는 숫자 발명 금지]\n" + "\n".join(
+            f"  - {c.get('claim','')} | 숫자: {c.get('exact_number','')} | 챕터: {c.get('chapter_hint','')}"
+            for c in locked_claims
+        ) + "\n"
 
+    broker_block = build_broker_prompt_block(lang)
+
+    _max_sec = int(os.getenv("SHORT_DURATION_SEC", "60"))
+    _budget = narration_char_budget(_max_sec, lang)
+
+    return f"""You are creating a {_max_sec}-second YouTube SHORTS script from exact data points.
+{broker_block}
 [Long-form Title]
 {long_title}
 
@@ -675,26 +796,36 @@ def _build_short_script_prompt(long_script: dict, blog_url: str, lang: str = "ko
 
 [Long-form URL]
 {blog_url}
-
+{locked_block}
 [CRITICAL RULES]
 - Output language: {"한국어" if lang == "ko" else "English"}
+- **HARD LIMIT: total narration across all chapters must be at most {_budget} characters.**
+  This is a spoken-length budget, not a style preference. {_max_sec}s of narration in this
+  language fits ~{_budget} characters. Anything longer is cut off mid-sentence and the CTA
+  never plays. Count characters and stay under the limit. Cut content, do not compress wording.
 - Use at least two confidence=exact data points verbatim via display_value or spoken_value.
-- Sentence 1: one exact number.
-- Sentence 2: one interpretation of that number.
-- Sentence 3: one risk or reversal.
-- Final sentence: information CTA with "전체 분석".
+- **Sentence 1 (first 3 seconds) must open a curiosity gap, not read a price.**
+  Half of all viewers leave within 3 seconds, so this sentence decides the video.
+  Good: a counterintuitive claim, a reversal, or a question the number will answer.
+  Bad: "X is trading at $Y right now." — a routine quote gives nobody a reason to stay.
+  The exact numbers belong in sentence 2 onward, where they pay off the tension.
+- Sentence 2: the exact number that grounds the claim in sentence 1.
+- Sentence 3: one interpretation of that number.
+- Then: one risk or reversal.
+- Final sentence: an information CTA pointing at the description link, plus a subscribe ask.
+  {_cta_phrase}
 - Do not add facts that are absent from Source Data Points.
 - 절대 금지: {forbidden}
 
 [Output: pure JSON only]
 {{
-  "title": "쇼츠 제목 (60자, #shorts 포함)",
-  "description": "쇼츠 설명 (롱폼 링크 포함)",
-  "tags": ["태그"],
+  "title": "shorts title, max 60 chars, must contain #shorts",
+  "description": "shorts description",
+  "tags": ["tag"],
   "chapters": [
-    {{"start_sec": 0, "title": "Hook", "text": "0-3초 hook", "chart": null}},
-    {{"start_sec": 3, "title": "핵심", "text": "3-50초 본문", "chart": "/images/.../chart.png"}},
-    {{"start_sec": 50, "title": "CTA", "text": "50-60초 안내", "chart": null}}
+    {{"start_sec": 0, "title": "Hook", "text": "0-3s hook", "chart": null}},
+    {{"start_sec": 3, "title": "Body", "text": "3-50s body", "chart": "/images/.../chart.png"}},
+    {{"start_sec": 50, "title": "CTA", "text": "50-60s close", "chart": null}}
   ],
   "mid_roll_marks_sec": [],
   "total_duration_sec": 60,
@@ -977,7 +1108,16 @@ def generate_long_video_script(
     body_text = data_pack["body_text"]
     if not body_text:
         raise ValueError(f"블로그 본문 추출 실패: {blog_md_path}")
-    result = _video_llm_json(_build_long_script_prompt(data_pack, lang), "long_video_script")
+
+    locked_claims: list = []
+    if os.getenv("VIDEO_TWO_PASS_BODY", "1") == "1":
+        locked_claims = _extract_claims_pass(
+            data_pack.get("body_excerpt", ""),
+            data_pack.get("source_data_points", []),
+            lang,
+        )
+
+    result = _video_llm_json(_build_long_script_prompt(data_pack, lang, locked_claims=locked_claims), "long_video_script")
 
     # 기본값
     result.setdefault("title", title)
@@ -998,7 +1138,8 @@ def generate_long_video_script(
     critique = _critique_script(result, data_pack, lang, "long")
     regenerated = False
     ok, issues = True, []
-    for _ in range(_VIDEO_SCRIPT_MAX_ITER):
+    prev_score = 0
+    for _iter in range(_VIDEO_SCRIPT_MAX_ITER):
         if critique.get("regenerate", True) or int(critique.get("score", 0) or 0) < _QUALITY_TARGET_SCORE:
             result = _rewrite_script(result, critique, data_pack, blog_url, lang, "long")
             regenerated = True
@@ -1015,6 +1156,10 @@ def generate_long_video_script(
         if not _needs_more_revision(result, critique, issues):
             break
         critique = _critique_script(result, data_pack, lang, "long", verify_issues=issues)
+        new_score = result.get("quality_report", {}).get("score", 0)
+        if new_score - prev_score < 3:
+            break
+        prev_score = new_score
 
     quality_report = _finalize_quality_report(result, critique, issues, regenerated)
     result["quality_report"] = quality_report
@@ -1050,11 +1195,20 @@ def generate_short_video_script(
     data_pack = data_pack or {
         "title": long_title,
         "source_data_points": long_script.get("source_data_points", []),
+        "body_excerpt": long_script.get("body_excerpt", ""),
     }
 
     _short_max_sec = int(os.getenv("SHORT_DURATION_SEC", "60"))
 
-    result = _video_llm_json(_build_short_script_prompt(long_script, blog_url, lang), "short_video_script")
+    locked_claims: list = []
+    if os.getenv("VIDEO_TWO_PASS_BODY", "1") == "1":
+        locked_claims = _extract_claims_pass(
+            data_pack.get("body_excerpt", ""),
+            data_pack.get("source_data_points", []),
+            lang,
+        )
+
+    result = _video_llm_json(_build_short_script_prompt(long_script, blog_url, lang, locked_claims=locked_claims), "short_video_script")
     result.setdefault("title", f"{data_pack.get('title', '')[:50]} #shorts")
     result.setdefault("tags", [])
     result.setdefault("chapters", [])
@@ -1065,7 +1219,8 @@ def generate_short_video_script(
     critique = _critique_script(result, data_pack, lang, "short")
     regenerated = False
     ok, issues = True, []
-    for _ in range(_VIDEO_SCRIPT_MAX_ITER):
+    prev_score = 0
+    for _iter in range(_VIDEO_SCRIPT_MAX_ITER):
         if critique.get("regenerate", True) or int(critique.get("score", 0) or 0) < _QUALITY_TARGET_SCORE:
             result = _rewrite_script(result, critique, data_pack, blog_url, lang, "short")
             regenerated = True
@@ -1082,6 +1237,10 @@ def generate_short_video_script(
             break
         critique = _critique_script(result, data_pack, lang, "short", verify_issues=issues)
         result = _rewrite_weak_parts(result, critique, data_pack, blog_url, "short")
+        new_score = result.get("quality_report", {}).get("score", 0)
+        if new_score - prev_score < 3:
+            break
+        prev_score = new_score
 
     quality_report = _finalize_quality_report(result, critique, issues, regenerated)
     result["quality_report"] = quality_report
@@ -1090,7 +1249,11 @@ def generate_short_video_script(
         for issue in issues:
             logger.warning("[short_video_script] 스크립트 검증 경고: %s", issue)
 
-    # SHORT_DURATION_SEC 환경변수 캡 적용
+    # SHORT_DURATION_SEC 환경변수 캡 적용.
+    # 이전에는 이 메타데이터 필드만 60으로 고쳐 쓰고 대사는 그대로 뒀다. 그래서
+    # "캡 적용" 로그는 찍히는데 실제 낭독은 2배로 길었고, TTS 오디오가 60초에서
+    # 통째로 잘려 문장 중간이 끊기고 CTA 가 유실됐다.
+    # 실제 대사 축약은 훅까지 붙은 뒤 trim_narration_text 한 곳에서 처리한다.
     if result.get("total_duration_sec", 0) > _short_max_sec:
         result["total_duration_sec"] = _short_max_sec
         logger.info(f"[short_video_script] total_duration_sec 캡 적용: {_short_max_sec}s")
@@ -1119,11 +1282,27 @@ def _verify_video_script(script: dict, lang: str = "ko") -> tuple[bool, list[str
         if w in combined:
             issues.append(f"1인칭 표현 발견: '{w}'")
 
-    # 금융 권유 표현
+    # 금융 권유 표현 (기존)
     fin_phrases = ["매수하세요", "사야 한다", "추천합니다", "BUY 신호", "SELL 신호"]
     for w in fin_phrases:
         if w in combined:
             issues.append(f"금융 권유 표현 발견: '{w}'")
+
+    # 자본시장법/금융소비자보호법/유사수신법 위반 표현 (강화)
+    from auto_publisher.content_verifier import check_financial_compliance
+    fin_violations = check_financial_compliance(combined, lang)
+    issues.extend(fin_violations)
+
+    # 영상 스크립트 전용 엄격 패턴: "이 종목은 ... 사세요/파세요"
+    _strict_script_patterns = [
+        re.compile(r"이\s*종목은.{0,30}(사세요|파세요|매수|매도)", re.DOTALL),
+        re.compile(r"(사세요|파세요).{0,20}(지금|바로|즉시)"),
+        re.compile(r"(지금|바로|즉시).{0,20}(사세요|파세요|매수하세요|매도하세요)"),
+    ]
+    for pat in _strict_script_patterns:
+        m = pat.search(combined)
+        if m:
+            issues.append(f"스크립트 금융 권유 패턴 발견: '{m.group(0)[:40]}'")
 
     # 교과서 문체 클리셰
     cliches = ["결론적으로", "다음과 같이", "앞서 살펴본 바와 같이"]
@@ -1141,22 +1320,122 @@ def _verify_video_script(script: dict, lang: str = "ko") -> tuple[bool, list[str
     if len(combined) < 200:
         issues.append(f"스크립트 너무 짧음: 합산 {len(combined)}자 (최소 200자)")
 
+    # 최대 길이 — 낭독 시간이 상한을 넘으면 영상 끝이 잘린다.
+    # 이 검증이 없어서 한국어 대본이 60초 상한의 2배로 생성돼 왔다.
+    _max_sec = int(os.getenv("SHORT_DURATION_SEC", "60"))
+    _budget = narration_char_budget(_max_sec, lang)
+    _narration_chars = sum(len(ch.get("text", "")) for ch in chapters)
+    if _narration_chars > _budget:
+        issues.append(
+            f"스크립트 너무 김: 합산 {_narration_chars}자 ({_max_sec}초 예산 {_budget}자)"
+        )
+
     hook_text = script.get("hook_text") or (chapters[0].get("text", "") if chapters else "")
     cta_text = script.get("cta_text") or (chapters[-1].get("text", "") if chapters else "")
 
-    if hook_text and "끝까지 보면" not in hook_text:
-        issues.append("훅에 시청 유인 문구 부족")
-    if cta_text and "전체 분석" not in cta_text and "블로그" not in cta_text:
-        issues.append("마지막 CTA 약함")
-    if len(chapters) >= 4:
+    # 아래 토큰 검사는 전부 한국어다. 다른 언어 대본에 적용하면 정상 결과가
+    # 항상 실패로 잡혀 재생성 루프를 돈다(Codex 리뷰 2차 지적).
+    if lang == "ko":
+        if hook_text and "끝까지 보면" not in hook_text:
+            issues.append("훅에 시청 유인 문구 부족")
+        if cta_text and "전체 분석" not in cta_text and "블로그" not in cta_text:
+            issues.append("마지막 CTA 약함")
+    if lang == "ko" and len(chapters) >= 4:
         risk_text = " ".join(ch.get("title", "") + " " + ch.get("text", "") for ch in chapters)
         if not any(token in risk_text for token in ("리스크", "반론", "틀릴 수", "변수", "위험")):
             issues.append("리스크 파트 부족")
     if len(_pick_key_numbers(combined, limit=3)) < 1:
         issues.append("핵심 숫자 부족")
 
+    # 마크다운 누출 체크
+    combined_text = " ".join(ch.get("text", "") for ch in chapters)
+    markdown_leak_patterns = [r"^##\s", r"\*\*\w", r"^>\s", r"```", r"^\|"]
+    for pat in markdown_leak_patterns:
+        if re.search(pat, combined_text, re.MULTILINE):
+            issues.append(f"본문 마크다운 누출: {pat}")
+
+    # 문장 길이 리듬 체크
+    max_sent = int(os.getenv("MAX_SENTENCE_CHARS", "60"))
+    for ch in chapters:
+        for sent in re.split(r"[.!?。]\s*", ch.get("text", "")):
+            if len(sent.strip()) > max_sent:
+                issues.append(f"문장 과장({len(sent.strip())}자): {sent.strip()[:30]}…")
+                break
+
     ok = len(issues) == 0
     return ok, issues
+
+
+# 언어별 TTS 발화 속도 (글자/초). 기존 생성물 100편의 SRT 타임스탬프에서 실측했다.
+# 한국어는 음절 밀도가 높아 같은 시간에 들어가는 글자 수가 라틴 문자의 절반이다.
+# 이 차이를 무시한 탓에 한국어 대본만 60초 상한의 2배로 생성돼 왔다.
+#
+# 평균이 아니라 하위 10퍼센타일(느린 쪽)을 쓴다. 평균으로 잡으면 정의상 절반의
+# 영상이 상한을 넘는다 — ko 평균 5.30 기준 317자 예산은 최저 4.65자/초 케이스에서
+# 68초가 되어 8초가 잘렸다. 느린 쪽에 맞춰야 상한이 보장된다.
+# 실측 분포(ko 표본 70편): 평균 5.30 / 최저 4.65 / 10퍼센타일 4.80
+_TTS_CHARS_PER_SEC = {
+    "ko": 4.8,
+    "ja": 6.2,
+    "en": 8.6,
+    # vi/id 는 표본이 1편 이하라 라틴 문자권인 en 값을 보수적으로 공유한다.
+    "vi": 8.6,
+    "id": 8.6,
+}
+_DEFAULT_CHARS_PER_SEC = 8.6
+
+
+def narration_char_budget(max_sec: int, lang: str = "ko") -> int:
+    """max_sec 안에 실제로 낭독 가능한 글자 수."""
+    return int(max_sec * _TTS_CHARS_PER_SEC.get(lang, _DEFAULT_CHARS_PER_SEC))
+
+
+def estimate_narration_sec(text: str, lang: str = "ko") -> float:
+    """대사 텍스트의 예상 나레이션 길이(초)."""
+    return len(text or "") / _TTS_CHARS_PER_SEC.get(lang, _DEFAULT_CHARS_PER_SEC)
+
+
+def trim_narration_text(text: str, max_sec: int, lang: str = "ko") -> str:
+    """TTS 직전 최종 안전망 — 예산 초과 시 가운데를 덜어내고 앞뒤를 보존한다.
+
+    앞은 훅, 뒤는 CTA 라 둘 다 살려야 한다. 오디오를 통째로 자르면 이 둘 중
+    뒤가 통째로 사라진다.
+    """
+    budget = narration_char_budget(max_sec, lang)
+    text = (text or "").strip()
+    if len(text) <= budget:
+        return text
+
+    sentences = [s for s in re.split(r"(?<=[.!?。])\s+|\n{2,}", text) if s and s.strip()]
+    if len(sentences) <= 2:
+        return text[:budget].rstrip()
+
+    tail = sentences[-1].strip()          # CTA
+    head_budget = max(budget - len(tail) - 1, 0)
+
+    kept, used = [], 0
+    for s in sentences[:-1]:
+        s = s.strip()
+        if used + len(s) + 1 > head_budget:
+            break
+        kept.append(s)
+        used += len(s) + 1
+
+    out = " ".join(kept + [tail]).strip()
+
+    # CTA 자체가 예산보다 길면 위 조립만으로는 상한을 못 지킨다(head_budget 이 0 이 되고
+    # tail 이 그대로 남는다). 그대로 두면 ffmpeg 강제 절단으로 넘어가 문장 중간이 끊긴다.
+    # 마지막에 무조건 상한을 강제한다 — 단어 경계 우선, 없으면 하드 컷.
+    if len(out) > budget:
+        cut = out[:budget]
+        sp = cut.rfind(" ")
+        out = (cut[:sp] if sp > budget * 0.6 else cut).rstrip()
+
+    logger.warning(
+        "[short_tts] 나레이션 예산 초과로 축약: %d자 → %d자 (예산 %d자, %s, %ds)",
+        len(text), len(out), budget, lang, max_sec,
+    )
+    return out
 
 
 def script_to_plain_text(script: dict) -> str:

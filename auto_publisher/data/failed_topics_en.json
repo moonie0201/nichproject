@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "topic_id": "auto-433ec7d6",
+    "attempts": 3,
+    "first_failed_at": "2026-06-21T07:12:38.225054",
+    "last_failed_at": "2026-06-21T07:39:50.896530",
+    "last_reason": "모든 LLM 백엔드 실패: claude model=claude-haiku-4-5-20251001 reason=claude CLI 2회 실패: claude 오류:  | gemini model=gemini-2.5-pro reason=gemini CLI 2회 실패: gemini 오류: Error authenticating: IneligibleTierError: "
+  }
+]

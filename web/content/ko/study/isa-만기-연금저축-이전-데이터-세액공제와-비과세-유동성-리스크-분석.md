@@ -1,5 +1,5 @@
 ---
-title: "ISA 만기 자금, 연금저축 vs IRP 어디로 옮길까: 60일 규정과 세액공제 비교"
+title: "ISA 만기 자금, 연금저축 vs IRP 어디로 옮길까"
 date: 2026-05-22
 lastmod: 2026-07-15
 draft: false
@@ -14,7 +14,7 @@ keywords:
   - "ISA 60일 규정"
   - "ISA 만기 세액공제"
   - "연금저축 IRP 차이"
-primary_keyword: "ISA 만기 자금 연금저축 IRP 이전"
+primary_keyword: "ISA 만기 자금"
 schema: "Article"
 toc: true
 comments: true
@@ -44,6 +44,13 @@ cover:
   image: "/images/isa-만기-연금저축-이전-데이터-세액공제와-비과세-유동성-리스크-분석/tax-comparison.png"
   alt: "ISA 만기 자금 연금저축 IRP 이전 비교"
   relative: false
+sources:
+  - name: "국세청"
+    url: "https://www.nts.go.kr"
+  - name: "금융위원회"
+    url: "https://www.fsc.go.kr"
+  - name: "국가법령정보센터"
+    url: "https://www.law.go.kr"
 ---
 
 ## 결론: 60일 안에, 안 쓸 돈만, 목적별로 나눈다
@@ -125,6 +132,8 @@ ISA 만기 자금을 연금계좌로 옮기면 이전금액 전체가 바로 세
 ## 마무리
 
 ISA 만기 자금 이전의 핵심은 세 가지입니다. **60일 안에 처리해야 하고, 절세 효과는 전환금액의 10% 추가 한도 구조이며, 연금저축과 IRP 선택은 절세보다 자금 목적과 유동성 차이에서 갈립니다.** 익숙한 운용과 상대적 유연성이 중요하면 연금저축을 먼저 보고, 장기 노후자금 분리와 추가 절세 설계가 중요하면 IRP를 함께 검토하는 순서가 현실적입니다.
+
+<p class="iq-tool-cta">이전 후 받게 될 세액공제를 계산해보려면 <a href="/ko/tools/pension-tax-credit/"><strong>연금저축·IRP 세액공제 계산기</strong></a>를 이용하세요.</p>
 
 ## 확인한 출처
 

@@ -27,7 +27,7 @@
   <div class="iq-tool-grid">
     {{- range . }}
     <a class="iq-tool-card" href="{{ .url }}">
-      <span class="iq-tool-card__ico">{{ .icon }}</span>
+      <span class="iq-tool-card__ico" aria-hidden="true">{{ .icon }}</span>
       <span class="iq-tool-card__title">{{ .title }}</span>
       <span class="iq-tool-card__desc">{{ .desc }}</span>
     </a>
@@ -71,14 +71,14 @@
 </section>
 {{- end }}
 
-{{- /* compressed market strip */ -}}
-{{- $daily := first 3 (where site.RegularPages "Section" "daily") }}
-{{- with $daily }}
+{{- /* market dashboards — 날짜별 글 목록이 아니라 갱신되는 대시보드 링크 */ -}}
+{{- $market := where site.RegularPages "Section" "market" }}
+{{- with $market }}
 <section class="iq-home-section">
   <h2>{{ $L.market }}</h2>
   <ul class="iq-market-strip">
     {{- range . }}
-    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <time>{{ .Date.Format "2006-01-02" }}</time></li>
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <time>{{ .Lastmod.Format "2006-01-02" }}</time></li>
     {{- end }}
   </ul>
 </section>

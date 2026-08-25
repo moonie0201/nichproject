@@ -40,7 +40,7 @@ other = "Expense ratio"
 [calc_data_as_of]
 other = "Data as of"
 [calc_disclaimer]
-other = "Actual dividends vary. Taxes, FX, and tracking error are not reflected. This is information only, not investment advice."
+other = "Results are estimates based on your inputs. Taxes, fees, and market conditions may differ. This is information only, not investment advice."
 
 # DCA calculator
 [dca_initial]
@@ -73,6 +73,8 @@ other = "ETF B final"
 other = "Difference"
 
 # FIRE calculator
+[fire_final_70y]
+other = "Projected balance after 70y"
 [fire_current]
 other = "Current savings"
 [fire_target]

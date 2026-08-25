@@ -72,7 +72,12 @@
 }
 .iq-card__label { font-size: 0.8rem; opacity: 0.7; }
 .iq-card__value { font-size: 1.25rem; font-weight: 700; margin-top: 4px; }
-.iq-table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 0.9rem; }
+/* 모바일에서 표가 페이지를 옆으로 밀지 않게 한다. 쇼츠 유입은 전부 모바일이다.
+   래퍼 div 를 파셜마다 넣는 대신 표 자체를 블록 스크롤로 만든다 — 한 곳 수정으로
+   dividend-calculator / compare 양쪽 표가 다 잡힌다. */
+.iq-table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 0.9rem;
+  display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.iq-table thead, .iq-table tbody, .iq-table tfoot { display: table; width: 100%; table-layout: fixed; }
 .iq-table th, .iq-table td { padding: 8px 10px; border-bottom: 1px solid var(--border, #e5e7eb); text-align: right; }
 .iq-table th:first-child, .iq-table td:first-child { text-align: left; }
 .iq-meta { font-size: 0.8rem; opacity: 0.7; margin-top: 12px; }

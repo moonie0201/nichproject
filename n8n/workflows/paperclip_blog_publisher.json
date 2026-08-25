@@ -1,0 +1,80 @@
+{
+  "id": "PaperclipBlogPublisher",
+  "name": "Paperclip Blog Publisher (매시 0분, work_product type=blog_post 폴링)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "trig-paperclip",
+      "name": "매시 0분 (KST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8765/paperclip/poll-and-publish",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={\"max_items\":5}",
+        "options": {
+          "timeout": 1200000
+        }
+      },
+      "id": "http-paperclip",
+      "name": "Paperclip 폴링 + 발행",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const r = $json;\nconst processed = r.processed || 0;\nconst succeeded = r.succeeded || 0;\nconst failed = r.failed || 0;\nconst total = r.candidates_total || 0;\nconst skipped = r.skipped;\n\nif (skipped) {\n  return [{ json: { text: `⏸ Paperclip publish skipped: ${skipped}`, succeeded: 0, failed: 0 } }];\n}\n\nlet text = `📰 Paperclip 발행: ${succeeded}/${processed} 성공 (후보 ${total}건)`;\nif (failed > 0) {\n  const reasons = (r.items || [])\n    .filter(i => !i.success)\n    .map(i => i.reason || i.error)\n    .filter(Boolean)\n    .slice(0, 3);\n  text += `\\n❌ 실패 ${failed}건: ${reasons.join(', ')}`;\n}\n\nreturn [{ json: { text, succeeded, failed, processed, total } }];"
+      },
+      "id": "msg-paperclip",
+      "name": "결과 메시지",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, 300]
+    }
+  ],
+  "connections": {
+    "매시 0분 (KST)": {
+      "main": [
+        [
+          {
+            "node": "Paperclip 폴링 + 발행",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Paperclip 폴링 + 발행": {
+      "main": [
+        [
+          {
+            "node": "결과 메시지",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul"
+  },
+  "active": false
+}

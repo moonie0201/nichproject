@@ -48,11 +48,11 @@
     <button type="button" id="iq-share" class="iq-btn iq-btn--ghost">{{ i18n "calc_share" }}</button>
   </div>
 
-  <div id="iq-result" class="iq-result" hidden>
+  <div id="iq-result" class="iq-result" aria-live="polite" hidden>
     <div class="iq-result__title">{{ i18n "calc_result_title" }}</div>
     <div class="iq-result__cards">
       <div class="iq-card" style="grid-column: span 2;"><div class="iq-card__label">{{ i18n "fire_reached" }} / {{ i18n "fire_not_reached" }}</div><div class="iq-card__value" id="iq-res-status">–</div></div>
-      <div class="iq-card"><div class="iq-card__label">{{ i18n "res_final_balance" }}</div><div class="iq-card__value" id="iq-res-final">–</div></div>
+      <div class="iq-card"><div class="iq-card__label">{{ i18n "fire_final_70y" }}</div><div class="iq-card__value" id="iq-res-final">–</div></div>
     </div>
     <table class="iq-table">
       <thead><tr><th>{{ i18n "tbl_year" }}</th><th>{{ i18n "tbl_balance" }}</th></tr></thead>
@@ -62,4 +62,4 @@
   </div>
 </div>
 
-<script type="application/json" id="iq-fx">{{ $fx | jsonify }}</script>
+<script type="application/json" id="iq-fx">{{ $fx | jsonify | safeJS }}</script>

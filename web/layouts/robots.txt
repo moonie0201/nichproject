@@ -1,0 +1,37 @@
+User-agent: *
+{{- if hugo.IsProduction | or (eq site.Params.env "production") }}
+Allow: /
+{{- else }}
+Disallow: /
+{{- end }}
+
+# 크롤 예산 보호 (언어 서브디렉토리 포함 차단)
+Disallow: /tags/
+Disallow: /categories/
+Disallow: /search/
+Disallow: /*/tags/
+Disallow: /*/categories/
+Disallow: /*/search/
+Disallow: /*?*
+
+# AI 학습 크롤러 — 인용 노출을 위해 허용
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+{{/* 사이트맵은 활성 언어만 나열한다.
+     이전에는 static/robots.txt 에 5개 언어를 고정으로 적어둬서, 언어를 비활성화한
+     뒤에도 404 인 사이트맵 4개를 계속 가리켰다. 심사 중 크롤러에 깨진 링크를
+     보내는 상태였다. site.Languages 는 disabled 언어를 제외하므로 자동으로 맞는다. */}}
+Sitemap: {{ "sitemap.xml" | absURL }}
+{{- range site.Languages }}
+Sitemap: {{ printf "%s/sitemap.xml" .Lang | absURL }}
+{{- end }}

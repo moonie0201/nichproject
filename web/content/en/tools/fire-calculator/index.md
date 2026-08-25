@@ -25,7 +25,7 @@ A fixed annual return assumption is a simplification. Sequence-of-returns risk, 
 
 - [DCA investment calculator](/en/tools/dca-calculator/)
 - [ETF fee comparison calculator](/en/tools/etf-fee-calculator/)
-- [Dividend calculator — SCHD](/en/tools/dividend-calculator/schd/)
+- [Dividend calculator — SCHD](/en/tools/dividend-calculator/)
 - Learn more: [Investment study](/en/study/)
 
 Sign up for our weekly newsletter for U.S. market and ETF updates.

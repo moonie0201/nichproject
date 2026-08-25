@@ -73,6 +73,8 @@ other = "ETF B akhir"
 other = "Selisih"
 
 # Kalkulator FIRE
+[fire_final_70y]
+other = "Perkiraan aset setelah 70 tahun"
 [fire_current]
 other = "Tabungan saat ini"
 [fire_target]

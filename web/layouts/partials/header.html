@@ -90,6 +90,7 @@
         {{- /* Per-language submenu labels */ -}}
         {{- $subLabels := dict
             "ko" (dict
+                "pension"  "연금저축·IRP 세액공제"
                 "dividend" "배당 ETF 계산기"
                 "dca"      "범용 계산기"
                 "compare"  "티커 비교"
@@ -160,6 +161,7 @@
                 {{- /* GetPage 경로는 현재 언어의 contentDir 기준(언어 프리픽스 없음).
                        프리픽스를 넣으면 조회가 항상 실패해 하위 링크가 전부 사라진다. */ -}}
                 {{- $subs := slice
+                    (dict "k" "pension"   "p" "/tools/pension-tax-credit")
                     (dict "k" "dividend"  "p" "/tools/dividend-calculator/schd")
                     (dict "k" "dca"       "p" "/tools/dca-calculator")
                     (dict "k" "compare"   "p" "/tools/compare/schd-vs-vym")

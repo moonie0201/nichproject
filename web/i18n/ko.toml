@@ -40,7 +40,7 @@ other = "운용보수"
 [calc_data_as_of]
 other = "데이터 기준일"
 [calc_disclaimer]
-other = "실제 배당은 변동하며 세금·환율·추적오차는 반영되지 않습니다. 본 콘텐츠는 정보 제공 목적이며 투자 권유가 아닙니다."
+other = "계산 결과는 입력한 가정에 따른 시산이며, 세금·수수료·환율 변동 등 실제 조건은 반영되지 않을 수 있습니다. 본 콘텐츠는 정보 제공 목적이며 투자 권유가 아닙니다."
 
 # DCA 계산기
 [dca_initial]
@@ -73,6 +73,8 @@ other = "ETF B 최종"
 other = "차이"
 
 # FIRE 계산기
+[fire_final_70y]
+other = "70년 후 예상 자산"
 [fire_current]
 other = "현재 보유 자산"
 [fire_target]

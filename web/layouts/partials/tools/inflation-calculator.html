@@ -42,7 +42,7 @@
     <button type="button" id="iq-share" class="iq-btn iq-btn--ghost">{{ i18n "calc_share" }}</button>
   </div>
 
-  <div id="iq-result" class="iq-result" hidden>
+  <div id="iq-result" class="iq-result" aria-live="polite" hidden>
     <div class="iq-result__title">{{ i18n "calc_result_title" }}</div>
     <div class="iq-result__cards">
       <div class="iq-card"><div class="iq-card__label">{{ i18n "res_future_cost" }}</div><div class="iq-card__value" id="iq-res-future">–</div></div>
@@ -57,4 +57,4 @@
   </div>
 </div>
 
-<script type="application/json" id="iq-fx">{{ $fx | jsonify }}</script>
+<script type="application/json" id="iq-fx">{{ $fx | jsonify | safeJS }}</script>

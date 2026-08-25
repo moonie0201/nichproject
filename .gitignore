@@ -16,6 +16,14 @@ ml_env/
 .omc/sessions/
 .claude/scheduled_tasks.lock
 web/public/.omc/
+# web/ 안에서 hugo 를 돌리면 여기에도 상태가 쌓인다 (2026-08-23)
+web/.omc/
+# 영상 캐시 — 편당 수십 MB, 재생성 가능
+.omc/video_cache/
+.omc/script_cache/
+# 잘못된 경로로 만들어진 산출물
+web/web/
+web/public_adsense/
 
 # 빌드 산출물
 web/public/
@@ -28,3 +36,35 @@ n8n/bridge.log
 
 # OAuth 자격증명 — 절대 커밋 금지 (2026-08-08)
 .youtube_secrets/
+# .tiktok_secrets/ 가 빠져 있었다. CLAUDE.md 보안 체크리스트는 등록돼 있다고
+# 적혀 있었지만 실제로는 없어서, git add -A 한 번이면 토큰이 커밋됐다. (2026-08-23)
+.tiktok_secrets/
+
+# 데이터 파일 백업 — 자동 생성 (2026-08-23)
+*.bak.*
+
+# 운영 산출물 — 매 실행마다 생성, 재현 가능 (2026-08-23)
+reports/
+.omc/bgm_cache/
+.serena/
+blog/
+shorts/
+# 임시 작업 파일
+script_*.md
+sns_distribution_plan_*.md
+# n8n 백업 — database.sqlite 에 워크플로 자격증명이 들어간다 (2026-08-23)
+n8n/backups/
+n8n/.bridge_api.lock
+# 루트에 흩어진 임시 산출물 (2026-08-23)
+blog_post*.json
+output_blog_post.json
+doctor_*.json
+*_agents.json
+*_issues.json
+in_progress.json
+blocked.json
+issues.json
+data.json
+.paperclip-agent-backups/
+.omx/
+.adsense_review

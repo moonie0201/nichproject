@@ -1,0 +1,17 @@
+{
+  "date": "2026-08-25",
+  "subscribers": 9,
+  "total_views": 83640,
+  "total_videos": 261,
+  "shorts": {
+    "count": 132,
+    "views": 83111,
+    "per_video": 629.6
+  },
+  "longform": {
+    "count": 131,
+    "views": 530,
+    "per_video": 4.0
+  },
+  "subs_per_1k_views": 0.108
+}

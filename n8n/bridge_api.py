@@ -6,13 +6,20 @@ n8n Bridge API — n8n이 로컬 Python 스크립트를 HTTP로 호출하기 위
 import os
 import sys
 import json
+import contextlib
 import fcntl
+import logging
+import ipaddress
 import subprocess
+import tempfile
 import threading
 import time
 import uuid
 from pathlib import Path
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, ThreadingHTTPServer, BaseHTTPRequestHandler
+from urllib.parse import urlparse
+
+logger = logging.getLogger(__name__)
 
 WORKSPACE = Path("/home/mh/ocstorage/workspace")
 NICHPROJECT = WORKSPACE / "nichproject"
@@ -27,6 +34,182 @@ load_dotenv(WORKSPACE / ".env")
 load_dotenv(NICHPROJECT / ".env", override=True)
 
 from auto_publisher.dynamic_topics import inject_dynamic_topics
+from auto_publisher.config import SUPPORTED_LANGUAGES
+
+
+ADSENSE_REVIEW_FLAG = NICHPROJECT / ".adsense_review"
+
+
+def _review_mode_block() -> dict | None:
+    """애드센스 심사 모드면 발행을 막는 skip 응답을, 아니면 None 을 돌려준다.
+
+    심사 중 자동 발행은 "manual review or curation 없는 대량 생성"이라는
+    위반 신호를 실시간으로 강화한다(survey/04-adsense-approval.md).
+
+    토글은 파일 존재 여부다:
+        켜기 : touch .adsense_review
+        끄기 : rm .adsense_review
+    n8n 워크플로우를 건드리지 않고 발행 경로 한 곳에서 흡수하므로,
+    승인 후 파일만 지우면 즉시 원복된다.
+    """
+    if not ADSENSE_REVIEW_FLAG.exists():
+        return None
+    return {
+        "success": True,
+        "skipped": True,
+        "reason": "애드센스 심사 모드 — 자동 발행 중단 중 (.adsense_review 삭제 시 재개)",
+    }
+
+
+def _lang_retired(lang: str) -> dict | None:
+    """발행 중단된 언어면 skip 응답을, 아니면 None 을 돌려준다.
+
+    n8n 워크플로우 27개가 여전히 lang=ja/vi/id 로 호출하므로, 워크플로우를
+    일일이 고치는 대신 여기서 no-op 으로 흡수한다.
+    심사 모드일 때는 언어와 무관하게 전부 막는다.
+    """
+    blocked = _review_mode_block()
+    if blocked:
+        return {**blocked, "lang": lang}
+    if lang in SUPPORTED_LANGUAGES:
+        return None
+    return {
+        "success": True,
+        "skipped": True,
+        "lang": lang,
+        "reason": f"{lang} 발행 중단 (활성 언어: {', '.join(SUPPORTED_LANGUAGES)})",
+    }
+
+
+def _atomic_write(path: Path, text: str) -> None:
+    """같은 임시파일에 쓰고 rename 한다.
+
+    intraday(22:30)와 wrap(07:30)이 같은 us-daily.md 를 쓴다. 스케줄은 안 겹치지만
+    수동 트리거가 겹치면 write_text 는 반쯤 쓰인 파일을 남긴다(Codex 리뷰 지적).
+    os.replace 는 같은 파일시스템 안에서 원자적이라 온전한 하나가 남는다.
+
+    tmp 이름에 PID 만 쓰면 안 된다 — 서버가 ThreadingHTTPServer 라 동시 요청이
+    같은 프로세스의 다른 스레드로 들어오고, 그러면 두 호출이 같은 tmp 를 공유해
+    한쪽이 replace 한 뒤 다른 쪽이 FileNotFoundError 를 낸다(Codex 리뷰 2차 지적).
+    mkstemp 로 호출마다 고유 이름을 받는다.
+    """
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix=f".{path.name}.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(text)
+        os.replace(tmp, path)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
+
+
+# hugo 는 --cleanDestinationDir 로 web/public 을 통째로 갈아엎고, 바로 그 디렉터리를
+# wrangler 가 배포한다. 세 발행 경로(wrap/weekly/intraday)가 이걸 공유하므로,
+# 동시에 돌면 한쪽 빌드가 다른 쪽 배포 중인 public/ 을 지운다(Codex 리뷰 2차 지적).
+# 쓰기→빌드→배포 전체를 직렬화한다. 프로세스 안(ThreadingHTTPServer)과 밖(cron/CLI)
+# 양쪽을 막아야 해서 스레드 락과 파일 락을 같이 쓴다.
+_BUILD_LOCK = threading.Lock()
+_BUILD_LOCK_FILE = NICHPROJECT / "web" / ".hugo_build.lock"
+# flock 은 블로킹 대기에 타임아웃을 못 걸어서 폴링한다. 간격은 테스트에서 줄인다.
+_BUILD_LOCK_POLL_SEC = 1.0
+
+
+@contextlib.contextmanager
+def _build_lock(timeout: int = 600):
+    """빌드+배포 구간을 프로세스 안팎에서 직렬화한다.
+
+    timeout 은 두 락의 **합계** 대기 시간이다. 스레드 락을 `with` 로 잡으면
+    거기서 무기한 대기해 timeout 계약이 깨진다(Codex 리뷰 3차 지적) —
+    데드라인을 하나 만들어 양쪽이 나눠 쓴다.
+    """
+    deadline = time.monotonic() + timeout
+    if not _BUILD_LOCK.acquire(timeout=timeout):
+        raise TimeoutError(f"hugo 빌드 락(스레드) 대기 {timeout}s 초과")
+    try:
+        _BUILD_LOCK_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(_BUILD_LOCK_FILE, "w") as fh:
+            while True:
+                try:
+                    fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    break
+                except BlockingIOError:
+                    # 남은 시간을 넘겨 자지 않는다. 고정 sleep(1) 이면 남은 시간이
+                    # 0.1s 여도 1s 를 자서, 성공도 실패도 계약을 최대 1s 초과한다
+                    # (Codex 리뷰 3차 지적).
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise TimeoutError(f"hugo 빌드 락(파일) 대기 {timeout}s 초과")
+                    time.sleep(min(_BUILD_LOCK_POLL_SEC, remaining))
+                    # 잔 뒤 재시도 전에 다시 확인한다 — 자는 동안 만료됐을 수 있다.
+                    if time.monotonic() >= deadline:
+                        raise TimeoutError(f"hugo 빌드 락(파일) 대기 {timeout}s 초과")
+            try:
+                yield
+            finally:
+                fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+    finally:
+        _BUILD_LOCK.release()
+
+
+ADSENSE_OVERLAY = NICHPROJECT / "web" / "hugo.adsense.toml"
+
+
+def _hugo_config_args() -> list[str]:
+    """심사 모드면 축소 overlay 를 얹어서 빌드한다.
+
+    overlay 는 만들어 놓고 아무도 쓰지 않았다. 그래서 `.adsense_review` 를 지우는
+    순간 다음 발행이 전체 사이트(약 3,900 페이지)를 다시 빌드해 배포하면서
+    축소를 통째로 되돌리게 돼 있었다. 되돌리기가 조용해서 더 위험했다.
+    """
+    if not ADSENSE_REVIEW_FLAG.exists():
+        return []
+    if not ADSENSE_OVERLAY.exists():
+        # fail-open 하면 안 된다. overlay 가 없다고 조용히 plain 빌드로 넘어가면
+        # 심사 중에 en 과 축소 대상 글이 전부 배포된다 — 막으려던 바로 그 사고다
+        # (Codex 리뷰 4차 지적).
+        raise FileNotFoundError(
+            f"심사 모드인데 축소 overlay 가 없다: {ADSENSE_OVERLAY}. "
+            "overlay 를 복구하거나 .adsense_review 를 지워라."
+        )
+    return ["--config", "hugo.toml,hugo.adsense.toml"]
+
+
+def _build_and_deploy(filepath: Path, md: str) -> tuple[dict | None, str]:
+    """대시보드 쓰기 → hugo 빌드 → Cloudflare 배포.
+
+    반환: (빌드 실패 시 오류 dict / 아니면 None, 배포 오류 문자열).
+    배포 실패는 치명적이지 않다 — 파일은 이미 커밋됐고 다음 발행에서 다시 나간다.
+    """
+    with _build_lock():
+        # 설정을 먼저 확정한다. 파일부터 쓰면 overlay 누락으로 터졌을 때
+        # 빌드는 막혀도 대시보드 파일은 이미 바뀐 채로 남는다(Codex 리뷰 5차 지적).
+        hugo_config_args = _hugo_config_args()
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        _atomic_write(filepath, md)
+        build = subprocess.run(
+            ["hugo", "--cleanDestinationDir", "--gc", "--minify", *hugo_config_args],
+            cwd=str(NICHPROJECT / "web"),
+            capture_output=True, text=True, timeout=120,
+        )
+        if build.returncode != 0:
+            return {"success": False, "error": "hugo_build_failed",
+                    "stderr": build.stderr[-500:], "file": str(filepath)}, ""
+        deploy = subprocess.run(
+            ["npx", "wrangler", "pages", "deploy", "public", "--project-name", "invest-korea"],
+            cwd=str(NICHPROJECT / "web"),
+            capture_output=True, text=True, timeout=300, env=os.environ.copy(),
+        )
+    return None, (deploy.stderr[-300:] if deploy.returncode != 0 else "")
+
+
+def _market_dashboard_path(lang: str, kind: str) -> Path:
+    """시황이 쓸 고정 경로를 돌려준다.
+
+    예전에는 발행 때마다 날짜 slug 로 새 URL 을 만들어 ko 기준 84편이 쌓였고,
+    전부 noindex 라 색인 가치는 0 인데 도메인 품질 평균만 끌어내렸다.
+    이제 시황은 갱신되는 대시보드 한 장으로 유지한다. kind 는 us-daily / us-weekly.
+    """
+    return NICHPROJECT / "web" / "content" / lang / "market" / f"{kind}.md"
 
 
 BRIDGE_LOCKFILE = NICHPROJECT / "n8n" / ".bridge_api.lock"
@@ -50,6 +233,8 @@ def acquire_bridge_lock() -> None:
 
 def run_auto_publish(lang: str = "ko") -> dict:
     """auto_publisher 실행 — 콘텐츠 생성 + Hugo 빌드 + CF 배포"""
+    if skip := _lang_retired(lang):
+        return skip
     stdout, stderr, returncode = _popen_stream(
         [VENV_PYTHON, "-m", "auto_publisher.main", "run", "--lang", lang],
         cwd=NICHPROJECT,
@@ -106,6 +291,11 @@ def get_topic_queue() -> dict:
 
 def publish_market_post() -> dict:
     """시장 분석 데이터 → InvestIQs 리서치 애널리스트 AI 포스트 생성 + Hugo 발행"""
+    # Hugo 발행 경로다. 한국어 전용이라 언어 인자가 없어 가드에서 빠져 있었다
+    # (Codex 리뷰 지적 — 2차).
+    if skip := _lang_retired("ko"):
+        return skip
+
     import logging
     import requests as req
     from auto_publisher.content_generator import _load_persona, _persona_brief, _inject_disclaimer
@@ -262,19 +452,42 @@ print(r['url'])
 
 def run_publish_us_market_wrap(dry_run: bool = False, force: bool = False, lang: str = "ko") -> dict:
     """매일 아침 '미국 증시 마감' 포스트 자동 생성 + Hugo 발행."""
+    if skip := _lang_retired(lang):
+        return skip
+    audit_id = None
+    try:
+        from auto_publisher.paperclip_audit import create_audit_issue, complete_audit_issue
+        audit_id = create_audit_issue("market-wrap", f"lang={lang}", lang=lang, source="n8n")
+    except Exception:
+        pass
+
     from auto_publisher import market_wrap
     from auto_publisher.content_generator import make_eeat_slug
     from pathlib import Path
 
+    def _finish(result: dict) -> dict:
+        try:
+            if audit_id:
+                complete_audit_issue(
+                    audit_id,
+                    ok=bool(result.get("success")),
+                    summary=str(result)[:200],
+                    error=result.get("error", "") or result.get("deploy_error", ""),
+                    blog_url=result.get("url", ""),
+                )
+        except Exception:
+            pass
+        return result
+
     snapshot = market_wrap.fetch_us_market_snapshot()
 
     if snapshot.get("is_us_market_holiday") and not force:
-        return {
+        return _finish({
             "success": True,
             "skipped": True,
             "reason": "us_market_holiday",
             "date_kst": snapshot.get("date_kst"),
-        }
+        })
 
     md = market_wrap.build_markdown(snapshot, lang=lang)
     if lang == "ko":
@@ -298,72 +511,67 @@ def run_publish_us_market_wrap(dry_run: bool = False, force: bool = False, lang:
         {"title": title, "html": md}, lang=lang, channel="blog"
     )
     if not compliance.get("ok"):
-        return {
+        return _finish({
             "success": False,
             "error": "compliance_violation",
             "violations": compliance.get("violations", []),
             "title": title,
-        }
+        })
 
     if dry_run:
-        return {
+        return _finish({
             "success": True,
             "dry_run": True,
             "title": title,
             "slug": slug,
             "len": len(md),
             "narrative_hint": snapshot.get("narrative_hint"),
-        }
+        })
 
     # 실제 파일 저장 + Hugo 빌드 + CF 배포
-    content_dir = NICHPROJECT / "web" / "content" / lang / "daily"
-    content_dir.mkdir(parents=True, exist_ok=True)
-    filepath = content_dir / f"{slug}.md"
-    filepath.write_text(md, encoding="utf-8")
+    filepath = _market_dashboard_path(lang, "us-daily")
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+    err, deploy_error = _build_and_deploy(filepath, md)
+    if err:
+        return _finish(err)
 
-    # Hugo 빌드
-    build = subprocess.run(
-        ["hugo", "--cleanDestinationDir", "--gc", "--minify"],
-        cwd=str(NICHPROJECT / "web"),
-        capture_output=True,
-        text=True,
-        timeout=120,
-    )
-    if build.returncode != 0:
-        return {
-            "success": False,
-            "error": "hugo_build_failed",
-            "stderr": build.stderr[-500:],
-            "file": str(filepath),
-        }
-
-    # Cloudflare Pages 배포
-    deploy_env = os.environ.copy()
-    deploy = subprocess.run(
-        ["npx", "wrangler", "pages", "deploy", "public", "--project-name", "invest-korea"],
-        cwd=str(NICHPROJECT / "web"),
-        capture_output=True,
-        text=True,
-        timeout=300,
-        env=deploy_env,
-    )
-
-    return {
-        "success": deploy.returncode == 0,
+    return _finish({
+        "success": True,
         "title": title,
         "slug": slug,
-        "url": f"/{lang}/daily/{slug}/",
+        "url": f"/{lang}/market/us-daily/",
         "file": str(filepath),
-        "hugo_stdout_tail": build.stdout[-300:] if build.stdout else "",
-        "deploy_stdout_tail": deploy.stdout[-300:] if deploy.stdout else "",
-        "deploy_error": deploy.stderr[-300:] if deploy.returncode != 0 else "",
-    }
+        "deploy_error": deploy_error,
+    })
 
 
 def run_publish_us_market_weekly(dry_run: bool = False, force: bool = False, lang: str = "ko") -> dict:
     """매주 토요일 09:00 KST '미국 증시 주간' 포스트 자동 생성 + Hugo 발행."""
+    if skip := _lang_retired(lang):
+        return skip
+    audit_id = None
+    try:
+        from auto_publisher.paperclip_audit import create_audit_issue, complete_audit_issue
+        audit_id = create_audit_issue("market-weekly", f"lang={lang}", lang=lang, source="n8n")
+    except Exception:
+        pass
+
     from auto_publisher import market_weekly
     from auto_publisher.content_generator import make_eeat_slug
+
+    def _finish(result: dict) -> dict:
+        try:
+            if audit_id:
+                complete_audit_issue(
+                    audit_id,
+                    ok=bool(result.get("success")),
+                    summary=str(result)[:200],
+                    error=result.get("error", "") or result.get("deploy_error", ""),
+                    blog_url=result.get("url", ""),
+                )
+        except Exception:
+            pass
+        return result
 
     snapshot = market_weekly.fetch_weekly_snapshot()
     md = market_weekly.build_weekly_markdown(snapshot, lang=lang)
@@ -386,15 +594,15 @@ def run_publish_us_market_weekly(dry_run: bool = False, force: bool = False, lan
         {"title": title, "html": md}, lang=lang, channel="blog"
     )
     if not compliance.get("ok"):
-        return {
+        return _finish({
             "success": False,
             "error": "compliance_violation",
             "violations": compliance.get("violations", []),
             "title": title,
-        }
+        })
 
     if dry_run:
-        return {
+        return _finish({
             "success": True,
             "dry_run": True,
             "title": title,
@@ -402,36 +610,20 @@ def run_publish_us_market_weekly(dry_run: bool = False, force: bool = False, lan
             "len": len(md),
             "narrative_hint": snapshot.get("narrative_hint"),
             "week_label": snapshot.get("week_label"),
-        }
+        })
 
-    content_dir = NICHPROJECT / "web" / "content" / lang / "weekly"
-    content_dir.mkdir(parents=True, exist_ok=True)
-    filepath = content_dir / f"{slug}.md"
-    filepath.write_text(md, encoding="utf-8")
-
-    build = subprocess.run(
-        ["hugo", "--cleanDestinationDir", "--gc", "--minify"],
-        cwd=str(NICHPROJECT / "web"),
-        capture_output=True, text=True, timeout=120,
-    )
-    if build.returncode != 0:
-        return {"success": False, "error": "hugo_build_failed",
-                "stderr": build.stderr[-500:], "file": str(filepath)}
-
-    deploy = subprocess.run(
-        ["npx", "wrangler", "pages", "deploy", "public", "--project-name", "invest-korea"],
-        cwd=str(NICHPROJECT / "web"),
-        capture_output=True, text=True, timeout=300,
-        env=os.environ.copy(),
-    )
-    return {
-        "success": deploy.returncode == 0,
+    filepath = _market_dashboard_path(lang, "us-weekly")
+    err, deploy_error = _build_and_deploy(filepath, md)
+    if err:
+        return _finish(err)
+    return _finish({
+        "success": True,
         "title": title,
         "slug": slug,
-        "url": f"/{lang}/weekly/{slug}/",
+        "url": f"/{lang}/market/us-weekly/",
         "file": str(filepath),
-        "deploy_error": deploy.stderr[-300:] if deploy.returncode != 0 else "",
-    }
+        "deploy_error": deploy_error,
+    })
 
 
 def run_shorts_auto_latest(lang: str = "ko", privacy: str = "public", dry_run: bool = False) -> dict:
@@ -439,6 +631,8 @@ def run_shorts_auto_latest(lang: str = "ko", privacy: str = "public", dry_run: b
 
     이미 영상화된 slug 는 video_cache 디렉토리 기준으로 제외.
     """
+    if skip := _lang_retired(lang):
+        return skip
     from auto_publisher.shorts_auto import find_latest_publishable_slug, list_videoed_slugs
 
     content_root = NICHPROJECT / "web" / "content"
@@ -480,18 +674,41 @@ def run_shorts_auto_latest(lang: str = "ko", privacy: str = "public", dry_run: b
 
 def run_publish_us_market_intraday(dry_run: bool = False, force: bool = False, lang: str = "ko") -> dict:
     """미국장 개장 30분 후 장중 시황 포스트 자동 생성 + Hugo 발행."""
+    if skip := _lang_retired(lang):
+        return skip
+    audit_id = None
+    try:
+        from auto_publisher.paperclip_audit import create_audit_issue, complete_audit_issue
+        audit_id = create_audit_issue("market-intraday", f"lang={lang}", lang=lang, source="n8n")
+    except Exception:
+        pass
+
     from auto_publisher import market_intraday
     from auto_publisher.content_generator import make_eeat_slug
+
+    def _finish(result: dict) -> dict:
+        try:
+            if audit_id:
+                complete_audit_issue(
+                    audit_id,
+                    ok=bool(result.get("success")),
+                    summary=str(result)[:200],
+                    error=result.get("error", "") or result.get("deploy_error", ""),
+                    blog_url=result.get("url", ""),
+                )
+        except Exception:
+            pass
+        return result
 
     snapshot = market_intraday.fetch_intraday_snapshot()
 
     if snapshot.get("is_us_market_holiday") and not force:
-        return {
+        return _finish({
             "success": True,
             "skipped": True,
             "reason": "us_market_not_in_session",
             "date_kst": snapshot.get("date_kst"),
-        }
+        })
 
     md = market_intraday.build_intraday_markdown(snapshot, lang=lang)
     if lang == "ko":
@@ -515,15 +732,15 @@ def run_publish_us_market_intraday(dry_run: bool = False, force: bool = False, l
         {"title": title, "html": md}, lang=lang, channel="blog"
     )
     if not compliance.get("ok"):
-        return {
+        return _finish({
             "success": False,
             "error": "compliance_violation",
             "violations": compliance.get("violations", []),
             "title": title,
-        }
+        })
 
     if dry_run:
-        return {
+        return _finish({
             "success": True,
             "dry_run": True,
             "title": title,
@@ -531,40 +748,28 @@ def run_publish_us_market_intraday(dry_run: bool = False, force: bool = False, l
             "len": len(md),
             "narrative_hint": snapshot.get("narrative_hint"),
             "gap": snapshot.get("gap"),
-        }
+        })
 
-    content_dir = NICHPROJECT / "web" / "content" / lang / "daily"
-    content_dir.mkdir(parents=True, exist_ok=True)
-    filepath = content_dir / f"{slug}.md"
-    filepath.write_text(md, encoding="utf-8")
-
-    build = subprocess.run(
-        ["hugo", "--cleanDestinationDir", "--gc", "--minify"],
-        cwd=str(NICHPROJECT / "web"),
-        capture_output=True, text=True, timeout=120,
-    )
-    if build.returncode != 0:
-        return {"success": False, "error": "hugo_build_failed",
-                "stderr": build.stderr[-500:], "file": str(filepath)}
-
-    deploy = subprocess.run(
-        ["npx", "wrangler", "pages", "deploy", "public", "--project-name", "invest-korea"],
-        cwd=str(NICHPROJECT / "web"),
-        capture_output=True, text=True, timeout=300,
-        env=os.environ.copy(),
-    )
-    return {
-        "success": deploy.returncode == 0,
+    # 장중 시황도 같은 대시보드를 갱신한다. 아침에는 전 세션 마감, 저녁에는 당일 장중이
+    # 올라가므로 시간순으로도 "현재 시장 상태" 한 장으로 일관된다.
+    filepath = _market_dashboard_path(lang, "us-daily")
+    err, deploy_error = _build_and_deploy(filepath, md)
+    if err:
+        return _finish(err)
+    return _finish({
+        "success": True,
         "title": title,
         "slug": slug,
-        "url": f"/{lang}/daily/{slug}/",
+        "url": f"/{lang}/market/us-daily/",
         "file": str(filepath),
-        "deploy_error": deploy.stderr[-300:] if deploy.returncode != 0 else "",
-    }
+        "deploy_error": deploy_error,
+    })
 
 
 def run_analyze(ticker: str = "VOO", lang: str = "ko") -> dict:
     """AI 분석 포스트 생성 + Hugo 발행"""
+    if skip := _lang_retired(lang):
+        return skip
     result = subprocess.run(
         [VENV_PYTHON, "-m", "auto_publisher.main", "analyze", "--ticker", ticker, "--lang", lang],
         cwd=NICHPROJECT,
@@ -588,6 +793,10 @@ def run_analyze(ticker: str = "VOO", lang: str = "ko") -> dict:
 
 def run_translate(source_lang: str = "ko", target_lang: str = "en") -> dict:
     """번역+현지화 발행"""
+    # 번역은 목적 언어로 새 글을 만드는 발행 경로다. 은퇴 언어로의 번역과
+    # 심사 모드를 모두 여기서 막는다. (Codex 리뷰 지적 — 이 경로가 무방비였다)
+    if skip := _lang_retired(target_lang):
+        return skip
     stdout, stderr, returncode = _popen_stream(
         [VENV_PYTHON, "-m", "auto_publisher.main", "translate", "--from", source_lang, "--to", target_lang],
         cwd=NICHPROJECT,
@@ -621,6 +830,220 @@ def _run_video_job(job_id: str, slug: str, lang: str, privacy: str) -> None:
         _VIDEO_JOBS[job_id].update({"status": "failed", "error": str(e), "finished_at": time.time()})
 
 
+_URL_JOBS: dict[str, dict] = {}
+
+
+def _validate_url_to_content_url(url: str) -> tuple[bool, str]:
+    """Return whether URL is actionable enough to create editorial work."""
+    if not url:
+        return False, "url is required"
+    if any(ch.isspace() for ch in url):
+        return False, "url contains whitespace"
+
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        return False, "url must use http or https"
+    if not parsed.hostname:
+        return False, "url host is missing"
+
+    host = parsed.hostname.rstrip(".").lower()
+    placeholder_hosts = {
+        "ex",
+        "example",
+        "example.com",
+        "example.net",
+        "example.org",
+        "test",
+        "localhost",
+    }
+    if host in placeholder_hosts:
+        return False, f"placeholder host is not actionable: {host}"
+
+    try:
+        ip = ipaddress.ip_address(host)
+    except ValueError:
+        ip = None
+
+    if ip:
+        if not ip.is_global:
+            return False, f"non-public host is not actionable: {host}"
+        return True, ""
+
+    labels = host.split(".")
+    if len(labels) < 2 or any(not label for label in labels):
+        return False, f"host must be a fully qualified public name: {host}"
+    if len(labels[-1]) < 2:
+        return False, f"host has an invalid top-level domain: {host}"
+
+    return True, ""
+
+
+def _cancel_url_to_content_job(job_id: str, url: str, reason: str, callback_url: str = "") -> dict:
+    finished_at = time.time()
+    _URL_JOBS[job_id] = {
+        "status": "cancelled",
+        "url": url,
+        "error": "invalid_url",
+        "reason": reason,
+        "started_at": finished_at,
+        "finished_at": finished_at,
+        "callback_url": callback_url,
+    }
+    logger.warning(f"url-to-content job {job_id} rejected: {reason}")
+    return {
+        "success": False,
+        "job_id": job_id,
+        "status": "cancelled",
+        "error": "invalid_url",
+        "reason": reason,
+        "poll": f"/url-to-content-status?job_id={job_id}",
+    }
+
+
+def _run_url_to_content_job(
+    job_id: str, url: str, lang: str, publish_blog: bool, publish_shorts: bool,
+    callback_url: str = "",
+) -> None:
+    """URL → blog post + (optional) YouTube Shorts. Discord에서 호출.
+    완료 시 callback_url 지정되면 POST.
+    Paperclip audit: 시작 시 issue 생성, 종료 시 status + work_product 업데이트.
+    """
+    # URL → 블로그 글 + 쇼츠를 만드는 발행 경로다. 심사 모드·은퇴 언어를 여기서도 막는다.
+    # (Codex 리뷰 지적 — 이 경로가 무방비여서 심사 중에도 신규 글이 나갈 수 있었다)
+    if skip := _lang_retired(lang):
+        _URL_JOBS[job_id].update(status="skipped", result=skip, finished_at=time.time())
+        logger.info(f"url-to-content job {job_id} skipped: {skip.get('reason')}")
+        _notify_url_job(job_id, callback_url)
+        return
+
+    _URL_JOBS[job_id]["status"] = "running"
+    cost_breakdown: dict = {}
+    # Paperclip audit issue (graceful — 실패해도 job 계속)
+    try:
+        from auto_publisher.paperclip_audit import create_url_content_issue
+        audit_issue_id = create_url_content_issue(url, lang, source="bridge", job_id=job_id)
+        if audit_issue_id:
+            _URL_JOBS[job_id]["paperclip_issue_id"] = audit_issue_id
+    except Exception as e:
+        logger.warning(f"paperclip audit 생성 skip: {e}")
+        audit_issue_id = None
+    try:
+        # 1. URL 콘텐츠 추출
+        from auto_publisher.url_fetcher import fetch_url_content
+        content = fetch_url_content(url)
+        _URL_JOBS[job_id]["fetched"] = {
+            "title": content["title"], "platform": content["platform"], "text_len": len(content["text"])
+        }
+
+        result: dict = {"source_url": url, "platform": content["platform"]}
+
+        # 2. 블로그 생성 + 발행
+        if publish_blog:
+            from auto_publisher.content_generator import generate_blog_post
+            # 토픽 = URL 제목, 키워드 = 제목에서 추출 가능한 의미있는 단어 + 핵심
+            topic = content["title"]
+            # 키워드: 제목 + 단순 분할 (LLM이 알아서 best primary 결정)
+            keywords = [topic] + topic.split()[:5]
+            post = generate_blog_post(
+                topic=topic, keywords=keywords, lang=lang, category="시장분석",
+                external_context=content["text"],
+            )
+            # 비용 추정 (post-hoc)
+            try:
+                from auto_publisher.token_estimator import estimate_call
+                import os as _os
+                primary = _os.getenv("LLM_PRIMARY_BACKEND", "gemini")
+                if primary == "gemini":
+                    model = _os.getenv("GEMINI_CLI_MODEL", "gemini-3.1-pro-preview")
+                elif primary == "claude":
+                    model = _os.getenv("CLAUDE_CLI_MODEL", "claude-haiku-4-5")
+                else:
+                    model = primary
+                full_response = post.get("content_html", "") + post.get("meta_description", "")
+                rough_prompt_estimate = content["text"][:3000] + content["title"]
+                breakdown = estimate_call(rough_prompt_estimate, full_response, model)
+                cost_breakdown[model] = breakdown
+            except Exception as _ce:
+                logger.warning(f"cost estimation 실패: {_ce}")
+
+            from auto_publisher.publishers.hugo import HugoPublisher
+            publisher = HugoPublisher(lang=lang)
+            hugo_result = publisher.publish(
+                title=post["title"],
+                content_html=post["content_html"],
+                tags=post.get("tags", []),
+                meta_description=post.get("meta_description", ""),
+                categories=["시장분석", "재테크"],
+                primary_keyword=post.get("primary_keyword", ""),
+                keywords_long_tail=post.get("keywords_long_tail", []),
+                schema_faq=post.get("schema_faq", []),
+                content_type=post.get("content_type", "guide"),
+                howto_steps=post.get("howto_steps", []),
+            )
+            result["blog_url"] = f"https://investiqs.net{hugo_result.get('url','')}"
+            result["filepath"] = hugo_result.get("filepath", "")
+            result["slug"] = hugo_result.get("slug", "")
+
+            # 3. Shorts 생성
+            if publish_shorts and result.get("slug"):
+                try:
+                    video_res = run_make_video(result["slug"], lang, "public")
+                    result["youtube_url"] = (video_res or {}).get("short_url") or (video_res or {}).get("youtube_url", "")
+                except Exception as e:
+                    logger.warning(f"url-to-content shorts 실패: {e}")
+                    result["youtube_error"] = str(e)[:200]
+
+        _URL_JOBS[job_id].update({"status": "done", "result": result, "finished_at": time.time()})
+    except Exception as e:
+        logger.error(f"url-to-content job {job_id} 실패: {e}", exc_info=True)
+        _URL_JOBS[job_id].update({"status": "cancelled", "error": str(e)[:300], "finished_at": time.time()})
+
+    # Paperclip audit 종료 — status + work_product + comment
+    if audit_issue_id:
+        try:
+            from auto_publisher.paperclip_audit import complete_url_content_issue
+            job_state = _URL_JOBS[job_id]
+            complete_url_content_issue(
+                audit_issue_id,
+                result=job_state.get("result") or {},
+                ok=(job_state.get("status") == "done"),
+                error=job_state.get("error", ""),
+                cost_breakdown=cost_breakdown or None,
+            )
+        except Exception as e:
+            logger.warning(f"paperclip audit 종료 실패: {e}")
+
+    _notify_url_job(job_id, callback_url)
+
+
+def _notify_url_job(job_id: str, callback_url: str) -> None:
+    """callback_url 호출 (성공/실패/skip 무관 알림).
+
+    호출자가 어떤 경로로 끝나든 완료 통지는 나가야 한다 — 심사모드 skip 이
+    이 통지를 건너뛰어 Discord 쪽이 영원히 대기했다(Codex 리뷰 2차 지적).
+    """
+    if not callback_url:
+        return
+    try:
+        import urllib.request as _ur
+        payload = json.dumps({
+            "job_id": job_id,
+            "status": _URL_JOBS[job_id].get("status"),
+            "result": _URL_JOBS[job_id].get("result", {}),
+            "error": _URL_JOBS[job_id].get("error", ""),
+        }, ensure_ascii=False, default=str).encode("utf-8")
+        req = _ur.Request(
+            callback_url, data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with _ur.urlopen(req, timeout=10) as resp:
+            resp.read()
+        logger.info(f"url-to-content callback 전송 완료: {callback_url}")
+    except Exception as cb_err:
+        logger.warning(f"callback_url POST 실패 ({callback_url}): {cb_err}")
+
+
 def _popen_stream(cmd: list, cwd, timeout_sec: int) -> tuple[str, str, int]:
     """subprocess.Popen으로 실행하며 stdout을 sys.stdout에 실시간 스트림하고 캡처도 반환.
 
@@ -650,6 +1073,8 @@ def _popen_stream(cmd: list, cwd, timeout_sec: int) -> tuple[str, str, int]:
 def run_make_video(slug: str = "", lang: str = "ko",
                    privacy: str = "public") -> dict:
     """블로그 slug → 롱폼+쇼츠 영상 생성 + YouTube 업로드"""
+    if skip := _lang_retired(lang):
+        return skip
     if not slug:
         # slug 없으면 가장 최근 발행된 lang 포스트 사용
         from auto_publisher.shorts_auto import find_latest_publishable_slug
@@ -854,29 +1279,51 @@ def health_full() -> dict:
     yt_path = NICHPROJECT / ".youtube_secrets" / "token.json"
     result["youtube_token"] = {"exists": yt_path.exists()}
 
-    # last_published
-    history_path = NICHPROJECT / "auto_publisher" / "data" / "published_history.json"
-    last_published: dict = {}
-    if history_path.exists():
+    # last_published — merges all published_history*.json (통합 + lang suffix)
+    from glob import glob as _glob_hist
+    from datetime import datetime as _dt
+    import re as _re_hist
+
+    def _entry_ts(entry: dict) -> float:
+        raw = entry.get("timestamp") or entry.get("published_at") or entry.get("date") or ""
+        if not raw:
+            return 0.0
         try:
-            entries = json.loads(history_path.read_text())
-            if isinstance(entries, list) and entries:
-                last = entries[-1]
-                last_published = {
-                    "timestamp": last.get("timestamp") or last.get("published_at"),
-                    "slug": last.get("slug"),
-                    "lang": last.get("lang"),
-                }
-            elif isinstance(entries, dict) and entries:
-                key = max(entries.keys())
-                last = entries[key]
-                last_published = {
-                    "timestamp": key,
-                    "slug": last.get("slug"),
-                    "lang": last.get("lang"),
-                }
+            return _dt.fromisoformat(str(raw).replace("Z", "+00:00")).timestamp()
         except Exception:
-            pass
+            return 0.0
+
+    def _iter_history():
+        base = NICHPROJECT / "auto_publisher" / "data"
+        for hp in _glob_hist(str(base / "published_history*.json")):
+            m = _re_hist.search(r"published_history(?:_([a-z]{2}))?\.json$", hp)
+            lang_from_file = m.group(1) if m and m.group(1) else None
+            try:
+                data = json.loads(open(hp).read())
+            except Exception:
+                continue
+            iterator = data if isinstance(data, list) else (
+                [{**(v if isinstance(v, dict) else {}), "timestamp": v.get("timestamp", k) if isinstance(v, dict) else k}
+                 for k, v in data.items()] if isinstance(data, dict) else []
+            )
+            for e in iterator:
+                if not isinstance(e, dict):
+                    continue
+                if lang_from_file and not e.get("lang"):
+                    e = {**e, "lang": lang_from_file}
+                yield e
+
+    last_published: dict = {}
+    try:
+        latest = max(_iter_history(), key=_entry_ts, default=None)
+        if latest:
+            last_published = {
+                "timestamp": latest.get("timestamp") or latest.get("published_at") or latest.get("date"),
+                "slug": latest.get("slug"),
+                "lang": latest.get("lang"),
+            }
+    except Exception:
+        pass
     result["last_published"] = last_published
 
     # n8n running (Docker 컨테이너 우선, 직접 프로세스 폴백)
@@ -962,48 +1409,86 @@ def health_full() -> dict:
     except Exception:
         result["gpu_utilization_percent"] = None
 
-    # 활성 n8n 워크플로우 수
+    # 활성 n8n 워크플로우 수 — alpine n8n 컨테이너에 sqlite3 바이너리 없으므로 docker cp 후 호스트에서 읽음
     def _active_workflows():
+        import tempfile, sqlite3 as _sql, os as _os
+        tmp_path = None
         try:
+            tf = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
+            tmp_path = tf.name
+            tf.close()
             r = subprocess.run(
-                ["docker", "exec", "n8n-n8n-1", "sqlite3",
-                 "/home/node/.n8n/database.sqlite",
-                 "SELECT COUNT(*) FROM workflow_entity WHERE active=1"],
-                capture_output=True, text=True, timeout=5
+                ["docker", "cp", "n8n-n8n-1:/home/node/.n8n/database.sqlite", tmp_path],
+                capture_output=True, text=True, timeout=10
             )
-            return int(r.stdout.strip()) if r.returncode == 0 else None
+            if r.returncode != 0:
+                return None
+            conn = _sql.connect(tmp_path)
+            row = conn.execute("SELECT COUNT(*) FROM workflow_entity WHERE active=1").fetchone()
+            conn.close()
+            return int(row[0]) if row else None
         except Exception:
             return None
+        finally:
+            if tmp_path:
+                try: _os.unlink(tmp_path)
+                except Exception: pass
 
-    # 최근 24h 발행 수
+    # 최근 24h 발행 수 — 모든 published_history*.json 합산
     def _recent_publish_count():
         try:
-            from datetime import datetime, timedelta
-            hist = json.load(open(str(NICHPROJECT / "auto_publisher" / "data" / "published_history.json")))
-            since = datetime.now().timestamp() - 86400
-            recent = [e for e in hist
-                      if datetime.fromisoformat(e.get('date', e.get('timestamp', '2000-01-01')).replace('Z', '+00:00')).timestamp() > since]
-            return len(recent)
+            since = _dt.now().timestamp() - 86400
+            return sum(1 for e in _iter_history() if _entry_ts(e) > since)
         except Exception:
             return None
 
-    # 마지막 영상 생성 시각
+    # 마지막 영상 생성 시각 — NICHPROJECT 기준 (WORKSPACE 였던 버그 수정)
     def _last_video():
         try:
             from glob import glob
             from os.path import getmtime
-            from datetime import datetime
-            videos = glob(str(WORKSPACE / ".omc" / "video_cache" / "*" / "short.mp4"))
+            videos = glob(str(NICHPROJECT / ".omc" / "video_cache" / "*" / "short.mp4"))
             if not videos:
                 return None
             latest = max(videos, key=getmtime)
-            return datetime.fromtimestamp(getmtime(latest)).isoformat()
+            return _dt.fromtimestamp(getmtime(latest)).isoformat()
         except Exception:
             return None
 
     result["active_workflows"] = _active_workflows()
     result["recent_24h_publish_count"] = _recent_publish_count()
     result["last_video_generated"] = _last_video()
+
+    # bot_status — TCP port listening checks
+    def _bot_listening(port: int) -> bool:
+        """Check if a TCP port is listening on 127.0.0.1."""
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(0.5)
+        try:
+            res = s.connect_ex(("127.0.0.1", port))
+            return res == 0
+        finally:
+            s.close()
+
+    result["bot_status"] = {
+        "discord_hermes_callback": _bot_listening(8900),
+        "telegram_callback": _bot_listening(8901),
+        "slack_callback": _bot_listening(8902),
+    }
+
+    # paperclip_today_cost — fetch today's cost from audit module
+    paperclip_today = {"usd": None, "alert_sent": False}
+    try:
+        from auto_publisher.paperclip_audit import check_cost_threshold
+        cost_result = check_cost_threshold()
+        if "today_usd" in cost_result:
+            paperclip_today["usd"] = cost_result["today_usd"]
+            paperclip_today["threshold_usd"] = cost_result.get("threshold_usd")
+            paperclip_today["alert_sent"] = cost_result.get("alert_sent", False)
+    except Exception:
+        pass
+    result["paperclip_today_cost"] = paperclip_today
 
     return result
 
@@ -1186,6 +1671,13 @@ class BridgeHandler(BaseHTTPRequestHandler):
                 return
             self._respond(200, _VIDEO_JOBS[job_id])
             return
+        if path == "/url-to-content-status":
+            job_id = params.get("job_id", "")
+            if not job_id or job_id not in _URL_JOBS:
+                self._respond(404, {"error": "job_id not found"})
+                return
+            self._respond(200, _URL_JOBS[job_id])
+            return
         if path in ROUTES:
             try:
                 result = ROUTES[path]()
@@ -1333,6 +1825,59 @@ class BridgeHandler(BaseHTTPRequestHandler):
                                  "poll": f"/make-video-status?job_id={job_id}"})
             return
 
+        if path == "/paperclip/poll-and-publish":
+            # Paperclip work_product(type=blog_post, status=ready) 폴링 + 발행
+            body = self._read_json_body() or {}
+            max_items = int(body.get("max_items", 5))
+            try:
+                from auto_publisher.paperclip_publish import poll_and_publish
+                result = poll_and_publish(max_items=max_items)
+                self._respond(200, result)
+            except Exception as e:
+                logger.error(f"paperclip poll-and-publish 실패: {e}", exc_info=True)
+                self._respond(500, {"success": False, "error": str(e)[:200]})
+            return
+
+        if path == "/paperclip/cost-alert-check":
+            # Daily cost threshold check (23:00 KST n8n cron)
+            try:
+                from auto_publisher.paperclip_audit import check_cost_threshold
+                result = check_cost_threshold()
+                self._respond(200, result)
+            except Exception as e:
+                logger.error(f"cost-alert-check 실패: {e}", exc_info=True)
+                self._respond(500, {"success": False, "error": str(e)[:200]})
+            return
+
+        if path == "/url-to-content":
+            # URL → blog post + (optional) YouTube Shorts. Async job.
+            body = self._read_json_body() or {}
+            url = (body.get("url") or "").strip()
+            if not url:
+                self._respond(400, {"error": "url 필수"})
+                return
+            lang = body.get("lang", "ko")
+            publish_blog = bool(body.get("publish_blog", True))
+            publish_shorts = bool(body.get("publish_shorts", True))
+            callback_url = (body.get("callback_url") or "").strip()
+            job_id = body.get("job_id") or str(uuid.uuid4())
+            valid_url, invalid_reason = _validate_url_to_content_url(url)
+            if not valid_url:
+                self._respond(422, _cancel_url_to_content_job(job_id, url, invalid_reason, callback_url))
+                return
+            _URL_JOBS[job_id] = {"status": "queued", "url": url, "started_at": time.time(),
+                                 "callback_url": callback_url}
+            threading.Thread(
+                target=_run_url_to_content_job,
+                args=(job_id, url, lang, publish_blog, publish_shorts, callback_url),
+                daemon=True,
+            ).start()
+            self._respond(202, {
+                "job_id": job_id, "status": "queued",
+                "poll": f"/url-to-content-status?job_id={job_id}",
+            })
+            return
+
         # Phase 2 스텁 라우트
         if path in STUB_ROUTES:
             # body 가 있으면 JSON 파싱 시도하되 실패해도 스텁 응답 유지
@@ -1383,7 +1928,9 @@ if __name__ == "__main__":
     acquire_bridge_lock()
     _start_health_alerter_thread()
     port = int(os.getenv("BRIDGE_PORT", "8765"))
-    server = HTTPServer(("127.0.0.1", port), BridgeHandler)
-    print(f"n8n Bridge API running on http://127.0.0.1:{port}")
+    bind_host = os.getenv("BRIDGE_BIND_HOST", "127.0.0.1")
+    # ThreadingHTTPServer: 동시 요청 처리 (단일스레드 HTTPServer는 cron 충돌 시 ECONNABORTED 유발)
+    server = ThreadingHTTPServer((bind_host, port), BridgeHandler)
+    print(f"n8n Bridge API running on http://{bind_host}:{port}")
     print(f"Routes: {list(ROUTES.keys()) + ['/health']}")
     server.serve_forever()

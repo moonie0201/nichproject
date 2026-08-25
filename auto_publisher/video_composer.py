@@ -7,6 +7,7 @@
 """
 
 import logging
+import math
 import os
 import shutil
 import subprocess
@@ -334,6 +335,77 @@ def _concat_clips(clip_paths: list[Path], out_path: Path) -> bool:
     return ok
 
 
+def _build_ai_disclosure_filters(
+    font_file: str,
+    is_shorts: bool,
+    total_duration: float,
+) -> str:
+    """AI 기본법 §32 준수 워터마크 + 시작/종료 자막 drawtext 필터 체인을 반환.
+
+    환경변수 AI_WATERMARK_DISABLED=true 이면 빈 문자열 반환 (테스트용).
+    """
+    if os.getenv("AI_WATERMARK_DISABLED", "false").lower() in ("true", "1", "yes"):
+        return ""
+
+    font_arg = f":fontfile='{font_file}'" if font_file else ""
+
+    # 공통 outline 스타일
+    outline = "borderw=2:bordercolor=black@0.85"
+
+    # 워터마크 크기/위치: 쇼츠 상단 영역(960px) 기준으로 우상단
+    wm_size = 18 if is_shorts else 24
+    # 쇼츠는 split-screen 상단 960px 안쪽에 워터마크 — y=20 으로 충분
+    wm_y = 20
+
+    # 시작 5초 자막 텍스트
+    if is_shorts:
+        open_text = _escape_drawtext("AI 영상 / 투자 권유 아님")
+    else:
+        open_text = _escape_drawtext("본 영상은 AI가 제작했으며 투자 권유가 아닙니다")
+
+    close_text = _escape_drawtext("투자 결정은 본인 판단입니다")
+
+    # 자막 크기/위치
+    disc_size = 20 if is_shorts else 22
+    # 시작/종료 자막: 영상 하단 — 기존 kinetic 자막(하단 960px 중앙, MarginV=440)과 겹침 방지
+    # kinetic/SRT 자막은 하단 160px 이하에, 이 자막은 하단 220~260px 영역에 배치
+    if is_shorts:
+        disc_y = "h-text_h-260"  # 쇼츠 하단 260px 위
+    else:
+        disc_y = "h-text_h-120"  # 롱폼 하단 120px 위
+
+    end_start = max(total_duration - 5.0, 0.0)
+
+    watermark_filter = (
+        f"drawtext=text='AI 생성'{font_arg}"
+        f":fontsize={wm_size}:fontcolor=white@0.92"
+        f":{outline}"
+        f":box=1:boxcolor=black@0.45:boxborderw=4"
+        f":x=w-text_w-20:y={wm_y}"
+        f":enable='gte(t\\,0)'"
+    )
+
+    open_filter = (
+        f"drawtext=text='{open_text}'{font_arg}"
+        f":fontsize={disc_size}:fontcolor=white@0.95"
+        f":{outline}"
+        f":box=1:boxcolor=black@0.55:boxborderw=6"
+        f":x=(w-text_w)/2:y={disc_y}"
+        f":enable='between(t\\,0\\,5)'"
+    )
+
+    close_filter = (
+        f"drawtext=text='{close_text}'{font_arg}"
+        f":fontsize={disc_size}:fontcolor=white@0.95"
+        f":{outline}"
+        f":box=1:boxcolor=black@0.55:boxborderw=6"
+        f":x=(w-text_w)/2:y={disc_y}"
+        f":enable='gte(t\\,{end_start:.2f})'"
+    )
+
+    return f",{watermark_filter},{open_filter},{close_filter}"
+
+
 def _mux_audio_subtitle(video_path: Path, audio_path: Path, srt_path: Path,
                         out_path: Path, video_duration: float, audio_duration: float,
                         is_shorts: bool = False) -> bool:
@@ -378,6 +450,10 @@ def _mux_audio_subtitle(video_path: Path, audio_path: Path, srt_path: Path,
     else:
         sub_filter = f"subtitles='{srt_escaped}':force_style='{sub_style}'"
 
+    # AI 기본법 §32 워터마크 + 시작/종료 공시 자막
+    font_file = _resolve_font_file()
+    ai_filters = _build_ai_disclosure_filters(font_file, is_shorts, audio_duration)
+
     # Codex 자문: short_form 프로파일 적용 (8M 비트레이트 + loudnorm 오디오 정규화)
     from auto_publisher.video_encoder import get_profile
     profile = get_profile("short_form" if is_shorts else "long_form")
@@ -386,12 +462,12 @@ def _mux_audio_subtitle(video_path: Path, audio_path: Path, srt_path: Path,
     if audio_filter:
         # 비디오 + 오디오 필터 chain 함께
         filter_complex = (
-            f"{pad_filter}{video_in}{sub_filter}[vout];"
+            f"{pad_filter}{video_in}{sub_filter}{ai_filters}[vout];"
             f"[1:a]{audio_filter}[aout]"
         )
         audio_map = "[aout]"
     else:
-        filter_complex = f"{pad_filter}{video_in}{sub_filter}[vout]"
+        filter_complex = f"{pad_filter}{video_in}{sub_filter}{ai_filters}[vout]"
         audio_map = "1:a"
 
     args = [
@@ -409,7 +485,10 @@ def _mux_audio_subtitle(video_path: Path, audio_path: Path, srt_path: Path,
     args += [
         "-c:a", profile.get("audio_codec", "aac"),
         "-b:a", profile.get("audio_bitrate", "192k"),
+        "-ar", profile.get("audio_sample_rate", "48000"),
+        "-ac", profile.get("audio_channels", "2"),
         "-shortest",
+        "-t", f"{audio_duration:.2f}",
         str(out_path),
     ]
     return _ffmpeg_run(args, "mux")
@@ -426,6 +505,7 @@ def compose_video(
     fallback_visual_plan: list[dict] | None = None,
     visual_beats: list[dict] | None = None,
     source_data_points: list[dict] | None = None,
+    chapters: list | None = None,
 ) -> Path | None:
     """차트 슬라이드쇼 + 음성 + 자막 → mp4 합성
 
@@ -448,6 +528,21 @@ def compose_video(
             valid_charts.append(Path(p))
 
     _kenburns_min = float(os.getenv("KENBURNS_PER_CHART_SEC", "2"))
+    # 체류 시간 상한. 이전에는 하한만 있어서 이미지가 모자라면 한 장이 무한정 머물렀다
+    # (쇼츠 60초에 차트 2장 = 30초씩 정지 화면). 줌이 3% 뿐이라 사실상 멈춘 화면이었다.
+    _kenburns_max = float(os.getenv(
+        "KENBURNS_MAX_PER_CHART_SEC", "4" if is_shorts else "12"
+    ))
+    # 순환은 서로 다른 이미지가 2장 이상일 때만 의미가 있다. 1장을 N번 반복하면
+    # 화면은 그대로면서 인코딩 비용만 N배로 든다 — 그 경우 비주얼 자체를 늘려야 한다.
+    if len(valid_charts) >= 2 and audio_duration_sec / len(valid_charts) > _kenburns_max:
+        needed = max(int(math.ceil(audio_duration_sec / _kenburns_max)), len(valid_charts))
+        cycled = [valid_charts[i % len(valid_charts)] for i in range(needed)]
+        logger.info(
+            "비주얼 부족(%d장 / %.1fs) — %d장으로 순환해 화면 전환을 만든다",
+            len(valid_charts), audio_duration_sec, needed,
+        )
+        valid_charts = cycled
     per_chart_sec = max(audio_duration_sec / max(len(valid_charts), 1), _kenburns_min)
 
     work_dir = audio_path.parent / f"{slug}_clips"
@@ -458,7 +553,12 @@ def compose_video(
         if not valid_charts:
             logger.warning("유효한 차트 없음 — fallback 카드 비주얼로 합성")
             cards = _build_fallback_cards(fallback_visual_plan, visual_beats, source_data_points)
-            per_card_sec = max(audio_duration_sec / max(len(cards), 1), 3.5)
+            _card_min_sec = 3.5
+            max_cards = max(int(audio_duration_sec / _card_min_sec), 1)
+            if len(cards) > max_cards:
+                logger.info(f"fallback cards {len(cards)} → {max_cards} (cap to fit {audio_duration_sec:.1f}s audio)")
+                cards = cards[:max_cards]
+            per_card_sec = max(audio_duration_sec / max(len(cards), 1), _card_min_sec)
             fallback_color = _cbg("bg-shorts", "#1e293b") if is_shorts else _cbg("bg", "#0f172a")
             for i, card in enumerate(cards):
                 clip_out = work_dir / f"fallback_{i:02d}.mp4"
@@ -481,15 +581,79 @@ def compose_video(
                     zoom_env = "SHORTS_KENBURNS_ZOOM_MAX" if is_shorts else "LONG_KENBURNS_ZOOM_MAX"
                     zoom_default = "1.03" if is_shorts else "1.15"
                     zoom_max = float(os.getenv(zoom_env, zoom_default))
-                if not _make_kenburns_clip(chart, per_chart_sec, clip_out, img_w, img_h,
-                                            zoom_max=zoom_max):
-                    logger.warning(f"클립 생성 실패: {chart}")
-                    continue
+                _anim_done = False
+                if os.getenv("VIDEO_ANIMATED_CARDS", "1") == "1" and chapters:
+                    _ch = chapters[i] if i < len(chapters) else None
+                    if _ch:
+                        from auto_publisher.motion_cards import (
+                            detect_chapter_animation_type,
+                            make_animated_number_clip,
+                            make_typewriter_card_clip,
+                        )
+                        _amode = detect_chapter_animation_type(_ch)
+                        if _amode == "animated_number":
+                            _sp = source_data_points or []
+                            _pt = _sp[i] if i < len(_sp) else {}
+                            _anim_done = make_animated_number_clip(
+                                value=str(_pt.get("display_value") or _pt.get("value", "")),
+                                label=str(_pt.get("label", _ch.get("title", ""))),
+                                unit="",
+                                duration_sec=per_chart_sec,
+                                out_path=clip_out,
+                                width=img_w, height=img_h,
+                            )
+                        elif _amode == "typewriter":
+                            _anim_done = make_typewriter_card_clip(
+                                text=_ch.get("text", "")[:200],
+                                duration_sec=per_chart_sec,
+                                out_path=clip_out,
+                                width=img_w, height=img_h,
+                            )
+                if not _anim_done:
+                    if not _make_kenburns_clip(chart, per_chart_sec, clip_out, img_w, img_h,
+                                               zoom_max=zoom_max):
+                        logger.warning(f"클립 생성 실패: {chart}")
+                        continue
+                # -- lower-third overlay --
+                if os.getenv("VIDEO_LOWER_THIRD", "1") == "1":
+                    _chapter_for_lt = None
+                    if chapters:
+                        for _ch in chapters:
+                            if _ch.get("chart") and str(_ch["chart"]) in str(chart):
+                                _chapter_for_lt = _ch
+                                break
+                        if not _chapter_for_lt and i < len(chapters):
+                            _chapter_for_lt = chapters[i]
+                    if _chapter_for_lt:
+                        from auto_publisher.branding import make_lower_third_overlay
+                        _lt_out = work_dir / f"lt_{i:02d}.mp4"
+                        if make_lower_third_overlay(_chapter_for_lt.get("title", ""), clip_out, _lt_out):
+                            clip_out.unlink(missing_ok=True)
+                            _lt_out.rename(clip_out)
                 clip_paths.append(clip_out)
 
         if not clip_paths:
             logger.error("생성된 클립 없음")
             return None
+
+        # -- branding injection --
+        if os.getenv("VIDEO_BRANDING", "1") == "1":
+            from auto_publisher.branding import make_intro_clip, make_outro_clip
+            intro_dur = 1.0 if is_shorts else 2.5
+            outro_dur = 1.5 if is_shorts else 3.0
+            intro_p = work_dir / "intro.mp4"
+            outro_p = work_dir / "outro.mp4"
+            _title = chapters[0].get("title", "InvestIQs") if chapters else "InvestIQs"
+            _blog_url = os.getenv("BLOG_URL_HINT", "investiqs.net")
+            branded = []
+            if make_intro_clip(_title, intro_p, img_w, img_h, intro_dur):
+                branded.append(intro_p)
+            branded.extend(clip_paths)
+            if make_outro_clip(_blog_url, outro_p, img_w, img_h, outro_dur):
+                branded.append(outro_p)
+            branded_concat = work_dir / "branded_concat.mp4"
+            if _concat_clips(branded, branded_concat):
+                clip_paths = [branded_concat]
 
         # 클립 합치기 → top.mp4 (상단 이미지 영역)
         concat_path = work_dir / "concat.mp4"
@@ -514,6 +678,23 @@ def compose_video(
         if not _mux_audio_subtitle(video_path, audio_path, srt_path, out_path,
                                    video_duration, audio_duration_sec, is_shorts=is_shorts):
             return None
+
+        # BGM 믹스 (VIDEO_BGM=1, 기본 on)
+        if os.getenv("VIDEO_BGM", "1").lower() not in ("false", "0", "no"):
+            try:
+                from auto_publisher.bgm_manager import mix_bgm
+                from auto_publisher.stock_broll import slug_to_category
+                bgm_category = os.getenv("SHORTS_CATEGORY") or slug_to_category(slug)
+                bgm_out = out_path.with_name(out_path.stem + ".bgm.mp4")
+                if mix_bgm(out_path, bgm_out, category=bgm_category):
+                    import shutil as _sh
+                    _sh.move(str(bgm_out), str(out_path))
+                    logger.info(f"BGM 합성 완료 (category={bgm_category})")
+                else:
+                    bgm_out.unlink(missing_ok=True)
+                    logger.info("BGM 없음 — 나레이션 단독 유지")
+            except Exception as _e:
+                logger.warning(f"BGM mix 예외 — 무시하고 계속: {_e}")
 
         if is_shorts and os.getenv("SHORTS_SPLIT_SCREEN", "false").lower() in ("true", "1", "yes"):
             from auto_publisher.stock_broll import slug_to_category
