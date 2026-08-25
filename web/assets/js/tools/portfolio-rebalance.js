@@ -83,7 +83,7 @@
 
   function render() {
     var s = currentState();
-    var cur = s.c || "USD";
+    var cur = IQ.safeCurrency(s.c || "USD", fxRates);
     var result = IQ.rebalance({ holdings: s.rows });
     var fmt = function (usd) { return IQ.formatMoney(IQ.convert(usd, cur, fxRates), cur); };
     var fmtPct = function (p) { return (isFinite(p) ? p.toFixed(2) : "0.00") + "%"; };

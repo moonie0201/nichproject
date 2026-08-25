@@ -35,7 +35,7 @@
 
   function render() {
     var s = currentState();
-    var cur = s.c || "USD";
+    var cur = IQ.safeCurrency(s.c || "USD", fxRates);
     var proj = IQ.projectFIRE({
       currentUsd: s.cu,
       monthlyUsd: s.m,

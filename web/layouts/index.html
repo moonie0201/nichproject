@@ -27,7 +27,7 @@
   <div class="iq-tool-grid">
     {{- range . }}
     <a class="iq-tool-card" href="{{ .url }}">
-      <span class="iq-tool-card__ico">{{ .icon }}</span>
+      <span class="iq-tool-card__ico" aria-hidden="true">{{ .icon }}</span>
       <span class="iq-tool-card__title">{{ .title }}</span>
       <span class="iq-tool-card__desc">{{ .desc }}</span>
     </a>
