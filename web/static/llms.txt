@@ -1,23 +1,33 @@
 # InvestIQs — 데이터 기반 투자 정보
 
-> 한국 및 글로벌 ETF, 배당주, 절세 전략, 부동산 투자에 대한 실데이터 기반 분석 콘텐츠. yfinance, pykrx 등 공개 시장 데이터로 검증 가능한 수치만 인용하며, 3인칭 리서치 노트 톤으로 작성한다.
+> 미국 ETF·배당주·절세 계좌를 다루는 한국어 정보 사이트. 무료 투자 계산기 10종과
+> 데이터 분석 글을 제공한다. 모든 수치는 공개 시장 데이터 기준이며 출처와 기준일을
+> 표기한다. 콘텐츠는 AI 보조 워크플로(AI-assisted editorial workflow)로 제작되고
+> 제작·검증 절차를 공개한다. 개별 종목 추천이나 매매 신호는 다루지 않는다.
 
-본 사이트는 자격이 인증된 투자 애널리스트 페르소나가 작성한 포스트를 다국어(한국어/영어/일본어/베트남어/인도네시아어)로 발행한다. 모든 수익률/가격 데이터는 yfinance 또는 pykrx에서 포스트 작성일 기준으로 수집된다.
+## 핵심 도구 (인터랙티브 계산기)
 
-## 핵심 콘텐츠
+- [투자 계산기 전체](https://investiqs.net/ko/tools/): 계산기 10종 목록
+- [연금저축·IRP 세액공제 계산기](https://investiqs.net/ko/tools/pension-tax-credit/): 총급여 구간별 공제율·환급액 계산
+- [배당 ETF 계산기](https://investiqs.net/ko/tools/dividend-calculator/): SCHD·JEPI·VYM·JEPQ·QYLD 배당 재투자 시뮬레이션
+- [ETF 비교 계산기](https://investiqs.net/ko/tools/compare/): 두 ETF 의 수익률·보수·배당 나란히 비교
+- [ETF 수수료 비교](https://investiqs.net/ko/tools/etf-fee-calculator/): 운용보수 차이의 장기 복리 효과
+- [적립식(DCA) 계산기](https://investiqs.net/ko/tools/dca-calculator/): 월 적립 복리 시뮬레이션
 
-- [ETF 투자 가이드](https://investiqs.net/ko/categories/etf/): S&P500, 나스닥, 배당 ETF, 채권 ETF 분석
-- [배당주 전략](https://investiqs.net/ko/categories/배당주/): 고배당주, 배당성장주, REITs, 배당 재투자
-- [절세 계좌](https://investiqs.net/ko/categories/절세/): ISA, 연금저축, IRP, 연말정산, 양도소득세
-- [부동산 투자](https://investiqs.net/ko/categories/부동산/): 청약, 갭투자, 경매, 수익형 부동산
-- [재테크 기초](https://investiqs.net/ko/categories/재테크-기초/): 사회초년생 로드맵, 자산배분, 신용관리
+## 핵심 분석 글
 
-## 데이터 출처 & 방법론
+- [투자공부 목록](https://investiqs.net/ko/study/): 세금·배당·계좌 데이터 분석
+- [해외 ETF 외국납부세액공제 2026](https://investiqs.net/ko/study/foreign-tax-credit-overseas-etf-2026/): 국세청 1차 출처 기반 신고 대상 구분
+- [ETF 분배금과 건강보험 피부양자](https://investiqs.net/ko/study/etf-distribution-health-insurance-dependent-2026/): 가입자 유형별 기준 정리
 
-- [데이터 & 방법론 페이지](https://investiqs.net/ko/about/methodology/)
+## 데이터 출처 & 제작 방식
+
+- [데이터 & 방법론](https://investiqs.net/ko/about/methodology/)
 - [편집 정책](https://investiqs.net/ko/about/editorial-policy/)
-- [저자 프로필](https://investiqs.net/ko/about/authors/)
+- [콘텐츠 제작·검증 절차 공개](https://investiqs.net/ko/about/authors/)
 
 ## 면책
 
-본 사이트는 교육/정보 목적이며 투자 자문이 아니다. 모든 투자 판단은 독자 본인의 책임이며, 과거 수익률이 미래 수익을 보장하지 않는다.
+본 사이트는 교육/정보 목적이며 투자 자문이 아니다. 모든 투자 판단은 독자 본인의
+책임이며, 과거 수익률이 미래 수익을 보장하지 않는다. 유사투자자문업 미등록
+사업자로서 개별 종목 추천·유료 자문을 제공하지 않는다.
