@@ -1,3 +1,6 @@
+# 루트 → ko. Hugo 의 meta-refresh 자리표시자(200+noindex)를 진짜 301 로 (2026-08-27)
+/ /ko/ 301
+
 # 동일 사건·동일 수치 중복 통합 (2차)
 /en/study/schd-quarterly-dividend-cut-27-yet-325-yield-persists-why-the-ma/ /en/study/schd-dividend-cut-to-325-yield-why-a-27-reduction-signals-stabili/ 301
 /en/study/schd-dividend-cut-27-maintains-325-yield-strategic-positioning-b/ /en/study/schd-dividend-cut-to-325-yield-why-a-27-reduction-signals-stabili/ 301
