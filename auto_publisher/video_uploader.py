@@ -87,6 +87,13 @@ def upload_youtube(
         from auto_publisher.shorts_description import enrich_shorts_description
         description = enrich_shorts_description(description, blog_url, shorts_category)
 
+    # 유튜브는 제목·설명에 꺾쇠(<, >)를 금지한다 — 있으면 업로드 전체가
+    # HTTP 400 invalidDescription 으로 거부된다. LLM 이 만든 설명문에
+    # "<br>" 나 "3% -> 5%" 를 "3% <5%" 처럼 쓰는 경우가 실제로 있었다
+    # (2026-08-28 재개 첫 편이 이걸로 실패). 업로드 직전에 정화한다.
+    title = title.replace("<", "(").replace(">", ")")
+    description = description.replace("<", "(").replace(">", ")")
+
     body = {
         "snippet": {
             "title": title[:100],
