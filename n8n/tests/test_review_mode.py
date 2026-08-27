@@ -10,13 +10,15 @@ import pytest
 import n8n.bridge_api as api
 
 
+# 사이트 발행 경로 — 심사 중 전부 차단돼야 한다.
+# 영상 경로(run_shorts_auto_latest, run_make_video)는 2026-08-28 부터 예외:
+# 심사관이 보는 건 investiqs.net 이지 유튜브가 아니고, 쇼츠는 이미 라이브에
+# 있는 글만 소재로 쓴다. 아래 test_youtube_channel_passes_review_mode 참조.
 PUBLISH_ENTRYPOINTS = [
     ("run_auto_publish", {"lang": "ko"}),
     ("run_publish_us_market_wrap", {"lang": "ko"}),
     ("run_publish_us_market_weekly", {"lang": "ko"}),
     ("run_publish_us_market_intraday", {"lang": "ko"}),
-    ("run_shorts_auto_latest", {"lang": "ko"}),
-    ("run_make_video", {"slug": "any-slug", "lang": "ko"}),
 ]
 
 
@@ -57,6 +59,24 @@ def test_review_mode_blocks_supported_language_too(review_on):
     """심사 모드에서는 활성 언어(ko/en)도 막아야 의미가 있다."""
     for lang in ("ko", "en"):
         assert api._lang_retired(lang)["skipped"] is True, lang
+
+
+def test_youtube_channel_passes_review_mode(review_on):
+    """심사 중에도 유튜브 채널은 통과한다 — 사이트는 안 바뀌므로.
+
+    실제 영상 생성 경로에 들어가면 테스트가 5분씩 돌므로 가드 함수
+    수준에서만 확인한다. run_make_video / run_shorts_auto_latest 가
+    channel="youtube" 로 호출하는 건 소스 검사로 잠근다.
+    """
+    assert api._review_mode_block(channel="youtube") is None
+    assert api._lang_retired("ko", channel="youtube") is None
+    # 은퇴 언어 차단은 채널과 무관하게 유지돼야 한다
+    assert api._lang_retired("ja", channel="youtube")["skipped"] is True
+
+    import inspect
+    for fn_name in ("run_make_video", "run_shorts_auto_latest"):
+        src = inspect.getsource(getattr(api, fn_name))
+        assert 'channel="youtube"' in src, f"{fn_name} 이 youtube 채널로 호출하지 않는다"
 
 
 # --- 발행 경로 전수 검사 (Codex 리뷰 2차 지적:

@@ -40,7 +40,7 @@ from auto_publisher.config import SUPPORTED_LANGUAGES
 ADSENSE_REVIEW_FLAG = NICHPROJECT / ".adsense_review"
 
 
-def _review_mode_block() -> dict | None:
+def _review_mode_block(*, channel: str = "site") -> dict | None:
     """애드센스 심사 모드면 발행을 막는 skip 응답을, 아니면 None 을 돌려준다.
 
     심사 중 자동 발행은 "manual review or curation 없는 대량 생성"이라는
@@ -51,7 +51,15 @@ def _review_mode_block() -> dict | None:
         끄기 : rm .adsense_review
     n8n 워크플로우를 건드리지 않고 발행 경로 한 곳에서 흡수하므로,
     승인 후 파일만 지우면 즉시 원복된다.
+
+    channel="youtube" 는 심사 중에도 통과시킨다. 심사관이 보는 것은
+    investiqs.net 이지 유튜브 채널이 아니다 — 쇼츠는 이미 라이브에 있는
+    글만 소재로 쓰므로 사이트는 한 글자도 바뀌지 않는다. 처음에 영상까지
+    묶어 20일간 업로드가 끊겼는데(마지막 8-08), "주 2편 쇼츠" 계획과
+    어긋난 과잉 차단이었다. (2026-08-28)
     """
+    if channel == "youtube":
+        return None
     if not ADSENSE_REVIEW_FLAG.exists():
         return None
     return {
@@ -61,14 +69,14 @@ def _review_mode_block() -> dict | None:
     }
 
 
-def _lang_retired(lang: str) -> dict | None:
+def _lang_retired(lang: str, *, channel: str = "site") -> dict | None:
     """발행 중단된 언어면 skip 응답을, 아니면 None 을 돌려준다.
 
     n8n 워크플로우 27개가 여전히 lang=ja/vi/id 로 호출하므로, 워크플로우를
     일일이 고치는 대신 여기서 no-op 으로 흡수한다.
-    심사 모드일 때는 언어와 무관하게 전부 막는다.
+    심사 모드일 때는 언어와 무관하게 전부 막는다(channel="youtube" 제외).
     """
-    blocked = _review_mode_block()
+    blocked = _review_mode_block(channel=channel)
     if blocked:
         return {**blocked, "lang": lang}
     if lang in SUPPORTED_LANGUAGES:
@@ -631,7 +639,7 @@ def run_shorts_auto_latest(lang: str = "ko", privacy: str = "public", dry_run: b
 
     이미 영상화된 slug 는 video_cache 디렉토리 기준으로 제외.
     """
-    if skip := _lang_retired(lang):
+    if skip := _lang_retired(lang, channel="youtube"):
         return skip
     from auto_publisher.shorts_auto import find_latest_publishable_slug, list_videoed_slugs
 
@@ -1073,7 +1081,7 @@ def _popen_stream(cmd: list, cwd, timeout_sec: int) -> tuple[str, str, int]:
 def run_make_video(slug: str = "", lang: str = "ko",
                    privacy: str = "public") -> dict:
     """블로그 slug → 롱폼+쇼츠 영상 생성 + YouTube 업로드"""
-    if skip := _lang_retired(lang):
+    if skip := _lang_retired(lang, channel="youtube"):
         return skip
     if not slug:
         # slug 없으면 가장 최근 발행된 lang 포스트 사용
