@@ -64,24 +64,22 @@ def notify_discord(
     if ticker:
         embed["fields"].insert(0, {"name": "티커", "value": ticker, "inline": True})
 
-    payload = json.dumps({"embeds": [embed]}).encode("utf-8")
-    req = Request(
-        DISCORD_WEBHOOK_URL,
-        data=payload,
-        headers={
-            "Content-Type": "application/json",
-            "User-Agent": "InvestIQsBot/1.0",
-        },
-        method="POST",
-    )
-
+    # urllib 로 보내면 Discord 앞단 Cloudflare 가 403 을 돌려준다 — 같은
+    # 페이로드·헤더로 curl/requests 는 204 다. urllib 의 TLS 지문이 봇으로
+    # 분류되는 알려진 케이스라, requests 로 보낸다. (2026-08-28 실측)
     try:
-        with urlopen(req, timeout=10) as resp:
-            if resp.status in (200, 204):
-                logger.info(f"Discord 알림 전송 완료: {title}")
-                return True
-            logger.warning(f"Discord 응답 {resp.status}")
-            return False
-    except URLError as e:
+        import requests
+        resp = requests.post(
+            DISCORD_WEBHOOK_URL,
+            json={"embeds": [embed]},
+            headers={"User-Agent": "InvestIQsBot/1.0"},
+            timeout=10,
+        )
+        if resp.status_code in (200, 204):
+            logger.info(f"Discord 알림 전송 완료: {title}")
+            return True
+        logger.warning(f"Discord 응답 {resp.status_code}: {resp.text[:120]}")
+        return False
+    except Exception as e:
         logger.warning(f"Discord 알림 실패: {e}")
         return False
