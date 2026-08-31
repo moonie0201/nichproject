@@ -75,10 +75,14 @@ enableRobotsTXT = true
       identifier = "ko-study"
       url = "/ko/study/"
       weight = 2
+    # "시황"(/ko/market/) 은 축소로 콘텐츠를 내리면서 404 가 됐는데 메뉴에는
+    # 남아 있었다 — 방문자가 30초 안에 마주치는 죽은 링크였다.
+    # 자리를 blog 로 넘긴다. blog 3편은 어느 내비게이션에서도 도달 불가능한
+    # 고아 페이지였다(헤더에 항목 없음 + 홈에 링크 없음). (2026-09-01)
     [[languages.ko.menu.main]]
-      name = "시황"
-      identifier = "ko-market"
-      url = "/ko/market/"
+      name = "블로그"
+      identifier = "ko-blog"
+      url = "/ko/blog/"
       weight = 3
     [[languages.ko.menu.footer]]
       name = "개인정보처리방침"
