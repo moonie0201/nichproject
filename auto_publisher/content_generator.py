@@ -690,10 +690,15 @@ def _build_verification_snippet(ticker: str, lang: str = "ko") -> str:
 CODEX_MODEL = os.getenv("CODEX_MODEL", "gpt-5.4-mini")
 GEMINI_CLI_MODEL = os.getenv("GEMINI_CLI_MODEL", "gemini-2.5-pro")
 CLAUDE_CLI_MODEL = os.getenv("CLAUDE_CLI_MODEL", "claude-sonnet-4-6")
-LLM_PRIMARY_BACKEND = os.getenv("LLM_PRIMARY_BACKEND", "gemini").strip().lower()
-# 폴백 순서: codex 제외 (토큰 만료 401), gemini → claude → ollama 순
+AGY_MODEL = os.getenv("AGY_MODEL", "").strip()
+LLM_PRIMARY_BACKEND = os.getenv("LLM_PRIMARY_BACKEND", "agy").strip().lower()
+# 폴백 순서: agy → claude → ollama.
+# gemini 는 제외한다 (2026-09-01, 지원 종료). codex 도 제외 — ChatGPT 계정
+# 인증이라 모델 선택이 제한되고 과거 토큰 만료 401 이력이 있다.
+# agy 는 Gemini 3.7 Flash / Claude Opus 4.6 등을 자체 라우팅하므로
+# gemini CLI 를 직접 부르던 것보다 상위 모델을 쓴다.
 # 추가하려면 env LLM_BACKENDS_OVERRIDE (콤마 구분) 설정
-_default_backends = ("gemini", "claude", "ollama")
+_default_backends = ("agy", "claude", "ollama")
 LLM_BACKENDS = tuple(
     b.strip() for b in os.getenv("LLM_BACKENDS_OVERRIDE", ",".join(_default_backends)).split(",") if b.strip()
 )
@@ -784,6 +789,46 @@ def _call_claude_cli(prompt: str, max_retries: int = 2, model: str | None = None
                 time.sleep(4)
             else:
                 raise RuntimeError(f"claude CLI {max_retries}회 실패: {e}")
+
+
+def _call_agy(prompt: str, max_retries: int = 2, model: str | None = None) -> str:
+    """agy CLI 호출.
+
+    -p 뒤에 오는 토큰을 프롬프트로 먹기 때문에 --model 은 반드시 -p 앞에 둔다
+    (뒤에 두면 "-p took --model as its prompt" 오류가 난다).
+    model 미지정 시 agy 기본 모델을 쓴다 — 붙어 있는 모델이 환경마다 달라
+    (Gemini 3.7 Flash / Claude Opus 4.6 등) 하드코딩하지 않는다.
+    """
+    model = model or AGY_MODEL
+    cmd = [_resolve_cli("agy")]
+    if model:
+        cmd += ["--model", model]
+    cmd += ["-p", prompt]
+    for attempt in range(max_retries):
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+            if result.returncode != 0:
+                raise RuntimeError(f"agy 오류: {result.stderr[:300]}")
+            out = result.stdout.strip()
+            # 모델명이 틀리면 exit 0 으로 사용 가능 목록만 뱉는다 — 성공으로 오인하면
+            # 그 목록이 그대로 본문에 실린다.
+            if "Available models:" in out or "invalid model selection" in out:
+                raise RuntimeError(f"agy 모델 인식 실패: {model}")
+            if not out:
+                raise RuntimeError("agy 빈 응답")
+            return out
+        except subprocess.TimeoutExpired:
+            logger.warning(f"agy 타임아웃 (시도 {attempt + 1}/{max_retries})")
+            if attempt < max_retries - 1:
+                time.sleep(4)
+            else:
+                raise RuntimeError("agy CLI 타임아웃")
+        except Exception as e:
+            logger.warning(f"agy 호출 실패 (시도 {attempt + 1}/{max_retries}): {e}")
+            if attempt < max_retries - 1:
+                time.sleep(4)
+            else:
+                raise RuntimeError(f"agy CLI {max_retries}회 실패: {e}")
 
 
 def _call_gemini_cli(prompt: str, max_retries: int = 2, model: str | None = None) -> str:
@@ -920,7 +965,7 @@ def _prepare_ollama_prompt(prompt: str, think: bool = False, model: str | None =
 
 def _call_llm(prompt: str, max_retries: int = 3, think: bool = False) -> str:
     """환경변수 기반 LLM 백엔드 선택 + 폴백."""
-    primary = LLM_PRIMARY_BACKEND if LLM_PRIMARY_BACKEND in LLM_BACKENDS else "gemini"
+    primary = LLM_PRIMARY_BACKEND if LLM_PRIMARY_BACKEND in LLM_BACKENDS else LLM_BACKENDS[0]
     non_ollama = [b for b in LLM_BACKENDS if b != "ollama"]
     if primary != "ollama":
         non_ollama = [primary] + [b for b in non_ollama if b != primary]
@@ -929,6 +974,9 @@ def _call_llm(prompt: str, max_retries: int = 3, think: bool = False) -> str:
 
     for backend in order:
         try:
+            if backend == "agy":
+                logger.info("LLM backend: agy model=%s", AGY_MODEL or "(기본)")
+                return _call_agy(prompt)
             if backend == "gemini":
                 logger.info("LLM backend: gemini model=%s", GEMINI_CLI_MODEL)
                 return _call_gemini_cli(prompt)
